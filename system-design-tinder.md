@@ -5,6 +5,7 @@
 A location-based dating platform supporting profile discovery, swiping, matching, messaging, and preferences for 50M+ daily active users.
 
 ### Key Numbers
+
 - 50M+ daily active users
 - 1.8B+ swipes per day
 - 26M+ matches per day
@@ -12,11 +13,10 @@ A location-based dating platform supporting profile discovery, swiping, matching
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Swipe right to like, left to pass
 - View profiles with photos and bio
 - Match with mutual swipes
@@ -24,6 +24,7 @@ A location-based dating platform supporting profile discovery, swiping, matching
 - Set preferences (distance, age)
 
 ### Non-Functional Requirements
+
 - Latency: Profile < 200ms, swipe < 100ms
 - Throughput: 100M+ swipes/day
 - Availability: 99.99% uptime
@@ -31,8 +32,6 @@ A location-based dating platform supporting profile discovery, swiping, matching
 - Scale: 75M+ monthly users, 190+ countries
 
 ---
-
-
 
 ---
 
@@ -66,35 +65,42 @@ flowchart TB
 5. Matched users - Chat Service opens WebSocket conversation
 6. Kafka events: swipe patterns - ML model improves recommendations
 7. Analytics: match rate, conversation rate, retention metrics
+
 ## Microservices
 
 ### 1. Profile Service
+
 - **Responsibility**: Profile creation, photo upload, bio, preferences, verification
 - **Tech**: Go
 - **DB**: PostgreSQL (profiles), S3 (photos)
 
 ### 2. Discovery Service (Critical)
+
 - **Responsibility**: Generate swipe deck, location-based filtering, preference matching, avoid showing same profile
 - **Tech**: Go / Python
 - **DB**: Redis (swipe deck, seen profiles), PostgreSQL (location index)
 
 ### 3. Matching Service (Critical)
+
 - **Responsibility**: Determine matches (both swiped right), prevent duplicate matches, match notifications
 - **Tech**: Go
 - **DB**: Cassandra (matches, write-heavy), Redis (match cache)
 - **Queue**: Kafka (match events)
 
 ### 4. Chat Service
+
 - **Responsibility**: One-to-one messaging between matched users, message history
 - **Tech**: Go
 - **DB**: Cassandra (messages), Redis (recent messages)
 
 ### 5. Notification Service
+
 - **Responsibility**: Match notifications, new message alerts, daily recommendations
 - **Tech**: Node.js
 - **Channels**: FCM, APNs
 
 ### 6. ML Ranking Service
+
 - **Responsibility**: Profile ranking (Elo score), recommendation optimization, behavioral analysis
 - **Tech**: Python (ML), TensorFlow
 - **DB**: Redis (scores), PostgreSQL (features)
@@ -182,7 +188,7 @@ SETEX elo:{profile_id} 3600 {score}
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2-4 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Cache** | Redis (single) |
@@ -193,7 +199,7 @@ SETEX elo:{profile_id} 3600 {score}
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (20-50 containers) |
 | **Database** | PostgreSQL + Cassandra (3 nodes) |
 | **Cache** | Redis Cluster (12 nodes) |
@@ -204,7 +210,7 @@ SETEX elo:{profile_id} 3600 {score}
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (500+ pods) |
 | **Database** | Cassandra (50+ nodes) + PostgreSQL (sharded) |
 | **Cache** | Redis Cluster (30+ nodes) |
@@ -217,29 +223,34 @@ SETEX elo:{profile_id} 3600 {score}
 ## Key Design Decisions
 
 ### 1. Pre-Computed Discovery Deck
+
 - Generate 100+ profiles per user in advance
 - Store in Redis list (LPUSH)
 - User swipes from deck, refill when low
 - Avoids real-time query on every swipe
 
 ### 2. Swipe-to-Match Detection
+
 - When user A swipes right on user B
 - Check if user B already swiped right on user A (HGET swipes:{B} {A})
 - If yes: MATCH! Notify both users
 - If no: Store A's swipe, continue
 
 ### 3. Elo Score for Profile Ranking
+
 - Higher Elo = shown more frequently
 - Elo increases when right-swiped
 - Elo decreases when left-swiped
 - Creates natural quality ranking
 
 ### 4. Why Cassandra for Matches?
+
 - Write-heavy (26M matches/day)
 - Time-series access (recent matches first)
 - Partition by user_id for even distribution
 
 ### 5. Anti-Abuse
+
 - Rate limit swipes (100/day for free users)
 - Shadow ban for spam/abuse
 - Photo verification (face match)
@@ -249,7 +260,7 @@ SETEX elo:{profile_id} 3600 {score}
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Elo score drift | Matches become irrelevant | Weekly recalibration, A/B test weights |
 | Deck generation slow | Spinning wheel | Pre-computed decks, background refresh |
 | Match notification delayed | Miss time-sensitive match | Priority push, SMS fallback |
@@ -259,11 +270,10 @@ SETEX elo:{profile_id} 3600 {score}
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 20x c5.xlarge | $2,800 |
 | PostgreSQL | db.r5.xlarge + 3 replicas | $4,800 |
 | Redis Cluster | 6x cache.r5.xlarge | $4,800 |
@@ -273,14 +283,14 @@ SETEX elo:{profile_id} 3600 {score}
 | ML Matching | GPU instances | $3,000 |
 | Kafka Cluster | 6x kafka.m5.large | $2,400 |
 | Geo Service | 5x c5.xlarge | $700 |
-| **Total** |  | **~$25,450/month** |
+| **Total** | | **~$25,450/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Redis GEO | PostGIS | Redis GEO | Sub-ms proximity queries |
 | Cassandra | PostgreSQL | Cassandra | Write-heavy swipe workload |
 | Redis set intersection | Database join | Redis set | O(min(N,M)) mutual like detection |
@@ -292,7 +302,7 @@ SETEX elo:{profile_id} 3600 {score}
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Discovery deck load time | < 200ms |
 | Swipe processing latency | < 100ms |
 | Match detection latency | < 500ms |
@@ -306,10 +316,10 @@ SETEX elo:{profile_id} 3600 {score}
 
 ---
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How does Elo scoring work for profile ranking?
 - How do you detect mutual likes in real-time?
 - How do you handle 1.8B+ swipes per day?
@@ -317,11 +327,10 @@ SETEX elo:{profile_id} 3600 {score}
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Elo Rating System | Applied in this system | Architecture + LLD |
 | Swipe Recommendation Algorithm | Applied in this system | Architecture + LLD |
 | Geospatial Matching | Applied in this system | Architecture + LLD |

@@ -5,6 +5,7 @@
 A cloud file storage system supporting file upload/download, sync, sharing, and versioning for millions of users.
 
 ### Key Numbers
+
 - 1B+ files stored
 - 500M+ daily active users
 - 10PB+ total storage
@@ -12,11 +13,10 @@ A cloud file storage system supporting file upload/download, sync, sharing, and 
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Chunked upload for large files
 - Download with resume
 - Share with users or public links
@@ -24,6 +24,7 @@ A cloud file storage system supporting file upload/download, sync, sharing, and 
 - File versioning and rollback
 
 ### Non-Functional Requirements
+
 - Latency: Metadata < 200ms
 - Throughput: 10M+ files/day
 - Availability: 99.999% uptime
@@ -60,25 +61,30 @@ flowchart TB
 5. Differential sync: only changed chunks transferred (rsync-like)
 6. Share Service: generate signed URL with TTL + permission check
 7. Kafka events: upload, download, share - Analytics
+
 ## Microservices
 
 ### 1. File Service
+
 - **Responsibility**: File upload/download, chunking, deduplication
 - **Tech**: Go
 - **DB**: PostgreSQL (file metadata)
 - **Storage**: S3
 
 ### 2. Sync Service
+
 - **Responsibility**: Real-time sync across devices, conflict resolution
 - **Tech**: Go
 - **DB**: PostgreSQL (sync state), Redis (sync queue)
 
 ### 3. Metadata Service
+
 - **Responsibility**: File metadata, versions, sharing permissions
 - **Tech**: Go
 - **DB**: PostgreSQL
 
 ### 4. Notification Service
+
 - **Responsibility**: Sync notifications, sharing alerts
 - **Tech**: Node.js
 - **Queue**: Kafka
@@ -133,7 +139,7 @@ CREATE TABLE file_shares (
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Storage** | S3 Standard |
@@ -142,7 +148,7 @@ CREATE TABLE file_shares (
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (10-20 containers) |
 | **Database** | PostgreSQL (read replicas) |
 | **Storage** | S3 + Glacier |
@@ -151,7 +157,7 @@ CREATE TABLE file_shares (
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (100+ pods) |
 | **Database** | PostgreSQL (sharded) + Cassandra |
 | **Storage** | S3 + custom storage layer |
@@ -159,27 +165,30 @@ CREATE TABLE file_shares (
 
 ---
 
-
 ---
 
 ## Key Design Decisions
 
 ### 1. Why Chunk-Based Storage?
+
 - Files split into 4KB chunks for deduplication
 - Identical chunks stored only once (2-5x savings)
 - Enables delta sync (only transfer changed chunks)
 
 ### 2. Why Presigned URLs?
+
 - Client uploads directly to S3 (no server bottleneck)
 - Server generates time-limited signed URLs
 - Reduces server load by 90%+
 
 ### 3. Why CRDT for Conflict Resolution?
+
 - Last-Write-Wins is simple and deterministic
 - No manual conflict resolution needed
 - Trade-off: may lose some edits in concurrent scenarios
 
 ### 4. Why Content-Addressable Storage?
+
 - Same content = same hash = stored once
 - Automatic deduplication without scanning
 - Enables integrity verification (hash mismatch = corruption)
@@ -187,7 +196,7 @@ CREATE TABLE file_shares (
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | S3 bucket becomes unavailable | Files inaccessible, uploads fail | Multi-region replication + fallback to secondary bucket |
 | Sync conflict during concurrent edits | Data loss or corruption | CRDT conflict resolution with automatic merge |
 | CDN edge node fails | Slower file downloads for some users | CloudFront routes to next nearest edge |
@@ -195,11 +204,10 @@ CREATE TABLE file_shares (
 | Presigned URL leaked | Unauthorized file access | Short-lived tokens (15min) + IP restrictions |
 | Upload interrupted mid-chunk | Partial file in storage | Multipart upload cleanup after 7-day TTL |
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | S3 Storage | 10EB (AWS managed) | $230,000 |
 | API Servers | 50x c5.xlarge | $7,000 |
 | PostgreSQL | db.r5.2xlarge + 10 replicas | $12,000 |
@@ -208,14 +216,14 @@ CREATE TABLE file_shares (
 | Sync Service | 30x c5.xlarge | $4,200 |
 | Chunk Servers | 100x c5.xlarge | $14,000 |
 | Encryption Service | 5x c5.large | $700 |
-| **Total** |  | **~$327,100/month** |
+| **Total** | | **~$327,100/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | S3 Multipart | Direct upload | S3 Multipart | Resumable, parallel chunk uploads |
 | CRDT | OT for sync | CRDT | Conflict-free, works offline |
 | SHA-256 + Rolling Hash | MD5 | SHA-256 + Rolling Hash | Better security, content-defined chunking |
@@ -227,7 +235,7 @@ CREATE TABLE file_shares (
 ## Key Metrics to Monitor
 
 | Metric | Description | Target |
-|--------|-------------|--------|
+| -------- | ------------- | -------- |
 | **Upload Speed** | Time to upload file | < 5 seconds (10MB file) |
 | **Download Speed** | Time to download file | < 2 seconds (10MB file) |
 | **Delta Sync Efficiency** | % bandwidth saved on sync | > 80% |
@@ -239,10 +247,10 @@ CREATE TABLE file_shares (
 | **Share Link Availability** | Shared files accessible | > 99.9% |
 | **Offline Sync Recovery** | Successful sync after offline | > 99% |
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How does CRDT handle concurrent file edits?
 - How do you implement chunked upload for large files?
 - How does content deduplication work with rolling hash?
@@ -250,11 +258,10 @@ CREATE TABLE file_shares (
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Chunked File Upload | Applied in this system | Architecture + LLD |
 | Content-Addressable Storage | Applied in this system | Architecture + LLD |
 | Deduplication | Applied in this system | Architecture + LLD |
@@ -361,7 +368,6 @@ class LastWriteWinsCRDT {
     }
 }
 ```
-
 
 ---
 

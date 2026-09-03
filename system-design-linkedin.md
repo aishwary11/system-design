@@ -5,6 +5,7 @@
 Professional networking platform with job matching, feed, messaging, learning, and recruiter tools for 900M+ members.
 
 ### Key Numbers
+
 - 900M+ members, 55M+ companies, 20M+ job postings
 - Feed P99 < 200ms, 10M+ messages/day
 
@@ -13,6 +14,7 @@ Professional networking platform with job matching, feed, messaging, learning, a
 ## Requirements
 
 ### Functional Requirements
+
 - Professional profile with experience, skills, education
 - Connection requests and professional graph
 - Personalized news feed with posts and articles
@@ -21,6 +23,7 @@ Professional networking platform with job matching, feed, messaging, learning, a
 - Learning courses and certifications
 
 ### Non-Functional Requirements
+
 - Latency: Feed < 200ms, Search < 100ms
 - Throughput: 10M+ concurrent users
 - Availability: 99.99%
@@ -56,10 +59,11 @@ flowchart TB
 5. InMail: messaging via WebSocket (read receipts, typing)
 6. Kafka events: post, like, connection - Analytics
 7. Notifications: job alerts, connection requests, endorsements
+
 ## Microservices
 
 | Service | Tech Stack | Database | Pattern |
-|---------|------------|----------|----------|
+| --------- | ------------ | ---------- | ---------- |
 | Feed Service | Node.js | Redis + Cassandra | Fan-out on Read |
 | Connection Service | Go | Neo4j | Graph Traversal |
 | Job Service | Java Spring Boot | PostgreSQL + ES | Saga + CQRS |
@@ -74,6 +78,7 @@ flowchart TB
 ## Database Design
 
 ### PostgreSQL (Relational)
+
 ```sql
 CREATE TABLE profiles (
     profile_id    BIGSERIAL PRIMARY KEY,
@@ -121,6 +126,7 @@ CREATE TABLE jobs (
 ```
 
 ### Cassandra (Wide Column)
+
 ```sql
 CREATE TABLE feed_items (
     user_id      BIGINT,
@@ -145,6 +151,7 @@ CREATE TABLE messages (
 ```
 
 ### Redis
+
 ```bash
 feed:{user_id}         -> SortedSet
 profile:{profile_id}   -> Hash
@@ -158,7 +165,7 @@ rate_limit:{user_id}   -> Hash
 ## Scaling Tiers
 
 | Tier | Users | Infrastructure | Monthly Cost |
-|------|-------|---------------|-------------|
+| ------ | ------- | --------------- | ------------- |
 | 1K-10K | 10K | 2 Node.js + PG + Redis | $300 |
 | 10K-1M | 1M | 10 app + PG cluster + Redis + ES | $15,000 |
 | 1M-10M+ | 10M+ | 50+ app + sharded PG + Cassandra + Neo4j | $500,000 |
@@ -190,7 +197,7 @@ rate_limit:{user_id}   -> Hash
 ## Failure Modes & Recovery
 
 | Failure | Impact | Mitigation |
-|---------|--------|-----------|
+| --------- | -------- | ----------- |
 | Redis Cache Failure | Feed slow | Read replica + failover |
 | Neo4j Crash | No graph traversal | Replicated cluster |
 | Kafka Broker Down | Events delayed | Multi-broker + RF=3 |
@@ -202,7 +209,7 @@ rate_limit:{user_id}   -> Hash
 ## Cost Estimation (1M Users)
 
 | Component | Configuration | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | App Servers (10x) | c5.2xlarge | $3,500 |
 | PostgreSQL | r5.xlarge | $2,000 |
 | Cassandra (6 nodes) | i3.xlarge | $4,300 |
@@ -218,7 +225,7 @@ rate_limit:{user_id}   -> Hash
 ## Trade-off Analysis
 
 | Decision | Option A | Option B | Choice | Why |
-|----------|----------|----------|--------|-----|
+| ---------- | ---------- | ---------- | -------- | ----- |
 | Feed Model | Fan-out on write | Fan-out on read | Hybrid | Write for <1K followers |
 | Graph DB | Neo4j | PostgreSQL | Neo4j | Complex traversals |
 | Messages | PostgreSQL | Cassandra | Cassandra | Write-heavy, TTL |
@@ -265,6 +272,7 @@ rate_limit:{user_id}   -> Hash
 ## Low-Level Design (LLD) - Algorithms & Data Structures
 
 ### Fan-out on Read Feed Generator
+
 ```text
 class FeedGenerator {
   constructor(redis, db) {
@@ -310,4 +318,3 @@ class FeedGenerator {
 
 const feed = new FeedGenerator(); console.log("Feed generator ready");
 ```
-

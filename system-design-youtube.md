@@ -5,6 +5,7 @@
 A video-sharing and streaming platform supporting video upload, transcoding, streaming, search, recommendations, likes/comments, and view counts for 2B+ users.
 
 ### Key Numbers
+
 - 2B+ logged-in users per month
 - 500+ hours of video uploaded per minute
 - 1B+ hours of video watched per day
@@ -12,11 +13,10 @@ A video-sharing and streaming platform supporting video upload, transcoding, str
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Upload videos with transcoding
 - Stream with adaptive bitrate
 - Like, comment, subscribe to channels
@@ -24,6 +24,7 @@ A video-sharing and streaming platform supporting video upload, transcoding, str
 - Search with filters
 
 ### Non-Functional Requirements
+
 - Latency: Video start < 2s
 - Throughput: 500+ hours uploaded/min
 - Availability: 99.99% uptime
@@ -60,54 +61,64 @@ flowchart TB
 5. Playback: CDN serves video segments with ABR (DASH/HLS)
 6. Kafka events: watch_time, likes, comments - Analytics
 7. Monetization: ad serving pipeline targets based on user profile
+
 ## Microservices
 
 ### 1. Auth Service
+
 - **Responsibility**: User registration, login, OAuth, channel management
 - **Tech**: Go / Node.js
 - **DB**: PostgreSQL
 
 ### 2. Upload Service
+
 - **Responsibility**: Chunked video upload, resumable uploads, virus scan, initial metadata
 - **Tech**: Go / Node.js
 - **Storage**: S3 (raw upload)
 - **Queue**: Kafka (triggers transcoding)
 
 ### 3. Transcoding Service
+
 - **Responsibility**: Video transcoding, quality ladder (240p-4K), thumbnail extraction, subtitle processing
 - **Tech**: FFmpeg + custom workers
 - **Queue**: Kafka (job queue)
 - **Storage**: S3 (transcoded segments)
 
 ### 4. Streaming Service
+
 - **Responsibility**: HLS/DASH manifest generation, ABR, DRM license, CDN manifest serving
 - **Tech**: Go
 - **CDN**: CloudFront / Google Cloud CDN
 - **Cache**: Redis (manifests)
 
 ### 5. Metadata Service
+
 - **Responsibility**: Video metadata, channel info, categories, tags, captions
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (metadata), Cassandra (view counts)
 
 ### 6. Search Service
+
 - **Responsibility**: Video search, autocomplete, related videos
 - **Tech**: Python / Go
 - **DB**: Elasticsearch
 - **Cache**: Redis (popular searches)
 
 ### 7. Recommendation Service
+
 - **Responsibility**: Personalized recommendations, trending, "Up Next" suggestions
 - **Tech**: Python (ML), TensorFlow
 - **DB**: Redis (recommendation cache)
 - **Pipeline**: Spark (batch training)
 
 ### 8. Analytics Service
+
 - **Responsibility**: View counts, watch time, revenue analytics, creator dashboards
 - **Tech**: Flink (streaming) + Spark (batch)
 - **DB**: ClickHouse (OLAP), S3 (data lake)
 
 ### 9. Notification Service
+
 - **Responsibility**: New video alerts, subscription notifications, comment replies
 - **Tech**: Node.js
 - **Queue**: Kafka consumer
@@ -196,7 +207,7 @@ SETEX video:{video_id} 3600 {json}
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2-4 EC2 (c5.xlarge) |
 | **Database** | PostgreSQL RDS |
 | **Storage** | S3 Standard |
@@ -208,7 +219,7 @@ SETEX video:{video_id} 3600 {json}
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (30-100 containers) |
 | **Database** | PostgreSQL + Cassandra (6 nodes) |
 | **Storage** | S3 + Glacier (archival) |
@@ -221,7 +232,7 @@ SETEX video:{video_id} 3600 {json}
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (500+ pods) |
 | **Database** | Cassandra (50+ nodes) + PostgreSQL (sharded) |
 | **Storage** | S3 + custom edge storage |
@@ -235,27 +246,32 @@ SETEX video:{video_id} 3600 {json}
 ## Key Design Decisions
 
 ### 1. Why Chunked Upload?
+
 - Resumable on network failure
 - Parallel chunk upload for speed
 - Each chunk 5MB, upload independently
 - Server reassembles chunks in order
 
 ### 2. Why Per-Title Encoding?
+
 - Action movies need higher bitrate than talking heads
 - 20-30% bandwidth savings
 - Each video gets custom encoding ladder
 
 ### 3. Why Cassandra for View History?
+
 - Write-heavy (billions of views/day)
 - Time-series access pattern
 - Partition by video_id + date for even distribution
 
 ### 4. Why Not Store Videos in Database?
+
 - Videos are 100MB-10GB each
 - Object storage (S3) is designed for large files
 - CDN caches frequently accessed videos
 
 ### 5. View Count Strategy
+
 - Real-time: Redis INCR (eventual consistency OK)
 - Durable: Batch write to Cassandra every 5 minutes
 - Display: Round to nearest 100 for videos > 1000 views
@@ -265,7 +281,7 @@ SETEX video:{video_id} 3600 {json}
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Transcoding bottleneck | Uploads take hours | Auto-scale workers, priority queue for shorts |
 | CDN cache miss storm | Popular video buffers | Pre-warm CDN, origin shield |
 | View count drift | Like/view ratio wrong | Batched writes with dedup, reconciliation |
@@ -275,11 +291,10 @@ SETEX video:{video_id} 3600 {json}
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | Transcoding Farm | 100x c5.4xlarge | $24,000 |
 | CDN | 500TB/month transfer | $40,000 |
 | S3 Storage | 1PB | $23,000 |
@@ -289,14 +304,14 @@ SETEX video:{video_id} 3600 {json}
 | Kafka Cluster | 24x kafka.m5.large | $9,600 |
 | Elasticsearch | 30x m5.xlarge | $12,600 |
 | ML Recommendation | GPU instances | $5,000 |
-| **Total** |  | **~$152,400/month** |
+| **Total** | | **~$152,400/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | S3 Multipart | Direct upload | S3 Multipart | Resumable, parallel chunk uploads |
 | FFmpeg + Lambda | AWS MediaConvert | FFmpeg + Lambda | More control, lower cost |
 | HLS | DASH | HLS | Better Apple device support |
@@ -308,7 +323,7 @@ SETEX video:{video_id} 3600 {json}
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Video startup time (TTFS) | < 2 seconds |
 | Rebuffer ratio | < 0.1% |
 | Upload success rate | > 99.9% |
@@ -322,10 +337,10 @@ SETEX video:{video_id} 3600 {json}
 
 ---
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How does chunked upload handle 10GB+ video files?
 - How do you transcode video to 8+ quality levels in real-time?
 - How does ABR algorithm adapt to changing network conditions?
@@ -333,11 +348,10 @@ SETEX video:{video_id} 3600 {json}
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Video Transcoding Pipeline | Applied in this system | Architecture + LLD |
 | Adaptive Bitrate (HLS/DASH) | Applied in this system | Architecture + LLD |
 | CDN for Video Delivery | Applied in this system | Architecture + LLD |

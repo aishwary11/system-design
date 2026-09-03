@@ -5,6 +5,7 @@
 A real-time search autocomplete system providing instant suggestions as users type, with < 100ms response time.
 
 ### Key Numbers
+
 - 100M+ queries per day
 - < 100ms response time
 - 10M+ unique search terms
@@ -12,11 +13,10 @@ A real-time search autocomplete system providing instant suggestions as users ty
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Show suggestions after 2 chars
 - Rank by popularity and recency
 - Typo tolerance and fuzzy matching
@@ -24,6 +24,7 @@ A real-time search autocomplete system providing instant suggestions as users ty
 - Track analytics for ranking
 
 ### Non-Functional Requirements
+
 - Latency: Suggestion < 100ms
 - Throughput: 100K+ queries/sec
 - Availability: 99.99% uptime
@@ -31,8 +32,6 @@ A real-time search autocomplete system providing instant suggestions as users ty
 - Scale: 10B+ queries, 1M+ prefixes
 
 ---
-
-
 
 ---
 
@@ -66,19 +65,23 @@ flowchart TB
 5. Kafka events: click, impression - update trie popularity scores
 6. Background: Trie Updater rebuilds trie hourly from click data
 7. Analytics: query volume, CTR, zero-result rate
+
 ## Microservices
 
 ### 1. Autocomplete Service
+
 - **Responsibility**: Suggest completions as user types
 - **Tech**: Go (high performance)
 - **DB**: Redis (Trie cache), PostgreSQL (query history)
 
 ### 2. Analytics Service
+
 - **Responsibility**: Track search queries, compute popularity
 - **Tech**: Python / Flink
 - **DB**: ClickHouse (OLAP), Kafka (event stream)
 
 ### 3. Trending Service
+
 - **Responsibility**: Real-time trending searches, boost recent popular queries
 - **Tech**: Go
 - **DB**: Redis (sorted sets)
@@ -136,7 +139,7 @@ ZADD trending:5min {score} {query}
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2 EC2 (t3.large) |
 | **Trie** | In-memory (single server) |
 | **Cache** | Local cache |
@@ -145,7 +148,7 @@ ZADD trending:5min {score} {query}
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (10-20 containers) |
 | **Trie** | Sharded by prefix |
 | **Cache** | Redis Cluster (6 nodes) |
@@ -154,7 +157,7 @@ ZADD trending:5min {score} {query}
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (100+ pods) |
 | **Trie** | Distributed trie (custom) |
 | **Cache** | Redis Cluster (30+ nodes) |
@@ -166,34 +169,37 @@ ZADD trending:5min {score} {query}
 ## Key Design Decisions
 
 ### 1. Why Trie over Elasticsearch?
+
 - Trie: O(L) lookup, in-memory, sub-millisecond
 - Elasticsearch: Full-text search, but higher latency
 - Use Trie for autocomplete, ES for full search
 
 ### 2. Why Cache Popular Prefixes?
+
 - 90% of queries are for top 10% prefixes
 - Cache hit ratio > 90%
 - Reduces trie lookup load
 
 ### 3. Why Analytics Pipeline?
+
 - Popular queries change over time
 - Need to update trie frequencies
 - Trending topics need real-time tracking
 
 ### 4. Why Personalization?
+
 - Same prefix, different suggestions per user
 - User history influences suggestions
 - A/B test personalization algorithms
 
 ---
 
-
 ---
 
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Trie node corruption | Returns garbage | Rebuild from analytics, popularity fallback |
 | Cache stampede popular prefix | All requests hit trie | Request coalescing, stale-while-revalidate |
 | Personalization stale | Suggestions not adapting | Online learning pipeline, periodic refresh |
@@ -203,11 +209,10 @@ ZADD trending:5min {score} {query}
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 10x c5.xlarge | $1,400 |
 | Redis Cluster | 12x cache.r5.xlarge | $9,600 |
 | Elasticsearch | 15x m5.xlarge | $6,300 |
@@ -215,14 +220,14 @@ ZADD trending:5min {score} {query}
 | Kafka (analytics) | 3x kafka.m5.large | $1,200 |
 | Trie Service | 10x c5.xlarge | $1,400 |
 | Analytics Workers | 5x c5.large | $700 |
-| **Total** |  | **~$24,200/month** |
+| **Total** | | **~$24,200/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Redis Trie | Elasticsearch prefix | Redis Trie | O(K) lookup, in-memory speed |
 | TF-IDF | BM25 | TF-IDF | Better for short queries |
 | Redis cache | Database cache | Redis | Sub-ms response for hot queries |
@@ -234,7 +239,7 @@ ZADD trending:5min {score} {query}
 ## Key Metrics to Monitor
 
 | Metric | Description | Target |
-|--------|-------------|--------|
+| -------- | ------------- | -------- |
 | **Autocomplete Latency** | Time to return suggestions | < 50ms (p99) |
 | **Cache Hit Rate** | % of prefix lookups from cache | > 90% |
 | **Trie Lookup Time** | Time for prefix search | < 10ms |
@@ -247,6 +252,7 @@ ZADD trending:5min {score} {query}
 | **Suggestion Freshness** | Average age of suggestions | < 24 hours |
 
 ## Deep Dive Prompts
+
 - How does Trie data structure achieve O(K) prefix lookup?
 - How do you handle fuzzy matching for typos?
 - How do you rank suggestions by time-decay and popularity?
@@ -254,11 +260,10 @@ ZADD trending:5min {score} {query}
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Trie Data Structure | Applied in this system | Architecture + LLD |
 | Frequency-Based Ranking | Applied in this system | Architecture + LLD |
 | Distributed Caching | Applied in this system | Architecture + LLD |
@@ -362,13 +367,12 @@ class PersonalizedRanker {
 ### Data Structures Summary
 
 | Component | Data Structure | Time | Space |
-|-----------|---------------|------|-------|
-| **Prefix Lookup** | Trie | O(L) | O(ALPHABET * L * N) |
+| ----------- | --------------- | ------ | ------- |
+| **Prefix Lookup** | Trie | O(L) | O(ALPHABET *L* N) |
 | **Top-K Selection** | Min-Heap | O(N log K) | O(K) |
 | **Trending Score** | Time Decay Formula | O(1) | O(1) |
 | **Personalization** | User History (Sorted Set) | O(K) | O(U * H) |
 | **Analytics** | ClickHouse (Columnar) | O(1) aggregate | O(N) |
-
 
 ---
 

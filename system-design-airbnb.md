@@ -5,6 +5,7 @@
 Two-sided marketplace connecting hosts and guests with search, booking, payments, reviews, and trust/safety systems.
 
 ### Key Numbers
+
 - 150M+ users, 7M+ listings, 190+ countries
 - 500M+ guest arrivals, Sub-500ms search
 
@@ -13,6 +14,7 @@ Two-sided marketplace connecting hosts and guests with search, booking, payments
 ## Requirements
 
 ### Functional Requirements
+
 - Search properties by location, dates, price, amenities
 - Book property with calendar availability check
 - Host listing management with pricing tools
@@ -21,6 +23,7 @@ Two-sided marketplace connecting hosts and guests with search, booking, payments
 - Messaging between host and guest
 
 ### Non-Functional Requirements
+
 - Latency: Search < 500ms, Booking < 2s
 - Availability: 99.99%
 - Consistency: Strong for bookings (no double-book)
@@ -56,10 +59,11 @@ flowchart TB
 5. Review system: bilateral reviews after checkout
 6. Kafka events: booking, cancellation, review - Analytics
 7. Notifications: booking request, confirmation, check-in reminder
+
 ## Microservices
 
 | Service | Responsibility | Tech Stack | Pattern |
-|---------|---------------|------------|---------|
+| --------- | --------------- | ------------ | --------- |
 | Search Service | Property search with filters | Elasticsearch, Redis | Geo Search |
 | Booking Service | Reservation management | Java, PostgreSQL | Saga Pattern |
 | Payment Service | Multi-currency payments, escrow | Java, PostgreSQL | Double-entry |
@@ -92,12 +96,15 @@ CREATE TABLE bookings (
 ## Scaling Tiers
 
 ### 1K - 10K Users ($500/mo)
+
 - Single PostgreSQL, 2 Redis, S3 for images
 
 ### 10K - 1M Users ($20K/mo)
+
 - PostgreSQL read replicas, Redis cluster, Elasticsearch
 
 ### 1M - 10M+ Users ($800K/mo)
+
 - Cassandra for messaging, multi-region, ML pricing
 
 ---
@@ -105,7 +112,7 @@ CREATE TABLE bookings (
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Geospatial Indexing | PostGIS + Elasticsearch geo queries | Search Service |
 | Saga Pattern | Distributed booking transactions | Booking Service |
 | Redis Locking | Prevent double-bookings with atomic locks | Booking Service |
@@ -120,7 +127,7 @@ CREATE TABLE bookings (
 ## Key Design Decisions
 
 | Decision | Choice | Why |
-|----------|--------|-----|
+| ---------- | -------- | ----- |
 | Booking Lock | Redis atomic SET NX | Prevent double-bookings |
 | Payment Flow | Escrow with hold | Protect both guest and host |
 | Search Engine | Elasticsearch with geo | Full-text + location queries |
@@ -131,7 +138,7 @@ CREATE TABLE bookings (
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Booking lock failure | Possible double-book | Database constraint as fallback |
 | Payment gateway down | Cannot process payments | Queue payments, retry later |
 | Search index corrupt | No search results | Rebuild from PostgreSQL |
@@ -141,7 +148,7 @@ CREATE TABLE bookings (
 ## Cost Estimation (1M Users)
 
 | Component | Monthly Cost |
-|-----------|-------------|
+| ----------- | ------------- |
 | Compute (6 microservices) | $8,000 |
 | PostgreSQL cluster | $3,000 |
 | Elasticsearch cluster | $2,500 |
@@ -156,7 +163,7 @@ CREATE TABLE bookings (
 ## Trade-off Analysis
 
 | Trade-off | Option A | Option B | Winner | Why |
-|-----------|----------|----------|--------|-----|
+| ----------- | ---------- | ---------- | -------- | ----- |
 | Booking Lock | Pessimistic (DB) | Optimistic (Redis) | Redis | Faster |
 | Payment | Direct charge | Escrow | Escrow | Protects both parties |
 | Pricing | Fixed | Dynamic ML | Dynamic | Maximizes revenue |
@@ -167,7 +174,7 @@ CREATE TABLE bookings (
 ## Key Metrics to Monitor
 
 | Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
+| -------- | -------- | ----------------- |
 | Search Latency P99 | < 500ms | > 1s |
 | Booking Success Rate | > 99% | < 98% |
 | Payment Success Rate | > 99.9% | < 99% |

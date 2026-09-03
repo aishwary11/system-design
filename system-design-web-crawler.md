@@ -5,17 +5,17 @@
 A distributed web crawler that systematically browses and downloads web pages for indexing, archiving, or data analysis.
 
 ### Key Numbers
+
 - 1B+ pages crawled per day
 - 1000+ concurrent connections
 - Petabytes of crawled data
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Crawl pages from seed URLs
 - Extract links and content
 - Respect robots.txt
@@ -23,6 +23,7 @@ A distributed web crawler that systematically browses and downloads web pages fo
 - Store content for indexing
 
 ### Non-Functional Requirements
+
 - Latency: Crawl scheduling < 1s
 - Throughput: 1B+ pages/day
 - Availability: 99.9% uptime
@@ -30,8 +31,6 @@ A distributed web crawler that systematically browses and downloads web pages fo
 - Scale: 10B+ URLs, 500TB+ storage
 
 ---
-
-
 
 ---
 
@@ -65,24 +64,29 @@ flowchart TB
 5. New URLs added back to queue (BFS traversal)
 6. Parsed content indexed in Elasticsearch for search
 7. Kafka events: crawl_stats - Analytics dashboard
+
 ## Microservices
 
 ### 1. URL Frontier Service
+
 - **Responsibility**: URL prioritization, politeness (robots.txt), deduplication
 - **Tech**: Go
 - **DB**: Redis (priority queue), PostgreSQL (URL metadata)
 
 ### 2. Downloader Service
+
 - **Responsibility**: Fetch web pages, handle robots.txt, rate limiting
 - **Tech**: Go / Python
 - **DB**: Redis (download queue)
 
 ### 3. Content Parser Service
+
 - **Responsibility**: HTML parsing, content extraction, link extraction
 - **Tech**: Python (BeautifulSoup/Scrapy)
 - **DB**: S3 (raw content)
 
 ### 4. URL Dedup Service
+
 - **Responsibility**: Detect duplicate URLs, content fingerprinting
 - **Tech**: Go
 - **DB**: Redis (Bloom filter), PostgreSQL (URL hash)
@@ -137,7 +141,7 @@ SET domain:{domain}:last_fetch {timestamp}
 ### Tier 1: 1K - 10K Pages/Day
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Single EC2 (t3.medium) |
 | **Database** | PostgreSQL |
 | **Queue** | In-memory queue |
@@ -147,7 +151,7 @@ SET domain:{domain}:last_fetch {timestamp}
 ### Tier 2: 10K - 1M Pages/Day
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (5-10 containers) |
 | **Database** | PostgreSQL + Redis |
 | **Queue** | Redis Streams |
@@ -157,7 +161,7 @@ SET domain:{domain}:last_fetch {timestamp}
 ### Tier 3: 1M - 10M+ Pages/Day
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (50+ pods) |
 | **Database** | PostgreSQL (sharded) + Cassandra |
 | **Queue** | Kafka (10+ brokers) |
@@ -169,21 +173,25 @@ SET domain:{domain}:last_fetch {timestamp}
 ## Key Design Decisions
 
 ### 1. Why BFS over DFS for Crawling?
+
 - BFS naturally respects depth limits
 - Better parallelization across domains
 - More predictable memory usage
 
 ### 2. Why SimHash for Dedup?
+
 - Near-duplicate detection (not just exact matches)
 - O(N) computation vs O(N^2) for pairwise comparison
 - Hamming distance threshold tunable for precision
 
 ### 3. Why Priority Queue for URL Frontier?
+
 - Important pages crawled first (higher authority = higher priority)
 - Prevents low-quality pages from blocking important ones
 - Domain-aware scheduling respects robots.txt
 
 ### 4. Why Content-Addressable Hashing?
+
 - Same content = same hash = skip download
 - Saves bandwidth (80%+ for duplicate content)
 - Enables distributed dedup across crawler nodes
@@ -191,7 +199,7 @@ SET domain:{domain}:last_fetch {timestamp}
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Politeness violation | Overwhelms small website | Respect robots.txt, adaptive rate limiting |
 | Infinite crawl loop | Spider traps consume resources | URL depth limit, content similarity detection |
 | Duplicate content waste | Same page crawled 100 times | SimHash fingerprinting, bloom filter dedup |
@@ -201,25 +209,24 @@ SET domain:{domain}:last_fetch {timestamp}
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | Crawler Nodes | 50x c5.xlarge | $7,000 |
 | PostgreSQL | db.r5.xlarge + 3 replicas | $4,800 |
 | Redis (URL frontier) | 6x cache.r5.xlarge | $4,800 |
 | S3 (crawled content) | 500TB | $11,500 |
 | Kafka (URL queue) | 6x kafka.m5.large | $2,400 |
 | DNS Cache | 3x c5.large | $420 |
-| **Total** |  | **~$30,920/month** |
+| **Total** | | **~$30,920/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | BFS | DFS | BFS | More controlled depth, better politeness |
 | SimHash | MinHash | SimHash | Faster for near-duplicate detection |
 | Redis frontier | Database queue | Redis | O(log N) priority operations |
@@ -231,7 +238,7 @@ SET domain:{domain}:last_fetch {timestamp}
 ## Key Metrics to Monitor
 
 | Metric | Description | Target |
-|--------|-------------|--------|
+| -------- | ------------- | -------- |
 | **Pages Crawled/sec** | Crawl throughput | > 1000 pages/sec |
 | **Avg Response Time** | Time to fetch and parse a page | < 2 seconds |
 | **Duplicate Detection Rate** | % of duplicate content caught | > 95% |
@@ -243,10 +250,10 @@ SET domain:{domain}:last_fetch {timestamp}
 | **Memory Usage** | Bloom filter + SimHash memory | < 4GB |
 | **DNS Cache Hit** | DNS lookups served from cache | > 95% |
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How do you respect robots.txt and crawl-delay directives?
 - How does SimHash detect near-duplicate content?
 - How do you handle 1B+ pages to crawl efficiently?
@@ -254,11 +261,10 @@ SET domain:{domain}:last_fetch {timestamp}
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | BFS/DFS Traversal | Applied in this system | Architecture + LLD |
 | URL Frontier with Priority | Applied in this system | Architecture + LLD |
 | Politeness (robots.txt) | Applied in this system | Architecture + LLD |
@@ -352,13 +358,12 @@ class ContentDedup {
 ### Data Structures Summary
 
 | Component | Data Structure | Purpose |
-|-----------|---------------|---------|
+| ----------- | --------------- | --------- |
 | **URL Frontier** | Priority queue (min-heap) | Crawl order by importance |
 | **URL Dedup** | Hash set (Redis) | Exact URL deduplication |
 | **Content Dedup** | SimHash | Near-duplicate detection |
 | **Domain Rules** | Robots.txt parser + cache | Polite crawling |
 | **URL Normalization** | URL canonicalization | Prevent param-based duplicates |
-
 
 ---
 
@@ -443,6 +448,5 @@ function check_robots_txt(url, user_agent) {
 ```
 
 ---
-
 
 ---

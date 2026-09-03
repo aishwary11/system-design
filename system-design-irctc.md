@@ -5,6 +5,7 @@
 IRCTC powers one of the world's largest online train ticket booking platforms, serving 8.5 billion passengers annually across 13,500 trains and 7,300 stations. The system must handle extreme concurrency during Tatkal booking windows (10 AM for AC classes, 11 AM for non-AC) when millions of users compete for limited seats in seconds.
 
 ### Key Numbers
+
 - 8.5 billion passengers annually
 - 13,500 passenger trains
 - 7,300 railway stations
@@ -18,6 +19,7 @@ IRCTC powers one of the world's largest online train ticket booking platforms, s
 ## Requirements
 
 ### Functional Requirements
+
 - Search trains by source, destination, date, class, and quota
 - Real-time seat availability with +/- 3 days view
 - Book tickets with passenger details and berth preferences
@@ -29,6 +31,7 @@ IRCTC powers one of the world's largest online train ticket booking platforms, s
 - Waitlist and RAC (Reservation Against Cancellation) management
 
 ### Non-Functional Requirements
+
 - Latency: Search < 500ms, Booking < 2s
 - Throughput: 1M+ requests/second during Tatkal
 - Availability: 99.99% uptime
@@ -65,38 +68,45 @@ flowchart TB
 5. Payment via multiple gateways with retry + idempotency
 6. Kafka events: booking, cancellation, waitlist - Analytics
 7. Notifications: PNR status updates, chart preparation alerts
+
 ## Microservices
 
 ### 1. Train Service
+
 - **Responsibility**: Train schedules, routes, station listings, fare calculation
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (schedules), Redis (cache)
 - **Pattern**: CQRS for read-heavy search queries
 
 ### 2. Booking Service
+
 - **Responsibility**: Ticket creation, seat allocation, waitlist/RAC management
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (transactions), Redis (atomic counters)
 - **Pattern**: Saga pattern for distributed transactions
 
 ### 3. Inventory Service
+
 - **Responsibility**: Real-time seat availability, Tatkal quota management
 - **Tech**: Go
 - **DB**: Redis (atomic counters), PostgreSQL (durable state)
 - **Pattern**: Event sourcing for audit trail
 
 ### 4. Payment Service
+
 - **Responsibility**: Payment processing, refunds, wallet management
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (financial records)
 - **Pattern**: Idempotency keys to prevent double charges
 
 ### 5. Notification Service
+
 - **Responsibility**: PNR status, booking confirmations, cancellation alerts
 - **Tech**: Node.js
 - **Channels**: SMS (Twilio), Email (SES), Push (FCM/APNS)
 
 ### 6. Status Service
+
 - **Responsibility**: PNR tracking, live train status, platform info
 - **Tech**: Go
 - **DB**: Redis (real-time), PostgreSQL (historical)
@@ -259,7 +269,7 @@ SETEX  train:live:{train_number} 60 {json_status}
 **Goal**: Basic train search and booking functionality
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | 2-4 EC2 instances (t3.large) | Handle initial traffic |
 | **Database** | PostgreSQL on RDS (db.t3.medium) | Single DB for all data |
 | **Cache** | Redis ElastiCache (cache.t3.small) | Session + search cache |
@@ -279,7 +289,7 @@ SETEX  train:live:{train_number} 60 {json_status}
 **Goal**: Handle normal booking with 100K-500K concurrent users
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | ECS/EKS (20-50 containers) | Auto-scaling services |
 | **Database** | PostgreSQL RDS (r5.xlarge, 3 read replicas) | Read scaling for search |
 | **Cache** | Redis Cluster (6 nodes) | High-throughput counters |
@@ -300,7 +310,7 @@ SETEX  train:live:{train_number} 60 {json_status}
 **Goal**: 2M+ concurrent users during Tatkal, 99.99% uptime, strong consistency
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | Multi-region K8s (EKS) - 200+ pods/region | Global auto-scaling |
 | **Database** | PostgreSQL (Citus sharding) + Aurora Global | Consistency + scale |
 | **NoSQL** | Cassandra (12+ nodes) | Write-heavy audit logs |
@@ -321,30 +331,35 @@ SETEX  train:live:{train_number} 60 {json_status}
 ## Key Design Decisions
 
 ### 1. Why Redis Atomic Counters for Tatkal?
+
 - DECR is atomic -- no race conditions between 2M+ concurrent users
 - Sub-millisecond latency (critical for 10 AM Tatkal window)
 - If DECR returns >= 0, seat is provisionally held; < 0 means sold out
 - TTL on provisional bookings auto-releases unclaimed seats
 
 ### 2. Why Saga Pattern for Booking?
+
 - Booking spans 3+ services (Inventory, Booking, Payment, Notification)
 - If payment fails, inventory must be released (compensating transaction)
 - Saga orchestrates the distributed transaction with rollback
 - Each step publishes events for downstream services
 
 ### 3. Why Kafka over RabbitMQ?
+
 - Event replay capability (reprocess failed bookings)
 - Higher throughput (1M+ events/sec during Tatkal)
 - Ordered logs for sequential processing (seat allocation order matters)
 - Consumer groups for parallel processing across services
 
 ### 4. Why PostgreSQL over MongoDB?
+
 - Strong ACID compliance for financial transactions (no double-selling)
 - Row-level locking for seat allocation
 - Referential integrity across bookings, passengers, payments
 - Mature replication for read scaling
 
 ### 5. Why Tatkal Quota Separation?
+
 - Tatkal seats are a fixed percentage (10-30%) of total capacity
 - Separate atomic counter prevents contention with general quota
 - Different release times (10 AM AC, 11 AM non-AC) require independent counters
@@ -355,7 +370,7 @@ SETEX  train:live:{train_number} 60 {json_status}
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Redis counter crash during Tatkal | Seat allocation frozen | Redis Sentinel failover < 1s, replica promotion |
 | Payment gateway timeout | Booking stuck in provisional | 15-min TTL auto-releases seat, idempotency key prevents double charge |
 | Kafka broker down | Booking events delayed | Replication factor 3, consumer rebalance |
@@ -370,7 +385,7 @@ SETEX  train:live:{train_number} 60 {json_status}
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 15x c5.xlarge | $2,100 |
 | PostgreSQL | db.r5.2xlarge + 3 replicas | $6,000 |
 | Redis Cluster | 6x cache.r5.xlarge | $4,800 |
@@ -387,7 +402,7 @@ SETEX  train:live:{train_number} 60 {json_status}
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Redis atomic counters | PostgreSQL row locks | Redis | 100x faster for Tatkal concurrent access |
 | Saga pattern | 2PC (Two-Phase Commit) | Saga | No global lock, better throughput under load |
 | Kafka | RabbitMQ | Kafka | Event replay + higher throughput for 1M+ bookings |
@@ -401,7 +416,7 @@ SETEX  train:live:{train_number} 60 {json_status}
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Search response time (p99) | < 500ms |
 | Booking completion time | < 2s |
 | Tatkal booking success rate | > 95% |
@@ -426,11 +441,10 @@ SETEX  train:live:{train_number} 60 {json_status}
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Atomic Seat Allocation (Redis DECR) | Applied in this system | Architecture + LLD |
 | Tatkal Quota Management | Applied in this system | Architecture + LLD |
 | Waitlist/RAC Priority Queue | Applied in this system | Architecture + LLD |
@@ -667,6 +681,7 @@ const booking = new BookingService(); console.log("Booking service ready");
 ### Real-World Insights & Best Practices
 
 **Tatkal Booking Flow (2024-2025)**:
+
 1. User logs in with CAPTCHA + OTP (prevents bots)
 2. Pre-fills train details before Tatkal window opens
 3. At 10:00 AM: Redis atomic DECR for instant seat allocation
@@ -675,6 +690,7 @@ const booking = new BookingService(); console.log("Booking service ready");
 6. If payment fails: Seat auto-releases via TTL
 
 **Anti-Bot Measures**:
+
 - CAPTCHA on every search/booking
 - OTP verification for Tatkal
 - Rate limiting per user (5 bookings per hour)
@@ -735,7 +751,7 @@ CANCELLED          REFUNDED
 ### Scale Numbers to Remember
 
 | Metric | IRCTC Peak | Hotstar Peak |
-|--------|-----------|--------------|
+| -------- | ----------- | -------------- |
 | Concurrent Users | 2M+ (Tatkal 10 AM) | 25M+ (IPL) |
 | Requests/sec | 1M+ | 500K+ |
 | Daily Bookings | 500K+ | N/A |

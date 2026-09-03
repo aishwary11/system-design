@@ -5,6 +5,7 @@
 Netflix is the world's leading subscription-based video streaming platform with 260M+ subscribers across 190+ countries. The system must deliver personalized content recommendations, support multiple concurrent streams per household, handle massive content libraries, and maintain 99.99% availability with sub-second startup times.
 
 ### Key Numbers
+
 - 260M+ subscribers globally
 - 100K+ titles in content library
 - 1 billion+ hours streamed per month
@@ -13,11 +14,10 @@ Netflix is the world's leading subscription-based video streaming platform with 
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Stream video with ABR based on network
 - Browse/search with personalized recs
 - Download for offline viewing
@@ -25,6 +25,7 @@ Netflix is the world's leading subscription-based video streaming platform with 
 - Multi-device playback with resume
 
 ### Non-Functional Requirements
+
 - Latency: Video start < 2s, seek < 500ms
 - Throughput: 250M+ subscribers
 - Availability: 99.99% uptime
@@ -32,8 +33,6 @@ Netflix is the world's leading subscription-based video streaming platform with 
 - Scale: 15% of global bandwidth
 
 ---
-
-
 
 ---
 
@@ -67,73 +66,86 @@ flowchart TB
 5. Open Connect CDN serves video segments (ABR adaptive quality)
 6. Kafka events: play, pause, seek - Analytics pipeline (Flink to S3)
 7. Encoding Workers transcode new uploads into per-title bitrate ladders
+
 ## Microservices
 
 ### 1. Auth & Identity Service
+
 - **Responsibility**: User authentication, JWT tokens, household management, device registration, DRM license proxy
 - **Tech**: Go / Node.js
 - **DB**: PostgreSQL (accounts, household), Redis (sessions)
 - **External**: OAuth (Facebook, Google, Apple)
 
 ### 2. Content Discovery Service
+
 - **Responsibility**: Content browsing, search results, category pages, "Continue Watching", "Top 10", personalized rows
 - **Tech**: Java / Spring Boot
 - **DB**: Cassandra (denormalized content views per user)
 - **Cache**: EVCache (Netflix's custom memcached)
 
 ### 3. Content Metadata Service
+
 - **Responsibility**: Title metadata, cast/crew, ratings, genres, synopsis, artwork assets, content relationships (sequels, related)
 - **Tech**: Java / Spring Boot
 - **DB**: Cassandra (content catalog, multi-model)
 - **Search**: Elasticsearch (metadata indexing)
 
 ### 4. User Profile Service
+
 - **Responsibility**: Profile management (up to 5 per household), viewing preferences, language settings, maturity levels, My List
 - **Tech**: Go
 - **DB**: Cassandra (profile data), Redis (active profile cache)
 
 ### 5. Playback Service
+
 - **Responsibility**: Stream URL generation, DRM license issuance, quality adaptation (ABR), buffering optimization, offline download tokens
 - **Tech**: Go / C++
 - **CDN**: Open Connect (Netflix's custom CDN)
 - **Cache**: Redis (stream manifests)
 
 ### 6. Recommendation Service
+
 - **Responsibility**: Personalized row ordering, "Because you watched..." suggestions, trending content, "Top 10" per country, new release suggestions
 - **Tech**: Python (ML inference), TensorFlow/PyTorch
 - **DB**: PostgreSQL (model features), Redis (cached recommendations)
 - **Pipeline**: Spark (batch training), real-time inference
 
 ### 7. Billing Service
+
 - **Responsibility**: Subscription management, payment processing, gift cards, plan changes, invoicing, tax calculation
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (ACID for financial data)
 - **Integrations**: Stripe, PayPal, in-app purchases
 
 ### 8. Analytics & Events Service
+
 - **Responsibility**: Viewing events collection, quality of experience (QoE) metrics, A/B test analysis, content performance, revenue analytics
 - **Tech**: Flink (streaming) + Spark (batch)
 - **DB**: S3 (data lake), Presto/Trino (interactive queries), ClickHouse (dashboards)
 - **Pipeline**: Kafka -> Flink -> S3/Hive
 
 ### 9. Notification Service
+
 - **Responsibility**: New content alerts, download completion, payment reminders, personalized recommendations via email/push
 - **Tech**: Node.js
 - **Channels**: FCM/APNs (push), SendGrid (email), Twilio (SMS)
 - **Queue**: Kafka consumer
 
 ### 10. A/B Testing Platform
+
 - **Responsibility**: Experiment assignment, feature flag management, statistical analysis, experiment lifecycle management
 - **Tech**: Go (assignment engine), Python (analysis)
 - **DB**: PostgreSQL (experiment configs), Redis (assignment cache)
 
 ### 11. Encoding Pipeline Service
+
 - **Responsibility**: Per-title encoding, adaptive bitrate ladder generation, AV1/H.265/VP9 encoding, thumbnail extraction, trailer generation
 - **Tech**: FFmpeg (custom build), distributed workers
 - **Queue**: Kafka (encoding jobs)
 - **Storage**: S3 (encoded segments)
 
 ### 12. Device & Platform Service
+
 - **Responsibility**: Device registration, capability detection, codec support, UI rendering rules per device, platform-specific features
 - **Tech**: Go
 - **DB**: PostgreSQL (device registry), Redis (capability cache)
@@ -328,7 +340,7 @@ s3://netflix-data-lake/
 **Goal**: Validate core streaming, basic recommendations, single-region
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | 4-6 EC2 instances (c5.xlarge) | Streaming + API servers |
 | **Database** | PostgreSQL RDS (db.r5.large) | All data in one DB |
 | **Cache** | Redis ElastiCache (cache.t3.medium) | Session + metadata |
@@ -352,7 +364,7 @@ s3://netflix-data-lake/
 **Goal**: Multi-device support, personalized recommendations, quality streaming
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | ECS/EKS (50-200 containers) | Auto-scaling microservices |
 | **Database** | PostgreSQL RDS (r5.4xlarge, 3 read replicas) | Read-heavy workloads |
 | **NoSQL** | Cassandra (6-node cluster) | Content catalog + viewing history |
@@ -378,7 +390,7 @@ s3://netflix-data-lake/
 **Goal**: 260M+ subscribers, 1000+ CDN nodes, 99.99% uptime, personalized everything
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | Multi-region K8s (1000+ pods per region) | Global auto-scaling |
 | **Database** | PostgreSQL (Vitess sharding) + Aurora Global | Global consistency |
 | **NoSQL** | Cassandra (50+ nodes, multi-DC) | Petabyte-scale catalog |
@@ -404,30 +416,35 @@ s3://netflix-data-lake/
 ## Key Design Decisions
 
 ### 1. Why Cassandra for Content Catalog?
+
 - Multi-datacenter replication (global availability)
 - Tunable consistency (eventual for catalog, strong for viewing history)
 - Linear scalability (260M+ users, billions of viewing events)
 - Denormalized data model (pre-computed views for fast reads)
 
 ### 2. Why Open Connect CDN (Custom)?
+
 - Netflix serves 15%+ of global internet bandwidth
 - Appliances placed directly in ISP networks (reduce transit cost)
 - Custom encoding per-title (optimize bitrate for each piece of content)
 - Direct ISP relationships for peering agreements
 
 ### 3. Why Per-Title Encoding?
+
 - Traditional encoding: fixed bitrate ladder for all content
 - Per-title: analyze each title's complexity, assign optimal bitrate
 - Result: 20-30% bandwidth savings with same quality
 - Each title gets its own optimal encoding ladder
 
 ### 4. Why Zuul + Ribbon + Eureka?
+
 - Client-side load balancing (Ribbon) avoids extra network hop
 - Eureka for service discovery (dynamic scaling)
 - Zuul for routing, monitoring, security
 - All Netflix OSS (battle-tested at scale)
 
 ### 5. Why EVCache over Redis?
+
 - EVCache is Netflix's custom distributed cache (built on memcached)
 - Optimized for Netflix's access patterns
 - Multi-region replication
@@ -438,7 +455,7 @@ s3://netflix-data-lake/
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Open Connect CDN fails | Regional streaming degradation | Multi-CDN fallback, manifest redirect |
 | EVCache split | Watch history out of sync | CRDT conflict resolution |
 | Zuul overload | All API requests fail | Circuit breaker, bulkhead isolation |
@@ -448,11 +465,10 @@ s3://netflix-data-lake/
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | Open Connect CDN | 200TB/month transfer | $30,000 |
 | Transcoding Farm | 50x c5.4xlarge | $12,000 |
 | EVCache Cluster | 12x cache.r5.xlarge | $9,600 |
@@ -462,14 +478,14 @@ s3://netflix-data-lake/
 | S3 Storage | 500TB | $11,500 |
 | API Servers | 30x c5.xlarge | $4,200 |
 | Chaos Monkey | Netflix OSS | $0 |
-| **Total** |  | **~$82,900/month** |
+| **Total** | | **~$82,900/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Cassandra | MongoDB | Cassandra | Multi-master, 99.99% availability, linear scalability |
 | EVCache | Redis | EVCache | Custom Memcached fork, 99.99% hit rate at Netflix scale |
 | Open Connect | CloudFront | Open Connect | Embedded in ISPs, 10x better than third-party CDN |
@@ -481,7 +497,7 @@ s3://netflix-data-lake/
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Stream startup time (TTFS) | < 2 seconds |
 | Rebuffer ratio | < 0.1% |
 | Stream completion rate | > 85% |
@@ -496,6 +512,7 @@ s3://netflix-data-lake/
 ---
 
 ## Deep Dive Prompts
+
 - How does Netflix's Open Connect CDN achieve 99.99% availability?
 - How does per-title encoding save 20-30% bandwidth without quality loss?
 - How does Chaos Monkey ensure resilience without affecting user experience?
@@ -503,11 +520,10 @@ s3://netflix-data-lake/
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Content-Based Filtering | Applied in this system | Architecture + LLD |
 | CDN with Origin Shield | Applied in this system | Architecture + LLD |
 | Kafka for Event Processing | Applied in this system | Architecture + LLD |
@@ -620,6 +636,7 @@ function get_server_for_user(user_id) {
     // - On server failure, remap to next server
 
 ```
+
 ### Content Delivery Flow
 
 ```
@@ -651,12 +668,14 @@ Play video to user
 ### Netflix's Actual Architecture (Based on Engineering Blog)
 
 **Migration from Monolith to Microservices**:
+
 - Started as monolith on own data centers
 - Migrated to AWS + microservices after 2008 major outage
 - Reasons: difficult to find bugs, vertical scaling limits, single points of failure
 - Now runs 1000+ microservices on AWS
 
 **Circuit Breaker Pattern (Hystrix)**:
+
 - Netflix created Hystrix for circuit breaker pattern
 - Prevents cascading failures when one microservice fails
 - Fault injection testing (Chaos Monkey) verifies circuit breaker works
@@ -664,17 +683,20 @@ Play video to user
 - Exponential backoff prevents thundering herd
 
 **Stateless vs Stateful Services**:
+
 - Stateless services: replicated + autoscaled (failure not notable)
 - Stateful services: replicated writes across data centers, route reads locally
 - Hybrid services (cache): partition with consistent hashing, request-level caching, fallback to DB
 
 **Chaos Engineering**:
+
 - Chaos Monkey: randomly kills instances in production
 - Simian Army: suite of chaos tools
 - Tests autoscaling, circuit breakers, and resilience
 - Netflix spends significant engineering on failure testing
 
 **Polyglot Architecture**:
+
 - Different services use different languages (Java, Python, Go, Node.js)
 - Cost: extra operational complexity, learning curve
 - Benefit: best tool for each job
@@ -683,7 +705,7 @@ Play video to user
 ### Netflix's Current Tech Stack (2024-2025)
 
 | Component | Technology |
-|-----------|-----------|
+| ----------- | ----------- |
 | API Gateway | Zuul (Netflix OSS) |
 | Service Discovery | Eureka (Netflix OSS) |
 | Load Balancing | Ribbon (client-side, Netflix OSS) |
@@ -723,6 +745,4 @@ Play video to user
 
 ---
 
-
 ---
-

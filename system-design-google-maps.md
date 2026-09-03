@@ -5,6 +5,7 @@
 Google Maps is a comprehensive mapping and navigation service providing map rendering, location search, turn-by-turn directions, real-time traffic updates, ETA estimation, Street View, and Points of Interest (POI) discovery.
 
 ### Key Numbers
+
 - 1B+ monthly active users
 - 200M+ road segments in the road graph
 - 50M+ km of mapped roads
@@ -17,6 +18,7 @@ Google Maps is a comprehensive mapping and navigation service providing map rend
 ## Requirements
 
 ### Functional Requirements
+
 - Search for locations by address, name, or coordinates with autocomplete
 - Display interactive maps with zoom levels (street to satellite view)
 - Compute fastest route between source and destination (driving, walking, cycling, transit)
@@ -27,6 +29,7 @@ Google Maps is a comprehensive mapping and navigation service providing map rend
 - Support offline map download for selected regions
 
 ### Non-Functional Requirements
+
 - Latency: Map tiles < 100ms, route computation < 500ms, search < 200ms
 - Throughput: 10M+ concurrent users, 1B+ tile requests/day
 - Availability: 99.99% (navigation is safety-critical)
@@ -63,10 +66,11 @@ flowchart TB
 5. Turn-by-turn navigation - WebSocket streams next maneuvers
 6. Kafka events: GPS pings, route requests - ML traffic model
 7. Analytics: popular routes, traffic patterns, tile requests
+
 ## Microservices
 
 | Service | Responsibility | Tech Stack | Pattern |
-|---------|---------------|------------|---------|
+| --------- | --------------- | ------------ | --------- |
 | Map Tile Service | Pre-render and serve map tiles | Go, Cloud Storage, CloudFront | CQRS, CDN Edge Cache |
 | Routing Service | Compute shortest/optimal paths | C++, Contraction Hierarchies | Graph Algorithm Service |
 | Traffic Service | Aggregate real-time GPS signals | Kafka, Apache Flink, Redis | Stream Processing |
@@ -119,16 +123,19 @@ CREATE TABLE poi (
 ## Scaling Tiers
 
 ### 1K - 10K Users ($500/mo)
+
 - Single PostgreSQL with PostGIS, 2 Redis instances
 - Map tiles from S3 + CloudFront
 - Single routing server (in-memory road graph)
 
 ### 10K - 1M Users ($20K/mo)
+
 - PostgreSQL read replicas, Redis cluster
 - Road graph sharded by geohash
 - Kafka for real-time GPS stream processing
 
 ### 1M - 10M+ Users ($800K/mo)
+
 - PostGIS cluster with geospatial sharding
 - 100+ Redis instances for tile/route/traffic cache
 - Kafka cluster with Flink for stream processing
@@ -139,7 +146,7 @@ CREATE TABLE poi (
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Contraction Hierarchies | Fastest path algorithm for road networks | Routing Service |
 | Geohash Indexing | Spatial indexing for proximity queries | POI Service, Search |
 | Consistent Hashing | Distribute road graph across nodes | Routing Service |
@@ -156,7 +163,7 @@ CREATE TABLE poi (
 ## Key Design Decisions
 
 | Decision | Choice | Why |
-|----------|--------|-----|
+| ---------- | -------- | ----- |
 | Road Graph | Contraction Hierarchies | 1000x faster than Dijkstra |
 | Tile Rendering | Pre-rendered + On-demand | 95% cache hit rate |
 | Traffic Processing | Apache Flink | Sub-second latency for GPS aggregation |
@@ -169,7 +176,7 @@ CREATE TABLE poi (
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Traffic Service down | No real-time traffic | Serve stale data (5 min old) |
 | Routing Service crash | No route computation | Pre-computed routes for top pairs |
 | CDN edge failure | Slow tile loading | Route to next-nearest edge |
@@ -182,7 +189,7 @@ CREATE TABLE poi (
 ## Cost Estimation (1M Users)
 
 | Component | Monthly Cost |
-|-----------|-------------|
+| ----------- | ------------- |
 | CDN (CloudFront, 100TB) | $8,500 |
 | Compute (routing + traffic) | $12,000 |
 | PostgreSQL/PostGIS cluster | $3,000 |
@@ -198,7 +205,7 @@ CREATE TABLE poi (
 ## Trade-off Analysis
 
 | Trade-off | Option A | Option B | Winner | Why |
-|-----------|----------|----------|--------|-----|
+| ----------- | ---------- | ---------- | -------- | ----- |
 | Routing | Dijkstra (exact) | Contraction Hierarchies | CH | 1000x faster, <1% loss |
 | Tile Storage | Pre-render all | On-demand | Hybrid | 95% cache hit |
 | Traffic Data | GPS only | Crowdsourced + sensors | Hybrid | Better coverage |
@@ -210,7 +217,7 @@ CREATE TABLE poi (
 ## Key Metrics to Monitor
 
 | Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
+| -------- | -------- | ----------------- |
 | Tile Cache Hit Rate | > 95% | < 90% |
 | Route Computation P99 | < 500ms | > 1s |
 | Traffic Update Latency | < 5s | > 10s |

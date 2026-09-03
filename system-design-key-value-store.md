@@ -5,6 +5,7 @@
 Distributed key-value store providing eventually consistent reads/writes with high availability.
 
 ### Key Numbers
+
 - 10M+ ops/sec
 - < 10ms P99 latency
 - 99.99% availability
@@ -15,12 +16,14 @@ Distributed key-value store providing eventually consistent reads/writes with hi
 ## Requirements
 
 ### Functional Requirements
+
 - put(key, value) - Store value with key
 - get(key) - Retrieve value by key
 - delete(key) - Remove key-value pair
 - Support TTL for automatic expiration
 
 ### Non-Functional Requirements
+
 - Latency: < 10ms P99
 - Throughput: 10M+ ops/sec
 - Availability: 99.99% (AP system)
@@ -56,10 +59,11 @@ flowchart TB
 5. Conflict resolution: vector clocks detect concurrent writes
 6. Anti-entropy: Merkle trees sync replicas in background
 7. Compaction: merge SSTables to reclaim space
+
 ## Microservices
 
 | Service | Responsibility | Tech Stack | Pattern |
-|---------|---------------|------------|---------|
+| --------- | --------------- | ------------ | --------- |
 | Coordinator | Request routing, quorum logic | Go | Consistent Hashing |
 | Storage Engine | LSM Tree / B-Tree persistence | C++ | Write-Ahead Log |
 | Replication Mgr | Replicate writes across nodes | Go | Quorum Consensus |
@@ -90,12 +94,15 @@ CREATE TABLE key_ranges (
 ## Scaling Tiers
 
 ### 1K - 10K Users ($500/mo)
+
 - Single node, replication factor 1, SSD storage
 
 ### 10K - 1M Users ($20K/mo)
+
 - 3-node cluster, replication factor 3, Quorum W=2 R=2
 
 ### 1M - 10M+ Users ($800K/mo)
+
 - Multi-datacenter cluster (9+ nodes), Merkle tree anti-entropy
 
 ---
@@ -103,7 +110,7 @@ CREATE TABLE key_ranges (
 ## Key Design Decisions
 
 | Decision | Choice | Why |
-|----------|--------|-----|
+| ---------- | -------- | ----- |
 | Consistency | Eventual (AP) | High availability for reads/writes |
 | Replication | Quorum (W+R > N) | Tunable consistency levels |
 | Failure Detection | Phi Accrual | Adaptive thresholds, fewer false positives |
@@ -115,7 +122,7 @@ CREATE TABLE key_ranges (
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Node failure | Partial unavailability | Gossip detects, hint-handed-off writes |
 | Network partition | Split-brain writes | Vector clocks detect conflicts |
 | Datacenter failure | Regional outage | Cross-datacenter replication continues |
@@ -126,7 +133,7 @@ CREATE TABLE key_ranges (
 ## Cost Estimation (1M Users)
 
 | Component | Monthly Cost |
-|-----------|-------------|
+| ----------- | ------------- |
 | Storage nodes (9x) | $6,000 |
 | Coordinator nodes (3x) | $2,000 |
 | Cross-DC bandwidth | $1,000 |
@@ -138,7 +145,7 @@ CREATE TABLE key_ranges (
 ## Trade-off Analysis
 
 | Trade-off | Option A | Option B | Winner | Why |
-|-----------|----------|----------|--------|-----|
+| ----------- | ---------- | ---------- | -------- | ----- |
 | Consistency | Strong (CP) | Eventual (AP) | AP | Higher availability |
 | Replication | Sync | Quorum | Quorum | Tunable consistency |
 | Conflict Resolution | Vector Clocks | LWW | Vector Clocks | Detect true conflicts |
@@ -149,7 +156,7 @@ CREATE TABLE key_ranges (
 ## Key Metrics to Monitor
 
 | Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
+| -------- | -------- | ----------------- |
 | Read Latency P99 | < 10ms | > 50ms |
 | Write Latency P99 | < 15ms | > 50ms |
 | Replication Lag | < 100ms | > 1s |
@@ -169,11 +176,10 @@ CREATE TABLE key_ranges (
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Consistent Hash Ring | Applied in this system | Architecture + LLD |
 | Vector Clocks | Applied in this system | Architecture + LLD |
 | Quorum Consensus | Applied in this system | Architecture + LLD |

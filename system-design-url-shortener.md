@@ -5,17 +5,17 @@
 A URL shortening service that converts long URLs to short, shareable links with analytics tracking.
 
 ### Key Numbers
+
 - 100M+ URLs shortened per day
 - 10B+ redirects per day
 - 100:1 read/write ratio
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Shorten long URL to short URL
 - Redirect short URL to original
 - Support custom aliases
@@ -23,6 +23,7 @@ A URL shortening service that converts long URLs to short, shareable links with 
 - Set expiration time
 
 ### Non-Functional Requirements
+
 - Latency: Redirect < 50ms
 - Throughput: 100M+ URLs/day
 - Availability: 99.99% uptime
@@ -30,8 +31,6 @@ A URL shortening service that converts long URLs to short, shareable links with 
 - Scale: 500M+ unique URLs
 
 ---
-
-
 
 ---
 
@@ -65,20 +64,24 @@ flowchart TB
 5. Cache miss - PostgreSQL fallback + cache for next time
 6. 301 redirect for SEO, 302 for analytics tracking
 7. Kafka events: click, referrer, geo - Analytics
+
 ## Microservices
 
 ### 1. URL Service
+
 - **Responsibility**: URL creation, validation, custom aliases, expiry
 - **Tech**: Go / Node.js
 - **DB**: PostgreSQL (URL mappings)
 - **Cache**: Redis (hot URLs)
 
 ### 2. Redirect Service
+
 - **Responsibility**: URL redirection, analytics tracking, bot detection
 - **Tech**: Go (high performance)
 - **Cache**: Redis (redirect cache)
 
 ### 3. Analytics Service
+
 - **Responsibility**: Click tracking, geographic data, device info, referral tracking
 - **Tech**: Python / Flink
 - **DB**: ClickHouse (OLAP), Kafka (event stream)
@@ -120,7 +123,7 @@ INCR url:{short_code}:clicks
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Cache** | Redis (single) |
@@ -129,7 +132,7 @@ INCR url:{short_code}:clicks
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (10-20 containers) |
 | **Database** | PostgreSQL (sharded by short_code) |
 | **Cache** | Redis Cluster (6 nodes) |
@@ -138,7 +141,7 @@ INCR url:{short_code}:clicks
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (100+ pods) |
 | **Database** | PostgreSQL (Citus sharding) + Cassandra |
 | **Cache** | Redis Cluster (30+ nodes) |
@@ -224,13 +227,12 @@ function check_url_expiry(short_code) {
 
 ---
 
-
 ---
 
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | ID generator exhaustion | No more short URLs | Multi-shard counter, auto-scale ranges |
 | Redis cache miss storm | All redirects hit DB | CDN for popular URLs, local cache |
 | DNS propagation delay | New URL not resolving | Edge caching, DNS pre-warming |
@@ -240,25 +242,24 @@ function check_url_expiry(short_code) {
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 10x c5.xlarge | $1,400 |
 | PostgreSQL | db.r5.xlarge + 3 replicas | $4,800 |
 | Redis Cluster | 6x cache.r5.xlarge | $4,800 |
 | Kafka (analytics) | 3x kafka.m5.large | $1,200 |
 | CDN | 50TB/month (redirects) | $4,000 |
 | Analytics Workers | 5x c5.large | $700 |
-| **Total** |  | **~$16,900/month** |
+| **Total** | | **~$16,900/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Base62 | MD5 hash | Base62 | Shorter, URL-safe, no special characters |
 | Snowflake ID | UUID | Snowflake | Monotonically increasing, better for B-tree |
 | Redis cache | Database only | Redis | Sub-ms redirect lookups |
@@ -270,7 +271,7 @@ function check_url_expiry(short_code) {
 ## Key Metrics to Monitor
 
 | Metric | Description | Target |
-|--------|-------------|--------|
+| -------- | ------------- | -------- |
 | **Redirect Latency** | Time to resolve short URL to original | < 5ms (p99) |
 | **Cache Hit Rate** | % of redirects served from Redis | > 99% |
 | **Short Code Collision Rate** | Duplicate codes generated | 0% |
@@ -283,6 +284,7 @@ function check_url_expiry(short_code) {
 | **Bloom Filter FP Rate** | False positive rate for duplicates | < 1% |
 
 ## Deep Dive Prompts
+
 - How does Base62 encoding generate short URLs?
 - How do you ensure unique ID generation across distributed systems?
 - How do you handle 100M+ URL shortening requests per day?
@@ -290,11 +292,10 @@ function check_url_expiry(short_code) {
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Base62 Encoding | Applied in this system | Architecture + LLD |
 | Unique ID Generation | Applied in this system | Architecture + LLD |
 | Cache-Aside Pattern | Applied in this system | Architecture + LLD |

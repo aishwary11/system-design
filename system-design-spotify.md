@@ -5,6 +5,7 @@
 Music streaming service with personalized playlists, podcast hosting, social features, and offline listening for 600M+ users.
 
 ### Key Numbers
+
 - 600M+ users (220M+ premium)
 - 100M+ tracks
 - 5M+ podcasts
@@ -16,6 +17,7 @@ Music streaming service with personalized playlists, podcast hosting, social fea
 ## Requirements
 
 ### Functional Requirements
+
 - Stream music with adaptive bitrate quality
 - Create, share, and discover playlists
 - Personalized recommendations (Discover Weekly, Release Radar)
@@ -24,6 +26,7 @@ Music streaming service with personalized playlists, podcast hosting, social fea
 - Offline download for premium users
 
 ### Non-Functional Requirements
+
 - Latency: Audio start < 200ms, search < 100ms
 - Throughput: 20M+ concurrent streams
 - Availability: 99.99%
@@ -60,10 +63,11 @@ flowchart TB
 5. Scrobble events - Kafka - Analytics (listening history)
 6. Playlist management: collaborative playlists via CDC
 7. Encoding pipeline: transcode to multiple bitrates per track
+
 ## Microservices
 
 | Service | Responsibility | Tech Stack | Pattern |
-|---------|---------------|------------|---------|
+| --------- | --------------- | ------------ | --------- |
 | Audio Service | Stream audio with adaptive bitrate | Go, CDN | P2P + CDN |
 | Recommendation Service | Discover Weekly, Release Radar | Python, TensorFlow | ML Pipeline |
 | Playlist Service | Create, share, collaborative playlists | Java, Cassandra | Event Sourcing |
@@ -102,14 +106,17 @@ CREATE TABLE user_library (
 ## Scaling Tiers
 
 ### 1K - 10K Users ($500/mo)
+
 - Single PostgreSQL, 2 Redis, S3 for audio storage
 
 ### 10K - 1M Users ($20K/mo)
+
 - PostgreSQL read replicas, Redis cluster
 - CDN for audio delivery, Kafka for events
 - Elasticsearch for search
 
 ### 1M - 10M+ Users ($800K/mo)
+
 - Cassandra for playlists, Neo4j for social graph
 - 100+ Redis instances for caching
 - Multi-region CDN, ML recommendation pipeline
@@ -119,7 +126,7 @@ CREATE TABLE user_library (
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Adaptive Bitrate Streaming | Adjust quality based on bandwidth | Audio Service |
 | CDN Edge Caching | Serve audio from edge locations | Audio Service |
 | Collaborative Filtering | User-item matrix for recommendations | Recommendation |
@@ -136,7 +143,7 @@ CREATE TABLE user_library (
 ## Key Design Decisions
 
 | Decision | Choice | Why |
-|----------|--------|-----|
+| ---------- | -------- | ----- |
 | Audio Format | Ogg Vorbis / AAC | Better compression than MP3 |
 | Recommendation | Collaborative + Content-based | Hybrid improves accuracy |
 | Playlist Storage | Cassandra | High write throughput, wide columns |
@@ -149,7 +156,7 @@ CREATE TABLE user_library (
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | CDN node failure | Audio playback fails | Route to next-nearest edge |
 | Recommendation Svc down | No personalized recs | Fall back to popular tracks |
 | Cassandra failure | Playlist unavailable | Serve from Redis cache |
@@ -161,7 +168,7 @@ CREATE TABLE user_library (
 ## Cost Estimation (1M Users)
 
 | Component | Monthly Cost |
-|-----------|-------------|
+| ----------- | ------------- |
 | CDN (audio delivery, 50TB) | $4,000 |
 | Compute (6 microservices) | $8,000 |
 | Cassandra cluster | $3,000 |
@@ -177,7 +184,7 @@ CREATE TABLE user_library (
 ## Trade-off Analysis
 
 | Trade-off | Option A | Option B | Winner | Why |
-|-----------|----------|----------|--------|-----|
+| ----------- | ---------- | ---------- | -------- | ----- |
 | Audio Format | MP3 | Ogg Vorbis | Ogg | Better compression, smaller files |
 | Recommendation | Collaborative | Content-based | Hybrid | Best of both approaches |
 | Playlist Storage | PostgreSQL | Cassandra | Cassandra | High write throughput |
@@ -189,7 +196,7 @@ CREATE TABLE user_library (
 ## Key Metrics to Monitor
 
 | Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
+| -------- | -------- | ----------------- |
 | Audio Start Latency P99 | < 200ms | > 500ms |
 | Search Latency P99 | < 100ms | > 300ms |
 | Stream Buffering Rate | < 0.1% | > 1% |

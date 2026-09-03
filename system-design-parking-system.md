@@ -5,6 +5,7 @@
 A smart parking management system that enables real-time parking spot discovery, reservation, guided navigation, automated entry/exit, and payment processing. The system manages parking lots across multiple cities with IoT sensors for real-time occupancy tracking.
 
 ### Key Numbers
+
 - 50K+ parking spots across 500+ lots
 - 1M+ registered users
 - 100K+ daily reservations
@@ -12,11 +13,10 @@ A smart parking management system that enables real-time parking spot discovery,
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Search spots by location
 - Reserve and pay for slots
 - Navigation to reserved spot
@@ -24,6 +24,7 @@ A smart parking management system that enables real-time parking spot discovery,
 - Dynamic pricing
 
 ### Non-Functional Requirements
+
 - Latency: Search < 200ms
 - Throughput: 10K searches/sec
 - Availability: 99.99% uptime
@@ -60,10 +61,11 @@ flowchart TB
 5. Kafka events: slot_status, entry, exit - Analytics dashboard
 6. Auto-release: TTL expires without payment, slot returns to pool
 7. Notifications: booking confirmation, reminders, receipt
+
 ## Microservices
 
 | Service | Responsibility | Tech Stack | Database |
-|---------|---------------|------------|----------|
+| --------- | --------------- | ------------ | ---------- |
 | Reservation Service | Book/cancel/extend slots | Node.js, Express | PostgreSQL |
 | Slot Management | Real-time slot map, availability | Go, Redis GEO | Redis + PostGIS |
 | IoT Gateway | Sensor ingestion, MQTT broker | EMQX, Kafka Connect | TimescaleDB |
@@ -80,6 +82,7 @@ flowchart TB
 ## Database Design
 
 ### PostgreSQL (Reservation + Lot Data)
+
 ```sql
 CREATE TABLE parking_lots (
   id BIGSERIAL PRIMARY KEY,
@@ -139,6 +142,7 @@ CREATE TABLE payments (
 ```
 
 ### Redis (Real-time Slot Map)
+
 ```
 GEOADD parking:spots:lot:101 73.8567 19.0760 "spot-A12"
 GEORADIUS parking:spots:lot:101 73.857 19.076 2 km WITHCOORD COUNT 10 ASC
@@ -147,14 +151,17 @@ SET pricing:lot:101:peak 1.5 EX 300
 ```
 
 ---
+
 ## Scaling Tiers
 
 ### 1K - 10K Users
+
 - 1 API server + 1 PostgreSQL + 1 Redis
 - Single MQTT broker for sensor data
 - Estimated cost: ~$500/month
 
 ### 10K - 1M Users
+
 - 5-10 API servers behind ALB
 - PostgreSQL primary + 2 read replicas, partitioned by lot_id
 - Redis Cluster (3 nodes) for slot map
@@ -163,6 +170,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 - Estimated cost: ~$15,000/month
 
 ### 1M - 10M+ Users
+
 - 50+ API servers across regions
 - PostgreSQL sharded by region
 - Redis Cluster per region with GEO
@@ -177,7 +185,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ## Key Design Decisions
 
 | Decision | Choice | Why |
-|----------|--------|-----|
+| ---------- | -------- | ----- |
 | Slot availability | Redis GEO | Sub-millisecond geospatial queries for nearest-spot search |
 | Sensor protocol | MQTT over TCP | Lightweight pub/sub ideal for low-power IoT sensors |
 | Reservation concurrency | Optimistic locking | Prevents double-booking without distributed locks |
@@ -190,7 +198,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | IoT sensor offline | Stale spot status | Fallback to last-known + admin alert |
 | Kafka broker down | Delayed sensor events | Replication factor 3 + consumer retry |
 | PostgreSQL down | Reservations fail | Auto-failover via Patroni |
@@ -203,7 +211,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 10x c5.large | $1,200 |
 | PostgreSQL | db.r5.xlarge + 2 replicas | $3,000 |
 | Redis Cluster | 6x cache.r5.large | $3,600 |
@@ -215,10 +223,11 @@ SET pricing:lot:101:peak 1.5 EX 300
 | **Total** | | **~$18,900/month** |
 
 ---
+
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Redis GEO for slot search | PostGIS queries | Redis GEO | 10x faster for real-time spatial queries |
 | MQTT for sensors | HTTP polling | MQTT | 90% less bandwidth, push-based, IoT-optimized |
 | Optimistic locking | Pessimistic locks | Optimistic | Higher throughput, no lock contention at scale |
@@ -230,7 +239,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ## Key Metrics to Monitor
 
 | Metric | Target | Alert Threshold |
-|--------|--------|----------------|
+| -------- | -------- | ---------------- |
 | Spot search latency (p99) | < 200ms | > 500ms |
 | Reservation success rate | > 99.9% | < 99.5% |
 | Sensor data freshness | < 5s | > 15s |
@@ -256,7 +265,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Geospatial Query (PostGIS) | Applied in this system | Architecture + LLD |
 | Real-time Availability (Redis) | Applied in this system | Architecture + LLD |
 | License Plate OCR | Applied in this system | Architecture + LLD |
@@ -371,6 +380,7 @@ function calculatePrice(baseRate, occupancy, hour, isWeekend, events) {
   return Math.round(baseRate * multiplier * 100) / 100;
 }
 ```
+
 ### 4. Anti-Passback State Machine (Entry/Exit)
 
 ```text

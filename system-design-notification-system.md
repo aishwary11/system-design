@@ -5,17 +5,17 @@
 A multi-channel notification system supporting push, email, SMS, and in-app notifications for millions of users.
 
 ### Key Numbers
+
 - 10B+ notifications per day
 - 1M+ notifications per second at peak
 - 95%+ delivery rate
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Send push notifications (iOS/Android)
 - Send SMS via carrier
 - Send email with templates
@@ -23,6 +23,7 @@ A multi-channel notification system supporting push, email, SMS, and in-app noti
 - Schedule optimal delivery
 
 ### Non-Functional Requirements
+
 - Latency: Push < 1s, SMS < 10s
 - Throughput: 10M+ notifications/day
 - Availability: 99.99% uptime
@@ -30,8 +31,6 @@ A multi-channel notification system supporting push, email, SMS, and in-app noti
 - Scale: 500M+ registered devices
 
 ---
-
-
 
 ---
 
@@ -65,34 +64,41 @@ flowchart TB
 5. Push Workers: FCM/APNs, email: SendGrid, SMS: Twilio
 6. Delivery tracking: sent -> delivered -> opened (read receipts)
 7. Analytics: delivery rate, open rate, click-through rate
+
 ## Microservices
 
 ### 1. Notification API
+
 - **Responsibility**: Accept notification requests, validate, enqueue
 - **Tech**: Go / Node.js
 - **DB**: PostgreSQL (notification templates)
 
 ### 2. Preference Service
+
 - **Responsibility**: User notification preferences, opt-out management
 - **Tech**: Go
 - **DB**: PostgreSQL (preferences), Redis (cache)
 
 ### 3. Push Service
+
 - **Responsibility**: FCM (Android), APNs (iOS), Web Push
 - **Tech**: Node.js
 - **External**: Firebase Cloud Messaging, Apple Push Notification Service
 
 ### 4. Email Service
+
 - **Responsibility**: Email rendering, sending, tracking
 - **Tech**: Node.js
 - **External**: SendGrid, SES, Mailgun
 
 ### 5. SMS Service
+
 - **Responsibility**: SMS sending, delivery tracking
 - **Tech**: Node.js
 - **External**: Twilio, Nexmo, AWS SNS
 
 ### 6. In-App Service
+
 - **Responsibility**: Real-time in-app notifications, notification center
 - **Tech**: Go
 - **DB**: Cassandra (notifications), Redis (unread count)
@@ -161,7 +167,7 @@ CREATE TABLE in_app_notifications (
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Queue** | Redis Streams |
@@ -171,7 +177,7 @@ CREATE TABLE in_app_notifications (
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (10-20 containers) |
 | **Database** | PostgreSQL + Cassandra (3 nodes) |
 | **Queue** | Kafka (3 brokers) |
@@ -181,7 +187,7 @@ CREATE TABLE in_app_notifications (
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (100+ pods) |
 | **Database** | Cassandra (20+ nodes) + PostgreSQL (sharded) |
 | **Queue** | Kafka (15+ brokers) |
@@ -191,27 +197,30 @@ CREATE TABLE in_app_notifications (
 
 ---
 
-
 ---
 
 ## Key Design Decisions
 
 ### 1. Why Multi-Channel Delivery?
+
 - Different users prefer different channels (push, email, SMS)
 - Redundancy ensures delivery even if one channel fails
 - Cost optimization (push is free, SMS is expensive)
 
 ### 2. Why Exponential Backoff with Jitter?
+
 - Prevents thundering herd on retry storms
 - Jitter spreads retries across time window
 - Exponential increase avoids overwhelming failing services
 
 ### 3. Why Per-User Rate Limiting?
+
 - Prevents notification fatigue (spam)
 - Different limits for different channels (SMS < push < email)
 - Protects users and maintains engagement
 
 ### 4. Why Batch Low-Priority Notifications?
+
 - Reduces API calls (email batching saves 80% of calls)
 - Better user experience (hourly digest vs constant pings)
 - High-priority notifications still sent immediately
@@ -219,7 +228,7 @@ CREATE TABLE in_app_notifications (
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | FCM/APNs delivery failure | Push not delivered | Retry with backoff, SMS fallback |
 | Email provider rate limit | Batch emails delayed | Multi-provider failover, queue-based |
 | SMS carrier outage | SMS fails in region | Multi-carrier fallback, priority queuing |
@@ -229,11 +238,10 @@ CREATE TABLE in_app_notifications (
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 10x c5.xlarge | $1,400 |
 | PostgreSQL | db.r5.xlarge + 2 replicas | $3,600 |
 | Redis Cluster | 6x cache.r5.xlarge | $4,800 |
@@ -242,14 +250,14 @@ CREATE TABLE in_app_notifications (
 | Twilio (SMS) | 1M SMS/month | $500 |
 | SendGrid (Email) | 1M emails/month | $90 |
 | Worker Nodes | 20x c5.xlarge | $2,800 |
-| **Total** |  | **~$16,090/month** |
+| **Total** | | **~$16,090/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | FCM | WebPush | FCM | Better Android support, higher delivery rate |
 | SES | SendGrid | SES | Lower cost at scale |
 | Twilio | Nexmo | Twilio | Better global coverage |
@@ -261,7 +269,7 @@ CREATE TABLE in_app_notifications (
 ## Key Metrics to Monitor
 
 | Metric | Description | Target |
-|--------|-------------|--------|
+| -------- | ------------- | -------- |
 | **Delivery Rate** | % of notifications successfully delivered | > 99% |
 | **Delivery Latency** | Time from trigger to delivery | < 1s (push), < 30s (email) |
 | **Dedup Rate** | % of duplicate notifications blocked | > 95% |
@@ -273,10 +281,10 @@ CREATE TABLE in_app_notifications (
 | **Provider Failover** | Automatic switch on provider failure | < 30 seconds |
 | **DLQ Depth** | Dead letter queue notifications | < 100 |
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How do you handle notification delivery across multiple channels?
 - How do you prevent duplicate notifications?
 - How do you implement exponential backoff for failed deliveries?
@@ -284,11 +292,10 @@ CREATE TABLE in_app_notifications (
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Multi-Channel Delivery (Push/SMS/Email) | Applied in this system | Architecture + LLD |
 | Template Engine | Applied in this system | Architecture + LLD |
 | Rate Limiting | Applied in this system | Architecture + LLD |
@@ -376,7 +383,6 @@ class UserRateLimiter {
     // - Email: 20/day
 
 ```
-
 
 ---
 

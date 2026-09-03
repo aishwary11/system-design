@@ -5,6 +5,7 @@
 A food delivery platform supporting restaurant discovery, order placement, real-time tracking, and delivery partner management.
 
 ### Key Numbers
+
 - 50M+ monthly active users
 - 500K+ restaurant partners
 - 5M+ orders per day
@@ -12,11 +13,10 @@ A food delivery platform supporting restaurant discovery, order placement, real-
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Browse restaurants/menus by location
 - Place orders with address and payment
 - Track delivery partner in real-time
@@ -24,6 +24,7 @@ A food delivery platform supporting restaurant discovery, order placement, real-
 - Support scheduled orders
 
 ### Non-Functional Requirements
+
 - Latency: Search < 200ms
 - Throughput: 1M+ orders/day
 - Availability: 99.99% uptime
@@ -31,8 +32,6 @@ A food delivery platform supporting restaurant discovery, order placement, real-
 - Scale: 10M+ users, 500K+ partners
 
 ---
-
-
 
 ## High-Level Architecture
 
@@ -62,35 +61,42 @@ flowchart TB
 5. Restaurant confirms - prepares food - driver picks up
 6. Kafka events: order_status, location, delivery - Analytics
 7. Notifications: order confirmed, driver assigned, delivered
+
 ## Microservices
 
 ### 1. Restaurant Service
+
 - **Responsibility**: Restaurant catalog, menu management, availability, ratings
 - **Tech**: Go / Java
 - **DB**: PostgreSQL (restaurants), Elasticsearch (search)
 
 ### 2. Order Service
+
 - **Responsibility**: Order creation, lifecycle, tracking, cancellation
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (orders)
 - **Pattern**: Order state machine
 
 ### 3. Matching Service
+
 - **Responsibility**: Match delivery partners to orders, optimize routes
 - **Tech**: Go
 - **DB**: Redis (driver location), PostgreSQL (matching history)
 
 ### 4. Location Service
+
 - **Responsibility**: Real-time driver/customer location tracking
 - **Tech**: Go
 - **DB**: Redis GEO (driver locations)
 
 ### 5. Payment Service
+
 - **Responsibility**: Payment processing, refunds, wallet management
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (financial records)
 
 ### 6. Notification Service
+
 - **Responsibility**: Order updates, delivery alerts, promotions
 - **Tech**: Node.js
 - **Channels**: FCM, SMS, Email
@@ -152,7 +158,7 @@ CREATE TABLE order_items (
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2-4 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Cache** | Redis (single) |
@@ -162,7 +168,7 @@ CREATE TABLE order_items (
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (20-50 containers) |
 | **Database** | PostgreSQL (read replicas) + Redis Cluster |
 | **Search** | Elasticsearch |
@@ -172,7 +178,7 @@ CREATE TABLE order_items (
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (500+ pods) |
 | **Database** | PostgreSQL (sharded) + Cassandra |
 | **Cache** | Redis Cluster (30+ nodes) |
@@ -182,27 +188,30 @@ CREATE TABLE order_items (
 
 ---
 
-
 ---
 
 ## Key Design Decisions
 
 ### 1. Why Redis GEO for Driver Location?
+
 - Sub-millisecond proximity queries (GEORADIUS)
 - Native support for geo-indexed data
 - Real-time updates without database overhead
 
 ### 2. Why Composite Scoring for Matching?
+
 - Pure distance-based ignores driver quality
 - Composite score (70% proximity + 30% rating) balances speed and quality
 - Prevents always assigning to the closest driver
 
 ### 3. Why Zone-Based Surge Pricing?
+
 - Simple to understand and implement
 - Easy to adjust thresholds per zone
 - Prevents price gouging while balancing supply/demand
 
 ### 4. Why WebSocket for Real-Time Tracking?
+
 - Bidirectional communication (push location updates)
 - Lower latency than polling (3s vs 10s)
 - Reduces server load (no repeated HTTP requests)
@@ -210,7 +219,7 @@ CREATE TABLE order_items (
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Driver location stale | Map inaccurate | GPS ping every 5s, Kalman filter |
 | Menu outdated | Order sold out item | Real-time inventory sync, sold-out flag |
 | Surge pricing stuck | 3x pricing for hours | Price cap with TTL, manual override |
@@ -220,11 +229,10 @@ CREATE TABLE order_items (
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 20x c5.xlarge | $2,800 |
 | PostgreSQL | db.r5.xlarge + 3 replicas | $4,800 |
 | Redis GEO Cluster | 6x cache.r5.xlarge | $4,800 |
@@ -233,14 +241,14 @@ CREATE TABLE order_items (
 | Elasticsearch | 10x m5.xlarge | $4,200 |
 | CDN | 10TB/month transfer | $800 |
 | Payment Gateway | Stripe fees ~2.9% | variable |
-| **Total** |  | **~$28,800/month** |
+| **Total** | | **~$28,800/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Redis GEO | PostGIS | Redis GEO | Sub-ms nearby restaurant searches |
 | Kafka | RabbitMQ | Kafka | Higher throughput for order events |
 | Go | Python for matching | Go | Faster driver matching algorithm |
@@ -252,7 +260,7 @@ CREATE TABLE order_items (
 ## Key Metrics to Monitor
 
 | Metric | Description | Target |
-|--------|-------------|--------|
+| -------- | ------------- | -------- |
 | **Order-to-Delivery Time** | Total time from order to delivery | < 45 minutes |
 | **ETA Accuracy** | Predicted vs actual delivery time | ±5 minutes |
 | **Driver Match Rate** | % of orders matched to driver | > 95% |
@@ -263,7 +271,6 @@ CREATE TABLE order_items (
 | **Cancellation Rate** | Orders cancelled by user/driver | < 5% |
 | **Peak Hour Capacity** | Max orders during rush hour | Monitored |
 | **Driver Utilization** | % of drivers actively delivering | > 70% |
-
 
 ---
 
@@ -276,11 +283,10 @@ CREATE TABLE order_items (
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Haversine Distance Calculation | Applied in this system | Architecture + LLD |
 | Geospatial Indexing (Geohash) | Applied in this system | Architecture + LLD |
 | Real-time GPS Tracking | Applied in this system | Architecture + LLD |

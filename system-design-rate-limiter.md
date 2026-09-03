@@ -5,17 +5,17 @@
 A distributed rate limiting system that controls API request rates per user/IP/API key to prevent abuse and ensure fair usage.
 
 ### Key Numbers
+
 - 10M+ API requests per second
 - 100K+ rate limit rules
 - Sub-millisecond decision time
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Limit API requests per user/IP/key
 - Support token bucket and sliding window
 - Return HTTP 429 with Retry-After
@@ -23,6 +23,7 @@ A distributed rate limiting system that controls API request rates per user/IP/A
 - Distributed rate limiting
 
 ### Non-Functional Requirements
+
 - Latency: Rate check < 1ms
 - Throughput: 10M+ requests/sec
 - Availability: 99.99% uptime
@@ -30,8 +31,6 @@ A distributed rate limiting system that controls API request rates per user/IP/A
 - Scale: 100K+ rate limit keys
 
 ---
-
-
 
 ---
 
@@ -63,10 +62,11 @@ flowchart TB
 5. Config Service: dynamic limit changes per API key / tier
 6. Analytics: rate limit hits, false positives, capacity planning
 7. Alerts when approaching limits (80% threshold)
+
 ## Microservices
 
 | Service | Responsibility | Tech | DB |
-|---------|---------------|------|-----|
+| --------- | --------------- | ------ | ----- |
 | **API Gateway** | Rate limit check at edge | NGINX/Kong/Envoy | Redis |
 | **Rule Engine** | Manage rate limit rules | Go/Node.js | PostgreSQL |
 | **Counter Service** | Increment/reset counters | Go | Redis |
@@ -117,7 +117,7 @@ EXPIRE rate:ip:192.168.1.1:window:1725148800 60
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Redis** | Single Redis instance |
 | **Algorithm** | Fixed Window or Token Bucket |
 | **Placement** | Application layer |
@@ -125,7 +125,7 @@ EXPIRE rate:ip:192.168.1.1:window:1725148800 60
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Redis** | Redis Cluster (6 nodes) |
 | **Algorithm** | Sliding Window Counter |
 | **Placement** | API Gateway + Application |
@@ -133,7 +133,7 @@ EXPIRE rate:ip:192.168.1.1:window:1725148800 60
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Redis** | Redis Cluster (30+ nodes, multi-region) |
 | **Algorithm** | Token Bucket + Sliding Window |
 | **Placement** | Multi-layer (Gateway + App + DB) |
@@ -141,23 +141,25 @@ EXPIRE rate:ip:192.168.1.1:window:1725148800 60
 
 ---
 
-
 ---
 
 ## Key Design Decisions
 
 ### 1. Where to Place Rate Limiter?
+
 - **API Gateway**: Centralized, easy to manage
 - **Application Layer**: More granular control
 - **Both**: Defense in depth
 
 ### 2. Rate Limit Keys
+
 - Per user: `rate:{user_id}`
 - Per IP: `rate:{ip_address}`
 - Per API key: `rate:{api_key}`
 - Per endpoint: `rate:{endpoint}:{user_id}`
 
 ### 3. Rate Limit Response
+
 ```text
 // HTTP 429 Too Many Requests
 {
@@ -169,6 +171,7 @@ EXPIRE rate:ip:192.168.1.1:window:1725148800 60
 ```
 
 ### 4. Redis Lua Script (Atomic)
+
 ```lua
 -- Atomic rate limiting in Redis
 local key = KEYS[1]
@@ -186,6 +189,7 @@ end
 ```
 
 ### 5. Rate Limit Headers
+
 ```
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
@@ -198,7 +202,7 @@ Retry-After: 30
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Redis cluster down | Limiter fails open | Fail-open design, local memory fallback |
 | Clock skew across nodes | Sliding window inaccurate | NTP sync, logical timestamps |
 | Hot key popular API | Single Redis shard overloaded | Local caching, sharded keys |
@@ -211,20 +215,20 @@ Retry-After: 30
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | Redis Cluster | 6x cache.r5.xlarge | $4,800 |
 | Rate Limiter Nodes | 10x c5.xlarge | $1,400 |
 | Config Service | 3x c5.large | $420 |
 | Kafka (config broadcast) | 3x kafka.m5.large | $1,200 |
 | Monitoring | Prometheus + Grafana | $500 |
-| **Total** |  | **~$8,320/month** |
+| **Total** | | **~$8,320/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Token bucket | Fixed window | Token bucket | Allows bursts, smoother rate limiting |
 | Sliding window | Fixed window | Sliding window | More accurate request counting |
 | Redis | Database | Redis | Sub-ms operations for rate limiting |
@@ -236,15 +240,15 @@ Retry-After: 30
 ## Key Metrics to Monitor
 
 | Metric | Target | Alert Threshold |
-|--------|--------|----------------|
+| -------- | -------- | ---------------- |
 | API latency (p99) | < 200ms | > 500ms |
 | Error rate | < 0.1% | > 1% |
 | Throughput | track | spike detection |
 
 ---
 
-
 ## Deep Dive Prompts
+
 - How does token bucket algorithm handle traffic bursts?
 - How do you implement distributed rate limiting across multiple servers?
 - How do you prevent race conditions in rate limiting?
@@ -252,11 +256,10 @@ Retry-After: 30
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Token Bucket Algorithm | Applied in this system | Architecture + LLD |
 | Sliding Window Counter | Applied in this system | Architecture + LLD |
 | Fixed Window Counter | Applied in this system | Architecture + LLD |
@@ -452,7 +455,7 @@ const limiter = new RateLimiter(); console.log("Rate limiter ready");
 ### Rate Limiting Strategies
 
 | Strategy | Use Case | Accuracy | Memory |
-|----------|----------|----------|--------|
+| ---------- | ---------- | ---------- | -------- |
 | Token Bucket | API rate limiting | High | Low |
 | Sliding Window Log | Strict rate limiting | Highest | High |
 | Sliding Window Counter | General purpose | High | Low |
@@ -460,4 +463,3 @@ const limiter = new RateLimiter(); console.log("Rate limiter ready");
 | Leaky Bucket | Traffic shaping | High | Low |
 
 ---
-

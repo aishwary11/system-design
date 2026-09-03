@@ -5,6 +5,7 @@
 A social media platform supporting tweet posting, following, personalized timeline, likes/retweets, search, and trending topics for 500M+ users.
 
 ### Key Numbers
+
 - 500M+ monthly active users
 - 500M+ tweets per day
 - Peak: 100K+ tweets per second
@@ -12,11 +13,10 @@ A social media platform supporting tweet posting, following, personalized timeli
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Post tweets (text, images, videos) 280 chars
 - Follow/unfollow and see timeline
 - Like, retweet, and reply
@@ -24,6 +24,7 @@ A social media platform supporting tweet posting, following, personalized timeli
 - Notifications for mentions and likes
 
 ### Non-Functional Requirements
+
 - Latency: Timeline < 200ms, publish < 500ms
 - Throughput: 500M+ tweets/day
 - Availability: 99.99% uptime
@@ -60,45 +61,53 @@ flowchart TB
 5. Timeline Service serves cached Redis timeline in < 50ms
 6. Kafka events: impressions, clicks, likes - Analytics
 7. Notifications: mentions, follows, retweets via push + email
+
 ## Microservices
 
 ### 1. Tweet Service
+
 - **Responsibility**: Create/delete tweets, retweets, quote tweets, thread support
 - **Tech**: Go / Java
 - **DB**: Cassandra (tweets, write-heavy)
 - **Cache**: Redis (tweet metadata)
 
 ### 2. Timeline Service (Critical)
+
 - **Responsibility**: Home timeline generation, fan-out-on-write, timeline caching
 - **Tech**: Java / Go
 - **DB**: Redis (pre-computed timelines), Cassandra (timeline store)
 - **Pattern**: Fan-out-on-write for normal users, fan-out-on-read for celebrities
 
 ### 3. Fan-out Service
+
 - **Responsibility**: Push tweets to follower timelines, handle celebrity edge cases
 - **Tech**: Go
 - **Queue**: Kafka (fan-out events)
 - **Pattern**: Async fan-out with write-behind
 
 ### 4. Search Service
+
 - **Responsibility**: Tweet search, user search, hashtag search, autocomplete
 - **Tech**: Python / Go
 - **DB**: Elasticsearch
 - **Cache**: Redis (popular searches)
 
 ### 5. Trending Service
+
 - **Responsibility**: Real-time trending topics, hashtag counting, trending algorithms
 - **Tech**: Python / Go
 - **DB**: Redis (counters, sorted sets), ClickHouse (analytics)
 - **Pattern**: Sliding window counting (1min, 5min, 15min, 60min)
 
 ### 6. Notification Service
+
 - **Responsibility**: Like/retweet/reply notifications, follow notifications, digest emails
 - **Tech**: Node.js
 - **Queue**: Kafka consumer
 - **Channels**: FCM, APNs, Email
 
 ### 7. User Service
+
 - **Responsibility**: Profiles, follow/unfollow, block/mute, settings
 - **Tech**: Go
 - **DB**: PostgreSQL (users), Redis (follow graph)
@@ -209,7 +218,7 @@ SADD following:{user_id} {followee_id}
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2-4 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Cache** | Redis (single) |
@@ -220,7 +229,7 @@ SADD following:{user_id} {followee_id}
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (20-50 containers) |
 | **Database** | PostgreSQL + Cassandra (6 nodes) |
 | **Cache** | Redis Cluster (12 nodes) |
@@ -231,7 +240,7 @@ SADD following:{user_id} {followee_id}
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (500+ pods) |
 | **Database** | Cassandra (50+ nodes) + PostgreSQL (sharded) |
 | **Cache** | Redis Cluster (30+ nodes) |
@@ -245,6 +254,7 @@ SADD following:{user_id} {followee_id}
 ## Key Design Decisions
 
 ### 1. Fan-Out-on-Write vs Fan-Out-on-Read
+
 - **Write (Push)**: When user tweets, push to all followers' timelines
   - Pro: Fast timeline reads (pre-computed)
   - Con: Celebrity problem (1M followers = 1M writes per tweet)
@@ -254,21 +264,25 @@ SADD following:{user_id} {followee_id}
 - **Hybrid**: Fan-out-on-write for normal users, on-read for celebrities
 
 ### 2. Why Cassandra for Tweets?
+
 - Write-heavy (500M+ tweets/day)
 - Time-series access (recent tweets first)
 - Partition by user_id for even distribution
 
 ### 3. Trending Algorithm
+
 - Count hashtags in sliding windows (1min, 5min, 15min, 60min)
-- Score = (count in 1min * 4) + (count in 5min * 3) + (count in 15min * 2) + (count in 60min * 1)
+- Score = (count in 1min *4) + (count in 5min* 3) + (count in 15min *2) + (count in 60min* 1)
 - Decay older counts to favor emerging trends
 
 ### 4. Why Not Store Tweets in PostgreSQL?
+
 - 500M+ tweets/day = billions of rows
 - Write-heavy workload (not PostgreSQL's strength)
 - Cassandra handles this scale naturally
 
 ### 5. Tweet Ordering
+
 - Use TIMEUUID (server-generated timestamp)
 - Per-user ordering (not global)
 - Handle clock skew with logical timestamps
@@ -278,7 +292,7 @@ SADD following:{user_id} {followee_id}
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Fan-out overloaded | Timeline delayed for millions | Shard by user ID, priority queue |
 | Trending false positives | Fake trends | Human review, velocity threshold |
 | Bloom filter spike | Duplicate tweets | Rebuild filter, content hash fallback |
@@ -288,11 +302,10 @@ SADD following:{user_id} {followee_id}
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 100x c5.xlarge | $14,000 |
 | PostgreSQL | db.r5.2xlarge + 10 replicas | $12,000 |
 | Redis Cluster | 24x cache.r5.xlarge | $19,200 |
@@ -302,14 +315,14 @@ SADD following:{user_id} {followee_id}
 | CDN | 100TB/month transfer | $8,000 |
 | Fan-out Workers | 50x c5.xlarge | $7,000 |
 | Trending Service | 10x c5.xlarge | $1,400 |
-| **Total** |  | **~$86,100/month** |
+| **Total** | | **~$86,100/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Fan-out-on-write | Fan-out-on-read | Hybrid | Write for regular users, read for celebrities (10M+ followers) |
 | Neo4j | PostgreSQL for graph | Neo4j | O(1) relationship queries vs O(N) for SQL |
 | Redis Lists | Cassandra for timeline | Redis Lists | Sub-ms reads for timeline serving |
@@ -321,7 +334,7 @@ SADD following:{user_id} {followee_id}
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Timeline load time (p99) | < 500ms |
 | Tweet creation latency | < 200ms |
 | Fan-out throughput | 1M+ tweets/sec |
@@ -335,10 +348,10 @@ SADD following:{user_id} {followee_id}
 
 ---
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How do you handle fan-out for a celebrity with 100M followers?
 - How does trending topics work with real-time hashtag counting?
 - How do you prevent spam and abuse at scale?
@@ -346,11 +359,10 @@ SADD following:{user_id} {followee_id}
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Fan-out on Write/Read Hybrid | Applied in this system | Architecture + LLD |
 | Graph Database (Neo4j) | Applied in this system | Architecture + LLD |
 | Redis Timeline Cache | Applied in this system | Architecture + LLD |
@@ -492,7 +504,9 @@ class TimelineService {
   }
 }
 ```
+
         // Some comment
+
 ```
 
 ```text
@@ -531,9 +545,11 @@ class SpamDetector {
 
 const fanout = new FanoutService(); console.log("Fan-out service ready");
 ```
+
     // // Dedup: prevent double like
     // // Real-time count
         // "tweet_id": tweet_id,
         // "user_id": user_id,
         // "action": "like"
+
 ```

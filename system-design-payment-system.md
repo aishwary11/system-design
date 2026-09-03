@@ -5,6 +5,7 @@
 A payment processing platform supporting online payments, refunds, subscriptions, and multi-currency transactions.
 
 ### Key Numbers
+
 - $800B+ total payment volume
 - 100M+ transactions per day
 - 135+ currencies supported
@@ -12,11 +13,10 @@ A payment processing platform supporting online payments, refunds, subscriptions
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Process card payments with Luhn
 - Idempotent operations (no double-charge)
 - Handle refunds
@@ -24,6 +24,7 @@ A payment processing platform supporting online payments, refunds, subscriptions
 - Multiple payment methods
 
 ### Non-Functional Requirements
+
 - Latency: Payment < 5s
 - Throughput: 50K+ transactions/sec
 - Availability: 99.999% uptime
@@ -31,8 +32,6 @@ A payment processing platform supporting online payments, refunds, subscriptions
 - Scale: 1B+ transactions/day
 
 ---
-
-
 
 ---
 
@@ -66,29 +65,35 @@ flowchart TB
 5. Ledger Service: double-entry bookkeeping (debit + credit)
 6. Kafka events: success, failure, refund - Reconciliation pipeline
 7. Reconciliation: match internal ledger with gateway settlements
+
 ## Microservices
 
 ### 1. Payment Service
+
 - **Responsibility**: Payment initiation, processing, status tracking
 - **Tech**: Java / Go
 - **DB**: PostgreSQL (ACID for financial data)
 
 ### 2. Fraud Detection Service
+
 - **Responsibility**: Real-time fraud scoring, rule engine, ML models
 - **Tech**: Python (ML)
 - **DB**: Redis (real-time scoring), PostgreSQL (rules)
 
 ### 3. Ledger Service
+
 - **Responsibility**: Double-entry bookkeeping, reconciliation, audit trail
 - **Tech**: Java / Go
 - **DB**: PostgreSQL (immutable ledger)
 
 ### 4. Merchant Service
+
 - **Responsibility**: Merchant onboarding, API key management, webhooks
 - **Tech**: Go
 - **DB**: PostgreSQL
 
 ### 5. Settlement Service
+
 - **Responsibility**: Batch settlement, payout scheduling, bank transfers
 - **Tech**: Go
 - **DB**: PostgreSQL
@@ -140,7 +145,7 @@ CREATE TABLE refunds (
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Cache** | Redis (single) |
@@ -150,7 +155,7 @@ CREATE TABLE refunds (
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (10-20 containers) |
 | **Database** | PostgreSQL (read replicas) + Redis Cluster |
 | **PSP** | Stripe + PayPal |
@@ -160,7 +165,7 @@ CREATE TABLE refunds (
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (100+ pods) |
 | **Database** | PostgreSQL (sharded) + Cassandra |
 | **Cache** | Redis Cluster (30+ nodes) |
@@ -171,21 +176,25 @@ CREATE TABLE refunds (
 ## Key Design Decisions
 
 ### 1. Why Idempotency Keys?
+
 - Network retries can cause duplicate charges
 - Idempotency ensures exactly-once processing
 - Client generates unique key per request
 
 ### 2. Why Double-Entry Bookkeeping?
+
 - Every transaction has two entries (debit + credit)
 - Ensures financial accuracy
 - Easy reconciliation and audit trail
 
 ### 3. Why Separate Fraud Detection?
+
 - Fraud scoring must be real-time (< 100ms)
 - ML models need dedicated compute
 - Rules engine needs frequent updates
 
 ### 4. Payment State Machine
+
 ```
 pending -> processing -> succeeded
    |           |
@@ -195,13 +204,12 @@ pending -> processing -> succeeded
 
 ---
 
-
 ---
 
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Payment gateway timeout | Charged but not confirmed | Idempotency key + retry, reconciliation |
 | Ledger imbalance | Credits != debits | Nightly reconciliation, alert on mismatch |
 | PCI compliance breach | Card data exposed | Tokenization at edge, never store raw |
@@ -214,7 +222,7 @@ pending -> processing -> succeeded
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | PCI-compliant Servers | 10x c5.xlarge | $1,400 |
 | PostgreSQL | db.r5.2xlarge + 5 replicas | $8,000 |
 | Redis Cluster | 6x cache.r5.xlarge | $4,800 |
@@ -223,14 +231,14 @@ pending -> processing -> succeeded
 | Fraud Detection ML | GPU instances | $3,000 |
 | Audit Log Storage | S3 50TB | $1,150 |
 | Reconciliation Workers | 5x c5.large | $700 |
-| **Total** |  | **~$26,450/month** |
+| **Total** | | **~$26,450/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | PostgreSQL | Cassandra for ledger | PostgreSQL | ACID transactions for financial data |
 | Stripe | Adyen | Stripe | Better developer experience |
 | ML fraud | Rule-based fraud | ML fraud | Better detection of complex patterns |
@@ -242,15 +250,15 @@ pending -> processing -> succeeded
 ## Key Metrics to Monitor
 
 | Metric | Target | Alert Threshold |
-|--------|--------|----------------|
+| -------- | -------- | ---------------- |
 | API latency (p99) | < 200ms | > 500ms |
 | Error rate | < 0.1% | > 1% |
 | Throughput | track | spike detection |
 
 ---
 
-
 ## Deep Dive Prompts
+
 - How does Luhn algorithm validate credit card numbers?
 - How does double-entry bookkeeping ensure financial accuracy?
 - How do you prevent double charges with idempotency keys?
@@ -258,11 +266,10 @@ pending -> processing -> succeeded
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Luhn Algorithm (Card Validation) | Applied in this system | Architecture + LLD |
 | Double-Entry Bookkeeping | Applied in this system | Architecture + LLD |
 | Idempotency Keys | Applied in this system | Architecture + LLD |
@@ -406,6 +413,7 @@ class PaymentStateMachine {
 }
 
 ```
+
 ```text
 class FraudDetector {
   // Detect fraudulent transactions using rules + ML
@@ -498,6 +506,7 @@ class SettlementService {
   }
 }
 ```
+
 ```
 
 ### 2. Idempotency Key
@@ -555,6 +564,7 @@ class ReconciliationService {
 
 const payment = new PaymentService(); console.log("Payment service ready");
 ```
+
 ```
 
 ### 4. Fraud Detection (Rule-Based + ML)

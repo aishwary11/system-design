@@ -5,6 +5,7 @@
 A geospatial service that finds nearby users, drivers, restaurants, or stores based on geographic location with sub-second response times.
 
 ### Key Numbers
+
 - 100M+ location updates per minute
 - 10M+ queries per minute for nearby search
 - 1M+ moving entities tracked simultaneously
@@ -12,11 +13,10 @@ A geospatial service that finds nearby users, drivers, restaurants, or stores ba
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Search nearby venues within radius
 - View venue details and reviews
 - Get directions to venue
@@ -24,6 +24,7 @@ A geospatial service that finds nearby users, drivers, restaurants, or stores ba
 - Filter by cuisine, price, rating
 
 ### Non-Functional Requirements
+
 - Latency: Nearby search < 200ms
 - Throughput: 100K+ searches/sec
 - Availability: 99.99% uptime
@@ -31,8 +32,6 @@ A geospatial service that finds nearby users, drivers, restaurants, or stores ba
 - Scale: 100M+ venues, 500M+ users
 
 ---
-
-
 
 ---
 
@@ -66,33 +65,39 @@ flowchart TB
 5. Reviews stored in PostgreSQL, indexed in Elasticsearch
 6. Geohash-based caching: hot areas cached in Redis
 7. Analytics: check-in patterns, popular times, trending venues
+
 ## Microservices
 
 ### 1. Location Ingestion Service
+
 - **Responsibility**: Receive location updates from devices, validate, normalize, publish to Kafka
 - **Tech**: Go
 - **Queue**: Kafka (location updates)
 - **Rate Limiting**: Per-device rate limiting
 
 ### 2. Location Storage Service
+
 - **Responsibility**: Store latest location per entity, update geospatial index, handle high write throughput
 - **Tech**: Go
 - **DB**: Redis (latest location + GEO index), PostgreSQL/PostGIS (persistent)
 - **Pattern**: Write-behind to persistent store
 
 ### 3. Nearby Search Service
+
 - **Responsibility**: Find nearby entities within radius, sort by distance, filter by attributes
 - **Tech**: Go
 - **DB**: Redis GEO (GEORADIUS), PostGIS (complex queries)
 - **Cache**: Redis (recent search results)
 
 ### 4. Geofence Service
+
 - **Responsibility**: Define geographic boundaries, trigger events when entities enter/exit geofences
 - **Tech**: Python / Go
 - **DB**: PostGIS (polygon storage)
 - **Queue**: Kafka (geofence events)
 
 ### 5. ETA Calculation Service
+
 - **Responsibility**: Estimate time of arrival, route optimization, traffic-aware routing
 - **Tech**: Go / Python
 - **External**: Google Maps API / OSRM / Mapbox
@@ -181,7 +186,7 @@ Level 20: ~1 m cells (street)
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2 EC2 (t3.large) |
 | **Database** | Redis GEO (single) |
 | **Persistent** | PostgreSQL + PostGIS |
@@ -191,7 +196,7 @@ Level 20: ~1 m cells (street)
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (10-30 containers) |
 | **Database** | Redis Cluster (6 nodes) |
 | **Persistent** | PostgreSQL + PostGIS (read replicas) |
@@ -202,7 +207,7 @@ Level 20: ~1 m cells (street)
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (200+ pods) |
 | **Database** | Redis Cluster (30+ nodes) |
 | **Persistent** | PostgreSQL + PostGIS (sharded) |
@@ -215,28 +220,33 @@ Level 20: ~1 m cells (street)
 ## Key Design Decisions
 
 ### 1. Why Redis GEO over PostGIS for Hot Queries?
+
 - Redis GEO: O(log N) for GEORADIUS, sub-millisecond
 - PostGIS: O(N) for complex polygon queries, millisecond-range
 - Use Redis for hot nearby searches, PostGIS for complex spatial queries
 
 ### 2. Why S2 Cells over Geohashing?
+
 - S2 cells are hierarchical (multi-level)
 - Better for variable-radius searches
 - Used by Google Maps internally
 - Supports polygon containment checks
 
 ### 3. Why Kafka for Location Updates?
+
 - 100M+ updates/minute needs durable queue
 - Decouples ingestion from processing
 - Enables replay for index rebuilding
 
 ### 4. Location Update Frequency
+
 - Moving vehicles: every 4 seconds (Uber standard)
 - Walking users: every 30 seconds
 - Stationary users: every 5 minutes
 - Battery-aware adaptive frequency
 
 ### 5. Write-Behind Pattern
+
 - Write to Redis immediately (fast)
 - Async batch write to PostgreSQL (durable)
 - 5-10 second delay acceptable for persistent store
@@ -246,7 +256,7 @@ Level 20: ~1 m cells (street)
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Geohash edge case | Venues near boundary missed | Search 8 neighboring cells, Haversine fallback |
 | Redis GEO stale | Closed venue still shows | TTL on data, periodic re-indexing |
 | Venue data inconsistency | Rating differs search vs detail | Single source PostgreSQL, cache invalidation |
@@ -256,11 +266,10 @@ Level 20: ~1 m cells (street)
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 20x c5.xlarge | $2,800 |
 | PostgreSQL + PostGIS | db.r5.xlarge + 3 replicas | $4,800 |
 | Redis GEO Cluster | 6x cache.r5.xlarge | $4,800 |
@@ -268,14 +277,14 @@ Level 20: ~1 m cells (street)
 | Google Maps API | 20M requests/day | $6,000 |
 | CDN | 20TB/month transfer | $1,600 |
 | Venue Data Pipeline | Kafka + workers | $2,400 |
-| **Total** |  | **~$28,700/month** |
+| **Total** | | **~$28,700/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Redis GEO | PostGIS | Redis GEO | Sub-ms proximity queries |
 | Geohash | Quadtree | Geohash | Simpler, better for distributed systems |
 | Haversine | Euclidean | Haversine | Accurate for earth-surface distances |
@@ -287,7 +296,7 @@ Level 20: ~1 m cells (street)
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Nearby search latency (p99) | < 100ms |
 | Location update latency | < 50ms |
 | Location accuracy | < 10 meters |
@@ -301,10 +310,10 @@ Level 20: ~1 m cells (street)
 
 ---
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How does Geohash index enable fast proximity queries?
 - How do you calculate accurate distance using Haversine formula?
 - How do you handle cache invalidation for location-based data?
@@ -312,11 +321,10 @@ Level 20: ~1 m cells (street)
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Geohash Indexing | Applied in this system | Architecture + LLD |
 | Quadtree for Spatial Queries | Applied in this system | Architecture + LLD |
 | Redis GEO Commands | Applied in this system | Architecture + LLD |

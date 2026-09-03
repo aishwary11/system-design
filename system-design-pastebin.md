@@ -6,6 +6,7 @@ Text sharing service allowing users to paste code/text snippets and share via un
 Handles 500M+ monthly views, 10M+ pastes/day, write-heavy workload.
 
 ### Key Numbers
+
 - 10M+ pastes/day, 500M+ page views/month
 - Write:Read ratio = 1:10
 - Average paste size: 10KB, max 10MB
@@ -15,6 +16,7 @@ Handles 500M+ monthly views, 10M+ pastes/day, write-heavy workload.
 ## Requirements
 
 ### Functional Requirements
+
 - Create paste with title, content, expiry, visibility
 - Retrieve paste by short URL
 - Set expiration (10 min to forever)
@@ -23,6 +25,7 @@ Handles 500M+ monthly views, 10M+ pastes/day, write-heavy workload.
 - Raw view and download
 
 ### Non-Functional Requirements
+
 - Latency: < 100ms for paste retrieval
 - Availability: 99.99%
 - Durability: Never lose a paste
@@ -58,10 +61,11 @@ flowchart TB
 5. Cache hit: sub-ms redirect, miss: PostgreSQL fallback
 6. Expiration Worker deletes pastes past their TTL
 7. Analytics: views, referrers, language distribution
+
 ## Microservices
 
 | Service | Tech Stack | Database | Pattern |
-|---------|------------|----------|----------|
+| --------- | ------------ | ---------- | ---------- |
 | Paste Service | Node.js + Express | DynamoDB | CRUD |
 | URL Service | Go | Redis Counter | Base62 |
 | Storage Service | Node.js | S3 + DynamoDB | Content Store |
@@ -73,6 +77,7 @@ flowchart TB
 ## Database Design
 
 ### DynamoDB
+
 ```
 Table: pastes
   PK: paste_id (String) - 7-char Base62
@@ -86,6 +91,7 @@ Table: users
 ```
 
 ### Redis
+
 ```bash
 paste:{paste_id}     -> Hash (cached paste metadata)
 counter:{date}       -> Atomic counter for ID generation
@@ -97,7 +103,7 @@ rate_limit:{user_id} -> Hash (sliding window)
 ## Scaling Tiers
 
 | Tier | Users | Infrastructure | Monthly Cost |
-|------|-------|---------------|-------------|
+| ------ | ------- | --------------- | ------------- |
 | 1K-10K | 10K | 2 Node.js + DynamoDB + S3 | $200 |
 | 10K-1M | 1M | 6 app + DynamoDB + S3 + Redis + CDN | $5,000 |
 | 1M-10M+ | 10M+ | 20+ app + DynamoDB On-Demand + S3 + ES | $50,000 |
@@ -130,7 +136,7 @@ rate_limit:{user_id} -> Hash (sliding window)
 ## Failure Modes & Recovery
 
 | Failure | Impact | Mitigation |
-|---------|--------|-----------|
+| --------- | -------- | ----------- |
 | DynamoDB Throttling | Paste creation fails | On-demand + backoff |
 | S3 Outage | Pastes unreadable | Multi-region replication |
 | Redis Cache Miss | Slower reads | DynamoDB fallback |
@@ -142,7 +148,7 @@ rate_limit:{user_id} -> Hash (sliding window)
 ## Cost Estimation (1M Users)
 
 | Component | Configuration | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | App Servers (6x) | t3.medium | $300 |
 | DynamoDB | On-Demand | $1,500 |
 | S3 (1TB stored) | Standard | $23 |
@@ -156,7 +162,7 @@ rate_limit:{user_id} -> Hash (sliding window)
 ## Trade-off Analysis
 
 | Decision | Option A | Option B | Choice | Why |
-|----------|----------|----------|--------|-----|
+| ---------- | ---------- | ---------- | -------- | ----- |
 | URL Scheme | Hash (MD5) | Counter (Base62) | Base62 | No collisions, sequential |
 | Storage | PostgreSQL | DynamoDB + S3 | DynamoDB + S3 | Serverless, auto-scale |
 | Expiry | DB Cleanup Job | Redis TTL | Redis TTL | Native, no polling |
@@ -203,6 +209,7 @@ rate_limit:{user_id} -> Hash (sliding window)
 ## Low-Level Design (LLD) - Algorithms & Data Structures
 
 ### Base62 URL Generator
+
 ```text
 class URLGenerator {
   constructor() {
@@ -236,4 +243,3 @@ class URLGenerator {
 
 const url = new URLGenerator(); console.log("URL generator:", url.generate());
 ```
-

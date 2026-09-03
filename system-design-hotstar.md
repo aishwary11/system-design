@@ -5,6 +5,7 @@
 Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporting live sports (cricket, football), entertainment shows, and Video-on-Demand (VOD). It must handle massive concurrent live viewership (e.g., 25M+ for IPL matches), adaptive bitrate streaming, low-latency live delivery, and personalized content recommendations.
 
 ### Key Numbers
+
 - 400M+ registered users
 - 25M+ concurrent live viewers during peak events
 - 100K+ hours of content
@@ -12,11 +13,10 @@ Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporti
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Stream live sports (cricket, football) with < 3s latency
 - Stream VOD with adaptive bitrate
 - Live cricket with real-time score overlay
@@ -24,6 +24,7 @@ Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporti
 - Multi-device viewing with playback sync
 
 ### Non-Functional Requirements
+
 - Latency: Live stream < 3s, VOD start < 2s
 - Throughput: 10M+ concurrent live viewers
 - Availability: 99.99% during live events
@@ -31,8 +32,6 @@ Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporti
 - Scale: 100M+ registered users
 
 ---
-
-
 
 ---
 
@@ -66,75 +65,88 @@ flowchart TB
 5. Transcoding Workers encode incoming stream at multiple bitrates
 6. Analytics pipeline processes viewership in real-time (Flink)
 7. Notifications service alerts users of match start, wickets, goals
+
 ## Microservices
 
 ### 1. Auth & Identity Service
+
 - **Responsibility**: User registration, login (email/phone/social), JWT token management, session management, device fingerprinting
 - **Tech**: Go / Node.js
 - **DB**: PostgreSQL (users, sessions)
 - **Cache**: Redis (session tokens, rate limits)
 
 ### 2. Content Management Service
+
 - **Responsibility**: Content catalog CRUD, metadata management, content categorization, editorial featured content, content lifecycle (upload -> transcode -> publish)
 - **Tech**: Java / Spring Boot
 - **DB**: MongoDB (flexible content schemas, nested metadata)
 - **Cache**: Redis (hot content metadata)
 
 ### 3. Live Stream Ingest Service
+
 - **Responsibility**: RTMP/SRT ingest from broadcast sources, stream health monitoring, multi-bitrate stream splitting, DRM token generation
 - **Tech**: Go / Rust + Nginx-RTMP / SRS
 - **DB**: Redis (active stream state)
 - **Protocol**: RTMP -> HLS/DASH segments
 
 ### 4. Transcoding Service
+
 - **Responsibility**: Adaptive bitrate transcoding, codec conversion (H.264/H.265/AV1), thumbnail/extraction, quality ladder generation
 - **Tech**: FFmpeg + AWS Elemental MediaConvert / custom GPU cluster
 - **Queue**: Kafka (transcode job queue)
 - **Storage**: S3 (transcoded segments)
 
 ### 5. Stream Delivery / Playback Service
+
 - **Responsibility**: HLS/DASH manifest generation, ABR (adaptive bitrate) logic, DRM license proxy (Widevine/FairPlay), CDN manifest serving, player analytics
 - **Tech**: Go / Node.js
 - **CDN**: CloudFront + Akamai (multi-CDN)
 - **Cache**: Redis (manifest caching)
 
 ### 6. User Profile & Preference Service
+
 - **Responsibility**: User profiles, watch history, continue watching, content preferences, parental controls, multi-profile support
 - **Tech**: Go
 - **DB**: Cassandra (write-heavy watch history, time-series pattern)
 - **Cache**: Redis (user preferences)
 
 ### 7. Recommendation Service
+
 - **Responsibility**: Personalized content recommendations, trending/popular content, collaborative filtering, content-based filtering, "Top 10" lists
 - **Tech**: Python (ML models), TensorFlow/PyTorch
 - **DB**: PostgreSQL (ML features), Redis (recommendation cache)
 - **Pipeline**: Spark/Flink for model training, real-time inference
 
 ### 8. Subscription & Billing Service
+
 - **Responsibility**: Plan management, payment processing, invoice generation, promo codes, free trial management, subscription lifecycle
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (ACID for financial data)
 - **Integrations**: Stripe, Razorpay, Apple IAP, Google Play Billing
 
 ### 9. Notification Service
+
 - **Responsibility**: Push notifications (FCM/APNs), email (SendGrid), SMS, in-app notifications, event-based triggers (new episode, live match starting)
 - **Tech**: Node.js
 - **Queue**: Kafka consumer
 - **DB**: PostgreSQL (notification history)
 
 ### 10. Search Service
+
 - **Responsibility**: Full-text search, autocomplete, faceted search (genre, language, year), search analytics, "Did you mean?" corrections
 - **Tech**: Go / Python
 - **DB**: Elasticsearch (full-text indexing)
 - **Cache**: Redis (popular search results)
 
 ### 11. Analytics & Metrics Service
+
 - **Responsibility**: Real-time viewership dashboards, content performance metrics, A/B test analysis, CDN analytics, revenue reporting
 - **Tech**: Flink (streaming) + Spark (batch)
 - **DB**: ClickHouse (OLAP), S3 (data lake)
 - **Pipeline**: Kafka -> Flink -> ClickHouse
 
 ### 12. Ad Service
+
 - **Responsibility**: Dynamic ad insertion (DAI), ad targeting, ad tracking/impression counting, VAST/VMAP compliance, ad-free subscription enforcement
 - **Tech**: Go / Node.js
 - **DB**: PostgreSQL (campaign data), Redis (ad cache)
@@ -307,7 +319,7 @@ SETEX recommendations:{user_id} 1800 {json_array}
 **Goal**: Validate core streaming + VOD functionality
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | 2-4 EC2 instances (t3.large) | Handle initial traffic |
 | **Database** | PostgreSQL on RDS (db.t3.medium) | Single DB for all data |
 | **Cache** | Redis ElastiCache (cache.t3.small) | Session + metadata cache |
@@ -330,7 +342,7 @@ SETEX recommendations:{user_id} 1800 {json_array}
 **Goal**: Handle live events with 50K-500K concurrent viewers
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | ECS/EKS (20-100 containers) | Auto-scaling services |
 | **Database** | PostgreSQL RDS (r5.2xlarge, read replicas x3) | Read scaling for catalog |
 | **NoSQL** | MongoDB Atlas (M40) | Flexible content metadata |
@@ -356,7 +368,7 @@ SETEX recommendations:{user_id} 1800 {json_array}
 **Goal**: 25M+ concurrent viewers during IPL, multi-region, 99.99% uptime
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | Multi-region K8s (EKS) - 500+ pods per region | Global auto-scaling |
 | **Database** | PostgreSQL (Citus sharding) + Aurora Global | Global consistency + scale |
 | **NoSQL** | MongoDB Sharded Cluster (6 shards) | Petabyte-scale content |
@@ -381,28 +393,33 @@ SETEX recommendations:{user_id} 1800 {json_array}
 ## Key Design Decisions
 
 ### 1. Why Cassandra for Watch History?
+
 - Write-heavy workload (every watch event)
 - Time-series access pattern (recent history first)
 - Linear horizontal scalability
 - Tunable consistency per query
 
 ### 2. Why Multi-CDN?
+
 - Single CDN outage cannot take down live events (IPL final = $100M+ revenue)
 - Each CDN has different ISP peering strengths
 - Geographic performance optimization
 
 ### 3. Why Kafka over RabbitMQ?
+
 - Event replay capability (reprocess analytics)
 - Higher throughput (millions of events/sec)
 - Ordered logs for sequential processing
 - Consumer groups for parallel processing
 
 ### 4. Why Custom Transcoding Pipeline?
+
 - AWS Elemental is expensive at scale ($0.12/minute)
 - Custom GPU farm 60% cheaper at 1M+ hours/month
 - Fine-grained control over encoding presets
 
 ### 5. Live vs VOD Separation
+
 - Live: Optimized for low latency, real-time delivery
 - VOD: Optimized for caching, storage efficiency
 - Different scaling patterns and infrastructure
@@ -412,7 +429,7 @@ SETEX recommendations:{user_id} 1800 {json_array}
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | CDN edge fails during live cricket | 50M viewers buffer | Multi-CDN failover, origin shield |
 | Kafka broker down during event | Live score delayed | Replication factor 3, consumer rebalance |
 | EMQX bridge disconnects | Score stops updating | Auto-reconnect, MQTT QoS 1, Redis fallback |
@@ -422,11 +439,10 @@ SETEX recommendations:{user_id} 1800 {json_array}
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | Live Streaming Servers | 20x c5.2xlarge (transcoding) | $2,400 |
 | Open Connect CDN | 100TB/month transfer | $15,000 |
 | Kafka Cluster | 6x kafka.m5.large | $2,400 |
@@ -436,14 +452,14 @@ SETEX recommendations:{user_id} 1800 {json_array}
 | EMQX Reverse Bridge | 3x bridge nodes | $900 |
 | API Servers | 15x c5.xlarge | $2,100 |
 | Monitoring | Prometheus + Grafana | $500 |
-| **Total** |  | **~$35,600/month** |
+| **Total** | | **~$35,600/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Wowza (commercial) | NGINX-RTMP (open source) | Wowza | Better support for LL-HLS, commercial SLA for live events |
 | Kafka | RabbitMQ | Kafka | 10x higher throughput for 1M+ events/second during live matches |
 | Redis Pub/Sub | Kafka Streams for chat | Redis Pub/Sub | Sub-ms latency for real-time chat fan-out |
@@ -455,7 +471,7 @@ SETEX recommendations:{user_id} 1800 {json_array}
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Stream startup time | < 2 seconds |
 | Buffer ratio | < 1% |
 | Live stream latency | < 3 seconds |
@@ -469,6 +485,7 @@ SETEX recommendations:{user_id} 1800 {json_array}
 ---
 
 ## Deep Dive Prompts
+
 - How do you handle 100M concurrent viewers during IPL final without any buffering?
 - What happens when a CDN edge server fails mid-match? How does failover work?
 - How do you achieve sub-3-second latency for live cricket scoring updates?
@@ -476,11 +493,10 @@ SETEX recommendations:{user_id} 1800 {json_array}
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Adaptive Bitrate Streaming | Applied in this system | Architecture + LLD |
 | CDN Edge Caching | Applied in this system | Architecture + LLD |
 | WebSocket for Live Chat | Applied in this system | Architecture + LLD |
@@ -634,6 +650,7 @@ class LiveChat {
   }
 }
 ```
+
 Low        | 480p       | 1.2 Mbps | H.264  | 30
 Medium     | 720p       | 2.5 Mbps | H.264  | 30
 High       | 720p       | 3.5 Mbps | H.265  | 30
@@ -641,7 +658,9 @@ Very High  | 1080p      | 5.0 Mbps | H.265  | 30
 Ultra HD   | 4K         | 12 Mbps  | H.265  | 60
 
 # Per-title adjustment for cricket
+
 # Fast motion (boundaries)
+
 ```
 
 ```text
@@ -675,6 +694,7 @@ class ViewTracker {
   }
 }
 ```
+
 ```
 ### Real-World Insights & Best Practices (2024-2025)
 
@@ -729,6 +749,7 @@ class ViewTracker {
 ### Live Match Data Flow
 
 ```
+
 Broadcast Camera / TV Feed
         |
         v
@@ -761,6 +782,7 @@ Broadcast Camera / TV Feed
                                             |  (WebSocket/     |
                                             |   MQTT)          |
                                             +------------------+
+
 ```
 
 ### Live Score Service (Redis-Based)
@@ -774,7 +796,9 @@ Broadcast Camera / TV Feed
 **Redis Data Structures for Live Cricket:**
 
 ```
+
 # Current Match Score (Hash)
+
 HSET match:{match_id}:score
     runs 185
     wickets 3
@@ -784,10 +808,12 @@ HSET match:{match_id}:score
     last_updated 1725206400
 
 # Ball-by-Ball Commentary (List - last 10 balls)
+
 LPUSH match:{match_id}:balls {json_ball}
 LTRIM match:{match_id}:balls 0 9
 
 # Current Batsman Stats (Hash)
+
 HSET match:{match_id}:batsman:{player_id}
     runs 45
     balls 32
@@ -796,6 +822,7 @@ HSET match:{match_id}:batsman:{player_id}
     strike_rate 140.62
 
 # Current Bowler Stats (Hash)
+
 HSET match:{match_id}:bowler:{player_id}
     overs 3.4
     maidens 0
@@ -804,30 +831,39 @@ HSET match:{match_id}:bowler:{player_id}
     economy 7.58
 
 # Match Status (String)
+
 SET match:{match_id}:status "live" EX 28800
 
 # Live Viewer Count (Atomic)
+
 INCR match:{match_id}:viewers
 
 # Fall of Wickets (List)
+
 RPUSH match:{match_id}:wickets {json_wicket}
 
 # Partnership Data (Hash)
+
 HSET match:{match_id}:partnership
     runs 67
     balls 45
     batsman_a "Player A"
     batsman_b "Player B"
+
 ```
 
 ### Kafka Topics for Live Cricket Events
 
 ```
+
 # Topic: live.score.events
+
 # Partition by: match_id (ensures ordering per match)
+
 # Retention: 24 hours
 
-# Event Types:
+# Event Types
+
 1. ball.delivered
    - ball_type: "regular", "wide", "no_ball", "bye", "leg_bye"
    - runs: 0-6
@@ -849,16 +885,20 @@ HSET match:{match_id}:partnership
 5. match.status.changed
    - status: "toss", "innings_break", "rain_delay", "completed"
    - winner_id, margin
+
 ```
 
 ### Live Commentary Service
 
 ```
+
 # Commentary stored in Redis (last 50 entries per match)
+
 LPUSH match:{match_id}:commentary {json_commentary}
 LTRIM match:{match_id}:commentary 0 49
 
-# Each commentary entry:
+# Each commentary entry
+
 {
   "ball_number": "18.4",
   "timestamp": 1725206400,
@@ -878,6 +918,7 @@ const stream = new StreamService(); console.log("Stream service ready");
 **Architecture (from Hotstar Engineering Blog):**
 
 ```
+
 Client sends emoji
     |
     v
@@ -899,6 +940,7 @@ EMQX (MQTT) PubSub
     |
     v
 All connected clients (persistent WebSocket)
+
 ```
 
 **Scale:**
@@ -910,18 +952,22 @@ All connected clients (persistent WebSocket)
 ### Live Match Alert System
 
 ```
-# Alert Types:
+
+# Alert Types
+
 1. Wicket Alert -> Push notification to all viewers
 2. Boundary Alert -> In-app toast notification
 3. Milestone Alert -> Full-screen celebration overlay
 4. Match Result -> Push notification + email digest
 5. Rain Delay Alert -> In-app banner notification
 
-# Kafka Topics:
+# Kafka Topics
+
 - match.alerts.wicket
 - match.alerts.boundary
 - match.alerts.milestone
 - match.alerts.status
+
 ```
 
 ### Live Match Database Design (Cassandra)
@@ -964,7 +1010,7 @@ CREATE TABLE match_summary (
 ### Live Streaming Latency Optimization
 
 | Technique | Latency | Use Case |
-|-----------|---------|----------|
+| ----------- | --------- | ---------- |
 | Standard HLS | 15-30s | VOD content |
 | Low Latency HLS (LL-HLS) | 3-5s | Live sports |
 | CMAF (Common Media) | 2-4s | Live sports |
@@ -972,6 +1018,7 @@ CREATE TABLE match_summary (
 | Custom TCP | 1-2s | Premium live sports |
 
 **Hotstar's Approach:**
+
 - LL-HLS for standard live streams (3-5s latency)
 - Custom low-latency protocol for premium matches (1-2s)
 - Edge computing at CDN nodes for manifest generation
@@ -980,18 +1027,21 @@ CREATE TABLE match_summary (
 ### Live Match Scaling Strategy
 
 **Pre-Match (30 min before):**
+
 - Pre-warm CDN caches with match manifest
 - Scale up WebSocket connections
 - Pre-load match metadata in Redis
 - Notify all subscribed users
 
 **During Match (3-4 hours):**
+
 - Auto-scale transcoding workers
 - Scale WebSocket gateway (100K+ connections per node)
 - Monitor CDN performance per region
 - Real-time viewer count tracking
 
 **Post-Match:**
+
 - Scale down transcoding workers
 - Archive match data to cold storage
 - Generate highlight clips (auto-extract key moments)
@@ -999,6 +1049,4 @@ CREATE TABLE match_summary (
 
 ---
 
-
 ---
-

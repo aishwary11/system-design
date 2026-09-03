@@ -5,6 +5,7 @@
 An e-commerce platform supporting product search, shopping cart, inventory management, order processing, payment, shipping, and reviews for millions of products and users.
 
 ### Key Numbers
+
 - 300M+ active users
 - 350M+ products
 - 66K+ orders per minute (peak)
@@ -12,11 +13,10 @@ An e-commerce platform supporting product search, shopping cart, inventory manag
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Search products with filters
 - Cart and checkout with payment methods
 - Track order status to delivery
@@ -24,6 +24,7 @@ An e-commerce platform supporting product search, shopping cart, inventory manag
 - Product reviews with ratings
 
 ### Non-Functional Requirements
+
 - Latency: Search < 200ms, checkout < 3s
 - Throughput: 100K orders/min peak
 - Availability: 99.99% uptime
@@ -60,55 +61,65 @@ flowchart TB
 5. Inventory Service decrements stock (optimistic locking)
 6. Kafka events: order_placed - Warehouse, Shipping, Notifications
 7. Analytics pipeline: conversion funnel, revenue dashboard
+
 ## Microservices
 
 ### 1. Product Service
+
 - **Responsibility**: Product catalog, categories, pricing, product details, seller management
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (product data), S3 (product images)
 
 ### 2. Search Service
+
 - **Responsibility**: Full-text search, filters, autocomplete, personalized search
 - **Tech**: Python / Go
 - **DB**: Elasticsearch (product indexing)
 - **Cache**: Redis (popular searches)
 
 ### 3. Cart Service
+
 - **Responsibility**: Shopping cart management, price calculation, coupon application
 - **Tech**: Node.js / Go
 - **DB**: Redis (cart data, TTL-based)
 - **Pattern**: Session-based cart, logged-in cart persisted to DB
 
 ### 4. Inventory Service (Critical)
+
 - **Responsibility**: Stock tracking, reservation, availability checking, warehouse management
 - **Tech**: Java / Go
 - **DB**: PostgreSQL (ACID for stock)
 - **Pattern**: Optimistic locking for stock updates
 
 ### 5. Order Service (Critical)
+
 - **Responsibility**: Order creation, order lifecycle, status tracking, cancellation
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (ACID for orders)
 - **Pattern**: Order state machine (pending -> confirmed -> shipped -> delivered)
 
 ### 6. Payment Service
+
 - **Responsibility**: Payment processing, refunds, gift cards, wallets
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (financial records)
 - **Integrations**: Stripe, PayPal, Razorpay
 
 ### 7. Shipping Service
+
 - **Responsibility**: Shipping calculation, carrier integration, tracking, delivery estimation
 - **Tech**: Go
 - **DB**: PostgreSQL
 - **Integrations**: FedEx, UPS, DHL APIs
 
 ### 8. Review Service
+
 - **Responsibility**: Product reviews, ratings, helpful votes, review moderation
 - **Tech**: Go
 - **DB**: PostgreSQL (reviews), Redis (rating cache)
 
 ### 9. Notification Service
+
 - **Responsibility**: Order confirmations, shipping updates, promotional emails
 - **Tech**: Node.js
 - **Queue**: Kafka consumer
@@ -193,7 +204,7 @@ ZADD trending {score} {product_id}
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2-4 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Cache** | Redis (single) |
@@ -204,7 +215,7 @@ ZADD trending {score} {product_id}
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (20-50 containers) |
 | **Database** | PostgreSQL (r5.xlarge, read replicas) |
 | **Cache** | Redis Cluster (6 nodes) |
@@ -215,7 +226,7 @@ ZADD trending {score} {product_id}
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (500+ pods) |
 | **Database** | PostgreSQL (Citus sharding) |
 | **Cache** | Redis Cluster (30+ nodes) |
@@ -228,26 +239,31 @@ ZADD trending {score} {product_id}
 ## Key Design Decisions
 
 ### 1. Why Optimistic Locking for Inventory?
+
 - Pessimistic locks cause deadlocks under high concurrency
 - Optimistic: read version, try update, retry on conflict
 - Works well when conflicts < 5%
 
 ### 2. Why Saga Pattern for Orders?
+
 - Order creation spans multiple services (inventory, payment, shipping)
 - Saga: Reserve stock -> Process payment -> Create order
 - Compensating transactions for rollback
 
 ### 3. Why Redis for Cart?
+
 - Sub-millisecond reads/writes
 - TTL for abandoned cart expiry
 - No database overhead for ephemeral data
 
 ### 4. Why Elasticsearch for Product Search?
+
 - Full-text search with relevance ranking
 - Faceted search (price range, brand, rating)
 - Autocomplete with n-gram tokenizer
 
 ### 5. Order State Machine
+
 ```
 pending -> confirmed -> shipped -> delivered -> completed
    |          |           |
@@ -260,7 +276,7 @@ cancelled  refunded   returned
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Inventory oversell flash sale | More orders than stock | Optimistic locking, queue-based checkout |
 | Search index lag | New product not findable | Near-real-time indexing via Kafka |
 | Payment timeout | Order placed but unclear | Idempotency key + retry + reconciliation |
@@ -270,11 +286,10 @@ cancelled  refunded   returned
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 30x c5.xlarge | $4,200 |
 | PostgreSQL | db.r5.2xlarge + 5 replicas | $8,000 |
 | Redis Cluster | 12x cache.r5.xlarge | $9,600 |
@@ -284,14 +299,14 @@ cancelled  refunded   returned
 | CDN | 50TB/month transfer | $4,000 |
 | Payment Gateway | Stripe fees ~2.9% | variable |
 | Recommendation ML | 5x c5.2xlarge | $2,800 |
-| **Total** |  | **~$44,100/month** |
+| **Total** | | **~$44,100/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Optimistic locking | Pessimistic locking | Optimistic | Better concurrency, no lock contention |
 | Elasticsearch | PostgreSQL full-text | Elasticsearch | Better faceted search, typo tolerance |
 | Redis cart | Database cart | Redis | Sub-ms reads, TTL for session expiry |
@@ -303,7 +318,7 @@ cancelled  refunded   returned
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Search latency (p99) | < 200ms |
 | Cart update latency | < 100ms |
 | Order creation success rate | > 99.9% |
@@ -317,10 +332,10 @@ cancelled  refunded   returned
 
 ---
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How do you prevent overselling during flash sales with 100x traffic?
 - How does optimistic locking work for inventory management?
 - How do you handle cart recovery across devices and sessions?
@@ -328,11 +343,10 @@ cancelled  refunded   returned
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Inventory Management | Applied in this system | Architecture + LLD |
 | Distributed Transactions (Saga) | Applied in this system | Architecture + LLD |
 | Redis Session Cache | Applied in this system | Architecture + LLD |
@@ -454,16 +468,19 @@ function search_products(query, filters = undefined, page = 1, limit = 20) {
 ### Real-Time Features
 
 ### Order Tracking (WebSocket)
+
 - Real-time order status updates (placed → confirmed → shipped → delivered)
 - Push notifications for status changes
 - Live delivery tracking with driver location
 
 ### Inventory Updates (SSE)
+
 - Stock level changes pushed to product pages
 - Low-stock alerts for sellers
 - Flash sale countdown timers
 
 ### Price Monitoring (Polling)
+
 - Dynamic pricing updates
 - Competitor price tracking
 - Deal expiration timers

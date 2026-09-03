@@ -5,6 +5,7 @@
 Real-time collaborative document editor with OT/CRDT conflict resolution.
 
 ### Key Numbers
+
 - 1B+ users, 500M+ docs/day, <100ms sync, 50+ concurrent editors
 
 ---
@@ -12,6 +13,7 @@ Real-time collaborative document editor with OT/CRDT conflict resolution.
 ## Requirements
 
 ### Functional Requirements
+
 - Create/edit rich-text documents with formatting
 - Real-time collaboration with multiple cursors
 - Offline editing with sync on reconnect
@@ -20,6 +22,7 @@ Real-time collaborative document editor with OT/CRDT conflict resolution.
 - Export to PDF, DOCX, HTML
 
 ### Non-Functional Requirements
+
 - Sync latency < 100ms, doc open < 500ms
 - 10M+ concurrent documents, 99.99% availability
 
@@ -53,10 +56,11 @@ flowchart TB
 5. Presence Service tracks cursors, selections in real-time
 6. Version history stored as operation log (append-only)
 7. Kafka events: edit, share, comment - Analytics + indexing
+
 ## Microservices
 
 | Service | Responsibility | Tech Stack | Pattern |
-|---------|---------------|------------|---------|
+| --------- | --------------- | ------------ | --------- |
 | Document Service | CRUD, version history | Node.js, PostgreSQL | Event Sourcing |
 | Sync Service | Real-time OT/CRDT sync | Go, WebSocket | Operational Transform |
 | Presence Service | Cursors, online users | Redis, WebSocket | Pub/Sub |
@@ -93,12 +97,15 @@ CREATE TABLE comments (
 ## Scaling Tiers
 
 ### 1K - 10K Users ($500/mo)
+
 - Single PostgreSQL, 2 Redis, GCS for storage, single sync server
 
 ### 10K - 1M Users ($20K/mo)
+
 - PostgreSQL read replicas, Redis cluster, OT sharded by doc, CDN
 
 ### 1M - 10M+ Users ($800K/mo)
+
 - PG cluster sharded, 100+ Redis, multi-region OT servers, GCS multi-region
 
 ---
@@ -106,7 +113,7 @@ CREATE TABLE comments (
 ## Key Design Decisions
 
 | Decision | Choice | Why |
-|----------|--------|-----|
+| ---------- | -------- | ----- |
 | Conflict Resolution | Operational Transformation | Proven for text editing, deterministic |
 | Storage Format | JSON operations log | Enables version history and undo |
 | Sync Protocol | WebSocket + heartbeat | Bidirectional real-time sync |
@@ -118,7 +125,7 @@ CREATE TABLE comments (
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | OT Server crash | Sync stops | Save-only mode, queue locally |
 | Database failure | State lost | Restore from op log replay |
 | Redis failure | Presence lost | Rebuild from client heartbeats |
@@ -130,7 +137,7 @@ CREATE TABLE comments (
 ## Cost Estimation (1M Users)
 
 | Component | Monthly Cost |
-|-----------|-------------|
+| ----------- | ------------- |
 | Compute (OT + Doc servers) | $8,000 |
 | PostgreSQL cluster | $3,000 |
 | Redis cluster (50GB) | $2,500 |
@@ -143,7 +150,7 @@ CREATE TABLE comments (
 ## Trade-off Analysis
 
 | Trade-off | Option A | Option B | Winner | Why |
-|-----------|----------|----------|--------|-----|
+| ----------- | ---------- | ---------- | -------- | ----- |
 | Conflict Resolution | OT | CRDT | OT | Proven for text editing |
 | Storage Model | Snapshot | Op Log | Op Log | Version history + undo |
 | Sync Protocol | WebSocket | SSE | WebSocket | Bidirectional, lower latency |
@@ -154,7 +161,7 @@ CREATE TABLE comments (
 ## Key Metrics to Monitor
 
 | Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
+| -------- | -------- | ----------------- |
 | Sync Latency P99 | < 100ms | > 200ms |
 | Document Open Time | < 500ms | > 2s |
 | Conflict Resolution Rate | < 0.1% | > 1% |
@@ -173,11 +180,10 @@ CREATE TABLE comments (
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Operational Transformation (OT) | Applied in this system | Architecture + LLD |
 | CRDT for Offline | Applied in this system | Architecture + LLD |
 | WebSocket for Real-time Sync | Applied in this system | Architecture + LLD |

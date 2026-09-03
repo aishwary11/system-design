@@ -3,6 +3,7 @@
 32 comprehensive system design documents covering High-Level Architecture (HLD), Low-Level Design (LLD), database design, scaling strategies, and executable JavaScript algorithms.
 
 Each document follows a consistent 15-section template:
+
 1. Overview
 2. Requirements
 3. High-Level Architecture
@@ -26,7 +27,7 @@ Each document follows a consistent 15-section template:
 ### Streaming & Media
 
 | # | Topic | File |
-|---|-------|------|
+| --- | ------- | ------ |
 | 1 | Hotstar (Live Streaming) | [View](system-design-hotstar.md) |
 | 2 | Netflix (Video Streaming) | [View](system-design-netflix.md) |
 | 3 | YouTube (Video Streaming) | [View](system-design-youtube.md) |
@@ -36,7 +37,7 @@ Each document follows a consistent 15-section template:
 ### Social & Messaging
 
 | # | Topic | File |
-|---|-------|------|
+| --- | ------- | ------ |
 | 1 | Twitter / X | [View](system-design-twitter.md) |
 | 2 | Instagram | [View](system-design-instagram.md) |
 | 3 | LinkedIn | [View](system-design-linkedin.md) |
@@ -45,7 +46,7 @@ Each document follows a consistent 15-section template:
 ### E-Commerce & Booking
 
 | # | Topic | File |
-|---|-------|------|
+| --- | ------- | ------ |
 | 1 | E-Commerce (Amazon) | [View](system-design-ecommerce.md) |
 | 2 | Ticketing (BookMyShow) | [View](system-design-ticketing-system.md) |
 | 3 | IRCTC (Railway Booking) | [View](system-design-irctc.md) |
@@ -56,7 +57,7 @@ Each document follows a consistent 15-section template:
 ### Transportation
 
 | # | Topic | File |
-|---|-------|------|
+| --- | ------- | ------ |
 | 1 | Uber (Ride-Hailing) | [View](system-design-uber.md) |
 | 2 | Metro Ticketing System | [View](system-design-metro-ticketing.md) |
 | 3 | Proximity Service | [View](system-design-proximity-service.md) |
@@ -65,7 +66,7 @@ Each document follows a consistent 15-section template:
 ### Infrastructure
 
 | # | Topic | File |
-|---|-------|------|
+| --- | ------- | ------ |
 | 1 | Rate Limiter | [View](system-design-rate-limiter.md) |
 | 2 | URL Shortener (bit.ly) | [View](system-design-url-shortener.md) |
 | 3 | Web Crawler | [View](system-design-web-crawler.md) |
@@ -107,7 +108,7 @@ Each document follows a consistent 15-section template:
 Every document includes infrastructure recommendations at three scale levels:
 
 | Tier | Users | Focus |
-|------|-------|-------|
+| ------ | ------- | ------- |
 | **Tier 1** | 1K - 10K | MVP / Prototype |
 | **Tier 2** | 10K - 1M | Growth Phase |
 | **Tier 3** | 1M - 10M+ | Global Scale |
@@ -117,7 +118,7 @@ Every document includes infrastructure recommendations at three scale levels:
 ## Technology Stack
 
 | Category | Technologies |
-|----------|-------------|
+| ---------- | ------------- |
 | **Databases** | PostgreSQL, MongoDB, Cassandra, DynamoDB, Redis, Elasticsearch, Neo4j |
 | **Message Queues** | Kafka, RabbitMQ, Redis Streams |
 | **Caching** | Redis, Memcached |
@@ -134,7 +135,7 @@ Every document includes infrastructure recommendations at three scale levels:
 ## Key Algorithms Implemented (JavaScript)
 
 | Algorithm | File | Use Case |
-|-----------|------|----------|
+| ----------- | ------ | ---------- |
 | Haversine Distance | food-delivery | Driver proximity calculation |
 | Token Bucket | rate-limiter | API rate limiting |
 | Base62 Encoding | url-shortener, pastebin | Short URL generation |
@@ -161,7 +162,7 @@ Every document includes infrastructure recommendations at three scale levels:
 ## Key Techniques & Patterns Used
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Consistent Hashing | Distributed key distribution | distributed-cache, key-value-store, rate-limiter |
 | Redis Caching | In-memory data store for hot data | All systems |
 | SOLID Principles | Single Responsibility, Open/Closed, etc. | All microservices |
@@ -201,6 +202,7 @@ Every document includes infrastructure recommendations at three scale levels:
 ## Contributing
 
 To add a new system design document:
+
 1. Create `system-design-<topic>.md`
 2. Follow the 15-section template
 3. Include executable JavaScript in LLD section

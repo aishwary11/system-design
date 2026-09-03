@@ -5,6 +5,7 @@
 A metro transit ticketing system supporting smart cards, QR code tickets, fare calculation, and real-time passenger tracking.
 
 ### Key Numbers
+
 - 10M+ daily passengers
 - 500+ metro stations
 - 1M+ smart card transactions per day
@@ -12,11 +13,10 @@ A metro transit ticketing system supporting smart cards, QR code tickets, fare c
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Tap NFC/QR at entry gate
 - Tap at exit to deduct fare
 - Calculate fare by distance
@@ -24,6 +24,7 @@ A metro transit ticketing system supporting smart cards, QR code tickets, fare c
 - Real-time train schedules
 
 ### Non-Functional Requirements
+
 - Latency: Gate < 500ms
 - Throughput: 100K+ taps/sec
 - Availability: 99.99% uptime
@@ -31,8 +32,6 @@ A metro transit ticketing system supporting smart cards, QR code tickets, fare c
 - Scale: 10M+ passengers, 500+ stations
 
 ---
-
-
 
 ---
 
@@ -66,29 +65,35 @@ flowchart TB
 5. Kafka events: entry, exit, fare - Reconciliation pipeline
 6. Analytics: peak hours, station traffic, revenue reports
 7. Dynamic pricing: peak vs off-peak fare adjustment
+
 ## Microservices
 
 ### 1. Ticket Service
+
 - **Responsibility**: Ticket generation, validation, QR code/NFC handling
 - **Tech**: Go
 - **DB**: PostgreSQL (tickets), Redis (validation cache)
 
 ### 2. Fare Service
+
 - **Responsibility**: Fare calculation, zone-based pricing, daily caps
 - **Tech**: Go
 - **DB**: PostgreSQL (fare rules), Redis (cached fares)
 
 ### 3. Card Service
+
 - **Responsibility**: Smart card management, balance tracking, recharging
 - **Tech**: Java / Go
 - **DB**: PostgreSQL (card accounts)
 
 ### 4. Gate Controller Service
+
 - **Responsibility**: Entry/exit validation, anti-passback, real-time status
 - **Tech**: Go (embedded systems)
 - **DB**: Redis (real-time validation)
 
 ### 5. Settlement Service
+
 - **Responsibility**: Daily settlement, revenue sharing, reconciliation
 - **Tech**: Java
 - **DB**: PostgreSQL (settlement records)
@@ -156,7 +161,7 @@ CREATE TABLE stations (
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Cache** | Redis (single) |
@@ -165,7 +170,7 @@ CREATE TABLE stations (
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (10-20 containers) |
 | **Database** | PostgreSQL (read replicas) |
 | **Cache** | Redis Cluster (6 nodes) |
@@ -174,7 +179,7 @@ CREATE TABLE stations (
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (100+ pods) |
 | **Database** | PostgreSQL (sharded) + Cassandra |
 | **Cache** | Redis Cluster (30+ nodes) |
@@ -185,34 +190,37 @@ CREATE TABLE stations (
 ## Key Design Decisions
 
 ### 1. Why Redis for Gate Validation?
+
 - Sub-millisecond reads (< 10ms required)
 - Gate must open in < 500ms
 - DB fallback for cold cards
 
 ### 2. Why Zone-Based Pricing?
+
 - Simple to implement and understand
 - Easy to adjust prices per zone
 - Daily caps prevent overcharging
 
 ### 3. Why Anti-Passback?
+
 - Prevents card sharing
 - Ensures accurate passenger counting
 - Required for revenue integrity
 
 ### 4. Why QR Codes + NFC?
+
 - QR codes: Cheaper hardware, works with phones
 - NFC: Faster, works with smart cards
 - Both: Redundancy for reliability
 
 ---
 
-
 ---
 
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | NFC gate reader offline | Passengers cannot tap in/out | Offline mode: cache balance locally, sync when back online |
 | Anti-passback state corrupted | Wrong fare charged, stuck passengers | Manual override by station staff + state reconciliation |
 | Redis cache failure | Balance check slow, gates delay | Fallback to PostgreSQL with connection pooling |
@@ -220,11 +228,10 @@ CREATE TABLE stations (
 | Kafka consumer lag | Analytics dashboard stale | Auto-scale consumers + alert on lag > threshold |
 | Wallet balance race condition | Double-spend possible | Distributed lock + idempotency key on transactions |
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | Gate Controllers | 500x edge devices | $25,000 |
 | NFC Readers | 1000x hardware | $50,000 (amortized) |
 | API Servers | 10x c5.xlarge | $1,400 |
@@ -233,14 +240,14 @@ CREATE TABLE stations (
 | Kafka Cluster | 6x kafka.m5.large | $2,400 |
 | QR Code Service | 3x c5.large | $420 |
 | Real-time Displays | 500x screens | $15,000 (amortized) |
-| **Total** |  | **~$103,820/month** |
+| **Total** | | **~$103,820/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | NFC | QR Code | Both | NFC for speed, QR for backup |
 | Redis state | Database state | Redis | Sub-ms anti-passback checks |
 | Zone fare | Distance fare | Zone fare | Simpler, more predictable |
@@ -252,7 +259,7 @@ CREATE TABLE stations (
 ## Key Metrics to Monitor
 
 | Metric | Description | Target |
-|--------|-------------|--------|
+| -------- | ------------- | -------- |
 | **Gate Tap Latency** | Time from tap to gate open | < 500ms |
 | **Fare Calculation Time** | Time to compute fare | < 50ms |
 | **Anti-Passback Violations** | Invalid taps blocked | Monitored |
@@ -265,6 +272,7 @@ CREATE TABLE stations (
 | **Offline Mode Usage** | Taps processed while offline | Monitored |
 
 ## Deep Dive Prompts
+
 - How does anti-passback prevent fare evasion?
 - How do you handle offline gate operation during network outages?
 - How does zone-based fare calculation work?
@@ -272,11 +280,10 @@ CREATE TABLE stations (
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | QR Code Generation | Applied in this system | Architecture + LLD |
 | Tap-In/Tap-Out State Machine | Applied in this system | Architecture + LLD |
 | Fare Calculation by Distance | Applied in this system | Architecture + LLD |
@@ -367,7 +374,6 @@ class DailyCap {
     // 3. If cap reached, remaining rides are free
 
 ```
-
 
 ---
 

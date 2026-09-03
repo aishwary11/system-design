@@ -5,6 +5,7 @@
 A photo/video sharing social platform supporting content upload, following, personalized feed, stories, likes/comments, and search for 2B+ users.
 
 ### Key Numbers
+
 - 2B+ monthly active users
 - 500M+ daily stories
 - 100M+ photos/videos uploaded daily
@@ -12,11 +13,10 @@ A photo/video sharing social platform supporting content upload, following, pers
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Post photos/videos with filters
 - Follow users and see feed
 - Like, comment, share posts
@@ -24,6 +24,7 @@ A photo/video sharing social platform supporting content upload, following, pers
 - Stories that disappear after 24h
 
 ### Non-Functional Requirements
+
 - Latency: Feed < 200ms, upload < 5s
 - Throughput: 100M+ photos/day
 - Availability: 99.99% uptime
@@ -60,31 +61,37 @@ flowchart TB
 5. Explore: ML-based discovery from engagement signals
 6. Kafka events: impressions, likes, shares - Analytics
 7. Notifications: likes, comments, follows, story views
+
 ## Microservices
 
 ### 1. Auth Service
+
 - **Responsibility**: Registration, login, OAuth, JWT tokens
 - **Tech**: Node.js / Go
 - **DB**: PostgreSQL
 
 ### 2. User Service
+
 - **Responsibility**: Profiles, follow/unfollow, block list, settings
 - **Tech**: Go
 - **DB**: PostgreSQL (users), Redis (follow graph cache)
 
 ### 3. Post Service
+
 - **Responsibility**: Create/delete posts, caption, tags, location, comments, likes
 - **Tech**: Go / Java
 - **DB**: Cassandra (posts, write-heavy)
 - **Cache**: Redis (post metadata)
 
 ### 4. Feed Service (Critical)
+
 - **Responsibility**: Home feed generation, timeline assembly, ranking
 - **Tech**: Java / Go
 - **DB**: Redis (pre-computed feeds), Cassandra (feed metadata)
 - **Pattern**: Fan-out-on-write for regular users, fan-out-on-read for celebrities
 
 ### 5. Media Service
+
 - **Responsibility**: Image/video upload, resizing, thumbnail generation, CDN upload
 - **Tech**: Go / Python
 - **Storage**: S3 (original + processed)
@@ -92,17 +99,20 @@ flowchart TB
 - **CDN**: CloudFront / Akamai
 
 ### 6. Search Service
+
 - **Responsibility**: User search, hashtag search, location search
 - **Tech**: Python / Go
 - **DB**: Elasticsearch
 
 ### 7. Notification Service
+
 - **Responsibility**: Push notifications, in-app notifications, email digests
 - **Tech**: Node.js
 - **Queue**: Kafka consumer
 - **Channels**: FCM, APNs, SendGrid
 
 ### 8. Stories Service
+
 - **Responsibility**: Story upload, story feed, story views, story reactions
 - **Tech**: Go
 - **DB**: Cassandra (stories, time-series)
@@ -190,7 +200,7 @@ SETEX post:{post_id} 3600 {json}
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2-4 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Cache** | Redis ElastiCache |
@@ -201,7 +211,7 @@ SETEX post:{post_id} 3600 {json}
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (20-50 containers) |
 | **Database** | PostgreSQL + Cassandra (3 nodes) |
 | **Cache** | Redis Cluster (12 nodes) |
@@ -213,7 +223,7 @@ SETEX post:{post_id} 3600 {json}
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (500+ pods) |
 | **Database** | Cassandra (50+ nodes) + PostgreSQL (sharded) |
 | **Cache** | Redis Cluster (30+ nodes) |
@@ -227,25 +237,30 @@ SETEX post:{post_id} 3600 {json}
 ## Key Design Decisions
 
 ### 1. Fan-Out-on-Write vs Fan-Out-on-Read
+
 - **Write**: Pre-compute feed when post is created (fast reads, slow writes)
 - **Read**: Generate feed when user opens app (slow reads, fast writes)
 - **Hybrid**: Fan-out-on-write for regular users, on-read for celebrities (1M+ followers)
 
 ### 2. Why Cassandra for Posts?
+
 - Write-heavy workload (100M+ posts/day)
 - Time-series access pattern (recent posts first)
 - Partition by user_id for even distribution
 
 ### 3. Why Redis for Feed Cache?
+
 - Sub-millisecond reads for feed loading
 - List data structure is perfect for timeline
 - TTL for automatic feed expiry
 
 ### 4. Image Processing Pipeline
+
 - Upload to S3 -> Lambda triggers resize -> Generate thumbnails (150x150, 640x640, 1080x1080) -> Upload to CDN
 - Use blurhash for placeholder images
 
 ### 5. Like Count Strategy
+
 - Use Redis INCR for real-time count (eventual consistency OK)
 - Periodically sync to Cassandra for durability
 - Use SET for unique like tracking (prevent double likes)
@@ -255,7 +270,7 @@ SETEX post:{post_id} 3600 {json}
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Feed slow for celebrity | Followers see delay | Fan-out-on-read for celebrities, pre-computed cache |
 | Media CDN failure | Cannot load images | Multi-CDN failover, lazy loading |
 | Story expiration storm | Millions expire simultaneously | Distributed expiration with jitter |
@@ -265,11 +280,10 @@ SETEX post:{post_id} 3600 {json}
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 50x c5.xlarge | $7,000 |
 | PostgreSQL | db.r5.2xlarge + 8 replicas | $10,400 |
 | Redis Cluster | 24x cache.r5.xlarge | $19,200 |
@@ -279,26 +293,26 @@ SETEX post:{post_id} 3600 {json}
 | Feed Service | 30x c5.xlarge | $4,200 |
 | ML Ranking | GPU instances | $5,000 |
 | Stories Service | 10x c5.xlarge | $1,400 |
-| **Total** |  | **~$79,500/month** |
+| **Total** | | **~$79,500/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Redis GEO | PostGIS | Redis GEO | Sub-ms location queries for nearby posts |
 | Fan-out-on-write | Fan-out-on-read | Hybrid | Normal users: push, celebrities: pull |
 | Sharp | ImageMagick | Sharp | 5x faster image processing in Node.js |
 | PostgreSQL | MongoDB | PostgreSQL | ACID compliance for user data |
-| Kafka | RabbitMQ | Kafka | Higher throughput for post events |s |
+| Kafka | RabbitMQ | Kafka | Higher throughput for post events | s |
 
 ---
 
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Feed load time (p99) | < 500ms |
 | Image upload success rate | > 99.9% |
 | Feed generation latency | < 200ms |
@@ -312,10 +326,10 @@ SETEX post:{post_id} 3600 {json}
 
 ---
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How does fan-out-on-write work for accounts with 100M+ followers?
 - How does EdgeRank algorithm rank posts in the feed?
 - How do you handle 100M+ photo uploads per day?
@@ -323,11 +337,10 @@ SETEX post:{post_id} 3600 {json}
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Fan-out on Write/Read Hybrid | Applied in this system | Architecture + LLD |
 | CDN for Media | Applied in this system | Architecture + LLD |
 | Redis Feed Cache | Applied in this system | Architecture + LLD |

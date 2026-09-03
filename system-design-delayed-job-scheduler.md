@@ -5,6 +5,7 @@
 A distributed delayed job scheduling system (similar to Sidekiq, Celery, Bull, or Hangfire) that allows applications to enqueue jobs to be executed after a specified delay or at a specific time. The system must handle millions of delayed jobs with precise timing, at-least-once delivery, retry logic, and dead letter handling.
 
 ### Key Numbers
+
 - 10M+ delayed jobs per day
 - 100K+ jobs scheduled per minute at peak
 - Sub-second scheduling accuracy
@@ -13,11 +14,10 @@ A distributed delayed job scheduling system (similar to Sidekiq, Celery, Bull, o
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Schedule jobs at specific time (cron)
 - Delay jobs by N minutes/hours/days
 - One-time and recurring jobs
@@ -25,6 +25,7 @@ A distributed delayed job scheduling system (similar to Sidekiq, Celery, Bull, o
 - Cancel pending jobs
 
 ### Non-Functional Requirements
+
 - Latency: Scheduling < 200ms
 - Throughput: 1M+ jobs/day
 - Availability: 99.99% uptime
@@ -32,8 +33,6 @@ A distributed delayed job scheduling system (similar to Sidekiq, Celery, Bull, o
 - Scale: 100M+ pending jobs
 
 ---
-
-
 
 ---
 
@@ -67,51 +66,60 @@ flowchart TB
 5. Worker Pool consumes from Kafka, executes job, updates status
 6. Failed jobs retry with exponential backoff (1s, 2s, 4s...)
 7. After max retries -> Dead Letter Queue for manual inspection
+
 ## Microservices
 
 ### 1. Job API Service
+
 - **Responsibility**: Job creation/cancellation API, validation, idempotency check, job metadata enrichment, priority assignment
 - **Tech**: Go / Node.js
 - **DB**: PostgreSQL (job definitions, validation rules)
 - **Cache**: Redis (idempotency keys, dedup)
 
 ### 2. Scheduler Service (Delayed Queue)
+
 - **Responsibility**: Poll delayed jobs, move due jobs to ready queue, handle scheduling precision, timezone-aware scheduling, recurring job management
 - **Tech**: Go
 - **DB**: Redis (sorted sets for delayed queue), PostgreSQL (recurring job configs)
 - **Pattern**: Redis ZSET with score = execution timestamp
 
 ### 3. Queue Manager Service
+
 - **Responsibility**: Route jobs to appropriate worker pools, priority queuing, backpressure handling, queue health monitoring, rate limiting per queue
 - **Tech**: Go / Java
 - **Queue**: Kafka (durable, ordered delivery)
 - **DB**: PostgreSQL (queue configurations)
 
 ### 4. Worker Pool Service
+
 - **Responsibility**: Execute jobs, report status, handle timeouts, resource management, concurrency control, job isolation (sandboxed execution)
 - **Tech**: Go / Python / Node.js (polyglot workers)
 - **DB**: Redis (worker heartbeats, job locks)
 - **Monitor**: Prometheus metrics per worker
 
 ### 5. Retry Manager Service
+
 - **Responsibility**: Exponential backoff scheduling, retry policy management, circuit breaker patterns, failure classification, max retry enforcement
 - **Tech**: Go
 - **DB**: PostgreSQL (retry policies, failure history)
 - **Queue**: Redis (retry delayed queue)
 
 ### 6. Dead Letter Handler Service
+
 - **Responsibility**: Capture permanently failed jobs, manual requeue interface, failure analysis, alerting on DLQ growth, job forensic debugging
 - **Tech**: Go / Python
 - **DB**: PostgreSQL (dead letter store with full context)
 - **Cache**: Redis (DLQ size counters)
 
 ### 7. Monitoring & Dashboard Service
+
 - **Responsibility**: Real-time queue metrics, job execution history, latency tracking, throughput dashboards, SLA monitoring, alerting
 - **Tech**: Python (analytics) + React (dashboard)
 - **DB**: ClickHouse (metrics), PostgreSQL (dashboards)
 - **Pipeline**: Kafka -> Flink -> ClickHouse
 
 ### 8. Admin & Management Service
+
 - **Responsibility**: Queue management, worker management, job search/filter, bulk operations, job replay, configuration management, RBAC
 - **Tech**: Go (API) + React (admin UI)
 - **DB**: PostgreSQL
@@ -296,7 +304,7 @@ GROUP BY hour, queue, status;
 **Goal**: Simple delayed job execution for a small application
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | 1-2 EC2 instances (t3.medium) | Low throughput |
 | **Database** | PostgreSQL RDS (db.t3.small) | All job data in one DB |
 | **Queue** | Redis (single instance) | ZSET for delayed queue |
@@ -311,6 +319,7 @@ GROUP BY hour, queue, status;
 **Cost**: ~$50-150/month
 
 **Scheduler Loop (Simplified)**:
+
 ```
 while true:
     due_jobs = ZRANGEBYSCORE(delayed:queue, 0, NOW())
@@ -327,7 +336,7 @@ while true:
 **Goal**: Multi-queue, priority support, reliable delivery
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | ECS (10-30 containers) | Auto-scaling workers |
 | **Database** | PostgreSQL RDS (r5.xlarge, 2 read replicas) | Read scaling for dashboard |
 | **Queue** | Redis Cluster (6 nodes) | High-throughput delayed queue |
@@ -345,6 +354,7 @@ while true:
 **Cost**: ~$2K-8K/month
 
 **Key Patterns**:
+
 - **Lease-based execution**: Worker acquires lease (Redis SETNX), extends during execution, releases on complete
 - **Leader election**: Only one scheduler instance polls the ZSET (using Redis or etcd)
 - **Backpressure**: Workers report queue depth, auto-scale based on lag
@@ -356,7 +366,7 @@ while true:
 **Goal**: 100M+ jobs/day, multi-tenant, 99.99% delivery, sub-second scheduling
 
 | Component | Choice | Why |
-|-----------|--------|-----|
+| ----------- | -------- | ----- |
 | **Compute** | Multi-region K8s (500+ pods) | Global auto-scaling |
 | **Database** | PostgreSQL (Citus sharding) + Aurora Global | Global consistency |
 | **Queue** | Redis Cluster (30+ nodes, multi-DC) | Sub-ms scheduling |
@@ -376,6 +386,7 @@ while true:
 **Cost**: ~$50K-200K/month
 
 **Key Patterns**:
+
 - **Multi-region scheduling**: Jobs sharded by tenant_id across regions
 - **Conflict resolution**: Two-phase commit for cross-region job state
 - **Exactly-once delivery**: Idempotency keys + dedup in Redis
@@ -387,12 +398,14 @@ while true:
 ## Key Design Decisions
 
 ### 1. Why Redis ZSET for Delayed Queue?
+
 - O(log N) insertion and range query
 - Atomic ZRANGEBYSCORE + ZREM for precise scheduling
 - Sub-millisecond latency for polling
 - Natural fit: score = timestamp, member = job_id
 
 ### 2. Why Separate Scheduler from Workers?
+
 - Scheduler is CPU-bound (polling, moving jobs)
 - Workers are I/O-bou
 
@@ -402,18 +415,21 @@ while true:
 - Scheduler failure does not stop running jobs
 
 ### 3. Why Kafka for Job Delivery?
+
 - Durable, ordered delivery (no job loss)
 - Consumer groups for parallel processing
 - Replay capability (reprocess failed jobs)
 - Backpressure handling (lag-based scaling)
 
 ### 4. Why Lease-Based Execution?
+
 - Prevents duplicate execution on worker crash
 - Automatic timeout if worker dies (lease expires)
 - Heartbeat extension for long-running jobs
 - Clean handoff between workers
 
 ### 5. Why Idempotency Keys?
+
 - Network retries can create duplicate job submissions
 - Idempotency ensures exactly-once processing
 - TTL-based dedup window (24 hours)
@@ -424,7 +440,7 @@ while true:
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Scheduler node crash | Jobs missed | Leader election, job lease TTL, failover |
 | Job execution timeout | Worker hangs | Worker heartbeat, lease expiration, re-queue |
 | Queue backlog spike | Jobs delayed hours | Auto-scale workers, priority queuing |
@@ -434,11 +450,10 @@ while true:
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | Scheduler Nodes | 5x c5.xlarge | $700 |
 | Worker Pool | 50x c5.xlarge | $7,000 |
 | PostgreSQL | db.r5.xlarge + 3 replicas | $4,800 |
@@ -446,14 +461,14 @@ while true:
 | Kafka (job queue) | 6x kafka.m5.large | $2,400 |
 | Dead Letter Queue | 3x c5.large | $420 |
 | Monitoring | Prometheus + Grafana | $500 |
-| **Total** |  | **~$20,620/month** |
+| **Total** | | **~$20,620/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Redis Sorted Set | Database table | Redis Sorted Set | O(log N) time-based queries |
 | Lease-based | Lock-based | Lease-based | Auto-expiry prevents deadlocks |
 | Exponential backoff | Fixed retry | Exponential backoff | Prevents thundering herd |
@@ -465,7 +480,7 @@ while true:
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Scheduling latency (due -> ready) | < 500ms |
 | Job execution latency (ready -> complete) | < 5s (varies by job type) |
 | Delivery guarantee | > 99.99% |
@@ -480,6 +495,7 @@ while true:
 ---
 
 ## Deep Dive Prompts
+
 - How does time-bucketed dispatch work for millions of jobs?
 - How do you prevent duplicate job execution with leases?
 - How do you handle exponential backoff for failed jobs?
@@ -487,11 +503,10 @@ while true:
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Priority Queue (Binary Heap) | Applied in this system | Architecture + LLD |
 | Lease-Based Worker Coordination | Applied in this system | Architecture + LLD |
 | Jitter for Anti-Thundering Herd | Applied in this system | Architecture + LLD |
@@ -633,6 +648,7 @@ class CronParser {
   }
 }
 ```
+
 ### Core Scheduling Algorithm
 
 ```text
@@ -706,7 +722,6 @@ console.log('Scheduler created with poll interval:', scheduler.pollInterval + 'm
 console.log('Batch size:', scheduler.batchSize);
 ```
 
-
 ---
 
 ### Job Lifecycle State Machine
@@ -772,6 +787,7 @@ Attempt 8: 24 hours (final)
 ```
 
 **Backoff Formula**: `delay = min(base * 2^attempt + jitter, max_delay)`
+
 - Base: 30 seconds
 - Jitter: random 0-5 seconds (prevent thundering herd)
 - Max delay: 24 hours
@@ -799,6 +815,7 @@ Clients -> Job Acceptor -> HBase (durable store)
 ```
 
 **5 Modules**:
+
 1. **Job Acceptor**: Accepts/validates requests, persists to HBase, assigns random Partition ID
 2. **Job Extractor**: Runs HBase scans to find eligible jobs (scheduled_time <= now), pushes to RMQ
 3. **Leader Elector**: Uses Zookeeper for leader election, assigns partitions to workers round-robin
@@ -806,30 +823,35 @@ Clients -> Job Acceptor -> HBase (durable store)
 5. **RMQ Consumer**: Makes HTTP callbacks to clients, handles retries per client config
 
 **Why HBase?**:
+
 - Sparse, distributed, persistent, multidimensional sorted map
 - Efficient scans by RowKey range (time-based queries)
 - Handles billions of rows with sub-millisecond lookups
 - Perfect for time-bucketed job extraction
 
 **Why RabbitMQ over Kafka?**:
+
 - HTTP callbacks are time-consuming, need decoupling
 - RMQ provides durable message storage until consumed
 - Consumer acknowledgments ensure at-least-once delivery
 - Better for request-response patterns (vs Kafka's log-based model)
 
 **Rate Limiting**:
+
 - Guava RateLimiter caps publish rate to ~100K msg/sec
 - Prevents fast-producer, slow-consumer problem
 - Dynamic pausing when queue size exceeds threshold
 - Prevents RMQ cluster instability from backlog
 
 **Partitioning**:
+
 - Each job gets a random Partition ID (e.g., 64 partitions)
 - Leader assigns partitions to workers round-robin
 - Ensures no two workers scan the same partition (no double execution)
 - Allows 64 concurrent scans for higher throughput
 
 **Relevancy Window**:
+
 - Clients can set time limits for callback relevance
 - Expired callbacks are not sent even when system recovers
 - Prevents stale job execution after system downtime
@@ -840,11 +862,13 @@ Clients -> Job Acceptor -> HBase (durable store)
 **Key Insight**: "The midnight herd, not the daily average, is what sizes the design."
 
 **Peak vs Average Problem**:
+
 - 1B jobs/day = 12K jobs/sec average
 - 18% due at midnight = 180M jobs in 60 seconds = 3M jobs/sec peak
 - Peak is 259x the average - design for peak, not average
 
 **5 Fixes for Naive Cron Process**:
+
 1. **Durable Store + Stateless Dispatchers**: No single point of failure
 2. **Time-Partitioned Due Index**: One bucket per minute, read only current + lookback
 3. **Atomic Lease Claim**: Conditional SET with expiry, only one dispatcher wins
@@ -852,12 +876,14 @@ Clients -> Job Acceptor -> HBase (durable store)
 5. **Retries + Backoff + Dead Letter Queue**: Handle transient and permanent failures
 
 **Effectively-Once Execution**:
+
 - True exactly-once is impossible in distributed systems
 - Achieve via at-least-once delivery + idempotent effect
 - Job carries caller's idempotency key
 - Repeat execution checks key before doing anything (safe no-op)
 
 **Lease Duration Tradeoff**:
+
 - Too short: healthy-but-slow workers get false reclaims
 - Too long: crashed dispatcher delays recovery
 - Sweet spot: 30-60 seconds with heartbeat renewal
@@ -876,6 +902,5 @@ Clients -> Job Acceptor -> HBase (durable store)
 - [ ] Use durable storage (HBase/PostgreSQL) not just Redis
 
 ---
-
 
 ---

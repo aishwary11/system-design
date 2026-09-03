@@ -5,6 +5,7 @@
 A ticket booking and hotel reservation platform supporting search, availability checking, seat/room selection, reservation with concurrency control, payment processing, and booking confirmation.
 
 ### Key Numbers
+
 - 50M+ monthly active users
 - 100K+ events/shows
 - Peak: 50K+ concurrent users during flash sales
@@ -12,11 +13,10 @@ A ticket booking and hotel reservation platform supporting search, availability 
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Search/browse events
 - Select seats from seating chart
 - Reserve seats during checkout
@@ -24,6 +24,7 @@ A ticket booking and hotel reservation platform supporting search, availability 
 - Transfer or resell tickets
 
 ### Non-Functional Requirements
+
 - Latency: Seat select < 200ms
 - Throughput: 100K tickets/min flash sales
 - Availability: 99.99% uptime
@@ -31,8 +32,6 @@ A ticket booking and hotel reservation platform supporting search, availability 
 - Scale: 10M+ events, 500M+ tickets/year
 
 ---
-
-
 
 ---
 
@@ -66,43 +65,51 @@ flowchart TB
 5. On payment success - Kafka event - Ticket generation (QR code)
 6. Reservation expired - TTL auto-releases seat back to pool
 7. Notifications: booking confirmation, reminder, cancellation
+
 ## Microservices
 
 ### 1. Auth Service
+
 - **Responsibility**: User registration, login, OAuth, role-based access
 - **Tech**: Node.js / Go
 - **DB**: PostgreSQL
 
 ### 2. Search Service
+
 - **Responsibility**: Event/show search, autocomplete, filters (date, genre, location)
 - **Tech**: Go / Python
 - **DB**: Elasticsearch
 - **Cache**: Redis (popular searches)
 
 ### 3. Inventory Service (Critical)
+
 - **Responsibility**: Seat/room availability, real-time inventory, pricing, hold management
 - **Tech**: Java / Go
 - **DB**: PostgreSQL (ACID), Redis (distributed locks)
 - **Pattern**: Optimistic locking with version numbers
 
 ### 4. Booking Service (Critical)
+
 - **Responsibility**: Seat selection, temporary hold, booking lifecycle, cancellation
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (ACID transactions)
 - **Cache**: Redis (seat locks with TTL)
 
 ### 5. Payment Service
+
 - **Responsibility**: Payment processing, refunds, invoice generation
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (financial records)
 - **Integrations**: Stripe, Razorpay, Google Pay
 
 ### 6. Notification Service
+
 - **Responsibility**: Booking confirmation, reminders, cancellation alerts
 - **Tech**: Node.js
 - **Channels**: Email (SendGrid), SMS (Twilio), Push (FCM)
 
 ### 7. Analytics Service
+
 - **Responsibility**: Sales dashboards, demand forecasting, revenue reporting
 - **Tech**: Python
 - **DB**: ClickHouse, S3 (data lake)
@@ -198,7 +205,7 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS (single) |
 | **Cache** | Redis (single) |
@@ -209,7 +216,7 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (10-30 containers) |
 | **Database** | PostgreSQL (r5.xlarge, 3 read replicas) |
 | **Cache** | Redis Cluster (6 nodes) |
@@ -220,7 +227,7 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (200+ pods) |
 | **Database** | PostgreSQL (Citus sharding) |
 | **Cache** | Redis Cluster (20+ nodes) |
@@ -233,26 +240,31 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ## Key Design Decisions
 
 ### 1. Why Optimistic Locking Over Pessimistic?
+
 - Pessimistic locks block other users (bad for flash sales)
 - Optimistic: try update, retry on version conflict
 - Works well when conflicts are rare (< 5%)
 
 ### 2. Why Temporary Hold (Reservation)?
+
 - Seat held for 10 minutes during checkout
 - Prevents seat from being sold to another user
 - Auto-release if payment not completed (TTL expiry)
 
 ### 3. Why Event-Sourcing for Inventory?
+
 - Every inventory change is an immutable event
 - Easy to audit and replay
 - Handles flash sale spikes gracefully
 
 ### 4. Flash Sale Strategy
+
 - Queue users during high demand
 - Show queue position and estimated wait time
 - Use virtual waiting room (CloudFlare Waiting Room)
 
 ### 5. Payment-Booking Consistency
+
 - Saga pattern: Reserve -> Pay -> Confirm
 - If payment fails, release hold
 - Idempotency key prevents double charges
@@ -262,7 +274,7 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Seat double-sell flash sale | Two users get same seat | Optimistic locking, seat hold TTL |
 | Payment timeout after hold | Seat locked but payment fails | Hold timer 10 min, auto release |
 | Bot scalper bypasses rate limit | Bots buy all tickets | CAPTCHA, device fingerprinting |
@@ -272,11 +284,10 @@ SETEX reservation:{reservation_id} 600 {json_data}
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 15x c5.xlarge | $2,100 |
 | PostgreSQL | db.r5.2xlarge + 3 replicas | $6,000 |
 | Redis Cluster | 6x cache.r5.xlarge | $4,800 |
@@ -286,14 +297,14 @@ SETEX reservation:{reservation_id} 600 {json_data}
 | QR Code Service | 3x c5.large | $420 |
 | Seat Hold Service | 5x c5.xlarge | $700 |
 | CDN | 10TB/month transfer | $800 |
-| **Total** |  | **~$21,420/month** |
+| **Total** | | **~$21,420/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Optimistic locking | Pessimistic locking | Optimistic | Better concurrency for seat selection |
 | Redis queue | Database queue | Redis | Sub-ms queue operations |
 | HMAC QR | UUID QR | HMAC QR | Tamper-proof, verifiable offline |
@@ -305,7 +316,7 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Seat lock acquisition time | < 100ms |
 | Booking success rate | > 99.9% |
 | Double-booking incidents | 0 |
@@ -319,10 +330,10 @@ SETEX reservation:{reservation_id} 600 {json_data}
 
 ---
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How do you prevent double-booking for seats during flash sales?
 - How does the virtual waiting room handle 100x traffic spikes?
 - How do you generate tamper-proof QR codes for tickets?
@@ -330,11 +341,10 @@ SETEX reservation:{reservation_id} 600 {json_data}
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Seat Locking with Redis | Applied in this system | Architecture + LLD |
 | Optimistic Concurrency Control | Applied in this system | Architecture + LLD |
 | Payment Saga Pattern | Applied in this system | Architecture + LLD |

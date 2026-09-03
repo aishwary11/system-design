@@ -5,6 +5,7 @@
 A real-time video conferencing platform supporting video/audio calls, screen sharing, chat, and recording for millions of concurrent users.
 
 ### Key Numbers
+
 - 300M+ daily meeting participants
 - 10M+ concurrent meeting participants
 - 100K+ concurrent meetings
@@ -12,11 +13,10 @@ A real-time video conferencing platform supporting video/audio calls, screen sha
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Create/join meetings with IDs
 - Screen sharing and real-time chat
 - Record meetings to cloud
@@ -24,6 +24,7 @@ A real-time video conferencing platform supporting video/audio calls, screen sha
 - Virtual backgrounds and noise cancel
 
 ### Non-Functional Requirements
+
 - Latency: Audio/video < 150ms
 - Throughput: 10M+ concurrent participants
 - Availability: 99.99% uptime
@@ -31,8 +32,6 @@ A real-time video conferencing platform supporting video/audio calls, screen sha
 - Scale: 300M+ daily participants
 
 ---
-
-
 
 ---
 
@@ -66,32 +65,38 @@ flowchart TB
 5. Adaptive bitrate: quality based on participant bandwidth
 6. Chat + reactions: WebSocket channel alongside media
 7. Analytics: call quality (jitter, packet loss), attendance
+
 ## Microservices
 
 ### 1. Signaling Service
+
 - **Responsibility**: WebRTC signaling, SDP exchange, ICE candidate handling
 - **Tech**: Go / Node.js
 - **Protocol**: WebSocket
 - **DB**: Redis (meeting state)
 
 ### 2. Media Server (SFU)
+
 - **Responsibility**: Selective Forwarding Unit, video/audio routing, simulcast
 - **Tech**: Go / Rust (Janus/mediasoup)
 - **Protocol**: WebRTC (UDP)
 - **Pattern**: SFU (not MCU) for scalability
 
 ### 3. TURN/STUN Service
+
 - **Responsibility**: NAT traversal, relay for peers behind firewalls
 - **Tech**: Coturn (open source)
 - **Protocol**: TURN/STUN (UDP/TCP)
 
 ### 4. Recording Service
+
 - **Responsibility**: Meeting recording, cloud storage, processing
 - **Tech**: Go / FFmpeg
 - **Storage**: S3
 - **Queue**: Kafka (recording jobs)
 
 ### 5. Chat Service
+
 - **Responsibility**: In-meeting chat, file sharing
 - **Tech**: Go
 - **DB**: Cassandra (messages), Redis (presence)
@@ -163,7 +168,7 @@ LTRIM room:123:chat 0 99
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2-4 EC2 (c5.2xlarge) |
 | **Media Server** | Single Janus instance |
 | **Signaling** | Node.js (WebSocket) |
@@ -174,7 +179,7 @@ LTRIM room:123:chat 0 99
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (20-50 containers) |
 | **Media Server** | Janus cluster (10+ nodes) |
 | **Signaling** | Go WebSocket cluster |
@@ -185,7 +190,7 @@ LTRIM room:123:chat 0 99
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (500+ pods) |
 | **Media Server** | Custom SFU (500+ nodes) |
 | **Signaling** | Go WebSocket (100+ nodes) |
@@ -198,35 +203,38 @@ LTRIM room:123:chat 0 99
 ## Key Design Decisions
 
 ### 1. SFU vs MCU
+
 - **SFU**: Forward without transcoding (scalable, lower latency)
 - **MCU**: Transcode and mix (centralized, higher latency)
 - **Choice**: SFU for scalability (Zoom uses SFU + selective subscription)
 
 ### 2. Why WebRTC?
+
 - Browser-native (no plugins)
 - Sub-100ms latency
 - Built-in encryption (DTLS-SRTP)
 - Adaptive bitrate (simulcast)
 
 ### 3. Why Separate TURN Servers?
+
 - TURN is CPU-intensive (relay traffic)
 - Isolate from application servers
 - Scale independently based on NAT traversal needs
 
 ### 4. Recording Architecture
+
 - Don't record on client (quality issues)
 - Record on SFU server (mix audio, select video)
 - Async processing pipeline (Kafka → FFmpeg → S3)
 
 ---
 
-
 ---
 
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | SFU node overload | Quality degrades for all | Auto-scale SFU, quality degradation not disconnect |
 | WebRTC connection failure | Cannot join meeting | STUN/TURN fallback, audio-only fallback |
 | Recording pipeline failure | Meeting not recorded | Dual recording paths, local backup |
@@ -236,11 +244,10 @@ LTRIM room:123:chat 0 99
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | SFU Cluster | 100x c5.xlarge | $14,000 |
 | Turn Servers | 20x c5.xlarge | $2,800 |
 | Recording Storage | 100TB S3 | $2,300 |
@@ -249,14 +256,14 @@ LTRIM room:123:chat 0 99
 | Redis Cluster | 6x cache.r5.xlarge | $4,800 |
 | CDN | 20TB/month transfer | $1,600 |
 | ML Backgrounds | GPU instances | $3,000 |
-| **Total** |  | **~$35,300/month** |
+| **Total** | | **~$35,300/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | SFU | Mesh | SFU | Scales to 100+ participants |
 | Janus | Mediasoup | Janus | More mature, better documentation |
 | WebSocket | HTTP polling | WebSocket | True real-time signaling |
@@ -268,7 +275,7 @@ LTRIM room:123:chat 0 99
 ## Key Metrics to Monitor
 
 | Metric | Description | Target |
-|--------|-------------|--------|
+| -------- | ------------- | -------- |
 | **End-to-End Latency** | Audio/video delivery delay | < 150ms |
 | **Packet Loss Rate** | Network packet loss during call | < 1% |
 | **Jitter** | Variation in packet arrival time | < 30ms |
@@ -280,10 +287,10 @@ LTRIM room:123:chat 0 99
 | **Participant Drop Rate** | Unexpected disconnections | < 1% |
 | **SFU CPU Usage** | CPU utilization on forwarding servers | < 70% |
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How does WebRTC SFU scale to 100+ participants?
 - How do you handle screen sharing with high bandwidth?
 - How does echo cancellation work in real-time?
@@ -291,11 +298,10 @@ LTRIM room:123:chat 0 99
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | WebRTC Peer-to-Peer | Applied in this system | Architecture + LLD |
 | SFU/MCU Architecture | Applied in this system | Architecture + LLD |
 | STUN/TURN Servers | Applied in this system | Architecture + LLD |

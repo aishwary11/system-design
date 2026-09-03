@@ -5,6 +5,7 @@
 A ride-hailing platform supporting real-time location tracking, driver matching, trip management, fare calculation, and payment for millions of riders and drivers.
 
 ### Key Numbers
+
 - 130M+ monthly active users
 - 5M+ active drivers
 - 23M+ trips per day
@@ -12,11 +13,10 @@ A ride-hailing platform supporting real-time location tracking, driver matching,
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Request ride by entering destination
 - Match nearest driver within 2-min ETA
 - Real-time GPS tracking during trip
@@ -24,6 +24,7 @@ A ride-hailing platform supporting real-time location tracking, driver matching,
 - Rate driver and provide feedback
 
 ### Non-Functional Requirements
+
 - Latency: Driver match < 10s, GPS < 5s
 - Throughput: 20M+ daily rides
 - Availability: 99.99% uptime
@@ -60,9 +61,11 @@ flowchart TB
 5. Location Service ingests GPS from driver every 4s via Kafka
 6. Trip completes - Payment Service charges rider, pays driver
 7. Kafka events feed Analytics + real-time surge pricing updates
+
 ## Microservices
 
 ### 1. Location Service (Critical)
+
 - **Responsibility**: Ingest driver locations every 4s, store in geospatial index, update real-time positions
 - **Tech**: Go
 - **DB**: Redis GEO (hot), PostGIS (persistent)
@@ -70,36 +73,42 @@ flowchart TB
 - **Pattern**: Write-behind, adaptive frequency
 
 ### 2. Trip Service
+
 - **Responsibility**: Ride requests, trip lifecycle, trip tracking, trip history
 - **Tech**: Java / Go
 - **DB**: PostgreSQL (trips), Redis (active trips)
 - **Pattern**: Trip state machine
 
 ### 3. Matching Service (Critical)
+
 - **Responsibility**: Find nearby drivers, send ride requests, handle acceptance/timeout, driver ranking
 - **Tech**: Go
 - **DB**: Redis (driver availability), PostgreSQL (matching history)
 - **Pattern**: Fan-out to nearby drivers, first-accept wins
 
 ### 4. Fare Service
+
 - **Responsibility**: Dynamic pricing (surge), ETA calculation, fare estimation, toll calculation
 - **Tech**: Python / Go
 - **DB**: Redis (surge multipliers), PostgreSQL (fare rules)
 - **External**: Google Maps API / OSRM
 
 ### 5. Payment Service
+
 - **Responsibility**: Payment processing, split payments, tips, refunds, driver payouts
 - **Tech**: Java / Spring Boot
 - **DB**: PostgreSQL (financial records)
 - **Integrations**: Stripe, PayPal, Razorpay
 
 ### 6. Notification Service
+
 - **Responsibility**: Ride updates, driver arrived, trip completed, promotions
 - **Tech**: Node.js
 - **Channels**: FCM, APNs, SMS (Twilio)
 - **Queue**: Kafka consumer
 
 ### 7. ETA Service
+
 - **Responsibility**: Real-time ETA calculation, route optimization, traffic-aware routing
 - **Tech**: Go / Python
 - **External**: Google Maps Distance Matrix, OSRM
@@ -172,7 +181,7 @@ CREATE TABLE payments (
 ### Tier 1: 1K - 10K Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2-4 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS |
 | **Cache** | Redis (single) |
@@ -183,7 +192,7 @@ CREATE TABLE payments (
 ### Tier 2: 10K - 1M Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (20-50 containers) |
 | **Database** | PostgreSQL (read replicas) + PostGIS |
 | **Cache** | Redis Cluster (12 nodes) |
@@ -194,7 +203,7 @@ CREATE TABLE payments (
 ### Tier 3: 1M - 10M+ Users
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (500+ pods) |
 | **Database** | PostgreSQL (sharded) + PostGIS |
 | **Cache** | Redis Cluster (30+ nodes) |
@@ -208,29 +217,34 @@ CREATE TABLE payments (
 ## Key Design Decisions
 
 ### 1. Why Kafka for Location Stream?
+
 - 5M drivers x 1 update/4s = 1.25M events/sec
 - Kafka handles this throughput easily
 - Enables replay for analytics
 - Decouples location ingestion from matching
 
 ### 2. Driver Matching Algorithm
+
 - Find N nearest available drivers (Redis GEORADIUS)
 - Send ride request to nearest driver first
 - If declined/timeout (30s), send to next nearest
 - First driver to accept wins (distributed lock)
 
 ### 3. Surge Pricing
+
 - Real-time demand/supply ratio per zone
 - If demand > supply: increase multiplier
 - Update every 2 minutes
 - Stored in Redis for fast reads
 
 ### 4. Why Redis for Active Trips?
+
 - Sub-millisecond reads for real-time tracking
 - TTL for automatic trip expiry
 - GEO for driver location queries
 
 ### 5. Trip State Machine
+
 ```
 requested -> accepted -> arrived -> in_progress -> completed
     |           |                        |
@@ -243,7 +257,7 @@ requested -> accepted -> arrived -> in_progress -> completed
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Redis GEO corruption | Wrong driver matches | Rebuild from PostgreSQL, PostGIS fallback |
 | Surge pricing stuck | Pricing at 3x for hours | Price cap with TTL, manual override |
 | GPS delayed > 30s | Inaccurate location | Kalman filter, ETA recalc |
@@ -253,11 +267,10 @@ requested -> accepted -> arrived -> in_progress -> completed
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | API Servers | 50x c5.xlarge | $7,000 |
 | PostgreSQL | db.r5.2xlarge + 5 replicas | $8,000 |
 | Redis GEO Cluster | 12x cache.r5.xlarge | $9,600 |
@@ -267,14 +280,14 @@ requested -> accepted -> arrived -> in_progress -> completed
 | Machine Learning | GPU instances for surge | $3,000 |
 | CDN | 50TB/month transfer | $4,000 |
 | Monitoring | Prometheus + Grafana + PagerDuty | $2,000 |
-| **Total** |  | **~$59,700/month** |
+| **Total** | | **~$59,700/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Redis GEO | PostGIS | Redis GEO | Sub-ms queries vs 10-50ms for PostGIS |
 | Custom matching | Google OR-Tools | Custom matching | Domain-specific optimization for ride matching |
 | Kafka | SQS | Kafka | Higher throughput for 1M+ location updates/second |
@@ -286,7 +299,7 @@ requested -> accepted -> arrived -> in_progress -> completed
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Driver matching latency | < 5s |
 | Location update throughput | 1.25M+ events/sec |
 | ETA accuracy | +/- 2 minutes |
@@ -300,10 +313,10 @@ requested -> accepted -> arrived -> in_progress -> completed
 
 ---
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How do you match a rider to the nearest driver within 10 seconds?
 - How does surge pricing work in real-time across thousands of geo-cells?
 - How do you handle 5M+ drivers sending GPS coordinates every 4 seconds?
@@ -311,11 +324,10 @@ requested -> accepted -> arrived -> in_progress -> completed
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Surge Pricing Algorithm | Applied in this system | Architecture + LLD |
 | ETA Calculation (Graph) | Applied in this system | Architecture + LLD |
 | Real-time Location Tracking | Applied in this system | Architecture + LLD |
@@ -439,6 +451,7 @@ class SurgePricing {
   }
 }
 ```
+
     // // Step 3: Traffic multiplier
         // "free_flow": 1.0,
         // "light": 1.2,
@@ -446,6 +459,7 @@ class SurgePricing {
     return routes;
   }
 }
+
 ```
 
 ### Algorithm 3
@@ -464,7 +478,9 @@ function calculateETA(pickup, dropoff, trafficMultiplier = 1.0) {
   return Math.round(travelMinutes);
 }
 ```
+
         // // Side effects
+
 ```
 ```text
 class TripStateMachine {

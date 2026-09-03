@@ -5,6 +5,7 @@
 A real-time messaging platform supporting one-to-one and group messaging, media sharing, online/offline status, delivery receipts, and push notifications for 2B+ users globally.
 
 ### Key Numbers
+
 - 2B+ registered users
 - 100B+ messages per day
 - 500M+ daily active users
@@ -12,11 +13,10 @@ A real-time messaging platform supporting one-to-one and group messaging, media 
 
 ---
 
-
-
 ## Requirements
 
 ### Functional Requirements
+
 - Send/receive text, images, videos, docs
 - Group chats up to 1024 members
 - Online/offline status and typing indicators
@@ -24,6 +24,7 @@ A real-time messaging platform supporting one-to-one and group messaging, media 
 - Multi-device delivery
 
 ### Non-Functional Requirements
+
 - Latency: Message delivery < 200ms
 - Throughput: 100B+ messages/day
 - Availability: 99.99% uptime
@@ -60,49 +61,58 @@ flowchart TB
 5. Media messages - upload to S3, generate thumbnail, share CDN URL
 6. Group message - fan-out to all group members conversation queues
 7. Kafka events - Analytics (message volume, DAU) + Media transcoding
+
 ## Microservices
 
 ### 1. Auth Service
+
 - **Responsibility**: Registration (phone OTP), JWT tokens, device management
 - **Tech**: Go / Node.js
 - **DB**: PostgreSQL
 - **Cache**: Redis (sessions)
 
 ### 2. WebSocket Gateway (Chat Connection Service)
+
 - **Responsibility**: Persistent WebSocket connections, message routing, heartbeats, reconnection handling
 - **Tech**: Go / Erlang (Elixir)
 - **Protocol**: WebSocket (primary), XMPP fallback
 - **Cache**: Redis (user -> server mapping)
 
 ### 3. Chat Service
+
 - **Responsibility**: One-to-one messaging, group messaging, message ordering, delivery receipts
 - **Tech**: Go
 - **DB**: Cassandra (message store, write-heavy)
 - **Cache**: Redis (recent messages, unread counts)
 
 ### 4. User Service
+
 - **Responsibility**: Profile management, contact sync, online/offline/presence status, block list
 - **Tech**: Go
 - **DB**: PostgreSQL (profiles), Redis (presence)
 
 ### 5. Group Service
+
 - **Responsibility**: Group creation, member management, admin roles, group settings
 - **Tech**: Go
 - **DB**: PostgreSQL (group metadata), Redis (group membership cache)
 
 ### 6. Media Service
+
 - **Responsibility**: Image/video/audio upload, thumbnail generation, compression, CDN upload
 - **Tech**: Node.js / Go
 - **Storage**: S3 (media files)
 - **Queue**: Kafka (async processing)
 
 ### 7. Notification Service
+
 - **Responsibility**: Push notifications (FCM/APNs), offline message delivery, notification batching
 - **Tech**: Node.js
 - **Queue**: Kafka consumer
 - **DB**: PostgreSQL (notification preferences)
 
 ### 8. Delivery Service
+
 - **Responsibility**: Message delivery tracking, retry logic, offline queue, read receipts
 - **Tech**: Go
 - **DB**: Redis (delivery state), Cassandra (delivery log)
@@ -198,7 +208,7 @@ LTRIM recent:{conversation_id} 0 99
 ### Tier 1: 1K - 10K Users (MVP)
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | 2-4 EC2 (t3.large) |
 | **Database** | PostgreSQL RDS (single) |
 | **Cache** | Redis (single) |
@@ -210,7 +220,7 @@ LTRIM recent:{conversation_id} 0 99
 ### Tier 2: 10K - 1M Users (Growth)
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | ECS (20-50 containers) |
 | **Database** | PostgreSQL (read replicas) + Cassandra (3 nodes) |
 | **Cache** | Redis Cluster (6 nodes) |
@@ -223,7 +233,7 @@ LTRIM recent:{conversation_id} 0 99
 ### Tier 3: 1M - 10M+ Users (Global)
 
 | Component | Choice |
-|-----------|--------|
+| ----------- | -------- |
 | **Compute** | Multi-region K8s (500+ pods) |
 | **Database** | Cassandra (50+ nodes, multi-DC) |
 | **Cache** | Redis Cluster (30+ nodes per region) |
@@ -238,28 +248,33 @@ LTRIM recent:{conversation_id} 0 99
 ## Key Design Decisions
 
 ### 1. Why Cassandra for Messages?
+
 - Write-heavy workload (100B+ messages/day)
 - Time-series access pattern (recent messages first)
 - Linear horizontal scalability
 - Multi-DC replication for global availability
 
 ### 2. Why WebSocket over HTTP Polling?
+
 - Bi-directional real-time communication
 - Lower latency (no HTTP overhead per message)
 - Lower bandwidth (no headers per message)
 - Server can push messages instantly
 
 ### 3. Why Fan-Out on Group (Not Per User)?
+
 - Group messages go to group, not individual users
 - Reduces write amplification for group chats
 - Each member pulls from group conversation
 
 ### 4. Message Ordering
+
 - Use server-generated timestamp (TIMEUUID)
 - Per-conversation ordering (not global)
 - Handle clock skew with logical timestamps
 
 ### 5. Why Not Kafka for Message Delivery?
+
 - Kafka is for async processing, not real-time delivery
 - WebSocket Gateway handles real-time delivery directly
 - Kafka used for: notifications, analytics, media processing
@@ -269,7 +284,7 @@ LTRIM recent:{conversation_id} 0 99
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | WebSocket gateway crash | 1M users disconnected | Graceful shutdown, auto-reconnect, session migration |
 | Message queue backlog | Messages delayed > 30s | Auto-scale workers, priority for 1:1 over group |
 | E2E key exchange failure | New device cannot decrypt | Key backup to cloud, multi-device sync |
@@ -279,11 +294,10 @@ LTRIM recent:{conversation_id} 0 99
 
 ---
 
-
 ## Cost Estimation (1M Users)
 
 | Component | Specification | Monthly Cost |
-|-----------|--------------|-------------|
+| ----------- | -------------- | ------------- |
 | WebSocket Gateway | 100x c5.xlarge | $14,000 |
 | PostgreSQL | db.r5.2xlarge + 10 replicas | $12,000 |
 | Redis Cluster | 24x cache.r5.xlarge | $19,200 |
@@ -293,14 +307,14 @@ LTRIM recent:{conversation_id} 0 99
 | Presence Service | 20x c5.xlarge | $2,800 |
 | E2E Key Server | 5x c5.large | $700 |
 | Signal Protocol | Open source | $0 |
-| **Total** |  | **~$62,100/month** |
+| **Total** | | **~$62,100/month** |
 
 ---
 
 ## Trade-off Analysis
 
 | Approach A | Approach B | Winner | Reason |
-|-----------|-----------|--------|--------|
+| ----------- | ----------- | -------- | -------- |
 | Cassandra | PostgreSQL | Cassandra | Write-heavy workload, linear scalability |
 | Signal Protocol | MLS | Signal Protocol | Battle-tested, better mobile support |
 | Redis presence | Database presence | Redis | Sub-ms heartbeat updates |
@@ -312,7 +326,7 @@ LTRIM recent:{conversation_id} 0 99
 ## Key Metrics to Monitor
 
 | Metric | Target |
-|--------|--------|
+| -------- | -------- |
 | Message delivery latency | < 200ms |
 | WebSocket connection success | > 99.9% |
 | Message delivery success rate | > 99.99% |
@@ -326,10 +340,10 @@ LTRIM recent:{conversation_id} 0 99
 
 ---
 
-
 ---
 
 ## Deep Dive Prompts
+
 - How does end-to-end encryption work with the Signal Protocol?
 - How do you handle message ordering across multiple devices?
 - How does presence system work for billions of users?
@@ -337,11 +351,10 @@ LTRIM recent:{conversation_id} 0 99
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | WebSocket for Real-time | Applied in this system | Architecture + LLD |
 | Message Queue (Kafka) | Applied in this system | Architecture + LLD |
 | Redis for Presence | Applied in this system | Architecture + LLD |
@@ -439,9 +452,11 @@ function handle_typing_event(user_id, conversation_id, is_typing) {
     }
 }
 ```
+
 ### Real-World Insights (2024-2025)
 
 ### WhatsApp Architecture Facts
+
 - Uses Ejabberd (XMPP) server written in Erlang
 - Erlang handles 2M connections per server
 - Signal Protocol for end-to-end encryption
@@ -449,14 +464,16 @@ function handle_typing_event(user_id, conversation_id, is_typing) {
 - Fallback: XMPP -> HTTP long-polling for unreliable networks
 
 ### Key Patterns
+
 - **Connection Affinity**: User is always routed to same WebSocket server via consistent hashing
 - **Offline Queue**: Messages queued in Cassandra, delivered when user reconnects
 - **Message Dedup**: Client-generated message ID prevents duplicates on retry
 - **Receipt Chain**: Sent -> Delivered -> Read (each is a separate message)
 
 ### Scale Numbers
+
 | Metric | Value |
-|--------|-------|
+| -------- | ------- |
 | Messages/day | 100B+ |
 | Peak messages/sec | 10M+ |
 | Connections per server | 2M (Erlang) |

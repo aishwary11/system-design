@@ -5,6 +5,7 @@
 High-performance in-memory caching layer providing sub-millisecond reads for frequently accessed data, reducing database load.
 
 ### Key Numbers
+
 - 1M+ ops/sec per node
 - <1ms P99 latency
 - 99.999% availability
@@ -15,6 +16,7 @@ High-performance in-memory caching layer providing sub-millisecond reads for fre
 ## Requirements
 
 ### Functional Requirements
+
 - Put(key, value, ttl) - Store key-value pair with expiration
 - Get(key) - Retrieve value by key
 - Delete(key) - Remove key-value pair
@@ -22,6 +24,7 @@ High-performance in-memory caching layer providing sub-millisecond reads for fre
 - Support distributed sharding across nodes
 
 ### Non-Functional Requirements
+
 - Latency: < 1ms P99
 - Throughput: 1M+ ops/sec per node
 - Availability: 99.999%
@@ -57,10 +60,11 @@ flowchart TB
 5. Write-through or write-behind based on consistency needs
 6. Replication: async to replicas for fault tolerance
 7. Eviction: LRU/LFU when memory limit reached
+
 ## Microservices
 
 | Service | Responsibility | Tech Stack | Pattern |
-|---------|---------------|------------|---------|
+| --------- | --------------- | ------------ | --------- |
 | Cache Proxy | Client routing, command parsing | Go/C++ | Connection Pool |
 | Replication Mgr | Primary-replica sync, failover | Go | Raft Consensus |
 | Eviction Manager | LRU/LFU/TTL eviction | C++ | Background Worker |
@@ -96,15 +100,18 @@ CREATE TABLE cache_stats (
 ## Scaling Tiers
 
 ### 1K - 10K Users ($500/mo)
+
 - Single Redis instance, 2GB RAM
 - In-process cache (Node LRU)
 
 ### 10K - 1M Users ($20K/mo)
+
 - Redis cluster (3 nodes), 32GB total
 - Read replicas for read-heavy workloads
 - Consistent hashing for key distribution
 
 ### 1M - 10M+ Users ($800K/mo)
+
 - 100+ Redis instances, TB-scale
 - Multi-region replication
 - Custom eviction policies per workload
@@ -115,7 +122,7 @@ CREATE TABLE cache_stats (
 ## Key Design Decisions
 
 | Decision | Choice | Why |
-|----------|--------|-----|
+| ---------- | -------- | ----- |
 | Eviction Policy | LRU + TTL hybrid | LRU for hot data, TTL for temporary entries |
 | Sharding | Consistent Hashing | Minimizes key movement on node add/remove |
 | Replication | Primary-Replica with Raft | Strong consistency for writes, read scaling |
@@ -127,7 +134,7 @@ CREATE TABLE cache_stats (
 ## Failure Modes & Recovery
 
 | Failure | Impact | Recovery |
-|---------|--------|----------|
+| --------- | -------- | ---------- |
 | Primary node crash | Write unavailability | Promote replica to primary via Raft |
 | Replica lag | Stale reads | Increase replication priority, rebuild from primary |
 | Memory exhaustion | Eviction storms | Scale horizontally, adjust eviction policy |
@@ -139,7 +146,7 @@ CREATE TABLE cache_stats (
 ## Cost Estimation (1M Users)
 
 | Component | Monthly Cost |
-|-----------|-------------|
+| ----------- | ------------- |
 | Redis cluster (100GB) | $4,000 |
 | Compute (proxy + replication) | $3,000 |
 | Monitoring (Prometheus) | $500 |
@@ -151,7 +158,7 @@ CREATE TABLE cache_stats (
 ## Trade-off Analysis
 
 | Trade-off | Option A | Option B | Winner | Why |
-|-----------|----------|----------|--------|-----|
+| ----------- | ---------- | ---------- | -------- | ----- |
 | Eviction | LRU | LFU | LRU | Simpler, better for most workloads |
 | Persistence | RDB only | RDB + AOF | RDB + AOF | Durability + performance balance |
 | Sharding | Consistent Hash | Range-based | Consistent Hash | Better load distribution |
@@ -162,7 +169,7 @@ CREATE TABLE cache_stats (
 ## Key Metrics to Monitor
 
 | Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
+| -------- | -------- | ----------------- |
 | Hit Rate | > 95% | < 85% |
 | P99 Latency | < 1ms | > 5ms |
 | Memory Usage | < 80% | > 90% |
@@ -182,11 +189,10 @@ CREATE TABLE cache_stats (
 
 ---
 
-
 ## Key Techniques & Patterns
 
 | Technique | Description | Used In |
-|-----------|-------------|----------|
+| ----------- | ------------- | ---------- |
 | Consistent Hashing | Applied in this system | Architecture + LLD |
 | LRU/LFU Eviction | Applied in this system | Architecture + LLD |
 | Cache Stampede Prevention | Applied in this system | Architecture + LLD |
