@@ -39,7 +39,8 @@ A food delivery platform supporting restaurant discovery, order placement, real-
 
 ```mermaid
 flowchart TB
-    clients["Customer App / Restaurant App / Delivery App"] --> lb["Load Balancer (ALB)"]
+    clients["Customer App / Restaurant App / Delivery App"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer (ALB)"]
     lb --> svc0["Order Svc"]
     lb --> svc1["Delivery Svc"]
     lb --> svc2["Restaurant Svc"]
@@ -50,6 +51,16 @@ flowchart TB
     stream --> worker0["ETA Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Notifications"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

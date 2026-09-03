@@ -41,17 +41,28 @@ Music streaming service with personalized playlists, podcast hosting, social fea
 
 ```mermaid
 flowchart TB
-    clients["Mobile App / Web App / Desktop"] --> lb["Load Balancer (ALB)"]
+    clients["Mobile App / Web App / Desktop"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer (ALB)"]
     lb --> svc0["Player Service"]
     lb --> svc1["Catalog Svc"]
     lb --> svc2["Recommendation"]
     svc0 --> store0["CDN + Redis"]
-    svc1 --> store1["PostgreSQL + Elast"]
+    svc1 --> store1["PostgreSQL + Elasticsearch"]
     svc2 --> store2["ML + PostgreSQL"]
     store0 --> stream["Kafka"]
     stream --> worker0["Encoding Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Playlist Workers"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

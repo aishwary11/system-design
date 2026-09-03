@@ -44,17 +44,28 @@ Google Maps is a comprehensive mapping and navigation service providing map rend
 
 ```mermaid
 flowchart TB
-    clients["Mobile App / Web App"] --> lb["Load Balancer"]
+    clients["Mobile App / Web App"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
     lb --> svc0["Map Svc"]
     lb --> svc1["Routing Svc"]
     lb --> svc2["Traffic Svc"]
-    svc0 --> store0["S2 Geometry + Redi"]
-    svc1 --> store1["Dijkstra + A* + OS"]
+    svc0 --> store0["S2 Geometry + Redis"]
+    svc1 --> store1["Dijkstra + A* + OSRM"]
     svc2 --> store2["ML + Kafka"]
     store0 --> stream["Kafka"]
     stream --> worker0["Map Tile Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Traffic Workers"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

@@ -39,7 +39,8 @@ A ride-hailing platform supporting real-time location tracking, driver matching,
 
 ```mermaid
 flowchart TB
-    clients["Rider App / Driver App"] --> lb["Load Balancer (ALB / NGINX)"]
+    clients["Rider App / Driver App"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer (ALB / NGINX)"]
     lb --> svc0["Ride Service"]
     lb --> svc1["Matching Service"]
     lb --> svc2["Fare Service"]
@@ -50,6 +51,16 @@ flowchart TB
     stream --> worker0["Trip Analytics"]
     stream --> worker1["ETA Workers"]
     stream --> worker2["Notifications"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

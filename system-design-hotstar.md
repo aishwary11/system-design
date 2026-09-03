@@ -43,17 +43,28 @@ Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporti
 
 ```mermaid
 flowchart TB
-    clients["Mobile / Web / Smart TV"] --> lb["Load Balancer"]
+    clients["Mobile / Web / Smart TV"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
     lb --> svc0["Streaming Svc"]
     lb --> svc1["Live Score Svc"]
     lb --> svc2["Chat Svc"]
     svc0 --> store0["FFmpeg + CDN"]
-    svc1 --> store1["Redis (live scores"]
+    svc1 --> store1["Redis (live scores)"]
     svc2 --> store2["WebSocket + Redis"]
     store0 --> stream["Kafka"]
     stream --> worker0["Transcoding Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Notifications"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow
@@ -589,7 +600,7 @@ class StreamManager {
       desktop: { 1000: '480p', 3000: '1080p', 6000: '4K' }
     };
     const map = bitrateMap[deviceType] || bitrateMap.mobile;
-    
+
     for (const [threshold, quality] of Object.entries(map).reverse()) {
       if (bandwidth >= parseInt(threshold)) return quality;
     }
@@ -599,7 +610,7 @@ class StreamManager {
   async startTranscoding(streamId) {
     // Trigger transcoding pipeline for all resolutions
     const resolutions = ['360p', '480p', '720p', '1080p'];
-    const tasks = resolutions.map(res => 
+    const tasks = resolutions.map(res =>
       this.cdn.transcode(streamId, res)
     );
     return Promise.all(tasks);
@@ -633,12 +644,12 @@ class LiveChat {
     const count = await this.r.incr(key);
     await this.r.expire(key, 60);
     if (count > 5) throw new Error('Rate limited');
-    
+
     // Store and broadcast
     const chatMsg = { userId, message, timestamp: Date.now() };
     await this.r.lpush(`chat:stream:${streamId}`, JSON.stringify(chatMsg));
     await this.r.ltrim(`chat:stream:${streamId}`, 0, 999);  // Keep last 1000
-    
+
     // Publish to all subscribers
     await this.pubsub.publish(`stream:${streamId}:chat`, chatMsg);
     return chatMsg;

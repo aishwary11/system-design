@@ -39,7 +39,8 @@ A real-time messaging platform supporting one-to-one and group messaging, media 
 
 ```mermaid
 flowchart TB
-    clients["Mobile / Web / Desktop App"] --> lb["Load Balancer"]
+    clients["Mobile / Web / Desktop App"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
     lb --> svc0["Chat Service"]
     lb --> svc1["Media Service"]
     lb --> svc2["Presence Svc"]
@@ -50,6 +51,16 @@ flowchart TB
     stream --> worker0["Push Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Media Transcoder"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

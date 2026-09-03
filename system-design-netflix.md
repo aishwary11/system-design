@@ -44,17 +44,28 @@ Netflix is the world's leading subscription-based video streaming platform with 
 
 ```mermaid
 flowchart TB
-    clients["Mobile / Web / Smart TV"] --> lb["Load Balancer (ALB / Zuul)"]
+    clients["Mobile / Web / Smart TV"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer (ALB / Zuul)"]
     lb --> svc0["Content Svc"]
     lb --> svc1["Recommendation Svc"]
     lb --> svc2["Streaming Svc"]
-    svc0 --> store0["Cassandra + EVCach"]
+    svc0 --> store0["Cassandra + EVCache"]
     svc1 --> store1["PostgreSQL + Spark"]
-    svc2 --> store2["FFmpeg + Open Conn"]
+    svc2 --> store2["FFmpeg + Open Connect"]
     store0 --> stream["Kafka"]
     stream --> worker0["Encoding Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Notifications"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow
@@ -565,7 +576,7 @@ class ContentBasedFilter {
       }
       return { ...item, score };
     });
-    
+
     return scored
       .sort((a, b) => b.score - a.score)
       .slice(0, topK);
@@ -592,24 +603,24 @@ function get_recommendations(user_id, top_n=10) {
 ```text
 function netflixABR(bandwidthEstimates, bufferLevel, deviceType) {
   // Netflix ABR: Bandwidth-based + buffer-based hybrid
-  
+
   // Weighted bandwidth estimation
   const weightedBW = bandwidthEstimates.slice(-5).reduce((sum, bw, i) => {
     return sum + bw * (i + 1) / 15;  // Recent samples weighted higher
   }, 0);
-  
+
   // Buffer-based adjustment
   if (bufferLevel < 10) return '360p';
   if (bufferLevel < 20) return '480p';
   if (bufferLevel < 30) return '720p';
-  
+
   // Bandwidth-based selection
   const bitrateMap = {
     'mobile': {1000: '480p', 2500: '720p', 5000: '1080p'},
     'tv': {2500: '720p', 5000: '1080p', 8000: '4K'},
     'web': {1500: '480p', 3000: '720p', 6000: '1080p'}
   };
-  
+
   const map = bitrateMap[deviceType] || bitrateMap['web'];
   for (const [threshold, quality] of Object.entries(map).sort((a, b) => b[0] - a[0])) {
     if (weightedBW >= parseInt(threshold)) return quality;

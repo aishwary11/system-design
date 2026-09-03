@@ -44,17 +44,28 @@ A distributed delayed job scheduling system (similar to Sidekiq, Celery, Bull, o
 
 ```mermaid
 flowchart TB
-    clients["Web App / Mobile App"] --> lb["Load Balancer"]
+    clients["Web App / Mobile App"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
     lb --> svc0["Scheduler Svc"]
     lb --> svc1["Worker Pool"]
     lb --> svc2["Priority Queue"]
     svc0 --> store0["PostgreSQL + Redis"]
     svc1 --> store1["Node.js Workers"]
-    svc2 --> store2["Kafka / Redis Stre"]
+    svc2 --> store2["Kafka / Redis Streams"]
     store0 --> stream["Kafka"]
     stream --> worker0["Retry Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Dead Letter Handler"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

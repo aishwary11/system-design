@@ -37,17 +37,28 @@ Distributed key-value store providing eventually consistent reads/writes with hi
 
 ```mermaid
 flowchart TB
-    clients["Web / Mobile / API Clients"] --> lb["Load Balancer"]
+    clients["Web / Mobile / API Clients"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
     lb --> svc0["KV Store"]
     lb --> svc1["Replication Svc"]
     lb --> svc2["Partition Svc"]
-    svc0 --> store0["Custom Storage Eng"]
+    svc0 --> store0["Custom Storage Engine"]
     svc1 --> store1["Quorum R+W"]
     svc2 --> store2["Consistent Hashing"]
     store0 --> stream["Kafka"]
     stream --> worker0["Compaction Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Anti-entropy Workers"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

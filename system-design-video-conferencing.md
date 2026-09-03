@@ -43,7 +43,8 @@ A real-time video conferencing platform supporting video/audio calls, screen sha
 
 ```mermaid
 flowchart TB
-    clients["Web / Mobile / Desktop App"] --> lb["Load Balancer"]
+    clients["Web / Mobile / Desktop App"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
     lb --> svc0["Signaling Svc"]
     lb --> svc1["Media Server"]
     lb --> svc2["Recording Svc"]
@@ -54,6 +55,16 @@ flowchart TB
     stream --> worker0["Recording Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Notification Workers"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

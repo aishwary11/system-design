@@ -43,17 +43,28 @@ A payment processing platform supporting online payments, refunds, subscriptions
 
 ```mermaid
 flowchart TB
-    clients["Web / Mobile / POS Terminal"] --> lb["Load Balancer"]
+    clients["Web / Mobile / POS Terminal"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
     lb --> svc0["Payment Svc"]
     lb --> svc1["Ledger Service"]
     lb --> svc2["Fraud Svc"]
     svc0 --> store0["PostgreSQL (ACID)"]
-    svc1 --> store1["Double-entry Ledge"]
+    svc1 --> store1["Double-entry Ledger"]
     svc2 --> store2["ML + Redis"]
     store0 --> stream["Kafka"]
     stream --> worker0["Reconciliation Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Fraud Workers"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

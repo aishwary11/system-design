@@ -46,7 +46,8 @@ IRCTC powers one of the world's largest online train ticket booking platforms, s
 
 ```mermaid
 flowchart TB
-    clients["Web / Mobile / POS Kiosk"] --> lb["Load Balancer"]
+    clients["Web / Mobile / POS Kiosk"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
     lb --> svc0["Booking Svc"]
     lb --> svc1["Tatkal Svc"]
     lb --> svc2["PNR Service"]
@@ -57,6 +58,16 @@ flowchart TB
     stream --> worker0["Tatkal Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Notifications"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

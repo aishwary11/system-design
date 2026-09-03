@@ -43,17 +43,28 @@ A geospatial service that finds nearby users, drivers, restaurants, or stores ba
 
 ```mermaid
 flowchart TB
-    clients["Mobile App / Web App"] --> lb["Load Balancer (ALB)"]
+    clients["Mobile App / Web App"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer (ALB)"]
     lb --> svc0["Proximity Svc"]
     lb --> svc1["Venue Service"]
     lb --> svc2["Review Service"]
-    svc0 --> store0["Redis GEO + PostGI"]
+    svc0 --> store0["Redis GEO + PostGIS"]
     svc1 --> store1["PostgreSQL + Redis"]
-    svc2 --> store2["PostgreSQL + Elast"]
+    svc2 --> store2["PostgreSQL + Elasticsearch"]
     store0 --> stream["Kafka"]
     stream --> worker0["Geo Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Notifications"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow
@@ -361,7 +372,7 @@ class GeoService {
     const results = await this.r.georadius(
       'venues:locations', lon, lat, radiusKm, 'km', 'WITHDIST', 'ASC'
     );
-    
+
     const venues = [];
     for (const [venueId, distance] of results.slice(0, 50)) {
       const details = await this.r.hgetall('venue:' + venueId);

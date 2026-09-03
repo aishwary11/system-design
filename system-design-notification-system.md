@@ -42,7 +42,8 @@ A multi-channel notification system supporting push, email, SMS, and in-app noti
 
 ```mermaid
 flowchart TB
-    clients["Web / Mobile / API Clients"] --> lb["Load Balancer (ALB)"]
+    clients["Web / Mobile / API Clients"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer (ALB)"]
     lb --> svc0["Notification Svc"]
     lb --> svc1["Template Svc"]
     lb --> svc2["Preference Svc"]
@@ -53,6 +54,16 @@ flowchart TB
     stream --> worker0["Push Workers"]
     stream --> worker1["Email Workers"]
     stream --> worker2["SMS Workers"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow

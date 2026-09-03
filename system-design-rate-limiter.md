@@ -40,17 +40,28 @@ A distributed rate limiting system that controls API request rates per user/IP/A
 
 ```mermaid
 flowchart TB
-    clients["Web / Mobile / API Clients"] --> lb["Load Balancer"]
+    clients["Web / Mobile / API Clients"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
     lb --> svc0["Rate Limiter"]
     lb --> svc1["Config Service"]
     lb --> svc2["Analytics Svc"]
-    svc0 --> store0["Redis (Sliding Win"]
+    svc0 --> store0["Redis (Sliding Window)"]
     svc1 --> store1["PostgreSQL + Redis"]
     svc2 --> store2["ClickHouse"]
     store0 --> stream["Kafka"]
     stream --> worker0["Config Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Alert Workers"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow
@@ -340,7 +351,7 @@ class SlidingWindowCounter {
   rollWindow() {
     const now = Math.floor(Date.now() / 1000);
     const currentWindow = Math.floor(now / this.windowSize) * this.windowSize;
-    
+
     if (currentWindow > this.windowStart) {
       // Shift windows
       const elapsed = (currentWindow - this.windowStart) / this.windowSize;

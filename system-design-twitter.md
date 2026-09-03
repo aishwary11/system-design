@@ -39,7 +39,8 @@ A social media platform supporting tweet posting, following, personalized timeli
 
 ```mermaid
 flowchart TB
-    clients["Mobile / Web / API Clients"] --> lb["Load Balancer (ALB)"]
+    clients["Mobile / Web / API Clients"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer (ALB)"]
     lb --> svc0["Tweet Service"]
     lb --> svc1["Timeline Svc"]
     lb --> svc2["Search Svc"]
@@ -50,6 +51,16 @@ flowchart TB
     stream --> worker0["Timeline Workers"]
     stream --> worker1["Analytics"]
     stream --> worker2["Notifications"]
+    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
+    svc1 -.-> platform
+    svc2 -.-> platform
+    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
+    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
+    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
+    stream --> dlq["DLQ / Replay / Schema Registry"]
+    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    svc1 -.-> ops
+    svc2 -.-> ops
 ```
 
 ### Data Flow
@@ -397,7 +408,7 @@ class FanoutService {
 
   async fanout(tweet, authorId) {
     const followers = await this.db.getFollowers(authorId);
-    
+
     // Celebrity threshold: skip fan-out, use pull-based timeline
     if (followers.length > 10000) {
       await this.db.flagCelebrityTweet(tweet.id, authorId);
@@ -411,7 +422,7 @@ class FanoutService {
       pipeline.ltrim(`timeline:${followerId}`, 0, 999);  // Keep last 1000
     }
     await pipeline.exec();
-    
+
     return { strategy: 'push', notified: followers.length };
   }
 
@@ -444,7 +455,7 @@ class TrendingService {
     // Get all trending hashtags and score by time-decayed count
     const keys = await this.r.keys('trending:*');
     const scored = [];
-    
+
     for (const key of keys) {
       const count = await this.r.pfcount(key);
       const hashtag = key.split(':')[1];
@@ -453,7 +464,7 @@ class TrendingService {
       const decayedScore = count / (1 + age * 0.1);  // Decay over time
       scored.push({ hashtag, score: decayedScore });
     }
-    
+
     return scored.sort((a, b) => b.score - a.score).slice(0, topK);
   }
 
@@ -492,11 +503,11 @@ class TimelineService {
     // Try cached timeline first (fan-out-on-write)
     const cacheKey = `timeline:${userId}`;
     const tweetIds = await this.r.lrange(cacheKey, cursor || 0, limit - 1);
-    
+
     if (tweetIds.length > 0) {
       return this.db.getTweetsByIds(tweetIds);
     }
-    
+
     // Fallback: fan-out-on-read (celebrity tweets)
     const following = await this.db.getFollowing(userId);
     const tweets = await this.db.getRecentTweets(following, limit);
@@ -522,12 +533,12 @@ class SpamDetector {
     const tweetCount = await this.r.incr(`user:${userId}:tweets:${this.getHour()}`);
     await this.r.expire(`user:${userId}:tweets:${this.getHour()}`, 3600);
     if (tweetCount > 10) return { spam: true, reason: 'rate_limit' };
-    
+
     // Check 2: Duplicate content (exact or near-duplicate)
     const contentHash = this.hashContent(tweetContent);
     const isDuplicate = await this.r.exists(`content:${contentHash}`);
     if (isDuplicate) return { spam: true, reason: 'duplicate_content' };
-    
+
     // Check 3: Suspicious patterns (excessive hashtags, mentions, links)
     const hashtags = (tweetContent.match(/#/g) || []).length;
     const mentions = (tweetContent.match(/@/g) || []).length;
@@ -535,7 +546,7 @@ class SpamDetector {
     if (hashtags > 10 || mentions > 15 || links > 5) {
       return { spam: true, reason: 'suspicious_patterns' };
     }
-    
+
     return { spam: false };
   }
 
