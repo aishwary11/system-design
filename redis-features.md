@@ -8,7 +8,7 @@ A quick-reference catalog of Redis features used in real backends: the data stru
 
 ```mermaid
 flowchart TB
-    clients["Web / Mobile / API Clients"] --> edge["API Gateway / TLS / Auth / Rate Limit"]
+    clients(["Web / Mobile / API Clients"]) --> edge["API Gateway / TLS / Auth / Rate Limit"]
     edge --> lb["Load Balancer"]
     lb --> svc["Application Services - stateless replicas"]
     svc -- "GET / SET / INCR / XADD (cache, locks, rate limits, streams)" --> redis[("Redis - primary cluster")]
@@ -22,6 +22,16 @@ flowchart TB
     redis -. "metrics" .-> ops
     sentinel -. "metrics" .-> ops
     svc -. "mTLS / discovery" .-> platform["Service Mesh / Discovery / Health Checks"]
+
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5
+    class clients actor
+    class edge,lb,svc service
+    class redis,db,repl,disk store
+    class sentinel,ops,platform control
 ```
 
 *Solid = data path, dashed = control/infrastructure. One Redis cluster serves all roles — caching §2, locks §3, rate limits §4, streams/delayed jobs §8–§9; Sentinel/Cluster HA §17, ACL/TLS security §17.

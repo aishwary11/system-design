@@ -8,7 +8,7 @@ A quick-reference catalog of PostgreSQL features used in everyday backends: data
 
 ```mermaid
 flowchart TB
-    clients["Web / Mobile / API Clients"] --> edge["API Gateway / TLS / Auth / Rate Limit"]
+    clients(["Web / Mobile / API Clients"]) --> edge["API Gateway / TLS / Auth / Rate Limit"]
     edge --> lb["Load Balancer"]
     lb --> svc["Application Services - stateless replicas"]
     svc --> cache[("Redis - cache-aside / locks / counters")]
@@ -21,12 +21,23 @@ flowchart TB
     pg -. "triggers + pg_notify" .-> notify["LISTEN / NOTIFY bus"]
     notify -. "invalidate key" .-> cache
     pg -. "logical decoding" .-> cdc["Debezium / CDC pipeline"]
-    cdc --> kafka["Kafka - event bus"]
+    cdc --> kafka{{"Kafka - event bus"}}
     kafka --> consumers["Consumers / Analytics / Search"]
     pg -. "health / metrics" .-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
     kafka -. "lag / metrics" .-> ops
     svc -. "mTLS / discovery" .-> platform["Service Mesh / Discovery / Health Checks"]
     wal -. "point-in-time recovery" .-> pg
+
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5
+    class clients actor
+    class edge,lb,svc,pool,notify,cdc,consumers service
+    class cache,pg,syncRep,asyncRep,wal store
+    class kafka broker
+    class ops,platform control
 ```
 
 *Solid = data path, dashed = infrastructure/control. Which section explains each hop:* cache path §14 & §18 · pooling/failover §16 · WAL archive/PITR §16 · NOTIFY invalidation §5 · CDC pipeline §17 · ops/security §21.

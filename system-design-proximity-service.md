@@ -43,29 +43,71 @@ A geospatial service that finds nearby users, drivers, restaurants, or stores ba
 
 ```mermaid
 flowchart TB
-    clients["Mobile App / Web App"] --> edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
-    edge --> lb["Load Balancer (ALB)"]
-    lb --> svc0["Proximity Svc"]
-    lb --> svc1["Venue Service"]
-    lb --> svc2["Review Service"]
-    svc0 --> store0["Redis GEO + PostGIS"]
-    svc1 --> store1["PostgreSQL + Redis"]
-    svc2 --> store2["PostgreSQL + Elasticsearch"]
-    store0 --> stream["Kafka"]
-    stream --> worker0["Geo Workers"]
-    stream --> worker1["Analytics"]
-    stream --> worker2["Notifications"]
-    svc0 -.-> platform["Service Mesh / mTLS / Discovery / Health Checks"]
-    svc1 -.-> platform
-    svc2 -.-> platform
-    store0 -.-> backup0["Multi-AZ Replica / Backup / Restore"]
-    store1 -.-> backup1["Multi-AZ Replica / Backup / Restore"]
-    store2 -.-> backup2["Multi-AZ Replica / Backup / Restore"]
-    stream --> dlq["DLQ / Replay / Schema Registry"]
-    svc0 -.-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    %% Actors (people)
+    clients(["Mobile App / Web App"])
+
+    %% System boundary - containers owned by the platform
+    subgraph platform["Proximity Service"]
+        edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+        lb["Load Balancer (ALB)"]
+        svc0["Proximity Svc"]
+        svc1["Venue Service"]
+        svc2["Review Service"]
+        store0[("Redis GEO + PostGIS")]
+        store1[("PostgreSQL + Redis")]
+        store2[("PostgreSQL + Elasticsearch")]
+        stream{{"Kafka"}}
+        worker0["Geo Workers"]
+        worker1["Analytics"]
+        worker2["Notifications"]
+        dlq["DLQ / Replay / Schema Registry"]
+    end
+
+    %% Cross-cutting control plane (dashed edges)
+    mesh["Service Mesh / mTLS / Discovery / Health Checks"]
+    ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    backup0["Multi-AZ Replica / Backup / Restore"]
+    backup1["Multi-AZ Replica / Backup / Restore"]
+    backup2["Multi-AZ Replica / Backup / Restore"]
+
+    clients --> edge
+    edge --> lb
+    lb --> svc0
+    lb --> svc1
+    lb --> svc2
+    svc0 --> store0
+    svc1 --> store1
+    svc2 --> store2
+    store0 --> stream
+    store1 --> stream
+    store2 --> stream
+    stream --> worker0
+    stream --> worker1
+    stream --> worker2
+    stream --> dlq
+    svc0 -.-> mesh
+    svc1 -.-> mesh
+    svc2 -.-> mesh
+    svc0 -.-> ops
     svc1 -.-> ops
     svc2 -.-> ops
+    store0 -.-> backup0
+    store1 -.-> backup1
+    store2 -.-> backup2
+
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5
+    class clients actor
+    class edge,lb,svc0,svc1,svc2,worker0,worker1,worker2 service
+    class store0,store1,store2 store
+    class stream broker
+    class dlq,mesh,ops,backup0,backup1,backup2 control
 ```
+
+*Solid = data flow, dashed = control plane / monitoring.*
 
 ### Data Flow
 
