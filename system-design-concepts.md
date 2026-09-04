@@ -42,13 +42,18 @@ The foundational concepts behind every distributed system, each explained in a f
 **Idea:** split the data horizontally across many database nodes; each node ("shard") owns a disjoint subset of rows. Together they serve the whole dataset.
 
 ```mermaid
-flowchart LR
-    clients["Billions of requests"] --> router{"Shard router - hash(user_id) % 4"}
-    router --> s0[("Shard 0 - users_0")]
-    router --> s1[("Shard 1 - users_1")]
-    router --> s2[("Shard 2 - users_2")]
-    router --> s3[("Shard 3 - users_3")]
+flowchart TB
+    clients["Clients"] --> edge["API Gateway / LB"]
+    edge --> app["Application Services"]
+    app --> router{"Sharding layer - hash(user_id) % 4 or directory lookup"}
+    router --> s0[("users_0 - primary + replica")]
+    router --> s1[("users_1 - primary + replica")]
+    router --> s2[("users_2 - primary + replica")]
+    router --> s3[("users_3 - primary + replica")]
+    config["Config / directory - shard map, migrations, rebalancing"] -. "route + rebalance" .-> router
 ```
+
+*Every query must carry the shard key so the router stays stateless; config service supports directory-based sharding and re-sharding (see below).*
 
 Three common strategies:
 
@@ -576,13 +581,20 @@ while (true) {
 **Idea:** keep copies of data on multiple nodes and keep them in sync.
 
 ```mermaid
-flowchart LR
-    app["Application"] -->|"writes"| leader[("Leader")]
-    leader -->|"replication"| f1[("Follower 1 - serves reads")]
-    leader -->|"replication"| f2[("Follower 2 - serves reads")]
-    f1 -.->|"reads"| app
-    f2 -.->|"reads"| app
+flowchart TB
+    writers["Write clients"] --> leader[("Leader - accepts writes")]
+    readers["Read clients"] --> lb["Read LB / routing"]
+    lb --> syncR[("Sync replica - 0 data loss")]
+    lb --> asyncR1[("Async replica - same region")]
+    lb --> asyncR2[("Async replica - DR region")]
+    leader -- "synchronous replication" --> syncR
+    leader -- "asynchronous replication (WAL stream)" --> asyncR1
+    leader -- "asynchronous replication (WAL stream)" --> asyncR2
+    ctrl["Failover controller (Patroni) - fencing tokens"] -. "monitor / promote / fence" .-> leader
+    ctrl -. "promote on failure" .-> asyncR1
 ```
+
+*Solid = data path, dashed = control. Async replicas serve reads and are promoted on failure; fencing tokens stop the old leader from writing after promotion (§14).*
 
 | Topology | Writes | Reads | Example |
 | -------- | ------ | ----- | ------- |

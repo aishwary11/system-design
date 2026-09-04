@@ -7,13 +7,24 @@ A quick-reference catalog of Redis features used in real backends: the data stru
 ### Where Redis sits in a system
 
 ```mermaid
-flowchart LR
-    clients["Clients / Services"] --> app["Application Services"]
-    app -->|"read: cache HIT"| redis[("Redis - hot path")]
-    app -->|"read: cache MISS then fill with TTL"| db[("PostgreSQL - source of truth")]
-    app -->|"writes"| db
-    app -->|"locks, rate limits, streams, delayed jobs"| redis
+flowchart TB
+    clients["Web / Mobile / API Clients"] --> edge["API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
+    lb --> svc["Application Services - stateless replicas"]
+    svc -- "GET / SET / INCR / XADD (cache, locks, rate limits, streams)" --> redis[("Redis - primary cluster")]
+    svc -- "SQL (writes + cache-miss reads)" --> db[("PostgreSQL - source of truth")]
+    redis --> repl[("Redis replicas - read scaling / failover")]
+    sentinel["Sentinel / Cluster - quorum & auto-failover"] -. "monitor + promote" .-> redis
+    sentinel -. "monitor + promote" .-> repl
+    redis -. "RDB snapshots + AOF" .-> disk[("Persistence - durability")]
+    redis -. "keyspace notifications" .-> svc
+    svc -. "metrics" .-> ops["Metrics / Alerts - hit ratio, evictions, latency"]
+    redis -. "metrics" .-> ops
+    sentinel -. "metrics" .-> ops
+    svc -. "mTLS / discovery" .-> platform["Service Mesh / Discovery / Health Checks"]
 ```
+
+*Solid = data path, dashed = control/infrastructure. One Redis cluster serves all roles — caching §2, locks §3, rate limits §4, streams/delayed jobs §8–§9; Sentinel/Cluster HA §17, ACL/TLS security §17.
 
 ---
 
