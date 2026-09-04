@@ -43,7 +43,7 @@ The foundational concepts behind every distributed system, each explained in a f
 
 ```mermaid
 flowchart TB
-    clients["Clients"] --> edge["API Gateway / LB"]
+    clients(["Clients"]) --> edge["API Gateway / LB"]
     edge --> app["Application Services"]
     app --> router{"Sharding layer - hash(user_id) % 4 or directory lookup"}
     router --> s0[("users_0 - primary + replica")]
@@ -51,6 +51,16 @@ flowchart TB
     router --> s2[("users_2 - primary + replica")]
     router --> s3[("users_3 - primary + replica")]
     config["Config / directory - shard map, migrations, rebalancing"] -. "route + rebalance" .-> router
+
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5
+    class clients actor
+    class edge,app,router service
+    class s0,s1,s2,s3 store
+    class config control
 ```
 
 *Every query must carry the shard key so the router stays stateless; config service supports directory-based sharding and re-sharding (see below).*
@@ -586,8 +596,8 @@ while (true) {
 
 ```mermaid
 flowchart TB
-    writers["Write clients"] --> leader[("Leader - accepts writes")]
-    readers["Read clients"] --> lb["Read LB / routing"]
+    writers(["Write clients"]) --> leader[("Leader - accepts writes")]
+    readers(["Read clients"]) --> lb["Read LB / routing"]
     lb --> syncR[("Sync replica - 0 data loss")]
     lb --> asyncR1[("Async replica - same region")]
     lb --> asyncR2[("Async replica - DR region")]
@@ -596,6 +606,16 @@ flowchart TB
     leader -- "asynchronous replication (WAL stream)" --> asyncR2
     ctrl["Failover controller (Patroni) - fencing tokens"] -. "monitor / promote / fence" .-> leader
     ctrl -. "promote on failure" .-> asyncR1
+
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5
+    class writers,readers actor
+    class lb service
+    class leader,syncR,asyncR1,asyncR2 store
+    class ctrl control
 ```
 
 *Solid = data path, dashed = control. Async replicas serve reads and are promoted on failure; fencing tokens stop the old leader from writing after promotion (§14).*

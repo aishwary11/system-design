@@ -5,7 +5,7 @@
 | 🗂️ Documents | 32 system designs | 4 feature guides |
 | --- | --- | --- |
 | **Topics** | Streaming, Social, E-Commerce, Transport, Infra, Productivity & more | Databases · Message queues · Core concepts |
-| **Each doc has** | 15-section template + Mermaid diagram + JS algorithms | Feature catalog + runnable examples + trade-offs |
+| **Each doc has** | 15-section template + C4-style Mermaid diagram + JS algorithms | Feature catalog + runnable examples + trade-offs |
 
 ---
 
@@ -138,6 +138,66 @@ Each **feature guide** follows its own reference layout: a table of contents, a 
 
 ---
 
+### Diagram Style (C4-style Mermaid)
+
+All architecture diagrams use **C4 notation expressed in GitHub-compatible Mermaid flowcharts** — C4's hierarchy and boundaries without Structurizr/PlantUML, which don't render natively in GitHub Markdown.
+
+| Element | Syntax | Meaning |
+| ------- | ------ | ------- |
+| Actor (person) | `([...])` stadium | Humans / external clients |
+| Container | `[...]` rectangle | Services, workers, gateways |
+| Data store | `[(...)]` cylinder | Databases, caches, buckets |
+| Message broker | `{{...}}` hexagon | Kafka / event bus |
+| System boundary | `subgraph platform["Name"]` | Everything the platform owns |
+| Data flow | solid `-->` | Request / event path |
+| Control plane | dashed `-.->` | Mesh, monitoring, backups, DLQ |
+| Colors | `classDef` + `class` | actor=blue, service=orange, store=green, broker=purple, control=gray |
+
+```mermaid
+flowchart TB
+    %% Actors (people)
+    clients(["Web / Mobile / API Clients"])
+
+    %% System boundary - containers owned by the platform
+    subgraph platform["System Name"]
+        edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
+        lb["Load Balancer (ALB)"]
+        svc0["Service A"]
+        svc1["Service B"]
+        store0[("PostgreSQL + Redis")]
+        stream{{"Kafka"}}
+        worker0["Workers"]
+        dlq["DLQ / Replay / Schema Registry"]
+    end
+
+    %% Cross-cutting control plane (dashed edges)
+    mesh["Service Mesh / mTLS / Discovery / Health Checks"]
+    ops["Metrics / Logs / Traces / Alerts / SLOs"]
+
+    clients --> edge
+    edge --> lb
+    lb --> svc0
+    svc0 --> store0
+    store0 --> stream
+    stream --> worker0
+    stream --> dlq
+    svc0 -.-> mesh
+    svc0 -.-> ops
+
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5
+    class clients actor
+    class edge,lb,svc0,svc1,worker0 service
+    class store0 store
+    class stream broker
+    class dlq,mesh,ops control
+```
+
+Every diagram closes with a caption: `*Solid = data flow, dashed = control plane / monitoring.*`
+
 ## 📈 Scaling Tiers
 
 Every system design document includes infrastructure recommendations at three scale levels:
@@ -243,7 +303,7 @@ Executable JavaScript implementations of the algorithms used across the designs:
 
 To add a new document:
 
-1. **System design**: create `system-design-<topic>.md`, follow the 15-section template, include executable JavaScript in the LLD section, add a Mermaid architecture diagram, and add the topic to this README.
+1. **System design**: create `system-design-<topic>.md`, follow the 15-section template, include executable JavaScript in the LLD section, add a C4-style Mermaid architecture diagram ([Diagram Style](#diagram-style-c4-style-mermaid)), and add the topic to this README.
 2. **Feature guide**: create `<technology>-features.md` (e.g. `mongodb-features.md`), follow the catalog layout used by the PostgreSQL/Redis/Kafka guides (TOC → feature sections with examples → takeaways → related docs), and add it to the *Technology Feature Guides* table.
 3. Verify the Markdown structure and code examples locally.
 
