@@ -79,6 +79,7 @@ flowchart TB
 7. Analytics: popular routes, traffic patterns, tile requests
 
 ## Microservices
+How the system is decomposed into independently deployed services:
 
 | Service | Responsibility | Tech Stack | Pattern |
 | --------- | --------------- | ------------ | --------- |
@@ -94,6 +95,7 @@ flowchart TB
 ---
 
 ## Database Design
+The data stores, schemas, and access patterns behind each service:
 
 ```sql
 CREATE TABLE road_segments (
@@ -155,6 +157,7 @@ CREATE TABLE poi (
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
@@ -172,6 +175,7 @@ CREATE TABLE poi (
 ---
 
 ## Key Design Decisions
+The choices that shape this architecture, and why each was made:
 
 | Decision | Choice | Why |
 | ---------- | -------- | ----- |
@@ -185,6 +189,7 @@ CREATE TABLE poi (
 ---
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -198,6 +203,7 @@ CREATE TABLE poi (
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Monthly Cost |
 | ----------- | ------------- |
@@ -214,6 +220,7 @@ CREATE TABLE poi (
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Trade-off | Option A | Option B | Winner | Why |
 | ----------- | ---------- | ---------- | -------- | ----- |
@@ -226,6 +233,7 @@ CREATE TABLE poi (
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Target | Alert Threshold |
 | -------- | -------- | ----------------- |

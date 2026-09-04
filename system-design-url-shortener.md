@@ -241,6 +241,7 @@ function check_url_expiry(short_code) {
 ---
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -254,6 +255,7 @@ function check_url_expiry(short_code) {
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Specification | Monthly Cost |
 | ----------- | -------------- | ------------- |
@@ -268,6 +270,7 @@ function check_url_expiry(short_code) {
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Approach A | Approach B | Winner | Reason |
 | ----------- | ----------- | -------- | -------- |
@@ -280,6 +283,7 @@ function check_url_expiry(short_code) {
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Description | Target |
 | -------- | ------------- | -------- |
@@ -304,6 +308,7 @@ function check_url_expiry(short_code) {
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |

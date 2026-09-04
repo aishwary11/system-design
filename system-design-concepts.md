@@ -891,6 +891,7 @@ OrderService ──OrderCreated──► Kafka topic "orders"
 Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the log is the source of truth, and Kafka as the durable backbone (`kafka-features.md`).
 
 ## 27. Quick Map: Concept → Problem Solved
+Lost? Start here - find the concept that matches the problem you are solving:
 
 | Concept | Solves | See also |
 | ------- | ------ | -------- |

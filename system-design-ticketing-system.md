@@ -283,6 +283,7 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ---
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -296,6 +297,7 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Specification | Monthly Cost |
 | ----------- | -------------- | ------------- |
@@ -313,6 +315,7 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Approach A | Approach B | Winner | Reason |
 | ----------- | ----------- | -------- | -------- |
@@ -325,6 +328,7 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Target |
 | -------- | -------- |
@@ -353,6 +357,7 @@ SETEX reservation:{reservation_id} 600 {json_data}
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |

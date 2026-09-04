@@ -228,6 +228,7 @@ CREATE TABLE order_items (
 - Reduces server load (no repeated HTTP requests)
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -241,6 +242,7 @@ CREATE TABLE order_items (
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Specification | Monthly Cost |
 | ----------- | -------------- | ------------- |
@@ -257,6 +259,7 @@ CREATE TABLE order_items (
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Approach A | Approach B | Winner | Reason |
 | ----------- | ----------- | -------- | -------- |
@@ -269,6 +272,7 @@ CREATE TABLE order_items (
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Description | Target |
 | -------- | ------------- | -------- |
@@ -295,6 +299,7 @@ CREATE TABLE order_items (
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |

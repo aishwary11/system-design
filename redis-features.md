@@ -343,6 +343,7 @@ return 0              -- deny
 ---
 
 ## 5. Counters & Analytics
+Atomic counters are Redis’s bread and butter - every INCR is race-free because the server is single-threaded:
 
 ```bash
 INCRBY user:42:points 10           # points
@@ -362,6 +363,7 @@ Redis counters are atomic because the server is single-threaded — **no `INCR` 
 ---
 
 ## 6. Leaderboards & Ranking
+Rankings are a perfect fit for sorted sets - the score *is* the ranking metric:
 
 ```bash
 ZADD game:scores 1500 "alice"
@@ -458,6 +460,7 @@ Use: retry queues, reminders, email digests, delayed payments — no separate sc
 ---
 
 ## 10. Sessions & Token Storage
+Redis is the natural home for server-side sessions - shared across app instances, with TTL expiry built in:
 
 ```bash
 # Login → create session with TTL = "sliding" refresh on every request
@@ -695,6 +698,7 @@ CLIENT LIST         # connected clients / blocked connections
 ---
 
 ## 18. Caching Anti-Patterns & Pitfalls
+Caches fail in predictable ways - here are the classic traps and how to avoid them:
 
 | Pitfall | Symptom | Fix |
 | ------- | ------- | --- |

@@ -72,6 +72,7 @@ flowchart TB
 7. Notifications: booking request, confirmation, check-in reminder
 
 ## Microservices
+How the system is decomposed into independently deployed services:
 
 | Service | Responsibility | Tech Stack | Pattern |
 | --------- | --------------- | ------------ | --------- |
@@ -85,6 +86,7 @@ flowchart TB
 ---
 
 ## Database Design
+The data stores, schemas, and access patterns behind each service:
 
 ```sql
 CREATE TABLE listings (
@@ -121,6 +123,7 @@ CREATE TABLE bookings (
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
@@ -136,6 +139,7 @@ CREATE TABLE bookings (
 ---
 
 ## Key Design Decisions
+The choices that shape this architecture, and why each was made:
 
 | Decision | Choice | Why |
 | ---------- | -------- | ----- |
@@ -147,6 +151,7 @@ CREATE TABLE bookings (
 ---
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -157,6 +162,7 @@ CREATE TABLE bookings (
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Monthly Cost |
 | ----------- | ------------- |
@@ -172,6 +178,7 @@ CREATE TABLE bookings (
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Trade-off | Option A | Option B | Winner | Why |
 | ----------- | ---------- | ---------- | -------- | ----- |
@@ -183,6 +190,7 @@ CREATE TABLE bookings (
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Target | Alert Threshold |
 | -------- | -------- | ----------------- |

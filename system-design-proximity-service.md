@@ -265,6 +265,7 @@ Level 20: ~1 m cells (street)
 ---
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -278,6 +279,7 @@ Level 20: ~1 m cells (street)
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Specification | Monthly Cost |
 | ----------- | -------------- | ------------- |
@@ -293,6 +295,7 @@ Level 20: ~1 m cells (street)
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Approach A | Approach B | Winner | Reason |
 | ----------- | ----------- | -------- | -------- |
@@ -305,6 +308,7 @@ Level 20: ~1 m cells (street)
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Target |
 | -------- | -------- |
@@ -333,6 +337,7 @@ Level 20: ~1 m cells (street)
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |

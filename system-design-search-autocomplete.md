@@ -208,6 +208,7 @@ ZADD trending:5min {score} {query}
 ---
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -221,6 +222,7 @@ ZADD trending:5min {score} {query}
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Specification | Monthly Cost |
 | ----------- | -------------- | ------------- |
@@ -236,6 +238,7 @@ ZADD trending:5min {score} {query}
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Approach A | Approach B | Winner | Reason |
 | ----------- | ----------- | -------- | -------- |
@@ -248,6 +251,7 @@ ZADD trending:5min {score} {query}
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Description | Target |
 | -------- | ------------- | -------- |
@@ -272,6 +276,7 @@ ZADD trending:5min {score} {query}
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
