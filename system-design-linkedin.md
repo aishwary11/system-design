@@ -72,6 +72,7 @@ flowchart TB
 7. Notifications: job alerts, connection requests, endorsements
 
 ## Microservices
+How the system is decomposed into independently deployed services:
 
 | Service | Tech Stack | Database | Pattern |
 | --------- | ------------ | ---------- | ---------- |
@@ -174,6 +175,7 @@ rate_limit:{user_id}   -> Hash
 ---
 
 ## Scaling Tiers
+How the architecture grows from MVP to global scale:
 
 | Tier | Users | Infrastructure | Monthly Cost |
 | ------ | ------- | --------------- | ------------- |
@@ -206,6 +208,7 @@ rate_limit:{user_id}   -> Hash
 ---
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Mitigation |
 | --------- | -------- | ----------- |
@@ -218,6 +221,7 @@ rate_limit:{user_id}   -> Hash
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Configuration | Monthly Cost |
 | ----------- | -------------- | ------------- |
@@ -234,6 +238,7 @@ rate_limit:{user_id}   -> Hash
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Decision | Option A | Option B | Choice | Why |
 | ---------- | ---------- | ---------- | -------- | ----- |

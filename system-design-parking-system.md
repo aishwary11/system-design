@@ -74,6 +74,7 @@ flowchart TB
 7. Notifications: booking confirmation, reminders, receipt
 
 ## Microservices
+How the system is decomposed into independently deployed services:
 
 | Service | Responsibility | Tech Stack | Database |
 | --------- | --------------- | ------------ | ---------- |
@@ -194,6 +195,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ---
 
 ## Key Design Decisions
+The choices that shape this architecture, and why each was made:
 
 | Decision | Choice | Why |
 | ---------- | -------- | ----- |
@@ -207,6 +209,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ---
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -220,6 +223,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Specification | Monthly Cost |
 | ----------- | -------------- | ------------- |
@@ -236,6 +240,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Approach A | Approach B | Winner | Reason |
 | ----------- | ----------- | -------- | -------- |
@@ -248,6 +253,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Target | Alert Threshold |
 | -------- | -------- | ---------------- |
@@ -274,6 +280,7 @@ SET pricing:lot:101:peak 1.5 EX 300
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |

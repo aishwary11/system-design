@@ -10,6 +10,7 @@
 ---
 
 ## 🧭 Quick Navigation
+Jump straight to a technology guide:
 
 | Guide | What it covers |
 | ----- | -------------- |
@@ -102,6 +103,7 @@
 ---
 
 ## 🧰 Technology Feature Guides
+The four guides cover the technology stack behind the design documents, each with runnable examples:
 
 | # | Guide | Highlights | File |
 | --- | ----- | ---------- | ------ |
@@ -149,6 +151,7 @@ Every system design document includes infrastructure recommendations at three sc
 ---
 
 ## 🛠️ Technology Stack
+The technologies referenced across the system design documents:
 
 | Category | Technologies |
 | ---------- | ------------- |
@@ -166,6 +169,7 @@ Every system design document includes infrastructure recommendations at three sc
 ---
 
 ## ⚙️ Key Algorithms Implemented (JavaScript)
+Executable JavaScript implementations of the algorithms used across the designs:
 
 | Algorithm | File | Use Case |
 | ----------- | ------ | ---------- |

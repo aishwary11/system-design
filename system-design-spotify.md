@@ -76,6 +76,7 @@ flowchart TB
 7. Encoding pipeline: transcode to multiple bitrates per track
 
 ## Microservices
+How the system is decomposed into independently deployed services:
 
 | Service | Responsibility | Tech Stack | Pattern |
 | --------- | --------------- | ------------ | --------- |
@@ -89,6 +90,7 @@ flowchart TB
 ---
 
 ## Database Design
+The data stores, schemas, and access patterns behind each service:
 
 ```sql
 CREATE TABLE tracks (
@@ -135,6 +137,7 @@ CREATE TABLE user_library (
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
@@ -152,6 +155,7 @@ CREATE TABLE user_library (
 ---
 
 ## Key Design Decisions
+The choices that shape this architecture, and why each was made:
 
 | Decision | Choice | Why |
 | ---------- | -------- | ----- |
@@ -165,6 +169,7 @@ CREATE TABLE user_library (
 ---
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -177,6 +182,7 @@ CREATE TABLE user_library (
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Monthly Cost |
 | ----------- | ------------- |
@@ -193,6 +199,7 @@ CREATE TABLE user_library (
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Trade-off | Option A | Option B | Winner | Why |
 | ----------- | ---------- | ---------- | -------- | ----- |
@@ -205,6 +212,7 @@ CREATE TABLE user_library (
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Target | Alert Threshold |
 | -------- | -------- | ----------------- |

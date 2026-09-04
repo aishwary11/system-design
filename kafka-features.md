@@ -65,6 +65,7 @@ flowchart TB
 ---
 
 ## 1. Core Concepts — Topic, Partition, Offset
+Kafka is best understood through five core terms - this diagram shows how a topic’s partitions flow from producers to consumer groups:
 
 ```
                  producer  producer  producer
@@ -99,6 +100,7 @@ Key mental model: **Kafka never deletes a consumed message by default** — rete
 ---
 
 ## 2. Topics & Partitions (CLI)
+The CLI is the fastest way to learn - create a topic and watch its partitions land on brokers:
 
 ```bash
 # Create a topic: 3 partitions, replicated 3x across brokers
@@ -230,6 +232,7 @@ Consumer **lag** (see CLI in §2) is the #1 operational metric: partitions growi
 ---
 
 ## 6. Delivery Semantics (at-most / at-least / exactly-once)
+How many times may a record be processed? Pick your delivery contract per pipeline:
 
 | Semantics | What it means | How to get it |
 | --------- | ------------- | ------------- |
@@ -406,6 +409,7 @@ DLQ topics themselves follow normal retention rules, so you can replay them afte
 ---
 
 ## 14. Kafka as the Backbone — Classic Use Cases
+Kafka’s superpower is being many things at once - pick the pattern that fits your flow:
 
 | Use case | What Kafka does | Example |
 | -------- | --------------- | ------- |
@@ -432,6 +436,7 @@ Different consumer groups = different views of the same stream; the same group =
 ---
 
 ## 15. Operational Features
+Production Kafka needs more than topics - these features keep a cluster healthy and secure:
 
 | Feature | Purpose | Notes |
 | ------- | ------- | ----- |

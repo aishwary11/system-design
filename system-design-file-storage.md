@@ -205,6 +205,7 @@ CREATE TABLE file_shares (
 - Enables integrity verification (hash mismatch = corruption)
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -216,6 +217,7 @@ CREATE TABLE file_shares (
 | Upload interrupted mid-chunk | Partial file in storage | Multipart upload cleanup after 7-day TTL |
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Specification | Monthly Cost |
 | ----------- | -------------- | ------------- |
@@ -232,6 +234,7 @@ CREATE TABLE file_shares (
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Approach A | Approach B | Winner | Reason |
 | ----------- | ----------- | -------- | -------- |
@@ -244,6 +247,7 @@ CREATE TABLE file_shares (
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Description | Target |
 | -------- | ------------- | -------- |
@@ -270,6 +274,7 @@ CREATE TABLE file_shares (
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
@@ -425,7 +430,6 @@ function sync_file(file_id, last_sync_version) {
 }
 
 const upload = new UploadService(); console.log("Upload service ready");
-
 
 ```
 

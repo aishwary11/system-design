@@ -134,6 +134,18 @@ Constraints are enforced by the database itself — never trust the application 
 - `NOT NULL`, `DEFAULT`, `EXCLUDE` (generalized: e.g. no overlapping bookings).
 
 ```sql
+CREATE TABLE users (
+    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    email       CITEXT NOT NULL UNIQUE,
+    name        TEXT NOT NULL,
+    city        TEXT,
+    active      BOOLEAN NOT NULL DEFAULT true,
+    last_login  TIMESTAMPTZ,
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Orders reference the users table above
 CREATE TABLE orders (
     id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id      BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -141,6 +153,8 @@ CREATE TABLE orders (
     status       TEXT NOT NULL DEFAULT 'created'
                  CHECK (status IN ('created', 'paid', 'shipped', 'cancelled')),
     total        NUMERIC(12, 2) NOT NULL CHECK (total >= 0),
+    created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
     -- one order number per user
     UNIQUE (user_id, order_number)
 );
@@ -161,6 +175,7 @@ CREATE TABLE bookings (
 ---
 
 ## 3. Indexes
+The right index depends on how you query the column - equality, ranges, text search, or JSON containment each map to a different type.
 
 | Index type | Best for | Example |
 | ---------- | -------- | ------- |
@@ -201,7 +216,7 @@ CREATE INDEX idx_orders_user_status ON orders (user_id, status);
 -- Covering indexes (INCLUDE) enable index-only scans — no heap lookup needed.
 
 -- SP-GiST: quadtree / radix-tree style indexing (IP ranges, text prefixes, points)
-CREATE INDEX idx_places_spgist ON places USING spgist (point);
+CREATE INDEX idx_places_spgist ON places USING spgist (location);
 
 -- KNN GiST: nearest-neighbor ORDER BY with a distance operator
 SELECT name FROM places ORDER BY location <-> point '(28.61, 77.20)' LIMIT 5;
@@ -357,6 +372,15 @@ SELECT u.name, r.lifetime_value
 FROM users u JOIN revenue r USING (user_id)
 ORDER BY r.lifetime_value DESC;
 
+-- Sample table used by the recursive CTE and window examples
+CREATE TABLE employees (
+    id            BIGINT PRIMARY KEY,
+    name          TEXT NOT NULL,
+    manager_id    BIGINT REFERENCES employees(id),
+    department_id INT,
+    salary        NUMERIC(10, 2)
+);
+
 -- Recursive CTE: org chart under a given manager
 WITH RECURSIVE team AS (
     -- anchor: the manager herself
@@ -415,8 +439,9 @@ Postgres has built-in full-text search: tokenize text into a `tsvector`, match a
 CREATE TABLE posts (
     id      BIGINT PRIMARY KEY,
     title   TEXT NOT NULL,
-    body    TEXT NOT NULL
-);
+    body    TEXT NOT NULL,
+    author_id   BIGINT NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 
 -- Auto-maintained search column (PG 12+ generated column)
 ALTER TABLE posts ADD COLUMN search tsvector GENERATED ALWAYS AS
@@ -795,6 +820,7 @@ ORDER BY n_dead_tup DESC;
 ---
 
 ## 20. Extensions — the Superpowers
+Extensions bolt new capabilities onto the core server - here are the ones worth knowing, from geospatial to vector search.
 
 | Extension | Gives Postgres |
 | --------- | -------------- |
@@ -902,6 +928,7 @@ JOIN remote_pageviews r ON r.page_url = '/order/' || o.id;
 ---
 
 ## 23. Bulk Load & Data Movement
+Move large volumes of data in and out of Postgres quickly and safely:
 
 ```sql
 -- Fast CSV import (server-side file, or STDIN from client tools like psql \copy)

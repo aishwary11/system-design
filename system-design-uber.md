@@ -266,6 +266,7 @@ requested -> accepted -> arrived -> in_progress -> completed
 ---
 
 ## Failure Modes & Recovery
+What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
@@ -279,6 +280,7 @@ requested -> accepted -> arrived -> in_progress -> completed
 ---
 
 ## Cost Estimation (1M Users)
+Rough monthly cost of running this design for one million users:
 
 | Component | Specification | Monthly Cost |
 | ----------- | -------------- | ------------- |
@@ -296,6 +298,7 @@ requested -> accepted -> arrived -> in_progress -> completed
 ---
 
 ## Trade-off Analysis
+The alternatives considered, and which one won and why:
 
 | Approach A | Approach B | Winner | Reason |
 | ----------- | ----------- | -------- | -------- |
@@ -308,6 +311,7 @@ requested -> accepted -> arrived -> in_progress -> completed
 ---
 
 ## Key Metrics to Monitor
+The metrics that signal system health, with alert thresholds:
 
 | Metric | Target |
 | -------- | -------- |
@@ -336,6 +340,7 @@ requested -> accepted -> arrived -> in_progress -> completed
 ---
 
 ## Key Techniques & Patterns
+The recurring techniques and patterns this design applies, mapped to where they are used:
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
