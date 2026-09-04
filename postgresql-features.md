@@ -28,11 +28,11 @@ flowchart TB
     svc -. "mTLS / discovery" .-> platform["Service Mesh / Discovery / Health Checks"]
     wal -. "point-in-time recovery" .-> pg
 
-    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px
-    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
-    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px
-    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px
-    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
     class clients actor
     class edge,lb,svc,pool,notify,cdc,consumers service
     class cache,pg,syncRep,asyncRep,wal store

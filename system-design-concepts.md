@@ -52,11 +52,11 @@ flowchart TB
     router --> s3[("users_3 - primary + replica")]
     config["Config / directory - shard map, migrations, rebalancing"] -. "route + rebalance" .-> router
 
-    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px
-    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
-    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px
-    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px
-    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
     class clients actor
     class edge,app,router service
     class s0,s1,s2,s3 store
@@ -607,11 +607,11 @@ flowchart TB
     ctrl["Failover controller (Patroni) - fencing tokens"] -. "monitor / promote / fence" .-> leader
     ctrl -. "promote on failure" .-> asyncR1
 
-    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px
-    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
-    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px
-    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px
-    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
     class writers,readers actor
     class lb service
     class leader,syncR,asyncR1,asyncR2 store

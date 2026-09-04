@@ -38,11 +38,11 @@ flowchart TB
     kr -. "controller / metadata" .-> brokers
     g2 -. "consumer lag" .-> lag["Lag monitoring / alerts"]
 
-    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px
-    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
-    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px
-    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px
-    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
     class apps,cdc,streams,g1,g2,g3,mm,sr,kr service
     class sinks store
     class brokers broker
