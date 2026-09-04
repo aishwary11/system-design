@@ -283,13 +283,17 @@ class NotificationService {
   constructor() { this.sender = new EmailSender(); }  // hard to test / swap
 }
 
-// ✓ GOOD: depend on an interface; inject the implementation
+// ✓ GOOD: depend on the abstraction; inject the implementation
+class MessageSender { send(msg) {} }                 // the abstraction (interface)
+class EmailSender extends MessageSender { send(m) { /* SMTP */ } }
+class SmsSender   extends MessageSender { send(m) { /* SMS */ } }
+class FakeSender  extends MessageSender { send(m) { /* tests */ } }
 class NotificationService {
-  constructor(sender) { this.sender = sender; }   // any MessageSender works
+  constructor(sender) { this.sender = sender; }      // any MessageSender works
 }
-new NotificationService(new EmailSender());        // prod
-new NotificationService(new SmsSender());          // added later — no edit to service
-new NotificationService(new FakeSender());         // tests
+new NotificationService(new EmailSender());          // prod
+new NotificationService(new SmsSender());            // added later — no edit to service
+new NotificationService(new FakeSender());           // tests
 ```
 
 ---
@@ -773,10 +777,10 @@ Design decisions: max retries, backoff policy, DLQ retention, alerting on DLQ de
 | **Window / credit based** | consumer tells producer how much it can send | TCP flow control, gRPC flow control |
 | **Buffering to disk** | spill, don't drop | Kafka (durable log) is *the* backpressure tool: consumers lag instead of crashing |
 
-```js
-// Bounded queue + fail fast (concept)
-const queue = new ArrayBlockingQueue(1000);
-if (!queue.offer(task)) {          // offer() returns false when full
+```java
+// Bounded queue + fail fast (concept) — Java's ArrayBlockingQueue
+BlockingQueue<Task> queue = new ArrayBlockingQueue<>(1000);
+if (!queue.offer(task)) {           // offer() returns false when full
   return 503;                       // shed load NOW instead of queueing forever
 }
 workerLoop(queue);                  // single consumer drains at its own pace
