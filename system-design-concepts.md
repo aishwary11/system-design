@@ -42,6 +42,7 @@ The foundational concepts behind every distributed system, each explained in a f
 **Idea:** split the data horizontally across many database nodes; each node ("shard") owns a disjoint subset of rows. Together they serve the whole dataset.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
 flowchart TB
     clients(["Clients"]) --> edge["API Gateway / LB"]
     edge --> app["Application Services"]
@@ -595,6 +596,7 @@ while (true) {
 **Idea:** keep copies of data on multiple nodes and keep them in sync.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
 flowchart TB
     writers(["Write clients"]) --> leader[("Leader - accepts writes")]
     readers(["Read clients"]) --> lb["Read LB / routing"]

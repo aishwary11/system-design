@@ -142,6 +142,9 @@ Each **feature guide** follows its own reference layout: a table of contents, a 
 
 All architecture diagrams use **C4 notation expressed in GitHub-compatible Mermaid flowcharts** — C4's hierarchy and boundaries without Structurizr/PlantUML, which don't render natively in GitHub Markdown.
 
+> **Shared theme:** every diagram opens with the same `%%{init}%%` header (below), pinning `theme: base` plus explicit colors for boundary boxes, edges, and text. GitHub and VS Code all honor this directive, so the diagrams render identically in light and dark viewers — no theme-dependent colors are left to the renderer.
+ — C4's hierarchy and boundaries without Structurizr/PlantUML, which don't render natively in GitHub Markdown.
+
 | Element | Syntax | Meaning |
 | ------- | ------ | ------- |
 | Actor (person) | `([...])` stadium | Humans / external clients |
@@ -154,6 +157,7 @@ All architecture diagrams use **C4 notation expressed in GitHub-compatible Merma
 | Colors | `classDef` + `class` | actor=blue, service=orange, store=green, broker=purple, control=gray |
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
 flowchart TB
     %% Actors (people)
     clients(["Web / Mobile / API Clients"])

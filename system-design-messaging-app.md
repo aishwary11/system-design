@@ -38,6 +38,7 @@ A real-time messaging platform supporting one-to-one and group messaging, media 
 ### Architecture Diagram
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
 flowchart TB
     %% Actors (people)
     clients(["Mobile / Web / Desktop App"])
