@@ -7,6 +7,7 @@ A quick-reference catalog of Apache Kafka features used in event-driven backends
 ### Event streaming at a glance
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
 flowchart TB
     subgraph Producers
         apps["Application Services - key-based partitioning"]
