@@ -316,7 +316,7 @@ SETEX post:{post_id} 3600 {json}
 | Fan-out-on-write | Fan-out-on-read | Hybrid | Normal users: push, celebrities: pull |
 | Sharp | ImageMagick | Sharp | 5x faster image processing in Node.js |
 | PostgreSQL | MongoDB | PostgreSQL | ACID compliance for user data |
-| Kafka | RabbitMQ | Kafka | Higher throughput for post events | s |
+| Kafka | RabbitMQ | Kafka | Higher throughput for post events |
 
 ---
 
@@ -425,7 +425,7 @@ function rank_posts(posts, user_id) {
 
 ```
 
-### 4. Image Processing Pipeline
+### 4. Image Processing Pipeline (Implementation)
 
 ```text
 function process_image(image_url) {

@@ -489,7 +489,7 @@ class PaymentService {
 
 ```
 
-### 2. Matching Algorithm
+### 2. Matching Algorithm (Implementation)
 
 ```text
 class MatchingService {
