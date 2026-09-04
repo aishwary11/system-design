@@ -8,14 +8,28 @@ A quick-reference catalog of PostgreSQL features used in everyday backends: data
 
 ```mermaid
 flowchart TB
-    clients["Clients / API"] --> app["Application Services"]
-    app --> cache[("Redis - cache / locks / counters")]
-    app --> db[("PostgreSQL primary - source of truth")]
-    db --> repl[("Read replicas - hot standby")]
-    app -- "cache miss then query DB" --> db
-    db -. "triggers + NOTIFY -> invalidate cache" .-> cache
-    db -. "logical replication / CDC" .-> kafka["Kafka / search / analytics"]
+    clients["Web / Mobile / API Clients"] --> edge["API Gateway / TLS / Auth / Rate Limit"]
+    edge --> lb["Load Balancer"]
+    lb --> svc["Application Services - stateless replicas"]
+    svc --> cache[("Redis - cache-aside / locks / counters")]
+    svc --> pool["PgBouncer - connection pooling"]
+    pool --> pg[("PostgreSQL Primary")]
+    pg --> syncRep[("Sync Replica - 0 data loss")]
+    pg --> asyncRep[("Async Replicas xN - reads / failover")]
+    asyncRep --> svc
+    pg -. "WAL archiving" .-> wal[("WAL Archive / PITR / Restore")]
+    pg -. "triggers + pg_notify" .-> notify["LISTEN / NOTIFY bus"]
+    notify -. "invalidate key" .-> cache
+    pg -. "logical decoding" .-> cdc["Debezium / CDC pipeline"]
+    cdc --> kafka["Kafka - event bus"]
+    kafka --> consumers["Consumers / Analytics / Search"]
+    pg -. "health / metrics" .-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
+    kafka -. "lag / metrics" .-> ops
+    svc -. "mTLS / discovery" .-> platform["Service Mesh / Discovery / Health Checks"]
+    wal -. "point-in-time recovery" .-> pg
 ```
+
+*Solid = data path, dashed = infrastructure/control. Which section explains each hop:* cache path §14 & §18 · pooling/failover §16 · WAL archive/PITR §16 · NOTIFY invalidation §5 · CDC pipeline §17 · ops/security §21.
 
 ---
 

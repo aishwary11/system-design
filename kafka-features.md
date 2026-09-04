@@ -7,27 +7,39 @@ A quick-reference catalog of Apache Kafka features used in event-driven backends
 ### Event streaming at a glance
 
 ```mermaid
-flowchart LR
+flowchart TB
     subgraph Producers
-        p1["Order Service"]
-        p2["Clickstream"]
-        p3["DB changes (CDC)"]
+        apps["Application Services - key-based partitioning"]
+        cdc["Kafka Connect / Debezium - CDC from DBs"]
+        streams["Kafka Streams - processors / joins / aggregations"]
     end
-    subgraph Kafka
-        b[("Brokers - partitioned, replicated topics")]
+    subgraph Kafka cluster
+        brokers[("Brokers - partitioned, replicated topics")]
+        kr["KRaft - metadata & controller quorum"]
+        sr["Schema Registry - Avro / Protobuf / JSON"]
     end
     subgraph Consumer groups
-        g1["Shipping"]
-        g2["Analytics"]
-        g3["Search Index"]
+        g1["Shipping - group shipping"]
+        g2["Analytics - group analytics"]
+        g3["Search Indexer - group search"]
     end
-    p1 --> b
-    p2 --> b
-    p3 --> b
-    b --> g1
-    b --> g2
-    b --> g3
+    apps --> brokers
+    cdc --> brokers
+    streams --> brokers
+    brokers --> g1
+    brokers --> g2
+    brokers --> g3
+    g1 --> sinks[("Postgres / S3 / Elasticsearch")]
+    g2 --> sinks
+    g3 --> sinks
+    brokers --> dlq["DLQ / Replay"]
+    brokers -. "replicate cross-region" .-> mm["MirrorMaker 2 - DR / active-active"]
+    sr -. "validate / evolve schemas" .-> apps
+    kr -. "controller / metadata" .-> brokers
+    g2 -. "consumer lag" .-> lag["Lag monitoring / alerts"]
 ```
+
+*Solid = event flow, dashed = control/infrastructure. Partitioning & ordering §2–§4, consumer groups & lag §5, replication/ISR & KRaft §8/§15, Schema Registry §12, DLQ §13, MirrorMaker 2 §15.
 
 ---
 
