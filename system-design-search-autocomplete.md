@@ -389,7 +389,7 @@ class PersonalizedRanker {
 
 ### Key Algorithms
 
-### 1. Trie Data Structure
+### 1. Trie Data Structure (Implementation)
 
 ```text
 class TrieNode {
