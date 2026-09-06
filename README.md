@@ -17,7 +17,7 @@ Jump straight to a technology guide:
 | 🔷 [PostgreSQL Features](postgresql-features.md) | Triggers, LISTEN/NOTIFY, indexes, JSONB, MVCC, partitioning, replication, CDC |
 | 🔴 [Redis Features](redis-features.md) | 15+ data types, caching, locking, rate limiting, Streams, HA/security |
 | ⚫ [Kafka Features](kafka-features.md) | Topics, consumer groups, exactly-once, compaction, Connect/Streams, CDC |
-| 🧩 [System Design Concepts](system-design-concepts.md) | Sharding, consistent hashing, SOLID, CAP, saga, outbox, CRDTs & more |
+| 🧩 [System Design Concepts](system-design-concepts.md) | Sharding, consistent hashing, quorum, PACELC, WAL, B-tree vs LSM, SOLID, CAP, saga, outbox, CRDTs & more + 17 LLD algorithms (Luhn, Dijkstra, A*, trie, LRU, HLL…) |
 
 ---
 
@@ -110,7 +110,7 @@ The four guides cover the technology stack behind the design documents, each wit
 | 1 | **PostgreSQL** | Data types, constraints, 10+ index types, triggers, LISTEN/NOTIFY pub-sub, PL/pgSQL functions, CTEs, window functions, full-text search, JSONB + SQL/JSON, upsert/RETURNING, MVCC & isolation, locks, materialized views (caching), partitioning, replication + PITR, CDC, VACUUM, extensions, row/column security, FDWs | [View](postgresql-features.md) |
 | 2 | **Redis** | 15+ data structures (incl. JSON, Time Series, Vector sets), caching patterns & eviction, distributed locking, rate limiting, Pub/Sub, Streams, delayed queues, transactions, Lua, pipelining, ACL security, persistence, Sentinel/Cluster | [View](redis-features.md) |
 | 3 | **Kafka** | Topics/partitions/offsets, producers & acks, consumer groups, ordering, exactly-once, replication/ISR, retention vs compaction, Connect + CDC, Kafka Streams, Schema Registry, DLQs, security | [View](kafka-features.md) |
-| 4 | **Core Concepts** | Sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus, 2PC, CRDTs, event-driven architecture, DLQ, backpressure — each with an example | [View](system-design-concepts.md) |
+| 4 | **Core Concepts** | Sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus, 2PC, CRDTs, event-driven architecture, DLQ, backpressure, quorum reads & writes, consistency models, PACELC, WAL, B-tree vs LSM, checksums, distributed locking, service discovery, API gateway vs service mesh, CDN, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLI/SLO, multi-region DR, deployment strategies, geospatial indexing, plus 17 classic algorithms with runnable JS (Luhn, Dijkstra, A*, BFS/DFS, topological sort, union-find, trie, LRU cache, external sort, reservoir sampling, count-min sketch, HyperLogLog, Levenshtein, KMP/Rabin-Karp, haversine, Base62/Snowflake, sliding window) — each with an example | [View](system-design-concepts.md) |
 
 ---
 

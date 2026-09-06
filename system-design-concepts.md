@@ -1,6 +1,8 @@
 # System Design Concepts — Quick Reference with Basic Examples
 
-The foundational concepts behind every distributed system, each explained in a few lines with a tiny, concrete example: **sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus (Raft/Paxos), two-phase commit, CRDTs, event-driven architecture, DLQs and backpressure.**
+The foundational concepts behind every distributed system, each explained in a few lines with a tiny, concrete example: **sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus (Raft/Paxos), two-phase commit, CRDTs, event-driven architecture, DLQs, backpressure, quorum reads & writes, consistency models, PACELC, write-ahead logs, B-tree vs LSM storage engines, checksums, distributed locking, service discovery, API gateways vs service meshes, CDNs, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLIs/SLOs, multi-region disaster recovery, deployment strategies and geospatial indexing.**
+
+**Part II adds 17 classic algorithms** — Luhn's (credit card validation), Dijkstra, A*, BFS/DFS, topological sort, union-find, trie, LRU cache, external sort, reservoir sampling, count-min sketch, HyperLogLog, Levenshtein, KMP/Rabin-Karp, haversine, Base62/Snowflake IDs, sliding window — each with a runnable JavaScript implementation and where it's used in system design.
 
 ---
 
@@ -32,7 +34,47 @@ The foundational concepts behind every distributed system, each explained in a f
 24. [Two-Phase Commit (2PC) vs Saga](#24-two-phase-commit-2pc-vs-saga)
 25. [CRDTs — Conflict-Free Replicated Data Types](#25-crdts--conflict-free-replicated-data-types)
 26. [Event-Driven Architecture](#26-event-driven-architecture)
-27. [Quick Map: Concept → Problem Solved](#27-quick-map-concept--problem-solved)
+28. [Quorum Reads & Writes](#28-quorum-reads--writes)
+29. [Consistency Models](#29-consistency-models)
+30. [PACELC Theorem](#30-pacelc-theorem)
+31. [Write-Ahead Log (WAL) & Durability](#31-write-ahead-log-wal--durability)
+32. [Storage Engines: B-Trees vs LSM Trees](#32-storage-engines-b-trees-vs-lsm-trees)
+33. [Checksums & Data Integrity](#33-checksums--data-integrity)
+34. [Distributed Locking & Fencing](#34-distributed-locking--fencing)
+35. [Service Discovery & Registry](#35-service-discovery--registry)
+36. [API Gateway vs Service Mesh](#36-api-gateway-vs-service-mesh)
+37. [CDN & Edge Caching](#37-cdn--edge-caching)
+38. [Distributed Tracing](#38-distributed-tracing)
+39. [Retries, Backoff & Jitter](#39-retries-backoff--jitter)
+40. [Timeouts & Hedging](#40-timeouts--hedging)
+41. [Logical Clocks (Lamport & HLC)](#41-logical-clocks-lamport--hlc)
+42. [Fan-out & Push vs Pull](#42-fan-out--push-vs-pull)
+43. [Hot Keys & Thundering Herd](#43-hot-keys--thundering-herd)
+44. [Optimistic Concurrency & Versioning](#44-optimistic-concurrency--versioning)
+45. [SLIs, SLOs & Error Budgets](#45-slis-slos--error-budgets)
+46. [Multi-Region & Disaster Recovery](#46-multi-region--disaster-recovery)
+47. [Deployment Strategies](#47-deployment-strategies)
+48. [Geospatial Indexing (Geohash & S2)](#48-geospatial-indexing-geohash--s2)
+49. [Quick Map: Concept → Problem Solved](#49-quick-map-concept--problem-solved)
+
+**Part II — Classic Algorithms & Data Structures (LLD)**
+50. [Luhn's Algorithm (Credit Card Validation)](#50-luhns-algorithm-credit-card-validation)
+51. [Dijkstra's Shortest Path](#51-dijkstras-shortest-path)
+52. [A* Search](#52-a-search)
+53. [BFS & DFS Graph Traversal](#53-bfs--dfs-graph-traversal)
+54. [Topological Sort (Kahn's Algorithm)](#54-topological-sort-kahns-algorithm)
+55. [Union-Find (Disjoint Set)](#55-union-find-disjoint-set)
+56. [Trie (Prefix Tree)](#56-trie-prefix-tree)
+57. [LRU Cache](#57-lru-cache)
+58. [External Sort & K-Way Merge](#58-external-sort--k-way-merge)
+59. [Reservoir Sampling](#59-reservoir-sampling)
+60. [Count-Min Sketch](#60-count-min-sketch)
+61. [HyperLogLog (Cardinality Estimation)](#61-hyperloglog-cardinality-estimation)
+62. [Levenshtein Distance (Edit Distance)](#62-levenshtein-distance-edit-distance)
+63. [String Matching (KMP & Rabin-Karp)](#63-string-matching-kmp--rabin-karp)
+64. [Haversine Distance](#64-haversine-distance)
+65. [Base62 Encoding & Snowflake IDs](#65-base62-encoding--snowflake-ids)
+66. [Sliding Window & Two Pointers](#66-sliding-window--two-pointers)
 
 ---
 
@@ -916,7 +958,541 @@ OrderService ──OrderCreated──► Kafka topic "orders"
 
 Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the log is the source of truth, and Kafka as the durable backbone (`kafka-features.md`).
 
-## 27. Quick Map: Concept → Problem Solved
+## 28. Quorum Reads & Writes
+
+**Problem:** with N replicas, a write must reach enough nodes to be safe and a read must not return stale data — but you can't wait for *all* nodes (one slow node would block everything), and you don't know which are up.
+**Idea:** require **W** nodes to acknowledge a write and **R** nodes to answer a read, with **`W + R > N`** — then any read set and any write set are guaranteed to *overlap*, so every read sees at least one node that acknowledged the write. Same math as majority quorum in consensus (§23): N=3 with W=2, R=2 tolerates 1 node down and still never reads fully stale data.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
+flowchart TB
+    writer([Writer]) -->|"write to W=2 of N=3"| rA[("Replica A")]
+    writer -->|"write"| rB[("Replica B")]
+    writer -. "down" .-> rC[("Replica C")]
+    rA -- "ack" --> writer
+    rB -- "ack" --> writer
+    reader([Reader]) -->|"read from R=2 of N=3"| rB
+    reader -->|"read"| rC
+    rB -- "value (acked the write)" --> reader
+    rC -- "value (may be stale)" --> reader
+    overlap["W + R > N ⇒ read & write sets overlap at B ⇒ the read is never fully stale"] -. "guarantee" .-> reader
+
+    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
+    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
+    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
+    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
+    class writer,reader actor
+    class rA,rB,rC store
+    class overlap control
+```
+
+| N | W | R | W + R > N? | Behavior |
+| - | - | - | ---------- | -------- |
+| 3 | 2 | 2 | ✓ | any 1 node down; reads never fully stale — the default |
+| 3 | 3 | 1 | ✓ | writes must hit all nodes; any single read is guaranteed fresh |
+| 3 | 1 | 3 | ✓ | fast writes (any node); reads hit all nodes |
+| 3 | 1 | 1 | ✗ | overlap NOT guaranteed — reads can be stale |
+
+**Keeping quorums honest when nodes miss writes:**
+- **Read repair:** a read that returns a stale value also fetches the fresh one from the overlapping node and writes it back.
+- **Hinted handoff:** a node that was down during a write gets the write stored ("hinted") on a live neighbor and delivered when it returns.
+- **Anti-entropy:** background comparison with Merkle trees (§22) finds and fixes the rest.
+- **Sloppy quorum:** during a partition Cassandra accepts the write from *any* W reachable nodes (even non-owners) and replays later — writes stay available, guarantees weaken.
+
+**The limits:** quorum fixes *stale reads*; it does not order *concurrent writes* — two clients writing different values to overlapping quorums still need versioning (vector clocks §19) or last-writer-wins.
+
+```js
+// Quorum check + which answers a read can return (N=3, W=2, R=2)
+const guaranteed = 2 + 2 > 3;                 // true → every read sees a fresh value
+
+const replicas = [
+  { id: "A", up: true,  acked: true  },       // acked the last write
+  { id: "B", up: true,  acked: true  },
+  { id: "C", up: true,  acked: false },       // missed it (was down → hinted handoff)
+];
+const answers = replicas.filter(r => r.up).slice(0, 2);   // pick R of the up nodes
+const fresh = answers.filter(r => r.acked).length;
+// guaranteed: fresh >= 1 whenever W + R > N — the read can never be all-stale
+if (fresh < answers.length) repairStale(answers);         // read repair fills C
+```
+
+---
+
+## 29. Consistency Models
+
+**Problem:** "eventual consistency" is a spectrum, not a point — an app must know exactly what it may observe after a write (its own write? never going backwards?) before it can be correct.
+**Idea:** pick the model that matches the user-visible contract, strongest → weakest:
+
+```text
+Linearizable      reads see the latest completed write — like a single CPU
+                  (Raft §23, Spanner, etcd, ZooKeeper)
+Sequential        a global order exists; each client's ops stay in order
+Causal            causally related ops are ordered; unrelated ops may reorder
+Read-your-writes  a client sees its own writes (no "where did my post go?")
+Monotonic reads   reads never move backwards (no flip-flopping values)
+Eventual          replicas converge if writes stop; reads may be stale (DNS, search)
+```
+
+| Model | What it guarantees | Typical cost | Where you meet it |
+| ----- | ------------------ | ------------ | ----------------- |
+| Linearizable | single point-in-time global order | quorum / leader round trip per op | etcd, ZooKeeper, Spanner |
+| Read-your-writes | own writes visible | route user to leader / a replica with their writes | most user-facing APIs |
+| Monotonic reads | no going backwards | pin a user to one replica | session reads |
+| Eventual | convergence when writes stop | nothing | DNS, search, analytics |
+
+Replication lag (§15) is where these break: without read-your-writes a user sees a 404 right after creating a page; without monotonic reads a refresh can show an older value than the previous one. Choose the weakest model that doesn't confuse users — every step up costs a round trip.
+
+---
+
+## 30. PACELC Theorem
+
+**Problem:** CAP (§3) only describes behavior *during a partition* — but most of the time the network is fine, and systems still make a choice: be fast or be strongly consistent?
+**Idea:** **P**artition → **A**vailability vs **C**onsistency (CAP); **E**lse → **L**atency vs **C**onsistency. PACELC is the "rest of the time" half of CAP.
+
+| System | During partition (P) | Otherwise (E) |
+| ------ | -------------------- | ------------- |
+| Cassandra (default quorum) | Availability | Latency (async reads) |
+| Cassandra (serial / LWT) | Consistency | Consistency |
+| DynamoDB (default) | Availability | Latency |
+| DynamoDB (strongly consistent reads) | Availability | Consistency |
+| Spanner / CockroachDB | Consistency | Consistency — pays the latency |
+| MongoDB (replica read preference) | Availability | Latency (or consistency if primary-only) |
+| Redis Cluster | Availability | Latency |
+
+Practical takeaway: most systems run **PA/EL** — available under partitions, fast when healthy — and pay with weaker guarantees; only money- or correctness-critical paths (ledgers, IDs, leases) choose consistency on both axes.
+
+---
+
+## 31. Write-Ahead Log (WAL) & Durability
+
+**Problem:** a database that only updates in-memory tables loses everything on crash; a database that only updates data files needs slow random I/O and can leave *torn* (half-written) pages.
+**Idea:** before touching data, **append the change to a sequential log on disk** (the write-ahead log) and fsync it — then apply to memory / pages at leisure. On crash, replay the log from the last checkpoint: no committed write is ever lost, no partial page is ever trusted.
+
+```text
+write ──► append + fsync to WAL ──► apply to in-memory / page cache ──► later: checkpoint to table
+                                        │ crash here?
+                                        ▼
+                              replay WAL from last checkpoint → committed writes restored
+```
+
+- **Group commit:** batch several commits into one fsync — hundreds of thousands of small commits/sec.
+- **The WAL doubles as the replication stream:** followers replay the same log (PostgreSQL streaming, MySQL, Kafka's partition log, etcd's raft log).
+- Durability vs latency knob: `synchronous_commit = off` skips the fsync (fast; RPO = a few ms of log).
+
+```text
+-- PostgreSQL: COMMIT is durable in pg_wal before the client is told "committed"
+BEGIN; UPDATE accounts SET balance = balance - 10 WHERE id = 42; COMMIT;
+-- power loss 1 ms later → recovery replays pg_wal → the -10 is there
+-- without the WAL the update might live only in a dirty page that never hit disk
+```
+
+| | WAL-first | Write data file directly |
+| -- | --------- | ----------------------- |
+| I/O pattern | sequential append (fast) | random page writes (slow) |
+| Crash safety | replay log; atomic by design | torn pages, lost commits |
+| Cost | extra write (log) + checkpointing | simplicity for tiny datasets |
+
+---
+
+## 32. Storage Engines: B-Trees vs LSM Trees
+
+**Problem:** the same data can be stored in two very different ways, and the choice decides whether your workload is fast — read-heavy or write-heavy.
+**Idea:** **B-trees** update pages *in place* (sorted tree on disk, read-optimized); **LSM trees** (log-structured merge) never touch old data — they append writes to a sorted in-memory **memtable**, flush immutable sorted **SSTables** to disk, and merge them in the background.
+
+```text
+LSM write path:
+  write ──► memtable (sorted, in memory) ──flush when full──► SSTable 0 (immutable)
+                                                                  │ background compaction
+                                                                  ▼
+                                          SSTable 0 ──merge──► SSTable 1 ──► fewer, bigger files
+  point read: memtable → bloom filter (§17) → newest SSTable → older SSTables (one has the key)
+```
+
+| | B-Tree | LSM (RocksDB, Cassandra, HBase, ScyllaDB) |
+| -- | ------ | ------------------------------------------ |
+| Writes | in-place page update: random I/O, write amplification | append-only: sequential, very fast |
+| Point reads | O(log n) tree walk, predictable | memtable → bloom (§17) → SSTables, still fast |
+| Range scans | excellent (leaf-level linked list) | good (SSTables sorted, but spans many files) |
+| Compaction | none | background merges — CPU + space amplification |
+| Latency tails | steady | compaction bursts spike p99 |
+| Durability | WAL (§31) in front | WAL in front; memtable is ephemeral |
+
+Rule of thumb: heavy inserts / logs / time-series → LSM; read-mostly with range queries and predictable latency → B-tree. PostgreSQL and MySQL InnoDB are B-tree; RocksDB (used inside Kafka tiered storage and many other systems) is LSM.
+
+---
+
+## 33. Checksums & Data Integrity
+
+**Problem:** disks, RAM, and networks silently flip bits (bit rot, bad sectors, cosmic rays) — no crash, no error message, just wrong data. Silent corruption is worse than a crash because nobody notices.
+**Idea:** store a **checksum with every block/value** (CRC32C is cheap, SHA-256 is stronger); verify on every read; on mismatch, treat the block as corrupt — repair from a replica (or re-fetch) instead of returning garbage.
+
+- PostgreSQL `data_checksums`, ZFS / btrfs scrub, S3 per-part checksums, Kafka per-record-batch checksums, git object hashes.
+- Merkle trees (§22) extend the idea to *ranges*: compare roots, descend only where hashes differ — a plain checksum can't say *which* block differs without reading everything.
+
+```js
+// CRC32 (table-free version) — store on write, verify on read
+function crc32(str) {
+  let crc = 0xffffffff;
+  for (let i = 0; i < str.length; i++) {
+    let c = (crc ^ str.charCodeAt(i)) & 0xff;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    crc = (crc >>> 8) ^ c;
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+const block = "balance=1000";
+const stored = crc32(block);            // write path: store (block, stored)
+const ok = crc32(block) === stored;     // read path: mismatch ⇒ corrupted ⇒ repair from replica
+```
+
+---
+
+## 34. Distributed Locking & Fencing
+
+**Problem:** "only one worker may run this job / write this key" across machines — an in-process mutex doesn't span processes, and a lock that never expires deadlocks forever when its holder crashes.
+**Idea:** a **lease-based lock** in a consensus-backed store (etcd, ZooKeeper, Redis): acquire with a TTL, renew by heartbeat, release on delete; a crashed holder's lease simply expires. The safety net for "holder paused longer than its lease" (GC pause, slow network) is a **fencing token**: an increasing token issued at acquire time; the *resource* rejects any write carrying a stale token.
+
+```text
+t1: acquire (token 41) ──► works ──► GC pause 30 s (> lease) ──► resumes, writes "balance=0" with token 41
+t2: acquire (token 42) ──► works while t1 is paused ──► writes "balance=100" with token 42
+
+without fencing:  t1's stale write clobbers t2's — silent corruption
+with fencing:     storage checks token: 41 < 42 → REJECT t1's write
+```
+
+- Same machinery as leader election (§14): a leader *is* a lock holder — fencing tokens are exactly the split-brain protection Raft (etcd, ZooKeeper) and Patroni provide.
+- **Redlock caveat:** Redis-based Redlock can't detect a holder paused past its lease (unbounded pause ⇒ two "holders"), so it's only a soft guarantee — pair it with fencing tokens, or use etcd/ZooKeeper when correctness matters.
+
+```text
+// etcd / ZooKeeper pattern (concept)
+lease = store.lock("job:nightly-report", ttl: 30s, token: ++sequence)   // token increases per acquire
+heartbeat loop renews the lease every 10 s
+on work: storage.apply(write, token)   // storage rejects if token < last accepted (fencing)
+```
+
+---
+
+## 35. Service Discovery & Registry
+
+**Problem:** in a dynamic cluster (autoscaling, rolling deploys, crashes) an instance's address is temporary — hardcoded IPs break, and clients must only talk to *healthy* instances.
+**Idea:** a **registry** (etcd, Consul, Kubernetes, ZooKeeper) holds `service → [healthy instances]`; each instance **self-registers** with a lease and renews a heartbeat; clients resolve through DNS or a client-side load balancer that watches the registry.
+
+```text
+Service A ──"where is B?"──► DNS / registry (etcd, Consul, K8s)
+                                 │ B1, B2 self-register + heartbeat
+                                 ▼
+                    B1 (healthy)  B2 (healthy)  B3 (draining — unregistered)
+Service A round-robins over B1/B2; unhealthy or slow B3 is removed automatically
+```
+
+| Approach | How it resolves | Failover speed | Notes |
+| -------- | --------------- | -------------- | ----- |
+| DNS round-robin | DNS name → several A records | slow (DNS TTL caching) | simplest; the *client* doesn't know health |
+| Client-side LB | watch registry directly (gRPC resolver, Finagle) | instant | health-aware; more client complexity |
+| Sidecar / proxy | local proxy resolves on behalf (§36) | instant | mesh territory — mTLS + retries bundled |
+
+Health checks matter more than the registry: a "healthy" instance serving errors is worse than a down one. Distinguish **readiness** (can take traffic) from **liveness** (process alive). Gossip (§18) is the *decentralized* alternative — no registry to fail, weaker consistency.
+
+---
+
+## 36. API Gateway vs Service Mesh
+
+**Problem:** clients shouldn't each know and authenticate against a dozen services, and intra-cluster traffic (service → service) needs mTLS, retries, and tracing without rewriting every service.
+**Idea:** an **API gateway** (north-south) is the single edge L7 proxy: authN/authZ, TLS termination, rate limiting, routing, response caching, WAF. A **service mesh** (east-west) injects a **sidecar proxy** next to every instance: mTLS between services, retries, timeouts, circuit breaking, tracing, policy — application code stays unaware.
+
+```text
+clients ──► [API Gateway] ──► svcA ─sidecar──► svcB ─sidecar──► svcC ──► db
+             authn / TLS /        └────── mTLS + retries + tracing between sidecars ──────┘
+             rate-limit / route
+```
+
+| | API Gateway | Service Mesh |
+| -- | ----------- | ------------ |
+| Where | the edge, one hop before services | next to every instance (sidecar) |
+| Typical job | auth, TLS, rate limit, routing, aggregation | mTLS, retries, circuit breaking, observability |
+| Examples | Kong, APISIX, Traefik, AWS API Gateway | Envoy, Istio, Linkerd, Consul Connect |
+| Cost | one more hop at the edge | CPU/RAM per instance + control plane |
+
+Both are proxies with overlapping features (Traefik does both) — the question is *where* the traffic flows: external clients → gateway; internal calls → mesh.
+
+---
+
+## 37. CDN & Edge Caching
+
+**Problem:** a user in Mumbai should not wait for a round trip to us-east for every image / JS / video byte, and the origin shouldn't serve the same popular object a million times.
+**Idea:** cache content at **edge PoPs** near users. **Pull CDN** (CloudFront, Fastly): the edge fetches from origin on first miss, then serves locally until the TTL expires. **Push CDN**: the origin uploads to edges (rare; full control).
+
+```text
+user (Mumbai) ──► PoP Mumbai ── cache hit? ──yes──► serve from edge (5 ms)
+                            │ miss
+                            ▼
+                     origin (us-east) ── fetch once ──► cache at edge with TTL
+```
+
+| Problem | Standard fix |
+| ------- | ------------ |
+| Stale objects | versioned URLs (`app.js?v=42`), short TTL for mutable content, cache-busting on deploy |
+| Forced update | purge API (`/*` invalidate), or write-through edge cache |
+| Private content | signed URLs / cookies (CloudFront signed URLs, S3 presigned) |
+| Dynamic API responses | edge functions (CloudFront Functions / Lambda@Edge) for geo-routing, A/B, token checks |
+
+Rule of thumb: static + globally popular → CDN; user-specific → cache *behind* auth at the app layer (§16). CDNs also absorb DDoS by spreading load across PoPs — put the WAF at the edge, not just at the origin.
+
+---
+
+## 38. Distributed Tracing
+
+**Problem:** one request fans out across 10 services; when it's slow, *which hop* is guilty? Per-service logs can't stitch the path together.
+**Idea:** a **trace ID** propagates in headers (`traceparent`, W3C) from the edge through every call; each service records a **span** (name, start, duration, tags, parent span ID); the collector (Jaeger, Zipkin, Tempo, Datadog) joins spans into one tree per trace.
+
+```text
+GET /feed  ──► trace id = 0a1b2c ──►
+  api-gateway    [span: gateway   12 ms ]
+  feed-svc       [span: feed      80 ms ]  parent = gateway
+  timeline-svc   [span: timeline 200 ms ]  parent = feed     ← the slow one
+  redis          [span: cache      3 ms ]  parent = timeline
+```
+
+- **Sampling:** head-based (decide at entry: keep 1%) or tail-based (keep only slow/error traces) — sampled traces are cheap, unsampled spans are not.
+- **Correlation:** put `trace_id` in log lines and turn span durations into metric histograms — logs answer "what", metrics "how many", traces "where".
+- Make it zero-effort per service: propagate the header in your HTTP client wrapper; never fork or retry without passing the span context.
+
+```js
+// concept: propagate and record one hop
+async function handle(req, res) {
+  const traceparent = req.headers["traceparent"] ?? `00-${randId()}-${randId()}-01`;
+  const start = Date.now();
+  try { await downstream.call({ traceparent }); }        // pass it on
+  finally { reportSpan(traceparent, "handle", Date.now() - start); }
+}
+```
+
+---
+
+## 39. Retries, Backoff & Jitter
+
+**Problem:** transient failures (timeouts, 503s, resets) are common — but retrying *immediately and identically* from thousands of clients turns one blip into a self-inflicted outage (retry storm, thundering herd §43).
+**Idea:** retry with **exponential backoff + jitter**, cap the attempts, and only retry operations that are safe to repeat (idempotent, or with an idempotency key §10).
+
+```js
+// exponential backoff with full jitter — breaks client synchronization
+function backoff(attempt, baseMs = 100, capMs = 10_000) {
+  const exp = Math.min(capMs, baseMs * 2 ** attempt);    // 100, 200, 400, 800, … capped
+  return Math.random() * exp;                            // random in [0, exp)
+}
+// use: for (let a = 0; a < 5; a++) { try { return await call(); } catch { await sleep(backoff(a)); } }
+```
+
+- **Why jitter:** without it every client retries at the same +1 s / +2 s / +4 s marks, recreating the exact load spike that caused the failure.
+- **What to retry:** reads, and writes with idempotency keys — never blindly retry a mutating call (double-charge, double-spend).
+- **When to stop:** cap attempts (e.g. 5), then fail fast; if errors persist, trip a circuit breaker (§11) instead of hammering.
+
+---
+
+## 40. Timeouts & Hedging
+
+**Problem:** a request's latency = its slowest subcall; one outlier (GC pause, noisy neighbor) drags the p99 of the whole system, and waiting forever for it is worse than failing fast.
+**Idea:** **timeouts** bound every call, **deadlines** bound the *total* budget (propagate remaining time down the call graph), **hedging** duplicates slow calls to another replica and takes the first answer.
+
+| Tool | What it does | Example |
+| ---- | ------------ | ------- |
+| Timeout | bounds a single call | 100 ms per hop |
+| Deadline | total budget, propagated | "2 s left", not "retry forever" |
+| Hedging | after a delay (e.g. 95th %ile), fire a duplicate elsewhere; first success wins | Google: ~half the long tails gone for ~14% extra requests |
+| Bounded concurrency | cap in-flight work; reject or queue the rest (§21) | queues are where latency goes to die |
+
+Classic failure mode: retry logic that resets the clock per attempt — the *deadline* (total) must stay fixed even as individual *timeouts* shrink. Hedging pairs with idempotency (§10): the duplicate read is free; the duplicate write is only safe if the operation is idempotent or keyed.
+
+---
+
+## 41. Logical Clocks (Lamport & HLC)
+
+**Problem:** wall-clock timestamps from different machines can't order events — NTP skew means A's "12:00:01" can be earlier than B's "12:00:00". Multi-machine causality needs a *logical* clock.
+**Idea (Lamport):** every node keeps a counter; local event → `L++`; send → attach `L`; receive → `L = max(L, msg.L) + 1`. If event `a` causally precedes `b`, then `L(a) < L(b)` — a total order exists, but concurrent events get arbitrary order.
+
+```text
+A: L=1 ──send──► B: L = max(0, 1)+1 = 2   (happened-before is preserved)
+B: L=2 ──send──► C: L = max(0, 2)+1 = 3
+two nodes with no communication: both at L=1 — same timestamp, no causality — arbitrary tiebreak
+```
+
+| Clock | Ordering guarantee | Detects concurrency? | Used by |
+| ----- | ------------------ | -------------------- | ------- |
+| Wall clock (NTP) | none under skew | no | logs only |
+| Lamport | causal order | no | distributed algorithms |
+| Vector clocks (§19) | causal order | **yes** | DynamoDB, Cassandra |
+| HLC (hybrid) | causal + near-wall-clock | no | CockroachDB, MongoDB |
+
+**HLC** = physical ms + a logical counter: timestamps that *look* like wall clock (good for UX, logs) but stay safe under skew. For conflict *detection* (two replicas wrote the same key), only vector clocks suffice — see §19.
+
+---
+
+## 42. Fan-out & Push vs Pull
+
+**Problem:** one user's action must reach thousands or millions of others (a post → followers' feeds; an event → subscribers), and client devices need updates without polling themselves into a DoS.
+**Idea:** **fan-out** spreads the single write. **Write fan-out**: on publish, copy the post into every follower's timeline (fast reads, expensive writes). **Read fan-out**: assemble the timeline at read time by querying followed users (cheap writes, slow reads). **Hybrid** (Twitter/Instagram): regular users write-fanout; celebrities' posts merge at read time.
+
+```text
+user posts ──► post-svc ──► fanout worker (async, batches) ──► insert into 1M followers' feed caches
+timeline read ──► cached feed (fan-out part) + celebrity posts fetched live and merged
+```
+
+**Push vs pull to clients:**
+
+| Mechanism | Direction | Use for | Cost |
+| --------- | --------- | ------- | ---- |
+| Polling | client pulls on a timer | cheap, low-frequency sync | wasteful at scale (constant empty requests) |
+| Long-poll | client holds the request until data arrives | near-real-time without sockets | one open connection per client |
+| SSE | server → client stream (HTTP) | notifications, live scores | one-way only; auto-reconnect |
+| WebSockets | bidirectional | chat, collaborative editing, live cursors | connection state + backpressure burden |
+| Webhooks | server → server (event-driven) | payments, CI, external systems | needs retries + idempotency (§10, §39) |
+
+Same shape as event-driven architecture (§26): fan-out is the *delivery* pattern; a broker (Kafka) is the durable backbone — see the Twitter, Instagram, and Notification System docs for full designs.
+
+---
+
+## 43. Hot Keys & Thundering Herd
+
+**Problem:** two skew problems: (1) a **hot key** — one key gets a disproportionate share of traffic (viral tweet, trending product), saturating its shard while the rest idle; (2) a **thundering herd** — a cache entry expires and *all* concurrent requests miss at once, stampeding the database.
+**Idea:** for hot keys: split or replicate the key across shards (`video:42:a/b/c`), keep hot data in a local in-process cache, detect skewed shards adaptively. For stampedes: **TTL jitter**, **single-flight** (one in-flight loader; everyone else awaits the same promise), stale-while-revalidate, or warm the key on write.
+
+```js
+// Single-flight: concurrent callers share ONE loader — the DB sees 1 query, not 10k
+const inflight = new Map();
+function singleFlight(key, load) {
+  if (!inflight.has(key)) {
+    inflight.set(key, load().finally(() => inflight.delete(key)));
+  }
+  return inflight.get(key);
+}
+// cache fill: singleFlight("feed:42", () => db.query(...))
+```
+
+```text
+without single-flight: 10 000 requests miss "feed:42" → 10 000 DB queries → DB melts → retries (§39) melt it more
+with single-flight:    10 000 await one promise → 1 DB query → everyone served the same fresh value
+```
+
+Same physics as retry storms (§39): synchronized load is the enemy — jitter, batching, and a single authoritative filler break the synchronization. Redis `SETNX` implements the same idea across processes (see the distributed-cache doc).
+
+---
+
+## 44. Optimistic Concurrency & Versioning
+
+**Problem:** two writers update the same row at the same time; last-writer-wins silently drops one user's edit.
+**Idea:** assume conflicts are rare — no locks — but make them *detectable*: each write carries a **version** (or the read's value); the update only succeeds if the version hasn't changed. A failed compare-and-swap (CAS) means retry or surface the conflict.
+
+```sql
+-- version column: exactly one writer wins
+UPDATE users SET name = 'Alice', version = version + 1
+WHERE id = 42 AND version = 5;
+-- 1 row updated → you won. 0 rows → someone else wrote first → retry with the new value, or 409
+```
+
+| Mechanism | Where you see it |
+| --------- | ---------------- |
+| Version column / CAS (`WHERE version = ?`) | SQL apps, DynamoDB conditional writes |
+| ETag + `If-Match` | HTTP: PUT only if the client's ETag still matches |
+| `WATCH`/`MULTI` + Lua compare-and-set | Redis optimistic CAS |
+| Tombstones | deletes as markers so a stale replica can't resurrect a key (LSM §32, multi-leader) |
+
+Without versioning a concurrent write is silently lost (LWW); with it you choose: retry (low contention) or show the user both versions (Google Docs-style merge — vector clocks §19, CRDTs §25).
+
+---
+
+## 45. SLIs, SLOs & Error Budgets
+
+**Problem:** "make it reliable" is unmeasurable — you can't discuss whether to ship, buy capacity, or stop deploys without numbers; and 100% uptime is both impossible and pointless.
+**Idea:** pick a **signal** (SLI), set a **target** (SLO) over a window, and treat the leftover as a **budget** you may deliberately spend — on deploys, experiments, or repairs.
+
+| Term | Meaning | Example |
+| ---- | ------- | ------- |
+| SLI | the measured signal | p99 latency ≤ 250 ms; error rate ≤ 0.1%; availability |
+| SLO | the target for the SLI | 99.9% availability over a 30-day window |
+| SLA | contractual commitment (usually weaker) | 99.95% with refunds |
+| Error budget | 100% − SLO | 0.1% ≈ 43 minutes/month of *allowed* failures |
+
+- **Burn-rate alerting:** if the budget burns at 14.4× (would exhaust in ~2 days), page now — not when the budget is already gone.
+- The budget makes trade-offs discussable: "we've used 10% of the month's budget — we can afford this rollout," or "deploys are frozen until the budget recovers."
+- Choose SLIs that match user pain (latency/errors on *user-visible* paths), not internal niceties.
+
+---
+
+## 46. Multi-Region & Disaster Recovery
+
+**Problem:** one region is a single point of failure (outage, disaster) and far-away users suffer latency; being multi-region means trading consistency and money for resilience.
+**Idea:** **RPO** (how much data you may lose) and **RTO** (how long you may be down) set the bar; then pick a topology:
+
+| | Active-Passive | Active-Active |
+| -- | -------------- | ------------- |
+| Writes | primary region only; async replicate to DR | both regions (conflicts possible!) |
+| Reads | primary + DR can both serve reads | both regions |
+| Failover | promote DR (RTO = minutes with automation, else hours) | none needed — clients just reroute |
+| Data loss | RPO = replication lag (async) or ~0 (sync, slower writes) | conflict resolution (§19, §25) |
+| Example | PostgreSQL streaming + PITR backups, Redis replicas | Spanner, multi-region Cassandra |
+
+```text
+us-east (primary) ──async replication──► us-west (DR)          active-passive
+  app writes → us-east only; us-east dies → promote us-west (RTO), accept losing < 1 s (RPO)
+geo-routing: latency-based DNS / anycast steers users to the nearest healthy region
+```
+
+- Never trust replication alone: restore-from-backup drills (PITR) are the only proof the DR story works.
+- Cross-region is where consistency models (§29) bite hardest: async replication + active-active = eventual across regions; strong consistency (Spanner) costs the latency CAP/PACELC (§30) predicts.
+
+---
+
+## 47. Deployment Strategies
+
+**Problem:** shipping new code is the most common way to break production; a bad release should fail loudly, affect few users, and roll back in seconds — not hours.
+**Idea:** control *how* new versions meet traffic:
+
+| Strategy | How it works | Rollback | Risk profile |
+| -------- | ------------ | -------- | ------------ |
+| Rolling | replace instances gradually (K8s default) | redeploy previous version | both versions live together — schema must be backward-compatible |
+| Blue-green | two full environments; switch the router | instant: flip back | 2× infra; DB still shared — schema must be compatible |
+| Canary | 1–5% of traffic to the new version; watch SLOs (§45); ramp up | route 100% back | small blast radius; needs metrics + alerts |
+| Feature flags | ship code hidden; toggle per user/group | flip a flag — no deploy | flag sprawl; flags must be cleaned up |
+
+```text
+traffic ──► canary 2% ──► watch error budget / latency ──► ramp 10% → 50% → 100% ──► done
+            errors or budget burn? ──► route 100% back to the old version, investigate
+```
+
+Best practice is a stack: **canary + feature flags + error-budget monitoring + automated rollback**, with migrations designed backward-compatible (additive columns, dual writes) so old and new code can coexist during any of these.
+
+---
+
+## 48. Geospatial Indexing (Geohash & S2)
+
+**Problem:** "venues within 5 km of me" — scanning every point is too slow, and (lat, lng) pairs don't sort into one key that supports range queries.
+**Idea:** **geohash**: encode (lat, lng) into a base32 string where *longer prefixes = smaller boxes* and nearby points share prefixes — a normal string index (B-tree §32) now serves "near me". **Quadtrees** split space into 4 recursively; **S2/H3** (Google/Uber) use spherical cells; PostGIS uses R-tree (GiST).
+
+```text
+geohash "te7u..." (≈ 1.2 km box)          ┌───┬───┬───┐
+Mumbai (19.07, 72.87) → "te7um..."        │   │   │   │  4-way split (quadtree):
+nearby venue            → "te7um9..."      │ X │   │   │  recurse only into the
+Delhi (28.61, 77.20)    → "ttd..."         └───┴───┴───┘  cell that contains points
+"near me" query: prefix match, then filter exact distance (haversine)
+```
+
+```js
+// Bounding-box prefilter — cheap with a normal index, then refine with exact distance
+function bboxQuery(lat, lng, radiusKm) {
+  const dLat = radiusKm / 111;                        // 1° latitude ≈ 111 km
+  const dLng = radiusKm / (111 * Math.cos(lat * Math.PI / 180));
+  return { minLat: lat - dLat, maxLat: lat + dLat,
+           minLng: lng - dLng, maxLng: lng + dLng };
+}
+// SELECT * FROM venues WHERE lat BETWEEN ? AND ? AND lng BETWEEN ? AND ?  →  haversine filter
+```
+
+Two-tier pattern everywhere: coarse index (geohash prefix / bbox / S2 cell) gets candidates, an exact haversine filter confirms — see `system-design-proximity-service.md` for the full design.
+
+---
+
+## 49. Quick Map: Concept → Problem Solved
 Lost? Start here - find the concept that matches the problem you are solving:
 
 | Concept | Solves | See also |
@@ -947,6 +1523,470 @@ Lost? Start here - find the concept that matches the problem you are solving:
 | 2PC vs Saga | blocking 2-phase commit vs compensating saga | saga row above |
 | CRDTs | coordinator-free convergence | google-docs (editing) |
 | Event-driven architecture | decouple services via an event bus | kafka-features.md |
+| Quorum | never read stale data; survive node loss | system-design-key-value-store.md |
+| Consistency models | which read guarantees your app needs | — |
+| PACELC | the no-partition half of CAP | — |
+| WAL | durability + cheap crash recovery | postgresql-features.md |
+| B-tree vs LSM | storage engine choice (reads vs writes) | — |
+| Checksums | silent data corruption | system-design-key-value-store.md |
+| Distributed locking | exactly one worker, safely | system-design-distributed-cache.md |
+| Service discovery | find healthy instances dynamically | — |
+| Gateway vs mesh | edge auth/routing vs intra-cluster mTLS | — |
+| CDN | low-latency global content | system-design-file-storage.md |
+| Distributed tracing | find the slow hop across services | — |
+| Retries & backoff | survive transient failures without storms | system-design-payment-system.md |
+| Timeouts & hedging | kill tail latency | — |
+| Logical clocks | order events without trusting wall clocks | — |
+| Fan-out | one write → many readers | twitter, instagram docs |
+| Hot keys & stampede | skewed load; cache-miss herds | system-design-distributed-cache.md |
+| Optimistic concurrency | lost updates without locks | system-design-google-docs.md |
+| SLI/SLO/SLA | reliability you can measure and budget | — |
+| Multi-region & DR | survive a region outage | — |
+| Deployment strategies | ship safely, roll back fast | — |
+| Geospatial indexing | "near me" at scale | system-design-proximity-service.md |
+| Algorithms (Luhn, Dijkstra, LRU, …) | classic LLD interview tools, JS included | Part II — §50–§66 |
+
+---
+
+## Part II — Classic Algorithms & Data Structures (LLD)
+
+## 50. Luhn's Algorithm (Credit Card Validation)
+
+**Problem:** a user typos a 16-digit card number — you want to reject it before it reaches the payment provider, without a database lookup.
+**Idea:** a checksum-style format check: from the rightmost (check) digit, double every second digit; any doubled digit > 9 subtracts 9; the total must be divisible by 10. Catches every single-digit error and ~90% of adjacent-transposition errors.
+
+```js
+function luhnValid(card) {
+  const d = String(card).replace(/\D/g, "");
+  if (d.length < 13) return false;
+  let sum = 0, double = false;
+  for (let i = d.length - 1; i >= 0; i--) {
+    let v = +d[i];
+    if (double) { v *= 2; if (v > 9) v -= 9; }
+    sum += v; double = !double;
+  }
+  return sum % 10 === 0;
+}
+luhnValid("4532015112830366");  // true — Visa test number
+luhnValid("4532015112830367");  // false — last digit flipped
+```
+
+Luhn is a *format* check, not security: still verify with the issuer, tokenize (never store PANs), and keep PCI scope minimal — see `system-design-payment-system.md`.
+
+---
+
+## 51. Dijkstra's Shortest Path
+
+**Problem:** cheapest route from A to B on a weighted graph (roads with travel times, network hops with latency) — exploring every path is exponential.
+**Idea:** expand nodes in order of current best known distance: pop the closest unsettled node, relax its neighbors, stop when the destination is popped. O((V + E) log V) with a min-heap.
+
+```js
+// adjacency list graph: { A: [["B", 4], ["C", 2]], B: [["C", 1], ["D", 5]], ... }
+function dijkstra(graph, start, goal) {
+  const dist = Object.fromEntries(Object.keys(graph).map(k => [k, Infinity]));
+  dist[start] = 0;
+  const pq = [[0, start]];                        // [distance, node] — real prod code uses a heap
+  while (pq.length) {
+    pq.sort((a, b) => a[0] - b[0]);
+    const [d, u] = pq.shift();
+    if (u === goal) return d;
+    if (d > dist[u]) continue;                    // stale entry
+    for (const [v, w] of graph[u]) {
+      if (d + w < dist[v]) { dist[v] = d + w; pq.push([d + w, v]); }
+    }
+  }
+  return Infinity;                                // unreachable
+}
+```
+
+Where: route engines (Google Maps), network routing (OSPF), P2P overlays. Positive weights only — with negative edges use Bellman-Ford. See `system-design-google-maps.md`.
+
+---
+
+## 52. A* Search
+
+**Problem:** Dijkstra expands in all directions; with an estimate of where the goal is, you can skip most of the map.
+**Idea:** score every node f(n) = g(n) + h(n): known cost so far + an **admissible heuristic** (straight-line / haversine §64 distance). Expand lowest f first — optimal whenever h never overestimates.
+
+```js
+// grid: 2D array of walkable cells; h: heuristic (e.g. straight-line distance to goal)
+function astar(grid, start, goal, h) {
+  const key = ([r, c]) => r + "," + c;
+  const open = [[h(start), 0, start]];            // [f, g, cell]
+  const gScore = { [key(start)]: 0 }, came = {};
+  while (open.length) {
+    open.sort((a, b) => a[0] - b[0]);
+    const [, g, cur] = open.shift();
+    if (key(cur) === key(goal)) return g;         // (reconstruct path via `came`)
+    for (const [dr, dc] of [[0, 1], [1, 0], [0, -1], [-1, 0]]) {
+      const nb = [cur[0] + dr, cur[1] + dc];
+      if (!grid[nb[0]]?.[nb[1]]) continue;
+      const ng = g + 1;
+      if (ng < (gScore[key(nb)] ?? Infinity)) {
+        gScore[key(nb)] = ng; came[key(nb)] = cur;
+        open.push([ng + h(nb), ng, nb]);
+      }
+    }
+  }
+  return Infinity;
+}
+```
+
+Where: navigation, delivery routing, games — the heuristic is what turns Dijkstra into a focused search.
+
+---
+
+## 53. BFS & DFS Graph Traversal
+
+**Problem:** explore a graph: shortest number of hops (BFS) or deep traversal / cycle detection (DFS).
+**Idea:** BFS = queue, visits by layers — the first time you see a node is the fewest-edge path (unweighted graphs). DFS = stack / recursion — finds cycles, connected components, and post-order.
+
+```js
+function bfs(graph, start) {                      // shortest hop count, unweighted
+  const seen = new Set([start]), q = [start], hops = { [start]: 0 };
+  while (q.length) {
+    const u = q.shift();
+    for (const v of graph[u]) if (!seen.has(v)) { seen.add(v); hops[v] = hops[u] + 1; q.push(v); }
+  }
+  return hops;
+}
+
+function hasCycle(graph) {                        // DFS with a recursion stack
+  const state = {};                               // 0 = visiting, 1 = done
+  const visit = u => {
+    if (state[u] === 1) return false;
+    if (state[u] === 0) return true;              // back-edge → cycle
+    state[u] = 0;
+    for (const v of graph[u]) if (visit(v)) return true;
+    state[u] = 1; return false;
+  };
+  return Object.keys(graph).some(visit);
+}
+```
+
+Where: web-crawler.md (BFS frontier), social graphs (friends-of-friends), metro hop queries — see `system-design-web-crawler.md` and `system-design-metro-ticketing.md`.
+
+---
+
+## 54. Topological Sort (Kahn's Algorithm)
+
+**Problem:** order tasks where some depend on others — build pipelines, DB migrations, stream-processing DAGs, Spark stages — and detect circular dependencies.
+**Idea (Kahn):** repeatedly remove nodes with in-degree 0; the removal order is a valid order; if nodes remain, there's a cycle.
+
+```js
+function topoSort(n, edges) {                     // n nodes, edges [[a, b]] = a before b
+  const adj = Array.from({ length: n }, () => []);
+  const indeg = new Array(n).fill(0);
+  for (const [a, b] of edges) { adj[a].push(b); indeg[b]++; }
+  const q = [], order = [];
+  for (let i = 0; i < n; i++) if (indeg[i] === 0) q.push(i);
+  while (q.length) {
+    const u = q.shift(); order.push(u);
+    for (const v of adj[u]) if (--indeg[v] === 0) q.push(v);
+  }
+  return order.length === n ? order : null;       // null ⇒ cycle — no valid order
+}
+```
+
+Where: delayed-job-scheduler.md (job DAGs), schema migrations, Airflow/DAG orchestration, Kafka Streams topology validation.
+
+---
+
+## 55. Union-Find (Disjoint Set)
+
+**Problem:** maintain connected components dynamically — friend circles, fraud-related accounts, dedupe clusters — with near-constant-time operations.
+**Idea:** parent pointers + **union by rank** + **path compression** → amortized α(n), practically O(1).
+
+```js
+class UnionFind {
+  constructor(n) { this.p = [...Array(n).keys()]; this.r = new Array(n).fill(0); }
+  find(x) { return this.p[x] === x ? x : (this.p[x] = this.find(this.p[x])); }  // path compression
+  union(a, b) {
+    a = this.find(a); b = this.find(b);
+    if (a === b) return false;
+    if (this.r[a] < this.r[b]) [a, b] = [b, a];   // union by rank
+    this.p[b] = a; if (this.r[a] === this.r[b]) this.r[a]++;
+    return true;
+  }
+}
+const uf = new UnionFind(6);
+uf.union(0, 1); uf.union(1, 2); uf.union(3, 4);
+uf.find(0) === uf.find(2);   // true  — same friend circle
+uf.find(0) === uf.find(4);   // false — different circle
+```
+
+Where: social networks (mutual friends), fraud detection (linked accounts), crawler URL clustering.
+
+---
+
+## 56. Trie (Prefix Tree)
+
+**Problem:** prefix queries at scale — autocomplete, dictionary lookup, IP routing — where comparing full strings repeatedly is wasteful.
+**Idea:** a tree where each edge is one character and every node is a prefix. Insert / search / prefix-walk cost O(key length), independent of dictionary size.
+
+```js
+class Trie {
+  constructor() { this.root = { kids: {} }; }
+  insert(word) {
+    let n = this.root;
+    for (const c of word) n = (n.kids[c] ??= { kids: {} });
+    n.end = true;
+  }
+  search(word) {
+    let n = this.root;
+    for (const c of word) if (!(n = n.kids[c])) return false;
+    return !!n.end;
+  }
+  startsWith(prefix) {
+    let n = this.root;
+    for (const c of prefix) if (!(n = n.kids[c])) return false;
+    return true;
+  }
+}
+```
+
+Where: search-autocomplete.md (prefix → top-k suggestions; each node holds a ranked list), load-balancer URL routing (longest-prefix match), spell-check dictionaries.
+
+---
+
+## 57. LRU Cache
+
+**Problem:** a bounded cache must evict the least-recently-used entry, and both get and put must be O(1).
+**Idea:** hash map for O(1) lookup + recency tracking; get touches the entry, put evicts the least-recent one when full. (Interview version: doubly-linked list + hash map — same complexity, no reliance on Map ordering.)
+
+```js
+class LRU {
+  constructor(cap) { this.cap = cap; this.m = new Map(); }   // Map preserves insertion order
+  get(k) {
+    if (!this.m.has(k)) return -1;
+    const v = this.m.get(k); this.m.delete(k); this.m.set(k, v);   // touch → move to front
+    return v;
+  }
+  put(k, v) {
+    if (this.m.has(k)) this.m.delete(k);
+    this.m.set(k, v);
+    if (this.m.size > this.cap) this.m.delete(this.m.keys().next().value);  // evict LRU
+  }
+}
+```
+
+Where: system-design-distributed-cache.md, Redis `allkeys-lru`, CDN edge caches, in-process caches (§16).
+
+---
+
+## 58. External Sort & K-Way Merge
+
+**Problem:** sorting 1 TB of URLs on a machine with 8 GB RAM (crawler dedupe, index building) — the data never fits in memory.
+**Idea:** split into chunks that fit in RAM → sort each in memory → write sorted runs to disk → **k-way merge** with a heap, streaming the output.
+
+```js
+// k-way merge: repeatedly take the smallest head across k sorted runs
+function kWayMerge(runs) {                        // runs: array of sorted arrays
+  const heap = runs.map((r, i) => r.length ? [r[0], i, 0] : null).filter(Boolean);
+  const out = [];
+  while (heap.length) {
+    heap.sort((a, b) => a[0] - b[0]);
+    const [v, run, idx] = heap.shift();
+    out.push(v);
+    const next = runs[run][idx + 1];
+    if (next !== undefined) heap.push([next, run, idx + 1]);
+  }
+  return out;
+}
+```
+
+Where: web-crawler.md URL dedupe, search index building, MapReduce shuffle phase, database sort-merge joins.
+
+---
+
+## 59. Reservoir Sampling
+
+**Problem:** pick k uniform-random items from a stream of unknown (or unbounded) size — without storing the stream.
+**Idea:** keep the first k items; for item i ≥ k, replace a random slot with probability k/i. Every item ends up selected with equal probability k/n.
+
+```js
+function reservoir(stream, k) {
+  const keep = [];
+  for (let i = 0; i < stream.length; i++) {
+    if (i < k) keep.push(stream[i]);
+    else {
+      const j = Math.floor(Math.random() * (i + 1));   // uniform in [0, i]
+      if (j < k) keep[j] = stream[i];
+    }
+  }
+  return keep;
+}
+```
+
+Where: canary selection (§47), A/B test assignment, metrics/tracing sampling (§38), random playlist generation (netflix / spotify docs).
+
+---
+
+## 60. Count-Min Sketch
+
+**Problem:** track frequencies of top items in a stream (trending topics, hot keys §43, per-key rate limiting) with bounded memory — exact counts for every key don't fit.
+**Idea:** d rows of counters, each row hashed by a different hash function; estimate = **min** across rows. Never undercounts; may overcount (hash collisions).
+
+```js
+class CountMinSketch {
+  constructor(w = 1000, d = 5) {
+    this.w = w; this.d = d;
+    this.t = Array.from({ length: d }, () => new Array(w).fill(0));
+  }
+  _h(i, x) {
+    let h = 2166136261;
+    for (const c of x) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+    return Math.abs(h + i * 0x9e3779b9) % this.w;
+  }
+  add(x) { for (let i = 0; i < this.d; i++) this.t[i][this._h(i, x)]++; }
+  count(x) {
+    let m = Infinity;
+    for (let i = 0; i < this.d; i++) m = Math.min(m, this.t[i][this._h(i, x)]);
+    return m;
+  }
+}
+const cms = new CountMinSketch();
+["video:42", "video:42", "video:7"].forEach(x => cms.add(x));
+cms.count("video:42");   // ≥ 2 — exact or overcount, never under
+```
+
+Where: hot-key detection (§43), trending hashtags, heavy hitters — pairs with bloom filter (§17, membership) and HLL (§61, distinct counts).
+
+---
+
+## 61. HyperLogLog (Cardinality Estimation)
+
+**Problem:** "how many distinct visitors today?" on a stream of billions — exact counting needs memory proportional to the set size.
+**Idea:** hash each element; keep the maximum run of leading zeros per register bucket; estimate ≈ 2^maxZeros averaged across registers. Redis PFADD/PFCOUNT: ~12 KB regardless of cardinality, ~0.8% error.
+
+```js
+// simplified HLL (single pass, m registers; real HLL adds bias correction)
+function hllEstimate(items, m = 1024) {
+  const regs = new Array(m).fill(0);
+  for (const it of items) {
+    let h = 0;
+    for (const c of it) h = (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0;
+    const idx = h % m, w = h >>> 10;
+    regs[idx] = Math.max(regs[idx], Math.clz32(w) + 1);   // leading zeros
+  }
+  const alpha = 0.7213 / (1 + 1.079 / m);
+  return alpha * m * m / regs.reduce((s, r) => s + 2 ** -r, 0);
+}
+```
+
+Where: redis-features.md (HLL data type), analytics dashboards, ad-tech reach counts, dedupe at the edge.
+
+---
+
+## 62. Levenshtein Distance (Edit Distance)
+
+**Problem:** fuzzy match — "did the user mean 'resturant'?" — or dedupe similar records (addresses, names) where exact equality fails.
+**Idea:** dynamic programming: edit distance between prefixes; cost 1 per insert / delete / substitute. O(m·n) time; O(n) space with two rows.
+
+```js
+function levenshtein(a, b) {
+  const dp = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1, dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return dp[a.length][b.length];
+}
+levenshtein("kitten", "sitting");   // 3
+```
+
+Where: search "did you mean", contact/address dedupe, OCR correction. O(n·m) is too slow for huge dictionaries → prefilter with trigrams / BK-trees, then exact DP on the candidates.
+
+---
+
+## 63. String Matching (KMP & Rabin-Karp)
+
+**Problem:** find a pattern in text (fraud-pattern scan, log search, content fingerprinting) without re-scanning matched characters on every mismatch.
+**Idea:** **KMP** precomputes the longest-prefix-suffix (LPS) table and never backtracks — O(n + m). **Rabin-Karp** hashes a sliding window and compares hashes — O(n) average, and one pass can check *many* patterns simultaneously (verify on hash match).
+
+```js
+function kmp(text, pat) {
+  const lps = new Array(pat.length).fill(0);            // longest proper prefix = suffix
+  for (let i = 1, j = 0; i < pat.length; i++) {
+    while (j > 0 && pat[i] !== pat[j]) j = lps[j - 1];
+    if (pat[i] === pat[j]) lps[i] = ++j;
+  }
+  const found = [];
+  for (let i = 0, j = 0; i < text.length; i++) {
+    while (j > 0 && text[i] !== pat[j]) j = lps[j - 1];
+    if (text[i] === pat[j]) j++;
+    if (j === pat.length) { found.push(i - j + 1); j = lps[j - 1]; }
+  }
+  return found;
+}
+```
+
+Where: intrusion/abuse pattern scanning, streaming content fingerprinting (rolling hash), plagiarism checks.
+
+---
+
+## 64. Haversine Distance
+
+**Problem:** exact distance between two (lat, lng) points — courier ETAs, "within 5 km", driver matching.
+**Idea:** spherical-law formula (haversine) over Earth's radius R ≈ 6371 km. Below ~1 km a flat-earth approximation is fine.
+
+```js
+function haversineKm(a, b) {
+  const R = 6371, toRad = x => x * Math.PI / 180;
+  const dLat = toRad(b[0] - a[0]), dLng = toRad(b[1] - a[1]);
+  const s = Math.sin(dLat / 2) ** 2 +
+            Math.cos(toRad(a[0])) * Math.cos(toRad(b[0])) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(s));
+}
+haversineKm([19.076, 72.8777], [19.1176, 72.9061]);   // ≈ 5.6 km — Mumbai
+```
+
+Where: proximity-service.md, uber.md, food-delivery.md — always as the *final filter* after a cheap geohash / bbox prefilter (§48), never as a full-table scan.
+
+---
+
+## 65. Base62 Encoding & Snowflake IDs
+
+**Problem:** URL-shortener keys must be short and URL-safe; globally unique IDs must be generated without a central sequence and ideally sort by time.
+**Idea:** **Base62** (0-9a-zA-Z) shrinks IDs: 7 characters encode ~3.5×10^12 values. **Snowflake** packs 41-bit ms timestamp + 10-bit machine + 12-bit sequence → 4096 IDs/ms/machine, ~69 years, time-ordered, zero coordination.
+
+```js
+const B62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+function toBase62(n) {
+  let s = "";
+  do { s = B62[n % 62] + s; n = Math.floor(n / 62); } while (n > 0);
+  return s;
+}
+// Snowflake (concept): (timestamp - epoch) << 22 | machineId << 12 | sequence
+function snowflake(ms, machineId, seq) {
+  return ((BigInt(ms) - 1288834974657n) << 22n) | (BigInt(machineId) << 12n) | BigInt(seq);
+}
+```
+
+Where: url-shortener.md (Base62 keys), payment-system.md and messaging-app.md (time-ordered IDs), distributed logs (IDs sort by creation time).
+
+---
+
+## 66. Sliding Window & Two Pointers
+
+**Problem:** windowed stats over streams — per-second rate limits, moving averages, anomaly detection — needing O(1) amortized add/evict, not a full recount.
+**Idea:** keep a queue (or circular buffer) of events; on each event, append and drop everything outside the window. Sliding-window *log* (exact), fixed-window *counter* (cheap, bursty), or sliding-window *counter* (buckets, approximate).
+
+```js
+class SlidingWindowRateLimiter {
+  constructor(limit, windowMs) { this.limit = limit; this.windowMs = windowMs; this.events = []; }
+  allow(now = Date.now()) {
+    while (this.events.length && this.events[0] <= now - this.windowMs) this.events.shift();
+    if (this.events.length >= this.limit) return false;
+    this.events.push(now);
+    return true;
+  }
+}
+```
+
+Where: rate-limiter.md (token bucket vs sliding window trade-offs), metrics aggregation, session windows — see `system-design-rate-limiter.md`.
 
 ---
 
@@ -957,4 +1997,5 @@ Lost? Start here - find the concept that matches the problem you are solving:
 - [Rate Limiter](system-design-rate-limiter.md) — token bucket, sliding window implementations
 - [Payment System (Stripe)](system-design-payment-system.md) — idempotency, saga
 - [E-Commerce (Amazon)](system-design-ecommerce.md) — sharding, caching, outbox
+- [Proximity Service](system-design-proximity-service.md) — geohash, spatial indexes, "near me" queries
 - [PostgreSQL Features Guide](postgresql-features.md) · [Redis Features Guide](redis-features.md) · [Kafka Features Guide](kafka-features.md)
