@@ -42,20 +42,20 @@ A social media platform supporting tweet posting, following, personalized timeli
 <title>Twitter — System Architecture</title>
 <rect x="52" y="288" width="710" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
 <text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Twitter / X</text>
-<path d="M407 132 L407 156 L424 156 L424 298 L408 298 L408 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M408 384 L408 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M394 636 L394 731 L149 731 L149 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M408 636 L408 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M422 636 L422 731 L665 731 L665 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M149 888 L149 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M407 888 L407 912 L428 912 L428 1054 L412 1054 L412 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M665 888 L665 912 L686 912 L686 1054 L670 1054 L670 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M149 1140 L149 1235 L393 1235 L393 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M407 1140 L407 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M670 1140 L670 1235 L421 1235 L421 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M393 1392 L393 1487 L149 1487 L149 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M407 1392 L407 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M421 1392 L421 1487 L665 1487 L665 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M407 132 L407 156 L424 156 L424 298 L408 298 L408 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M408 384 L408 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M394 636 L394 731 L149 731 L149 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M408 636 L408 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M422 636 L422 731 L665 731 L665 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M149 888 L149 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M407 888 L407 912 L428 912 L428 1054 L412 1054 L412 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M665 888 L665 912 L686 912 L686 1054 L670 1054 L670 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M149 1140 L149 1235 L393 1235 L393 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M407 1140 L407 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M670 1140 L670 1235 L421 1235 L421 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M393 1392 L393 1487 L149 1487 L149 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M407 1392 L407 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
+<path d="M421 1392 L421 1487 L665 1487 L665 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\twitter)"/>
 <rect x="333" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="407" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Mobile / Web</text>
 <rect x="327" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -82,7 +82,7 @@ A social media platform supporting tweet posting, following, personalized timeli
 <text x="670" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Elasticsearch</text>
 <rect x="333" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="407" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\twitter" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/twitter.architecture.html](diagrams/system-design/twitter.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

@@ -12,7 +12,7 @@
  *   hexagon {{..}} broker           -> messagebus
  *   diamond {...} service           -> backend
  */
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -97,8 +97,6 @@ function shortName(label) {
 }
 
 // ---- CLI -------------------------------------------------------------------
-const args = process.argv.slice(2);
-const only = args[0] ? new RegExp(args[0]) : null;
 
 // ---- discover files ---------------------------------------------------------
 const files = readdirSync(ROOT).filter(f => /\.md$/.test(f)).sort();
@@ -505,7 +503,8 @@ function convertBlock(file, block, blockIdx) {
     ];
   }
   const finalConnections = keptConnections.map(c => {
-    const { __back, ...rest } = c;
+    const rest = { ...c };
+    delete rest.__back;   // strip the internal layout flag from the emitted spec
     return rest;
   });
   const spec = { schema_version: 1, diagram_type: 'architecture', meta, components: laidOut.components, boundaries: laidOut.boundaries, connections: finalConnections };

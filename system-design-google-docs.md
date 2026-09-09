@@ -37,20 +37,20 @@ Real-time collaborative document editor with OT/CRDT conflict resolution.
 <title>Google Docs — System Architecture</title>
 <rect x="52" y="288" width="727" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
 <text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Google Docs</text>
-<path d="M416 132 L416 156 L432 156 L432 298 L416 298 L416 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M416 384 L416 408 L432 408 L432 550 L416 550 L416 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M402 636 L402 731 L156 731 L156 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M416 636 L416 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M430 636 L430 731 L675 731 L675 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M156 888 L156 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M416 888 L416 912 L444 912 L444 1054 L428 1054 L428 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M675 888 L675 912 L703 912 L703 1054 L687 1054 L687 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M156 1140 L156 1235 L402 1235 L402 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M416 1140 L416 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M687 1140 L687 1235 L430 1235 L430 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M402 1392 L402 1487 L158 1487 L158 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M416 1392 L416 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M430 1392 L430 1487 L674 1487 L674 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M416 132 L416 156 L432 156 L432 298 L416 298 L416 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M416 384 L416 408 L432 408 L432 550 L416 550 L416 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M402 636 L402 731 L156 731 L156 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M416 636 L416 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M430 636 L430 731 L675 731 L675 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M156 888 L156 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M416 888 L416 912 L444 912 L444 1054 L428 1054 L428 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M675 888 L675 912 L703 912 L703 1054 L687 1054 L687 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M156 1140 L156 1235 L402 1235 L402 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M416 1140 L416 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M687 1140 L687 1235 L430 1235 L430 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M402 1392 L402 1487 L158 1487 L158 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M416 1392 L416 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
+<path d="M430 1392 L430 1487 L674 1487 L674 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs)"/>
 <rect x="342" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="416" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Web App</text>
 <rect x="335" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -77,7 +77,7 @@ Real-time collaborative document editor with OT/CRDT conflict resolution.
 <text x="687" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis (cursors)</text>
 <rect x="342" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="416" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\google-docs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/google-docs.architecture.html](diagrams/system-design/google-docs.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

@@ -47,20 +47,20 @@ Netflix is the world's leading subscription-based video streaming platform with 
 <title>Netflix — System Architecture</title>
 <rect x="52" y="288" width="759" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
 <text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Netflix</text>
-<path d="M432 132 L432 156 L448 156 L448 298 L432 298 L432 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M432 384 L432 408 L448 408 L448 550 L432 550 L432 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M418 636 L418 731 L169 731 L169 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M432 636 L432 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M446 636 L446 731 L695 731 L695 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M169 888 L169 983 L153 983 L153 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M432 888 L432 912 L448 912 L448 1054 L424 1054 L424 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M695 888 L695 912 L719 912 L719 1054 L703 1054 L703 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M153 1140 L153 1235 L418 1235 L418 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M432 1140 L432 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M703 1140 L703 1235 L446 1235 L446 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M418 1392 L418 1487 L174 1487 L174 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M432 1392 L432 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M446 1392 L446 1487 L690 1487 L690 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M432 132 L432 156 L448 156 L448 298 L432 298 L432 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M432 384 L432 408 L448 408 L448 550 L432 550 L432 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M418 636 L418 731 L169 731 L169 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M432 636 L432 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M446 636 L446 731 L695 731 L695 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M169 888 L169 983 L153 983 L153 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M432 888 L432 912 L448 912 L448 1054 L424 1054 L424 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M695 888 L695 912 L719 912 L719 1054 L703 1054 L703 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M153 1140 L153 1235 L418 1235 L418 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M432 1140 L432 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M703 1140 L703 1235 L446 1235 L446 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M418 1392 L418 1487 L174 1487 L174 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M432 1392 L432 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
+<path d="M446 1392 L446 1487 L690 1487 L690 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\netflix)"/>
 <rect x="358" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="432" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Mobile / Web</text>
 <rect x="351" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -87,7 +87,7 @@ Netflix is the world's leading subscription-based video streaming platform with 
 <text x="703" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">FFmpeg + Open Connect</text>
 <rect x="358" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="432" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\netflix" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/netflix.architecture.html](diagrams/system-design/netflix.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

@@ -43,20 +43,20 @@ A distributed rate limiting system that controls API request rates per user/IP/A
 <title>Rate Limiter — System Architecture</title>
 <rect x="52" y="288" width="749" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
 <text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Rate Limiter</text>
-<path d="M427 132 L427 156 L443 156 L443 298 L427 298 L427 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M427 384 L427 408 L443 408 L443 550 L427 550 L427 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M413 636 L413 731 L169 731 L169 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M427 636 L427 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M441 636 L441 731 L685 731 L685 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M169 888 L169 912 L185 912 L185 1054 L164 1054 L164 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M427 888 L427 983 L446 983 L446 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M685 888 L685 983 L709 983 L709 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M164 1140 L164 1235 L413 1235 L413 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M446 1140 L446 1235 L427 1235 L427 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M709 1140 L709 1235 L441 1235 L441 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M413 1392 L413 1487 L169 1487 L169 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M427 1392 L427 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M441 1392 L441 1487 L685 1487 L685 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M427 132 L427 156 L443 156 L443 298 L427 298 L427 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M427 384 L427 408 L443 408 L443 550 L427 550 L427 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M413 636 L413 731 L169 731 L169 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M427 636 L427 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M441 636 L441 731 L685 731 L685 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M169 888 L169 912 L185 912 L185 1054 L164 1054 L164 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M427 888 L427 983 L446 983 L446 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M685 888 L685 983 L709 983 L709 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M164 1140 L164 1235 L413 1235 L413 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M446 1140 L446 1235 L427 1235 L427 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M709 1140 L709 1235 L441 1235 L441 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M413 1392 L413 1487 L169 1487 L169 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M427 1392 L427 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
+<path d="M441 1392 L441 1487 L685 1487 L685 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter)"/>
 <rect x="353" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="427" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
 <rect x="346" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -83,7 +83,7 @@ A distributed rate limiting system that controls API request rates per user/IP/A
 <text x="709" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">ClickHouse</text>
 <rect x="353" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="427" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\rate-limiter" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/rate-limiter.architecture.html](diagrams/system-design/rate-limiter.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
