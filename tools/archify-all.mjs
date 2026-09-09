@@ -11,7 +11,7 @@
  *   diagrams/features/<tech>-*.arch.html       (kafka / redis / postgresql + redis AI set)
  *   diagrams/template.arch.html                (README reference diagram)
  */
-import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readdirSync, readFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
 import { homedir } from 'node:os';

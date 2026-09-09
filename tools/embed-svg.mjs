@@ -41,6 +41,7 @@ function layoutFor(specPath) {
 }
 
 function svgFor(specPath, title) {
+  const stem = specPath.replace(/.*[\/]/, '').replace(/.architecture.json$/, '');
   const L = layoutFor(specPath);
   const [vw, vh] = L.viewBox;
   const byId = new Map((L.components ?? []).map(c => [c.id, c]));
@@ -67,7 +68,7 @@ function svgFor(specPath, title) {
     const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0]} ${p[1]}`).join(' ');
     const dashed = c.variant === 'dashed' ? ' stroke-dasharray="5 4"' : '';
     const emph = c.variant === 'emphasis' ? ' stroke="#059669" stroke-width="2.4"' : ' stroke="#64748b" stroke-width="1.6"';
-    out.push(`<path d="${d}" fill="none"${emph}${dashed} marker-end="url(#arr)"/>`);
+    out.push(`<path d="${d}" fill="none"${emph}${dashed} marker-end="url(#arr-${stem})"/>`);
     if (c.labelAt && c.label) {
       const [lx, ly] = c.labelAt;
       const w = Math.max(...String(c.label).split(' ').map(t => t.length)) * 6.6 + 10;
@@ -89,7 +90,7 @@ function svgFor(specPath, title) {
     }
   }
 
-  out.push(`<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>`);
+  out.push(`<defs><marker id="arr-${stem}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>`);
   out.push(`</svg>`);
   return out.join('\n');
 }
@@ -108,39 +109,58 @@ const files = readdirSync(ROOT).filter(f => /\.md$/.test(f)).sort();
 let replaced = 0;
 const problems = [];
 
-const STEM_BY_FILE_BLOCK = (file, blockIdx, block) => {
+const STEM_BY_FILE_BLOCK = (file, blockIdx) => {
   if (file === 'system-design-concepts.md') return 'concept-' + ['sharding', 'replication', 'quorum'][blockIdx];
   if (/^system-design-/.test(file)) return file.replace(/^system-design-/, '').replace(/\.md$/, '');
   if (file === 'README.md') return 'template';
   return file.replace(/-features\.md$/, '') + '-at-a-glance';
 };
 
+// diagram stem -> doc title (kept in sync with convert-mermaid.mjs naming)
+const titleFor = (stem, file) =>
+  ({ 'template': 'Reference Architecture Template' }[stem])
+  ?? (file === 'system-design-concepts.md'
+    ? ['Sharding — Data Partitioning', 'Replication Topologies', 'Quorum Reads & Writes'][['concept-sharding', 'concept-replication', 'concept-quorum'].indexOf(stem)] ?? 'Concept'
+    : null)
+  ?? (/^system-design-/.test(file)
+    ? stem.replace(/(^|-)(\w)/g, (_, a, b) => (a ? ' ' : '') + b.toUpperCase()) + ' — System Architecture'
+    : stem.replace(/-at-a-glance$/, '').replace(/(^|-)(\w)/g, (_, a, b) => (a ? ' ' : '') + b.toUpperCase()) + ' at a Glance');
+
 for (const file of files) {
   const src = readFileSync(join(ROOT, file), 'utf8');
-  if (!src.includes('```mermaid')) continue;
-  const parts = src.split(/(```mermaid\r?\n[\s\S]*?```)/);
+  if (!src.includes('<svg') && !src.includes('```mermaid')) continue;
   let blockIdx = 0;
-  for (let i = 1; i < parts.length; i += 2) {
-    const block = parts[i];
-    const stem = STEM_BY_FILE_BLOCK(file, blockIdx, block);
-    blockIdx++;
-    const title = { 'template': 'Reference Architecture Template' }[stem]
-      ?? (file === 'system-design-concepts.md'
-        ? ['Sharding — Data Partitioning', 'Replication Topologies', 'Quorum Reads & Writes'][['concept-sharding', 'concept-replication', 'concept-quorum'].indexOf(stem)]
-        : null)
-      ?? (/^system-design-/.test(file) ? stem.replace(/(^|-)(\w)/g, (_, a, b) => (a ? ' ' : '') + b.toUpperCase()) + ' — System Architecture' : null)
-      ?? stem.replace(/-at-a-glance$/, '') .replace(/(^|-)(\w)/g, (_, a, b) => (a ? ' ' : '') + b.toUpperCase()) + ' at a Glance';
+  let out = src;
+
+  // Pass 1 (historical): swap mermaid fences for svg + standard link.
+  out = out.replace(/```mermaid\r?\n[\s\S]*?```/g, () => {
+    const stem = STEM_BY_FILE_BLOCK(file, blockIdx++);
+    const title = titleFor(stem, file);
     try {
-      const specPath = join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`);
-      const svg = svgFor(specPath, title.trim());
       const target = htmlTarget(stem);
-      const link = `\n**Interactive diagram:** [${target}](${target}) — pan/zoom, search, dark/light theme, PNG/SVG export.\n`;
-      parts[i] = svg + '\n' + link;
+      const svg = svgFor(join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`), title);
       replaced++;
+      return svg + '\n' + `**Interactive diagram:** [${target}](${target}) — pan/zoom, search, dark/light theme, PNG/SVG export.\n`;
     } catch (e) {
       problems.push(`${file} [${stem}]: ${e.message}`);
+      return '```mermaid (conversion failed)```';
     }
-  }
-  if (blockIdx) writeFileSync(join(ROOT, file), parts.join(''));
+  });
+
+  // Pass 2 (idempotent): refresh existing svg + link blocks, keyed by the link target.
+  out = out.replace(/<svg\b[\s\S]*?<\/svg>\n+\*\*[^*]*\*\* \[[^\]]+\]\((diagrams\/[^)\s]+)\)[^\n]*\n/g, (m, target) => {
+    const stem = target.split('/').pop().replace(/(\.architecture)?\.html$/, '');
+    const title = titleFor(stem, file);
+    try {
+      const svg = svgFor(join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`), title);
+      replaced++;
+      return svg + '\n\n' + m.slice(m.indexOf('**'));
+    } catch (e) {
+      problems.push(`${file} [${stem}]: ${e.message}`);
+      return m;
+    }
+  });
+
+  if (out !== src) writeFileSync(join(ROOT, file), out);
 }
 console.log(`embedded ${replaced} svg diagrams${problems.length ? '\nPROBLEMS:\n' + problems.join('\n') : ''}`);

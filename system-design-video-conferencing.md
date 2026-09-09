@@ -46,20 +46,20 @@ A real-time video conferencing platform supporting video/audio calls, screen sha
 <title>Video Conferencing — System Architecture</title>
 <rect x="52" y="288" width="727" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
 <text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Video Conferencing</text>
-<path d="M416 132 L416 156 L432 156 L432 298 L416 298 L416 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M416 384 L416 408 L432 408 L432 550 L416 550 L416 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M402 636 L402 731 L158 731 L158 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M416 636 L416 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M430 636 L430 731 L674 731 L674 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M158 888 L158 912 L174 912 L174 1054 L158 1054 L158 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M416 888 L416 912 L433 912 L433 1054 L417 1054 L417 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M674 888 L674 912 L691 912 L691 1054 L675 1054 L675 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M158 1140 L158 1235 L402 1235 L402 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M416 1140 L416 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M675 1140 L675 1235 L430 1235 L430 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M402 1392 L402 1487 L146 1487 L146 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M416 1392 L416 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
-<path d="M430 1392 L430 1487 L675 1487 L675 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M416 132 L416 156 L432 156 L432 298 L416 298 L416 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M416 384 L416 408 L432 408 L432 550 L416 550 L416 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M402 636 L402 731 L158 731 L158 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M416 636 L416 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M430 636 L430 731 L674 731 L674 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M158 888 L158 912 L174 912 L174 1054 L158 1054 L158 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M416 888 L416 912 L433 912 L433 1054 L417 1054 L417 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M674 888 L674 912 L691 912 L691 1054 L675 1054 L675 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M158 1140 L158 1235 L402 1235 L402 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M416 1140 L416 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M675 1140 L675 1235 L430 1235 L430 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M402 1392 L402 1487 L146 1487 L146 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M416 1392 L416 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
+<path d="M430 1392 L430 1487 L675 1487 L675 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing)"/>
 <rect x="342" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="416" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
 <rect x="335" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -86,7 +86,7 @@ A real-time video conferencing platform supporting video/audio calls, screen sha
 <text x="675" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">S3 + FFmpeg</text>
 <rect x="342" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="416" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\video-conferencing" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/video-conferencing.architecture.html](diagrams/system-design/video-conferencing.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
