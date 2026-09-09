@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Quorum Reads & Writes",
+    "output": "concept-quorum.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      502
+    ]
+  },
+  "components": [
+    {
+      "id": "writer",
+      "type": "external",
+      "label": "Writer",
+      "pos": [
+        199,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "reader",
+      "type": "external",
+      "label": "Reader",
+      "tag": "← W + R > N ⇒ read &…",
+      "pos": [
+        457,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "rA",
+      "type": "database",
+      "label": "Replica A",
+      "pos": [
+        70,
+        322
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "rB",
+      "type": "database",
+      "label": "Replica B",
+      "pos": [
+        328,
+        322
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "rC",
+      "type": "database",
+      "label": "Replica C",
+      "tag": "down",
+      "pos": [
+        586,
+        322
+      ],
+      "size": [
+        148,
+        62
+      ]
+    }
+  ],
+  "boundaries": [],
+  "connections": [
+    {
+      "id": "e1-writer-rA",
+      "from": "writer",
+      "to": "rA",
+      "label": "write W=2/N=3 / ack",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-writer-rB",
+      "from": "writer",
+      "to": "rB",
+      "label": "write / ack",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-reader-rB",
+      "from": "reader",
+      "to": "rB",
+      "label": "read R=2/N=3 / value",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e7-reader-rC",
+      "from": "reader",
+      "to": "rC",
+      "label": "read / value (stale)",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

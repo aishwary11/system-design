@@ -1,0 +1,313 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Payment System — System Architecture",
+    "output": "payment-system.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      1762
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "Web / Mobile",
+      "sublabel": "POS Terminal",
+      "pos": [
+        348,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "WAF / API Gateway",
+      "sublabel": "TLS / Auth / Rate Limit",
+      "pos": [
+        341,
+        322
+      ],
+      "size": [
+        161,
+        62
+      ]
+    },
+    {
+      "id": "lb",
+      "type": "backend",
+      "label": "Load Balancer",
+      "pos": [
+        348,
+        574
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "svc0",
+      "type": "backend",
+      "label": "Payment Svc",
+      "tag": "→ Service Mesh · → Metrics",
+      "pos": [
+        90,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "svc1",
+      "type": "backend",
+      "label": "Ledger Service",
+      "tag": "→ Service Mesh · → Metrics",
+      "pos": [
+        348,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "svc2",
+      "type": "backend",
+      "label": "Fraud Svc",
+      "tag": "→ Service Mesh · → Metrics",
+      "pos": [
+        606,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker0",
+      "type": "backend",
+      "label": "Reconciliation Workers",
+      "pos": [
+        70,
+        1582
+      ],
+      "size": [
+        187,
+        62
+      ]
+    },
+    {
+      "id": "worker1",
+      "type": "backend",
+      "label": "Analytics",
+      "pos": [
+        367,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker2",
+      "type": "backend",
+      "label": "Fraud Workers",
+      "pos": [
+        625,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "store0",
+      "type": "database",
+      "label": "PostgreSQL (ACID)",
+      "tag": "→ Multi-AZ Replica",
+      "pos": [
+        80,
+        1078
+      ],
+      "size": [
+        151,
+        62
+      ]
+    },
+    {
+      "id": "store1",
+      "type": "database",
+      "label": "Double-entry Ledger",
+      "tag": "→ Multi-AZ Replica",
+      "pos": [
+        341,
+        1078
+      ],
+      "size": [
+        165,
+        62
+      ]
+    },
+    {
+      "id": "store2",
+      "type": "database",
+      "label": "ML + Redis",
+      "tag": "→ Multi-AZ Replica",
+      "pos": [
+        616,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "stream",
+      "type": "messagebus",
+      "label": "Kafka",
+      "tag": "→ DLQ",
+      "pos": [
+        348,
+        1330
+      ],
+      "size": [
+        148,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Payment System",
+      "wraps": [
+        "edge",
+        "lb",
+        "svc0",
+        "svc1",
+        "svc2",
+        "worker0",
+        "worker1",
+        "worker2",
+        "store0",
+        "store1",
+        "store2",
+        "stream"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1-clients-edge",
+      "from": "clients",
+      "to": "edge",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-edge-lb",
+      "from": "edge",
+      "to": "lb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-lb-svc0",
+      "from": "lb",
+      "to": "svc0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-lb-svc1",
+      "from": "lb",
+      "to": "svc1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-lb-svc2",
+      "from": "lb",
+      "to": "svc2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-svc0-store0",
+      "from": "svc0",
+      "to": "store0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e7-svc1-store1",
+      "from": "svc1",
+      "to": "store1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e8-svc2-store2",
+      "from": "svc2",
+      "to": "store2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e9-store0-stream",
+      "from": "store0",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e10-store1-stream",
+      "from": "store1",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e11-store2-stream",
+      "from": "store2",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e12-stream-worker0",
+      "from": "stream",
+      "to": "worker0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e13-stream-worker1",
+      "from": "stream",
+      "to": "worker1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e14-stream-worker2",
+      "from": "stream",
+      "to": "worker2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

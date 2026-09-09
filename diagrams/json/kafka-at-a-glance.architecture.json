@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Kafka at a Glance",
+    "output": "kafka-at-a-glance.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      996,
+      1006
+    ]
+  },
+  "components": [
+    {
+      "id": "apps",
+      "type": "backend",
+      "label": "Application Services",
+      "sublabel": "key-based partitioning",
+      "tag": "← Schema Registry",
+      "pos": [
+        70,
+        70
+      ],
+      "size": [
+        172,
+        62
+      ]
+    },
+    {
+      "id": "cdc",
+      "type": "backend",
+      "label": "Kafka Connect / Debezium",
+      "sublabel": "CDC from DBs",
+      "pos": [
+        352,
+        70
+      ],
+      "size": [
+        201,
+        62
+      ]
+    },
+    {
+      "id": "streams",
+      "type": "backend",
+      "label": "Kafka Streams",
+      "sublabel": "processors / joins / aggregations",
+      "pos": [
+        663,
+        70
+      ],
+      "size": [
+        215,
+        62
+      ]
+    },
+    {
+      "id": "g1",
+      "type": "backend",
+      "label": "Shipping",
+      "sublabel": "group shipping",
+      "pos": [
+        142,
+        574
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "g2",
+      "type": "backend",
+      "label": "Analytics",
+      "sublabel": "group analytics",
+      "tag": "→ Lag monitoring",
+      "pos": [
+        400,
+        574
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "g3",
+      "type": "backend",
+      "label": "Search Indexer",
+      "sublabel": "group search",
+      "pos": [
+        658,
+        574
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "sinks",
+      "type": "database",
+      "label": "Postgres / S3",
+      "sublabel": "Elasticsearch",
+      "pos": [
+        400,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "brokers",
+      "type": "messagebus",
+      "label": "Brokers",
+      "sublabel": "partitioned, replicated topics",
+      "tag": "→ DLQ · → MirrorMaker 2",
+      "pos": [
+        375,
+        322
+      ],
+      "size": [
+        198,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Producers",
+      "wraps": [
+        "apps",
+        "cdc",
+        "streams"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "Consumer",
+      "wraps": [
+        "g1",
+        "g2",
+        "g3"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1-apps-brokers",
+      "from": "apps",
+      "to": "brokers",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-cdc-brokers",
+      "from": "cdc",
+      "to": "brokers",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-streams-brokers",
+      "from": "streams",
+      "to": "brokers",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-brokers-g1",
+      "from": "brokers",
+      "to": "g1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-brokers-g2",
+      "from": "brokers",
+      "to": "g2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-brokers-g3",
+      "from": "brokers",
+      "to": "g3",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e7-g1-sinks",
+      "from": "g1",
+      "to": "sinks",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e8-g2-sinks",
+      "from": "g2",
+      "to": "sinks",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e9-g3-sinks",
+      "from": "g3",
+      "to": "sinks",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

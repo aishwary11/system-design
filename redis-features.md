@@ -6,34 +6,38 @@ A quick-reference catalog of Redis features used in real backends: the data stru
 
 ### Where Redis sits in a system
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
-flowchart TB
-    clients(["Web / Mobile / API Clients"]) --> edge["API Gateway / TLS / Auth / Rate Limit"]
-    edge --> lb["Load Balancer"]
-    lb --> svc["Application Services - stateless replicas"]
-    svc -- "GET / SET / INCR / XADD (cache, locks, rate limits, streams)" --> redis[("Redis - primary cluster")]
-    svc -- "SQL (writes + cache-miss reads)" --> db[("PostgreSQL - source of truth")]
-    redis --> repl[("Redis replicas - read scaling / failover")]
-    sentinel["Sentinel / Cluster - quorum & auto-failover"] -. "monitor + promote" .-> redis
-    sentinel -. "monitor + promote" .-> repl
-    redis -. "RDB snapshots + AOF" .-> disk[("Persistence - durability")]
-    redis -. "keyspace notifications" .-> svc
-    svc -. "metrics" .-> ops["Metrics / Alerts - hit ratio, evictions, latency"]
-    redis -. "metrics" .-> ops
-    sentinel -. "metrics" .-> ops
-    svc -. "mTLS / discovery" .-> platform["Service Mesh / Discovery / Health Checks"]
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1510" width="900" role="img" aria-label="Redis at a Glance">
+<rect x="0" y="0" width="960" height="1510" fill="#ffffff"/>
+<title>Redis at a Glance</title>
+<path d="M273 132 L273 156 L290 156 L290 298 L274 298 L274 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M274 384 L274 408 L290 408 L290 550 L273 550 L273 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M273 636 L273 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M266 888 L266 983 L144 983 L144 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="176.9" y="964" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="205" y="977" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">GET/SET ops</text>
+<path d="M280 888 L280 983 L402 983 L402 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="326.1" y="964" width="29.799999999999997" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="341" y="977" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">SQL</text>
+<path d="M144 1140 L144 1235 L274 1235 L274 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="199" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
+<text x="273" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
+<rect x="198" y="322" width="151" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="273.5" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">API Gateway / TLS</text>
+<rect x="199" y="574" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="273" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer</text>
+<rect x="187" y="826" width="172" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="273" y="862" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Application Services</text>
+<rect x="70" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="144" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis</text>
+<rect x="328" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="402" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL</text>
+<rect x="193" y="1330" width="161" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="273.5" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis replicas</text>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+</svg>
 
-    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
-    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
-    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
-    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
-    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
-    class clients actor
-    class edge,lb,svc service
-    class redis,db,repl,disk store
-    class sentinel,ops,platform control
-```
+**Interactive diagram:** [diagrams/features/redis-at-a-glance.architecture.html](diagrams/features/redis-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 
 *Solid = data path, dashed = control/infrastructure. One Redis cluster serves all roles — caching §2, locks §3, rate limits §4, streams/delayed jobs §8–§9; Sentinel/Cluster HA §17, ACL/TLS security §17.
 
@@ -616,6 +620,12 @@ VSIM vec:products 4 0.1 0.2 0.3 0.4 COUNT 3            # top-3 most similar
 VEMB vec:products "item-1"                              # read a stored vector
 # RAG / recommendation systems query similarity right inside Redis.
 ```
+
+**Beyond the cache — Redis as AI infrastructure:** Redis 8's Vector Sets (above), the Query Engine's vector search for RAG, **LangCache** for *semantic* caching — caching LLM answers by meaning so paraphrased prompts hit the cache, not just exact matches — and short-/long-term **agent memory** (working state + semantic recall across sessions) are turning Redis into a real-time context layer between AI applications and their data, not just a cache in front of the database. Good deep-dive on this shift: [Redis Is No Longer Just a Cache: How Redis Is Becoming AI Infrastructure](https://decodingtech1.substack.com/p/redis-is-no-longer-just-a-cache-how?r=6dvsb6) (Decoding Tech, Sep 2026).
+
+**Interactive diagram:** [diagrams/features/redis-ai-context-layer.architecture.html](diagrams/features/redis-ai-context-layer.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
+**LangCache flow diagram:** [diagrams/features/langcache-semantic-cache.architecture.html](diagrams/features/langcache-semantic-cache.architecture.html) — how a paraphrased prompt hits the semantic cache (or falls through to the LLM and writes back).
 
 ---
 

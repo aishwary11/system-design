@@ -37,72 +37,56 @@ A food delivery platform supporting restaurant discovery, order placement, real-
 
 ### Architecture Diagram
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
-flowchart TB
-    %% Actors (people)
-    clients(["Customer App / Restaurant App / Delivery App"])
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="Food Delivery — System Architecture">
+<rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
+<title>Food Delivery — System Architecture</title>
+<rect x="52" y="288" width="723" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Food Delivery</text>
+<path d="M414 132 L414 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M414 384 L414 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M400 636 L400 731 L156 731 L156 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M414 636 L414 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M428 636 L428 731 L672 731 L672 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M156 888 L156 912 L172 912 L172 1054 L149 1054 L149 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M414 888 L414 912 L430 912 L430 1054 L414 1054 L414 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M672 888 L672 912 L694 912 L694 1054 L678 1054 L678 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M149 1140 L149 1235 L400 1235 L400 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M414 1140 L414 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M678 1140 L678 1235 L428 1235 L428 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M400 1392 L400 1487 L156 1487 L156 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M414 1392 L414 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M428 1392 L428 1487 L672 1487 L672 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="295" y="70" width="237" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
+<text x="413.5" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Customer App / Restaurant App</text>
+<rect x="333" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="413.5" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">WAF / API Gateway</text>
+<rect x="331" y="574" width="165" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="413.5" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer (ALB)</text>
+<rect x="82" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="156" y="862" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Order Svc</text>
+<rect x="340" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="414" y="862" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Delivery Svc</text>
+<rect x="598" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="672" y="862" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Restaurant Svc</text>
+<rect x="82" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="156" y="1618" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">ETA Workers</text>
+<rect x="340" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="414" y="1618" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Analytics</text>
+<rect x="598" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="672" y="1618" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Notifications</text>
+<rect x="70" y="1078" width="158" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="149" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + Redis</text>
+<rect x="338" y="1078" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="413.5" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis GEO + Kafka</text>
+<rect x="599" y="1078" width="158" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="678" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + Redis</text>
+<rect x="340" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
+<text x="414" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+</svg>
 
-    %% System boundary - containers owned by the platform
-    subgraph platform["Food Delivery"]
-        edge["WAF / API Gateway / TLS / Auth / Rate Limit"]
-        lb["Load Balancer (ALB)"]
-        svc0["Order Svc"]
-        svc1["Delivery Svc"]
-        svc2["Restaurant Svc"]
-        store0[("PostgreSQL + Redis")]
-        store1[("Redis GEO + Kafka")]
-        store2[("PostgreSQL + Redis")]
-        stream{{"Kafka"}}
-        worker0["ETA Workers"]
-        worker1["Analytics"]
-        worker2["Notifications"]
-        dlq["DLQ / Replay / Schema Registry"]
-    end
+**Interactive diagram:** [diagrams/system-design/food-delivery.architecture.html](diagrams/system-design/food-delivery.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
-    %% Cross-cutting control plane (dashed edges)
-    mesh["Service Mesh / mTLS / Discovery / Health Checks"]
-    ops["Metrics / Logs / Traces / Alerts / SLOs"]
-    backup0["Multi-AZ Replica / Backup / Restore"]
-    backup1["Multi-AZ Replica / Backup / Restore"]
-    backup2["Multi-AZ Replica / Backup / Restore"]
-
-    clients --> edge
-    edge --> lb
-    lb --> svc0
-    lb --> svc1
-    lb --> svc2
-    svc0 --> store0
-    svc1 --> store1
-    svc2 --> store2
-    store0 --> stream
-    store1 --> stream
-    store2 --> stream
-    stream --> worker0
-    stream --> worker1
-    stream --> worker2
-    stream --> dlq
-    svc0 -.-> mesh
-    svc1 -.-> mesh
-    svc2 -.-> mesh
-    svc0 -.-> ops
-    svc1 -.-> ops
-    svc2 -.-> ops
-    store0 -.-> backup0
-    store1 -.-> backup1
-    store2 -.-> backup2
-
-    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
-    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
-    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
-    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
-    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
-    class clients actor
-    class edge,lb,svc0,svc1,svc2,worker0,worker1,worker2 service
-    class store0,store1,store2 store
-    class stream broker
-    class dlq,mesh,ops,backup0,backup1,backup2 control
-```
 
 *Solid = data flow, dashed = control plane / monitoring.*
 

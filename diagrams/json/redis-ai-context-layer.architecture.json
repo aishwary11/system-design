@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Redis as AI Infrastructure: The Real-Time Context Layer",
+    "output": "redis-ai-context-layer.architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "agent",
+      "type": "external",
+      "label": "AI Agent",
+      "sublabel": "App / Orchestrator",
+      "pos": [
+        80,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "backend",
+      "label": "LLM",
+      "sublabel": "Reasons & Generates",
+      "pos": [
+        80,
+        570
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "redis",
+      "type": "cloud",
+      "label": "Redis 8",
+      "sublabel": "Real-Time Context Layer",
+      "pos": [
+        680,
+        70
+      ],
+      "size": [
+        198,
+        62
+      ]
+    },
+    {
+      "id": "mem",
+      "type": "backend",
+      "label": "Agent Memory",
+      "sublabel": "Working + Long-Term",
+      "pos": [
+        400,
+        320
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "vec",
+      "type": "database",
+      "label": "Vector Search",
+      "sublabel": "Query Engine + Vector Sets",
+      "pos": [
+        596,
+        320
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "lang",
+      "type": "backend",
+      "label": "LangCache",
+      "sublabel": "Semantic Cache",
+      "pos": [
+        792,
+        320
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "ctx",
+      "type": "messagebus",
+      "label": "Context Retriever",
+      "sublabel": "Right Context, Right Time",
+      "pos": [
+        560,
+        570
+      ],
+      "size": [
+        198,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "AI Application",
+      "wraps": [
+        "agent",
+        "llm"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "Redis",
+      "wraps": [
+        "redis",
+        "mem",
+        "vec",
+        "lang",
+        "ctx"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1",
+      "from": "agent",
+      "to": "redis",
+      "label": "prompts",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "e2",
+      "from": "redis",
+      "to": "mem",
+      "label": "memory ops",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3",
+      "from": "redis",
+      "to": "vec",
+      "label": "KNN",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4",
+      "from": "redis",
+      "to": "lang",
+      "label": "Q/A",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5",
+      "from": "mem",
+      "to": "ctx",
+      "label": "memories",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6",
+      "from": "vec",
+      "to": "ctx",
+      "label": "neighbors",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "e7",
+      "from": "lang",
+      "to": "ctx",
+      "label": "hit",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e8",
+      "from": "ctx",
+      "to": "llm",
+      "label": "context",
+      "variant": "emphasis",
+      "fromSide": "left",
+      "toSide": "right",
+      "route": "straight"
+    }
+  ]
+}

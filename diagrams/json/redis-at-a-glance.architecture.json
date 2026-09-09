@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Redis at a Glance",
+    "output": "redis-at-a-glance.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      1510
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "Web / Mobile",
+      "sublabel": "API Clients",
+      "pos": [
+        199,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "API Gateway / TLS",
+      "sublabel": "Auth / Rate Limit",
+      "pos": [
+        198,
+        322
+      ],
+      "size": [
+        151,
+        62
+      ]
+    },
+    {
+      "id": "lb",
+      "type": "backend",
+      "label": "Load Balancer",
+      "pos": [
+        199,
+        574
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "svc",
+      "type": "backend",
+      "label": "Application Services",
+      "sublabel": "stateless replicas",
+      "tag": "keyspace notifications · → Metrics",
+      "pos": [
+        187,
+        826
+      ],
+      "size": [
+        172,
+        62
+      ]
+    },
+    {
+      "id": "redis",
+      "type": "database",
+      "label": "Redis",
+      "sublabel": "primary cluster",
+      "tag": "← Sentinel · → Persistence",
+      "pos": [
+        70,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "source of truth",
+      "pos": [
+        328,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "repl",
+      "type": "database",
+      "label": "Redis replicas",
+      "sublabel": "read scaling / failover",
+      "tag": "← Sentinel",
+      "pos": [
+        193,
+        1330
+      ],
+      "size": [
+        161,
+        62
+      ]
+    }
+  ],
+  "boundaries": [],
+  "connections": [
+    {
+      "id": "e1-clients-edge",
+      "from": "clients",
+      "to": "edge",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-edge-lb",
+      "from": "edge",
+      "to": "lb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-lb-svc",
+      "from": "lb",
+      "to": "svc",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-svc-redis",
+      "from": "svc",
+      "to": "redis",
+      "label": "GET/SET ops",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-svc-db",
+      "from": "svc",
+      "to": "db",
+      "label": "SQL",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-redis-repl",
+      "from": "redis",
+      "to": "repl",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}
