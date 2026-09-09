@@ -1,0 +1,313 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Linkedin — System Architecture",
+    "output": "linkedin.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      1762
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "Web App",
+      "sublabel": "Mobile App",
+      "pos": [
+        333,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "WAF / API Gateway",
+      "sublabel": "TLS / Auth / Rate Limit",
+      "pos": [
+        327,
+        322
+      ],
+      "size": [
+        161,
+        62
+      ]
+    },
+    {
+      "id": "lb",
+      "type": "backend",
+      "label": "Load Balancer (ALB)",
+      "pos": [
+        325,
+        574
+      ],
+      "size": [
+        165,
+        62
+      ]
+    },
+    {
+      "id": "svc0",
+      "type": "backend",
+      "label": "Feed Service",
+      "tag": "→ Service Mesh · → Metrics",
+      "pos": [
+        75,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "svc1",
+      "type": "backend",
+      "label": "Connection Svc",
+      "tag": "→ Service Mesh · → Metrics",
+      "pos": [
+        333,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "svc2",
+      "type": "backend",
+      "label": "Job Service",
+      "tag": "→ Service Mesh · → Metrics",
+      "pos": [
+        591,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker0",
+      "type": "backend",
+      "label": "Feed Workers",
+      "pos": [
+        75,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker1",
+      "type": "backend",
+      "label": "Analytics",
+      "pos": [
+        333,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker2",
+      "type": "backend",
+      "label": "Notifications",
+      "pos": [
+        591,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "store0",
+      "type": "database",
+      "label": "Fan-out + Redis",
+      "tag": "→ Multi-AZ Replica",
+      "pos": [
+        70,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "store1",
+      "type": "database",
+      "label": "PostgreSQL + Neo4j",
+      "tag": "→ Multi-AZ Replica",
+      "pos": [
+        328,
+        1078
+      ],
+      "size": [
+        158,
+        62
+      ]
+    },
+    {
+      "id": "store2",
+      "type": "database",
+      "label": "Elasticsearch",
+      "tag": "→ Multi-AZ Replica",
+      "pos": [
+        596,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "stream",
+      "type": "messagebus",
+      "label": "Kafka",
+      "tag": "→ DLQ",
+      "pos": [
+        333,
+        1330
+      ],
+      "size": [
+        148,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "LinkedIn",
+      "wraps": [
+        "edge",
+        "lb",
+        "svc0",
+        "svc1",
+        "svc2",
+        "worker0",
+        "worker1",
+        "worker2",
+        "store0",
+        "store1",
+        "store2",
+        "stream"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1-clients-edge",
+      "from": "clients",
+      "to": "edge",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-edge-lb",
+      "from": "edge",
+      "to": "lb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-lb-svc0",
+      "from": "lb",
+      "to": "svc0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-lb-svc1",
+      "from": "lb",
+      "to": "svc1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-lb-svc2",
+      "from": "lb",
+      "to": "svc2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-svc0-store0",
+      "from": "svc0",
+      "to": "store0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e7-svc1-store1",
+      "from": "svc1",
+      "to": "store1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e8-svc2-store2",
+      "from": "svc2",
+      "to": "store2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e9-store0-stream",
+      "from": "store0",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e10-store1-stream",
+      "from": "store1",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e11-store2-stream",
+      "from": "store2",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e12-stream-worker0",
+      "from": "stream",
+      "to": "worker0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e13-stream-worker1",
+      "from": "stream",
+      "to": "worker1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e14-stream-worker2",
+      "from": "stream",
+      "to": "worker2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

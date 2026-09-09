@@ -83,28 +83,37 @@ The foundational concepts behind every distributed system, each explained in a f
 **Problem:** one database can't hold the writes/reads of a billion users.
 **Idea:** split the data horizontally across many database nodes; each node ("shard") owns a disjoint subset of rows. Together they serve the whole dataset.
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
-flowchart TB
-    clients(["Clients"]) --> edge["API Gateway / LB"]
-    edge --> app["Application Services"]
-    app --> router{"Sharding layer - hash(user_id) % 4 or directory lookup"}
-    router --> s0[("users_0 - primary + replica")]
-    router --> s1[("users_1 - primary + replica")]
-    router --> s2[("users_2 - primary + replica")]
-    router --> s3[("users_3 - primary + replica")]
-    config["Config / directory - shard map, migrations, rebalancing"] -. "route + rebalance" .-> router
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1110 1258" width="900" role="img" aria-label="Sharding — Data Partitioning">
+<rect x="0" y="0" width="1110" height="1258" fill="#ffffff"/>
+<title>Sharding — Data Partitioning</title>
+<path d="M531 132 L531 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M531 384 L531 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M531 636 L531 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M510 888 L510 983 L144 983 L144 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M524 888 L524 983 L402 983 L402 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M538 888 L538 983 L660 983 L660 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M552 888 L552 983 L918 983 L918 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="457" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
+<text x="531" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Clients</text>
+<rect x="457" y="322" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="531" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">API Gateway</text>
+<rect x="445" y="574" width="172" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="531" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Application Services</text>
+<rect x="413" y="826" width="236" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="531" y="862" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Sharding layer</text>
+<rect x="70" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="144" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_0</text>
+<rect x="328" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="402" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_1</text>
+<rect x="586" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="660" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_2</text>
+<rect x="844" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="918" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_3</text>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+</svg>
 
-    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
-    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
-    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
-    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
-    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
-    class clients actor
-    class edge,app,router service
-    class s0,s1,s2,s3 store
-    class config control
-```
+**Interactive diagram:** [diagrams/concepts/concept-sharding.architecture.html](diagrams/concepts/concept-sharding.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 
 *Every query must carry the shard key so the router stays stateless; config service supports directory-based sharding and re-sharding (see below).*
 
@@ -637,30 +646,36 @@ while (true) {
 **Problem:** one server = single point of failure + limited read throughput.
 **Idea:** keep copies of data on multiple nodes and keep them in sync.
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
-flowchart TB
-    writers(["Write clients"]) --> leader[("Leader - accepts writes")]
-    readers(["Read clients"]) --> lb["Read LB / routing"]
-    lb --> syncR[("Sync replica - 0 data loss")]
-    lb --> asyncR1[("Async replica - same region")]
-    lb --> asyncR2[("Async replica - DR region")]
-    leader -- "synchronous replication" --> syncR
-    leader -- "asynchronous replication (WAL stream)" --> asyncR1
-    leader -- "asynchronous replication (WAL stream)" --> asyncR2
-    ctrl["Failover controller (Patroni) - fencing tokens"] -. "monitor / promote / fence" .-> leader
-    ctrl -. "promote on failure" .-> asyncR1
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 754" width="900" role="img" aria-label="Replication Topologies">
+<rect x="0" y="0" width="960" height="754" fill="#ffffff"/>
+<title>Replication Topologies</title>
+<path d="M146 132 L146 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M404 132 L404 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M478 353 L760 353 L760 680 L144 680 L144 636" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M411 384 L411 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M139 384 L139 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="180.8" y="389" width="36.4" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="199" y="402" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">sync repl</text>
+<path d="M153 384 L153 479 L397 479 L397 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="230.4" y="460" width="89.19999999999999" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="275" y="473" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">asynchronous replication</text>
+<rect x="72" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
+<text x="146" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Write clients</text>
+<rect x="330" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
+<text x="404" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Read clients</text>
+<rect x="330" y="322" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="404" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Read LB</text>
+<rect x="72" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="146" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Leader</text>
+<rect x="70" y="574" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="144" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Sync replica</text>
+<rect x="328" y="574" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="403.5" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Async replicas x2</text>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+</svg>
 
-    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
-    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
-    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
-    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
-    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
-    class writers,readers actor
-    class lb service
-    class leader,syncR,asyncR1,asyncR2 store
-    class ctrl control
-```
+**Interactive diagram:** [diagrams/concepts/concept-replication.architecture.html](diagrams/concepts/concept-replication.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 
 *Solid = data path, dashed = control. Async replicas serve reads and are promoted on failure; fencing tokens stop the old leader from writing after promotion (§14).*
 
@@ -963,29 +978,36 @@ Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the 
 **Problem:** with N replicas, a write must reach enough nodes to be safe and a read must not return stale data — but you can't wait for *all* nodes (one slow node would block everything), and you don't know which are up.
 **Idea:** require **W** nodes to acknowledge a write and **R** nodes to answer a read, with **`W + R > N`** — then any read set and any write set are guaranteed to *overlap*, so every read sees at least one node that acknowledged the write. Same math as majority quorum in consensus (§23): N=3 with W=2, R=2 tolerates 1 node down and still never reads fully stale data.
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
-flowchart TB
-    writer([Writer]) -->|"write to W=2 of N=3"| rA[("Replica A")]
-    writer -->|"write"| rB[("Replica B")]
-    writer -. "down" .-> rC[("Replica C")]
-    rA -- "ack" --> writer
-    rB -- "ack" --> writer
-    reader([Reader]) -->|"read from R=2 of N=3"| rB
-    reader -->|"read"| rC
-    rB -- "value (acked the write)" --> reader
-    rC -- "value (may be stale)" --> reader
-    overlap["W + R > N ⇒ read & write sets overlap at B ⇒ the read is never fully stale"] -. "guarantee" .-> reader
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 502" width="900" role="img" aria-label="Quorum Reads &amp; Writes">
+<rect x="0" y="0" width="960" height="502" fill="#ffffff"/>
+<title>Quorum Reads &amp; Writes</title>
+<path d="M266 132 L266 227 L144 227 L144 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="176.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="205" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">write W=2/N=3 / ack</text>
+<path d="M280 132 L280 227 L395 227 L395 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="316.5" y="208" width="43" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="338" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">write / ack</text>
+<path d="M524 132 L524 227 L409 227 L409 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="438.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="467" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">read R=2/N=3 / value</text>
+<path d="M538 132 L538 227 L660 227 L660 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="570.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="599" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">read / value (stale)</text>
+<rect x="199" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
+<text x="273" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Writer</text>
+<rect x="457" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
+<text x="531" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Reader</text>
+<rect x="70" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="144" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica A</text>
+<rect x="328" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="402" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica B</text>
+<rect x="586" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="660" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica C</text>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+</svg>
 
-    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
-    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
-    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
-    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
-    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
-    class writer,reader actor
-    class rA,rB,rC store
-    class overlap control
-```
+**Interactive diagram:** [diagrams/concepts/concept-quorum.architecture.html](diagrams/concepts/concept-quorum.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 
 | N | W | R | W + R > N? | Behavior |
 | - | - | - | ---------- | -------- |

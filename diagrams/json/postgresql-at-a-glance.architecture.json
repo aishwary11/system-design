@@ -1,0 +1,298 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Postgresql at a Glance",
+    "output": "postgresql-at-a-glance.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      1762
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "Web / Mobile",
+      "sublabel": "API Clients",
+      "pos": [
+        95,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "API Gateway / TLS",
+      "sublabel": "Auth / Rate Limit",
+      "pos": [
+        94,
+        322
+      ],
+      "size": [
+        151,
+        62
+      ]
+    },
+    {
+      "id": "lb",
+      "type": "backend",
+      "label": "Load Balancer",
+      "pos": [
+        79,
+        574
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "svc",
+      "type": "backend",
+      "label": "Application Services",
+      "sublabel": "stateless replicas",
+      "tag": "→ Service Mesh",
+      "pos": [
+        212,
+        826
+      ],
+      "size": [
+        172,
+        62
+      ]
+    },
+    {
+      "id": "pool",
+      "type": "backend",
+      "label": "PgBouncer",
+      "sublabel": "connection pooling",
+      "pos": [
+        70,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "cdc",
+      "type": "backend",
+      "label": "Debezium",
+      "sublabel": "CDC pipeline",
+      "pos": [
+        353,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "consumers",
+      "type": "backend",
+      "label": "Consumers / Analytics",
+      "sublabel": "Search",
+      "pos": [
+        337,
+        574
+      ],
+      "size": [
+        180,
+        62
+      ]
+    },
+    {
+      "id": "cache",
+      "type": "database",
+      "label": "Redis",
+      "sublabel": "cache-aside / locks / counters",
+      "tag": "← LISTEN",
+      "pos": [
+        328,
+        1078
+      ],
+      "size": [
+        198,
+        62
+      ]
+    },
+    {
+      "id": "pg",
+      "type": "database",
+      "label": "PostgreSQL Primary",
+      "tag": "→ WAL Archive · → LISTEN",
+      "pos": [
+        219,
+        1330
+      ],
+      "size": [
+        158,
+        62
+      ]
+    },
+    {
+      "id": "syncRep",
+      "type": "database",
+      "label": "Sync Replica",
+      "sublabel": "0 data loss",
+      "pos": [
+        94,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "asyncRep",
+      "type": "database",
+      "label": "Async Replicas xN",
+      "sublabel": "reads / failover",
+      "pos": [
+        352,
+        1582
+      ],
+      "size": [
+        151,
+        62
+      ]
+    },
+    {
+      "id": "kafka",
+      "type": "messagebus",
+      "label": "Kafka",
+      "sublabel": "event bus",
+      "tag": "→ Metrics",
+      "pos": [
+        355,
+        322
+      ],
+      "size": [
+        148,
+        62
+      ]
+    }
+  ],
+  "boundaries": [],
+  "connections": [
+    {
+      "id": "e1-clients-edge",
+      "from": "clients",
+      "to": "edge",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-edge-lb",
+      "from": "edge",
+      "to": "lb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-lb-svc",
+      "from": "lb",
+      "to": "svc",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-svc-cache",
+      "from": "svc",
+      "to": "cache",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-svc-pool",
+      "from": "svc",
+      "to": "pool",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-pool-pg",
+      "from": "pool",
+      "to": "pg",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e7-pg-syncRep",
+      "from": "pg",
+      "to": "syncRep",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e8-pg-asyncRep",
+      "from": "pg",
+      "to": "asyncRep",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e9-asyncRep-svc",
+      "from": "asyncRep",
+      "to": "svc",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "via": [
+        [
+          427.5,
+          1704
+        ],
+        [
+          40,
+          1704
+        ],
+        [
+          40,
+          857
+        ]
+      ]
+    },
+    {
+      "id": "e13-pg-cdc",
+      "from": "pg",
+      "to": "cdc",
+      "label": "logical decoding",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "right",
+      "via": [
+        [
+          606,
+          1361
+        ],
+        [
+          606,
+          101
+        ]
+      ]
+    },
+    {
+      "id": "e14-cdc-kafka",
+      "from": "cdc",
+      "to": "kafka",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e15-kafka-consumers",
+      "from": "kafka",
+      "to": "consumers",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

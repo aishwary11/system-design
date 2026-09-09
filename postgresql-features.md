@@ -6,40 +6,52 @@ A quick-reference catalog of PostgreSQL features used in everyday backends: data
 
 ### PostgreSQL in a typical stack
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"darkMode": false, "lineColor": "#64748b", "textColor": "#111827", "titleColor": "#111827", "primaryTextColor": "#111827", "clusterBkg": "#f1f5f9", "clusterBorder": "#94a3b8", "edgeLabelBackground": "#ffffff"}}}%%
-flowchart TB
-    clients(["Web / Mobile / API Clients"]) --> edge["API Gateway / TLS / Auth / Rate Limit"]
-    edge --> lb["Load Balancer"]
-    lb --> svc["Application Services - stateless replicas"]
-    svc --> cache[("Redis - cache-aside / locks / counters")]
-    svc --> pool["PgBouncer - connection pooling"]
-    pool --> pg[("PostgreSQL Primary")]
-    pg --> syncRep[("Sync Replica - 0 data loss")]
-    pg --> asyncRep[("Async Replicas xN - reads / failover")]
-    asyncRep --> svc
-    pg -. "WAL archiving" .-> wal[("WAL Archive / PITR / Restore")]
-    pg -. "triggers + pg_notify" .-> notify["LISTEN / NOTIFY bus"]
-    notify -. "invalidate key" .-> cache
-    pg -. "logical decoding" .-> cdc["Debezium / CDC pipeline"]
-    cdc --> kafka{{"Kafka - event bus"}}
-    kafka --> consumers["Consumers / Analytics / Search"]
-    pg -. "health / metrics" .-> ops["Metrics / Logs / Traces / Alerts / SLOs"]
-    kafka -. "lag / metrics" .-> ops
-    svc -. "mTLS / discovery" .-> platform["Service Mesh / Discovery / Health Checks"]
-    wal -. "point-in-time recovery" .-> pg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="Postgresql at a Glance">
+<rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
+<title>Postgresql at a Glance</title>
+<path d="M169 132 L169 156 L186 156 L186 298 L170 298 L170 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M170 384 L170 479 L153 479 L153 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M153 636 L153 731 L298 731 L298 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M305 888 L305 983 L427 983 L427 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M291 888 L291 983 L144 983 L144 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M144 1140 L144 1235 L298 1235 L298 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M291 1392 L291 1487 L168 1487 L168 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M305 1392 L305 1487 L428 1487 L428 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M428 1644 L428 1704 L40 1704 L40 857 L212 857" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M377 1361 L606 1361 L606 101 L501 101" fill="none" stroke="#64748b" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<rect x="574.6" y="712" width="62.8" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="606" y="725" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">logical decoding</text>
+<path d="M427 132 L427 156 L445 156 L445 298 L429 298 L429 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M429 384 L429 408 L445 408 L445 550 L427 550 L427 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="95" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
+<text x="169" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
+<rect x="94" y="322" width="151" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="169.5" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">API Gateway / TLS</text>
+<rect x="79" y="574" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="153" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer</text>
+<rect x="212" y="826" width="172" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="298" y="862" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Application Services</text>
+<rect x="70" y="1078" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="144" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">PgBouncer</text>
+<rect x="353" y="70" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="427" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Debezium</text>
+<rect x="337" y="574" width="180" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="427" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Consumers / Analytics</text>
+<rect x="328" y="1078" width="198" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="427" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis</text>
+<rect x="219" y="1330" width="158" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="298" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL Primary</text>
+<rect x="94" y="1582" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="168" y="1618" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Sync Replica</text>
+<rect x="352" y="1582" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="427.5" y="1618" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Async Replicas xN</text>
+<rect x="355" y="322" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
+<text x="429" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+</svg>
 
-    classDef actor fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#111827
-    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#111827
-    classDef store fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111827
-    classDef broker fill:#fae8ff,stroke:#a21caf,stroke-width:2px,color:#111827
-    classDef control fill:#f3f4f6,stroke:#6b7280,stroke-width:1.5px,stroke-dasharray:5 5,color:#111827
-    class clients actor
-    class edge,lb,svc,pool,notify,cdc,consumers service
-    class cache,pg,syncRep,asyncRep,wal store
-    class kafka broker
-    class ops,platform control
-```
+**Interactive diagram:** [diagrams/features/postgresql-at-a-glance.architecture.html](diagrams/features/postgresql-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 
 *Solid = data path, dashed = infrastructure/control. Which section explains each hop:* cache path §14 & §18 · pooling/failover §16 · WAL archive/PITR §16 · NOTIFY invalidation §5 · CDC pipeline §17 · ops/security §21.
 

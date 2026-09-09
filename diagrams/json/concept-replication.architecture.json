@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Replication Topologies",
+    "output": "concept-replication.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      754
+    ]
+  },
+  "components": [
+    {
+      "id": "writers",
+      "type": "external",
+      "label": "Write clients",
+      "pos": [
+        72,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "readers",
+      "type": "external",
+      "label": "Read clients",
+      "pos": [
+        330,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "lb",
+      "type": "backend",
+      "label": "Read LB",
+      "sublabel": "routing",
+      "pos": [
+        330,
+        322
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "leader",
+      "type": "database",
+      "label": "Leader",
+      "sublabel": "accepts writes",
+      "tag": "← Failover controller",
+      "pos": [
+        72,
+        322
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "syncR",
+      "type": "database",
+      "label": "Sync replica",
+      "sublabel": "0 data loss",
+      "pos": [
+        70,
+        574
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "asyncR1",
+      "type": "database",
+      "label": "Async replicas x2",
+      "tag": "← Failover controller",
+      "pos": [
+        328,
+        574
+      ],
+      "size": [
+        151,
+        62
+      ]
+    }
+  ],
+  "boundaries": [],
+  "connections": [
+    {
+      "id": "e1-writers-leader",
+      "from": "writers",
+      "to": "leader",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-readers-lb",
+      "from": "readers",
+      "to": "lb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-lb-syncR",
+      "from": "lb",
+      "to": "syncR",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [
+        [
+          760,
+          353
+        ],
+        [
+          760,
+          680
+        ],
+        [
+          144,
+          680
+        ]
+      ]
+    },
+    {
+      "id": "e5-lb-asyncR2",
+      "from": "lb",
+      "to": "asyncR1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-leader-syncR",
+      "from": "leader",
+      "to": "syncR",
+      "label": "sync repl",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24,
+      "labelDx": 60
+    },
+    {
+      "id": "e8-leader-asyncR2",
+      "from": "leader",
+      "to": "asyncR1",
+      "label": "asynchronous replication",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

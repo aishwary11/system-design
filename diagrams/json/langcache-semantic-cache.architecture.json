@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "LangCache: Semantic Cache Request Flow",
+    "output": "langcache-semantic-cache.architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User Prompt",
+      "sublabel": "Paraphrased, every time",
+      "pos": [
+        406,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "embed",
+      "type": "backend",
+      "label": "Embed Model",
+      "sublabel": "Prompt → Vector",
+      "pos": [
+        406,
+        300
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "cache",
+      "type": "database",
+      "label": "LangCache",
+      "sublabel": "Q/A Pairs + KNN Index",
+      "pos": [
+        406,
+        530
+      ],
+      "size": [
+        172,
+        62
+      ]
+    },
+    {
+      "id": "check",
+      "type": "messagebus",
+      "label": "Similarity ≥ Threshold?",
+      "sublabel": "Decision Point",
+      "pos": [
+        406,
+        760
+      ],
+      "size": [
+        186,
+        62
+      ]
+    },
+    {
+      "id": "hit",
+      "type": "backend",
+      "label": "Cache Hit",
+      "sublabel": "Return Cached Answer",
+      "pos": [
+        406,
+        1010
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "backend",
+      "label": "LLM",
+      "sublabel": "Fallback: Generate",
+      "pos": [
+        120,
+        760
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "write",
+      "type": "cloud",
+      "label": "Write-Back",
+      "sublabel": "Store Q/A Pair",
+      "pos": [
+        120,
+        1010
+      ],
+      "size": [
+        148,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Redis",
+      "wraps": [
+        "cache",
+        "write"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1",
+      "from": "user",
+      "to": "embed",
+      "label": "prompt",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "e2",
+      "from": "embed",
+      "to": "cache",
+      "label": "query vector",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3",
+      "from": "cache",
+      "to": "check",
+      "label": "nearest neighbors",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4",
+      "from": "check",
+      "to": "hit",
+      "label": "hit",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5",
+      "from": "check",
+      "to": "llm",
+      "label": "miss",
+      "fromSide": "left",
+      "toSide": "right",
+      "route": "straight"
+    },
+    {
+      "id": "e6",
+      "from": "llm",
+      "to": "write",
+      "label": "answer",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "e7",
+      "from": "write",
+      "to": "cache",
+      "label": "future hits",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "via": [
+        [
+          194,
+          1120
+        ],
+        [
+          80,
+          1120
+        ],
+        [
+          80,
+          561
+        ]
+      ]
+    }
+  ]
+}

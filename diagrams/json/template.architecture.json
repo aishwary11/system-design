@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Reference Architecture Template",
+    "output": "template.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      1762
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "Web / Mobile",
+      "sublabel": "API Clients",
+      "pos": [
+        79,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "WAF / API Gateway",
+      "sublabel": "TLS / Auth / Rate Limit",
+      "pos": [
+        72,
+        322
+      ],
+      "size": [
+        161,
+        62
+      ]
+    },
+    {
+      "id": "lb",
+      "type": "backend",
+      "label": "Load Balancer (ALB)",
+      "pos": [
+        70,
+        574
+      ],
+      "size": [
+        165,
+        62
+      ]
+    },
+    {
+      "id": "svc0",
+      "type": "backend",
+      "label": "Service A",
+      "tag": "→ Service Mesh · → Metrics",
+      "pos": [
+        79,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker0",
+      "type": "backend",
+      "label": "Workers",
+      "pos": [
+        79,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "store0",
+      "type": "database",
+      "label": "PostgreSQL + Redis",
+      "pos": [
+        74,
+        1078
+      ],
+      "size": [
+        158,
+        62
+      ]
+    },
+    {
+      "id": "stream",
+      "type": "messagebus",
+      "label": "Kafka",
+      "tag": "→ DLQ",
+      "pos": [
+        79,
+        1330
+      ],
+      "size": [
+        148,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "System Name",
+      "wraps": [
+        "edge",
+        "lb",
+        "svc0",
+        "worker0",
+        "store0",
+        "stream"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1-clients-edge",
+      "from": "clients",
+      "to": "edge",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-edge-lb",
+      "from": "edge",
+      "to": "lb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-lb-svc0",
+      "from": "lb",
+      "to": "svc0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-svc0-store0",
+      "from": "svc0",
+      "to": "store0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-store0-stream",
+      "from": "store0",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-stream-worker0",
+      "from": "stream",
+      "to": "worker0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

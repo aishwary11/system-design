@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Sharding — Data Partitioning",
+    "output": "concept-sharding.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1110,
+      1258
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "Clients",
+      "pos": [
+        457,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "API Gateway",
+      "sublabel": "LB",
+      "pos": [
+        457,
+        322
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "app",
+      "type": "backend",
+      "label": "Application Services",
+      "pos": [
+        445,
+        574
+      ],
+      "size": [
+        172,
+        62
+      ]
+    },
+    {
+      "id": "router",
+      "type": "backend",
+      "label": "Sharding layer",
+      "sublabel": "hash(user_id) % 4 or directory lookup",
+      "tag": "← Config",
+      "pos": [
+        413,
+        826
+      ],
+      "size": [
+        236,
+        62
+      ]
+    },
+    {
+      "id": "s0",
+      "type": "database",
+      "label": "users_0",
+      "sublabel": "primary + replica",
+      "pos": [
+        70,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "s1",
+      "type": "database",
+      "label": "users_1",
+      "sublabel": "primary + replica",
+      "pos": [
+        328,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "s2",
+      "type": "database",
+      "label": "users_2",
+      "sublabel": "primary + replica",
+      "pos": [
+        586,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "s3",
+      "type": "database",
+      "label": "users_3",
+      "sublabel": "primary + replica",
+      "pos": [
+        844,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    }
+  ],
+  "boundaries": [],
+  "connections": [
+    {
+      "id": "e1-clients-edge",
+      "from": "clients",
+      "to": "edge",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-edge-app",
+      "from": "edge",
+      "to": "app",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-app-router",
+      "from": "app",
+      "to": "router",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-router-s0",
+      "from": "router",
+      "to": "s0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-router-s1",
+      "from": "router",
+      "to": "s1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-router-s2",
+      "from": "router",
+      "to": "s2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e7-router-s3",
+      "from": "router",
+      "to": "s3",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}
