@@ -86,13 +86,13 @@ The foundational concepts behind every distributed system, each explained in a f
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1110 1258" width="900" role="img" aria-label="Sharding — Data Partitioning">
 <rect x="0" y="0" width="1110" height="1258" fill="#ffffff"/>
 <title>Sharding — Data Partitioning</title>
-<path d="M531 132 L531 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-sharding)"/>
-<path d="M531 384 L531 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-sharding)"/>
-<path d="M531 636 L531 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-sharding)"/>
-<path d="M510 888 L510 983 L144 983 L144 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-sharding)"/>
-<path d="M524 888 L524 983 L402 983 L402 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-sharding)"/>
-<path d="M538 888 L538 983 L660 983 L660 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-sharding)"/>
-<path d="M552 888 L552 983 L918 983 L918 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-sharding)"/>
+<path d="M531 132 L531 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
+<path d="M531 384 L531 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
+<path d="M531 636 L531 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
+<path d="M501 888 L501 983 L144 983 L144 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
+<path d="M521 888 L521 983 L402 983 L402 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
+<path d="M541 888 L541 983 L660 983 L660 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
+<path d="M561 888 L561 983 L918 983 L918 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
 <rect x="457" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="531" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Clients</text>
 <rect x="457" y="322" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -109,7 +109,7 @@ The foundational concepts behind every distributed system, each explained in a f
 <text x="660" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_2</text>
 <rect x="844" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
 <text x="918" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_3</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\concept-sharding" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-concept-sharding" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/concepts/concept-sharding.architecture.html](diagrams/concepts/concept-sharding.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -649,16 +649,16 @@ while (true) {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 754" width="900" role="img" aria-label="Replication Topologies">
 <rect x="0" y="0" width="960" height="754" fill="#ffffff"/>
 <title>Replication Topologies</title>
-<path d="M146 132 L146 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-replication)"/>
-<path d="M404 132 L404 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-replication)"/>
-<path d="M478 353 L760 353 L760 680 L144 680 L144 636" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-replication)"/>
-<path d="M411 384 L411 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-replication)"/>
-<path d="M139 384 L139 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-replication)"/>
-<rect x="180.8" y="389" width="36.4" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
-<text x="199" y="402" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">sync repl</text>
-<path d="M153 384 L153 479 L397 479 L397 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-replication)"/>
-<rect x="230.4" y="460" width="89.19999999999999" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
-<text x="275" y="473" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">asynchronous replication</text>
+<path d="M146 132 L146 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
+<path d="M404 132 L404 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
+<path d="M478 353 L760 353 L760 680 L144 680 L144 636" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
+<path d="M414 384 L414 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
+<path d="M136 384 L136 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
+<rect x="177.8" y="389" width="36.4" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="196" y="402" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">sync repl</text>
+<path d="M156 384 L156 479 L394 479 L394 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
+<rect x="230.4" y="460" width="89.19999999999999" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="275" y="473" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">asynchronous replication</text>
 <rect x="72" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="146" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Write clients</text>
 <rect x="330" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
@@ -671,7 +671,7 @@ while (true) {
 <text x="144" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Sync replica</text>
 <rect x="328" y="574" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
 <text x="403.5" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Async replicas x2</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\concept-replication" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-concept-replication" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/concepts/concept-replication.architecture.html](diagrams/concepts/concept-replication.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -981,18 +981,18 @@ Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 502" width="900" role="img" aria-label="Quorum Reads &amp; Writes">
 <rect x="0" y="0" width="960" height="502" fill="#ffffff"/>
 <title>Quorum Reads &amp; Writes</title>
-<path d="M266 132 L266 227 L144 227 L144 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-quorum)"/>
-<rect x="176.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
-<text x="205" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">write W=2/N=3 / ack</text>
-<path d="M280 132 L280 227 L395 227 L395 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-quorum)"/>
-<rect x="316.5" y="208" width="43" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
-<text x="338" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">write / ack</text>
-<path d="M524 132 L524 227 L409 227 L409 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-quorum)"/>
-<rect x="438.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
-<text x="467" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">read R=2/N=3 / value</text>
-<path d="M538 132 L538 227 L660 227 L660 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\concept-quorum)"/>
-<rect x="570.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
-<text x="599" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#475569">read / value (stale)</text>
+<path d="M263 132 L263 227 L144 227 L144 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
+<rect x="175.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="204" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">write W=2/N=3 / ack</text>
+<path d="M283 132 L283 227 L392 227 L392 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
+<rect x="316.5" y="208" width="43" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="338" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">write / ack</text>
+<path d="M521 132 L521 227 L412 227 L412 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
+<rect x="438.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="467" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">read R=2/N=3 / value</text>
+<path d="M541 132 L541 227 L660 227 L660 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
+<rect x="572.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="601" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">read / value (stale)</text>
 <rect x="199" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="273" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Writer</text>
 <rect x="457" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
@@ -1003,7 +1003,7 @@ Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the 
 <text x="402" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica B</text>
 <rect x="586" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
 <text x="660" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica C</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\concept-quorum" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-concept-quorum" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/concepts/concept-quorum.architecture.html](diagrams/concepts/concept-quorum.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

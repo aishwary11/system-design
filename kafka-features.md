@@ -10,18 +10,18 @@ A quick-reference catalog of Apache Kafka features used in event-driven backends
 <rect x="0" y="0" width="996" height="1006" fill="#ffffff"/>
 <title>Kafka at a Glance</title>
 <rect x="52" y="36" width="844" height="114" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="56" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Producers</text>
+<text x="66" y="56" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">Producers</text>
 <rect x="124" y="540" width="700" height="114" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="138" y="560" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Consumer</text>
-<path d="M156 132 L156 227 L460 227 L460 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\kafka-at-a-glance)"/>
-<path d="M453 132 L453 227 L474 227 L474 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\kafka-at-a-glance)"/>
-<path d="M771 132 L771 227 L488 227 L488 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\kafka-at-a-glance)"/>
-<path d="M460 384 L460 479 L216 479 L216 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\kafka-at-a-glance)"/>
-<path d="M474 384 L474 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\kafka-at-a-glance)"/>
-<path d="M488 384 L488 479 L732 479 L732 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\kafka-at-a-glance)"/>
-<path d="M216 636 L216 731 L460 731 L460 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\kafka-at-a-glance)"/>
-<path d="M474 636 L474 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\kafka-at-a-glance)"/>
-<path d="M732 636 L732 731 L488 731 L488 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\kafka-at-a-glance)"/>
+<text x="138" y="560" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">Consumer</text>
+<path d="M156 132 L156 227 L454 227 L454 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-kafka-at-a-glance)"/>
+<path d="M453 132 L453 227 L474 227 L474 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-kafka-at-a-glance)"/>
+<path d="M771 132 L771 227 L494 227 L494 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-kafka-at-a-glance)"/>
+<path d="M454 384 L454 479 L216 479 L216 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-kafka-at-a-glance)"/>
+<path d="M474 384 L474 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-kafka-at-a-glance)"/>
+<path d="M494 384 L494 479 L732 479 L732 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-kafka-at-a-glance)"/>
+<path d="M216 636 L216 731 L454 731 L454 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-kafka-at-a-glance)"/>
+<path d="M474 636 L474 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-kafka-at-a-glance)"/>
+<path d="M732 636 L732 731 L494 731 L494 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-kafka-at-a-glance)"/>
 <rect x="70" y="70" width="172" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
 <text x="156" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Application Services</text>
 <rect x="352" y="70" width="201" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -38,7 +38,7 @@ A quick-reference catalog of Apache Kafka features used in event-driven backends
 <text x="474" y="862" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Postgres / S3</text>
 <rect x="375" y="322" width="198" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="474" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Brokers</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\kafka-at-a-glance" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-kafka-at-a-glance" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/features/kafka-at-a-glance.architecture.html](diagrams/features/kafka-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

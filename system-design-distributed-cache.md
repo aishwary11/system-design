@@ -40,21 +40,21 @@ High-performance in-memory caching layer providing sub-millisecond reads for fre
 <rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
 <title>Distributed Cache — System Architecture</title>
 <rect x="52" y="288" width="717" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Distributed Cache</text>
-<path d="M411 132 L411 156 L427 156 L427 298 L411 298 L411 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M411 384 L411 408 L427 408 L427 550 L411 550 L411 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M397 636 L397 731 L153 731 L153 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M411 636 L411 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M425 636 L425 731 L669 731 L669 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M153 888 L153 912 L169 912 L169 1054 L148 1054 L148 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M411 888 L411 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M669 888 L669 912 L690 912 L690 1054 L674 1054 L674 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M148 1140 L148 1235 L397 1235 L397 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M411 1140 L411 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M674 1140 L674 1235 L425 1235 L425 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M397 1392 L397 1487 L144 1487 L144 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M411 1392 L411 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
-<path d="M425 1392 L425 1487 L669 1487 L669 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache)"/>
+<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">Distributed Cache</text>
+<path d="M411 132 L411 156 L427 156 L427 298 L411 298 L411 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M411 384 L411 408 L427 408 L427 550 L411 550 L411 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M391 636 L391 731 L153 731 L153 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M411 636 L411 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M431 636 L431 731 L669 731 L669 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M153 888 L153 912 L169 912 L169 1054 L148 1054 L148 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M411 888 L411 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M669 888 L669 912 L690 912 L690 1054 L674 1054 L674 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M148 1140 L148 1235 L391 1235 L391 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M411 1140 L411 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M674 1140 L674 1235 L431 1235 L431 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M391 1392 L391 1487 L144 1487 L144 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M411 1392 L411 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
+<path d="M431 1392 L431 1487 L669 1487 L669 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-distributed-cache)"/>
 <rect x="337" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="411" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
 <rect x="330" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -81,7 +81,7 @@ High-performance in-memory caching layer providing sub-millisecond reads for fre
 <text x="674" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Raft Consensus</text>
 <rect x="337" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="411" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\distributed-cache" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-distributed-cache" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/distributed-cache.architecture.html](diagrams/system-design/distributed-cache.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

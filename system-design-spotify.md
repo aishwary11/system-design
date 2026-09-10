@@ -43,21 +43,21 @@ Music streaming service with personalized playlists, podcast hosting, social fea
 <rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
 <title>Spotify — System Architecture</title>
 <rect x="52" y="288" width="768" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Spotify</text>
-<path d="M436 132 L436 156 L453 156 L453 298 L437 298 L437 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M437 384 L437 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M423 636 L423 731 L178 731 L178 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M437 636 L437 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M451 636 L451 731 L694 731 L694 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M178 888 L178 983 L144 983 L144 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M436 888 L436 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M694 888 L694 983 L728 983 L728 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M144 1140 L144 1235 L422 1235 L422 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M436 1140 L436 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M728 1140 L728 1235 L450 1235 L450 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M422 1392 L422 1487 L178 1487 L178 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M436 1392 L436 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
-<path d="M450 1392 L450 1487 L694 1487 L694 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\spotify)"/>
+<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">Spotify</text>
+<path d="M436 132 L436 156 L453 156 L453 298 L437 298 L437 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M437 384 L437 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M417 636 L417 731 L178 731 L178 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M437 636 L437 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M457 636 L457 731 L694 731 L694 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M178 888 L178 983 L144 983 L144 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M436 888 L436 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M694 888 L694 983 L728 983 L728 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M144 1140 L144 1235 L416 1235 L416 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M436 1140 L436 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M728 1140 L728 1235 L456 1235 L456 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M416 1392 L416 1487 L178 1487 L178 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M436 1392 L436 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
+<path d="M456 1392 L456 1487 L694 1487 L694 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-spotify)"/>
 <rect x="350" y="70" width="172" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="436" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Mobile App / Web App</text>
 <rect x="356" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -84,7 +84,7 @@ Music streaming service with personalized playlists, podcast hosting, social fea
 <text x="728" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">ML + PostgreSQL</text>
 <rect x="362" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="436" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\spotify" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-spotify" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/spotify.architecture.html](diagrams/system-design/spotify.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

@@ -45,21 +45,21 @@ A metro transit ticketing system supporting smart cards, QR code tickets, fare c
 <rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
 <title>Metro Ticketing — System Architecture</title>
 <rect x="52" y="288" width="739" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Metro Ticketing</text>
-<path d="M422 132 L422 156 L438 156 L438 298 L422 298 L422 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M422 384 L422 408 L438 408 L438 550 L422 550 L422 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M408 636 L408 731 L164 731 L164 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M422 636 L422 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M436 636 L436 731 L680 731 L680 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M164 888 L164 912 L180 912 L180 1054 L159 1054 L159 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M422 888 L422 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M680 888 L680 912 L701 912 L701 1054 L685 1054 L685 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M159 1140 L159 1235 L408 1235 L408 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M422 1140 L422 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M685 1140 L685 1235 L436 1235 L436 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M408 1392 L408 1487 L164 1487 L164 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M422 1392 L422 1487 L441 1487 L441 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
-<path d="M436 1392 L436 1487 L699 1487 L699 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing)"/>
+<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">Metro Ticketing</text>
+<path d="M422 132 L422 156 L438 156 L438 298 L422 298 L422 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M422 384 L422 408 L438 408 L438 550 L422 550 L422 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M402 636 L402 731 L164 731 L164 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M422 636 L422 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M442 636 L442 731 L680 731 L680 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M164 888 L164 912 L180 912 L180 1054 L159 1054 L159 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M422 888 L422 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M680 888 L680 912 L701 912 L701 1054 L685 1054 L685 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M159 1140 L159 1235 L402 1235 L402 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M422 1140 L422 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M685 1140 L685 1235 L442 1235 L442 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M402 1392 L402 1487 L164 1487 L164 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M422 1392 L422 1487 L441 1487 L441 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
+<path d="M442 1392 L442 1487 L699 1487 L699 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-metro-ticketing)"/>
 <rect x="348" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="422" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Mobile App</text>
 <rect x="341" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -86,7 +86,7 @@ A metro transit ticketing system supporting smart cards, QR code tickets, fare c
 <text x="685" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis + PostgreSQL</text>
 <rect x="348" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="422" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\metro-ticketing" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-metro-ticketing" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/metro-ticketing.architecture.html](diagrams/system-design/metro-ticketing.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
