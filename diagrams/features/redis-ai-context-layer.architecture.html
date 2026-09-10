@@ -5036,12 +5036,12 @@
 
         <!-- Connection paths (before components for correct z-order) -->
         <path data-edge-from="agent" data-edge-to="redis" data-edge-label="prompts" data-edge-key="0" data-edge-id="e1" data-composition-points="228,101;680,101" d="M 228 101 L 680 101" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="redis" data-edge-to="mem" data-edge-label="memory ops" data-edge-key="1" data-edge-id="e2" data-composition-points="765,132;765,226;474,226;474,320" d="M 765 132 L 765 218 Q 765 226 757 226 L 482 226 Q 474 226 474 234 L 474 320" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="redis" data-edge-to="mem" data-edge-label="memory ops" data-edge-key="1" data-edge-id="e2" data-composition-points="759,132;759,226;474,226;474,320" d="M 759 132 L 759 218 Q 759 226 751 226 L 482 226 Q 474 226 474 234 L 474 320" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
         <path data-edge-from="redis" data-edge-to="vec" data-edge-label="KNN" data-edge-key="2" data-edge-id="e3" data-composition-points="779,132;779,226;670,226;670,320" d="M 779 132 L 779 218 Q 779 226 771 226 L 678 226 Q 670 226 670 234 L 670 320" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="redis" data-edge-to="lang" data-edge-label="Q/A" data-edge-key="3" data-edge-id="e4" data-composition-points="793,132;793,226;866,226;866,320" d="M 793 132 L 793 218 Q 793 226 801 226 L 858 226 Q 866 226 866 234 L 866 320" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="mem" data-edge-to="ctx" data-edge-label="memories" data-edge-key="4" data-edge-id="e5" data-composition-points="474,382;474,476;645,476;645,570" d="M 474 382 L 474 468 Q 474 476 482 476 L 637 476 Q 645 476 645 484 L 645 570" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="redis" data-edge-to="lang" data-edge-label="Q/A" data-edge-key="3" data-edge-id="e4" data-composition-points="799,132;799,226;866,226;866,320" d="M 799 132 L 799 218 Q 799 226 807 226 L 858 226 Q 866 226 866 234 L 866 320" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="mem" data-edge-to="ctx" data-edge-label="memories" data-edge-key="4" data-edge-id="e5" data-composition-points="474,382;474,476;639,476;639,570" d="M 474 382 L 474 468 Q 474 476 482 476 L 631 476 Q 639 476 639 484 L 639 570" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
         <path data-edge-from="vec" data-edge-to="ctx" data-edge-label="neighbors" data-edge-key="5" data-edge-id="e6" data-composition-points="659,382;659,570" d="M 659 382 L 659 570" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="lang" data-edge-to="ctx" data-edge-label="hit" data-edge-key="6" data-edge-id="e7" data-composition-points="866,382;866,476;673,476;673,570" d="M 866 382 L 866 468 Q 866 476 858 476 L 681 476 Q 673 476 673 484 L 673 570" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="lang" data-edge-to="ctx" data-edge-label="hit" data-edge-key="6" data-edge-id="e7" data-composition-points="866,382;866,476;679,476;679,570" d="M 866 382 L 866 468 Q 866 476 858 476 L 687 476 Q 679 476 679 484 L 679 570" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
         <path data-edge-from="ctx" data-edge-to="llm" data-edge-label="context" data-edge-key="7" data-edge-id="e8" data-composition-points="560,601;228,601" d="M 560 601 L 228 601" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
 
         <!-- Components -->
@@ -5133,28 +5133,28 @@
           <text x="454" y="91" class="t-backend" font-size="8" text-anchor="middle">prompts</text>
         </g>
         <g data-detail="context" data-edge-from="redis" data-edge-to="mem" data-edge-label="memory ops" data-edge-key="1" data-edge-id="e2">
-          <rect x="590.5" y="206" width="58" height="14" rx="3" class="c-mask"/>
-          <text x="619.5" y="216" class="t-muted" font-size="8" text-anchor="middle">memory ops</text>
+          <rect x="587.5" y="206" width="58" height="14" rx="3" class="c-mask"/>
+          <text x="616.5" y="216" class="t-muted" font-size="8" text-anchor="middle">memory ops</text>
         </g>
         <g data-detail="context" data-edge-from="redis" data-edge-to="vec" data-edge-label="KNN" data-edge-key="2" data-edge-id="e3">
           <rect x="709.5" y="206" width="30" height="14" rx="3" class="c-mask"/>
           <text x="724.5" y="216" class="t-muted" font-size="8" text-anchor="middle">KNN</text>
         </g>
         <g data-detail="context" data-edge-from="redis" data-edge-to="lang" data-edge-label="Q/A" data-edge-key="3" data-edge-id="e4">
-          <rect x="814.5" y="206" width="30" height="14" rx="3" class="c-mask"/>
-          <text x="829.5" y="216" class="t-muted" font-size="8" text-anchor="middle">Q/A</text>
+          <rect x="817.5" y="206" width="30" height="14" rx="3" class="c-mask"/>
+          <text x="832.5" y="216" class="t-muted" font-size="8" text-anchor="middle">Q/A</text>
         </g>
         <g data-detail="context" data-edge-from="mem" data-edge-to="ctx" data-edge-label="memories" data-edge-key="4" data-edge-id="e5">
-          <rect x="535.3" y="456" width="48.4" height="14" rx="3" class="c-mask"/>
-          <text x="559.5" y="466" class="t-muted" font-size="8" text-anchor="middle">memories</text>
+          <rect x="532.3" y="456" width="48.4" height="14" rx="3" class="c-mask"/>
+          <text x="556.5" y="466" class="t-muted" font-size="8" text-anchor="middle">memories</text>
         </g>
         <g data-detail="context" data-edge-from="vec" data-edge-to="ctx" data-edge-label="neighbors" data-edge-key="5" data-edge-id="e6">
           <rect x="632.4" y="386" width="53.199999999999996" height="14" rx="3" class="c-mask"/>
           <text x="659" y="396" class="t-muted" font-size="8" text-anchor="middle">neighbors</text>
         </g>
         <g data-detail="context" data-edge-from="lang" data-edge-to="ctx" data-edge-label="hit" data-edge-key="6" data-edge-id="e7">
-          <rect x="754.5" y="456" width="30" height="14" rx="3" class="c-mask"/>
-          <text x="769.5" y="466" class="t-muted" font-size="8" text-anchor="middle">hit</text>
+          <rect x="757.5" y="456" width="30" height="14" rx="3" class="c-mask"/>
+          <text x="772.5" y="466" class="t-muted" font-size="8" text-anchor="middle">hit</text>
         </g>
         <g data-detail="context" data-edge-from="ctx" data-edge-to="llm" data-edge-label="context" data-edge-key="7" data-edge-id="e8">
           <rect x="372.2" y="581" width="43.6" height="14" rx="3" class="c-mask"/>

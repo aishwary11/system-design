@@ -45,21 +45,21 @@ A geospatial service that finds nearby users, drivers, restaurants, or stores ba
 <rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
 <title>Proximity Service — System Architecture</title>
 <rect x="52" y="288" width="795" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Proximity Service</text>
-<path d="M450 132 L450 156 L466 156 L466 298 L450 298 L450 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M450 384 L450 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M436 636 L436 731 L192 731 L192 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M450 636 L450 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M464 636 L464 731 L708 731 L708 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M192 888 L192 983 L153 983 L153 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M450 888 L450 983 L424 983 L424 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M708 888 L708 912 L737 912 L737 1054 L721 1054 L721 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M153 1140 L153 1235 L436 1235 L436 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M424 1140 L424 1235 L450 1235 L450 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M721 1140 L721 1235 L464 1235 L464 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M436 1392 L436 1487 L192 1487 L192 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M450 1392 L450 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
-<path d="M464 1392 L464 1487 L708 1487 L708 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service)"/>
+<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">Proximity Service</text>
+<path d="M450 132 L450 156 L466 156 L466 298 L450 298 L450 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M450 384 L450 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M430 636 L430 731 L192 731 L192 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M450 636 L450 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M470 636 L470 731 L708 731 L708 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M192 888 L192 983 L153 983 L153 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M450 888 L450 983 L424 983 L424 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M708 888 L708 912 L737 912 L737 1054 L721 1054 L721 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M153 1140 L153 1235 L430 1235 L430 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M424 1140 L424 1235 L450 1235 L450 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M721 1140 L721 1235 L470 1235 L470 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M430 1392 L430 1487 L192 1487 L192 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M450 1392 L450 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
+<path d="M470 1392 L470 1487 L708 1487 L708 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-proximity-service)"/>
 <rect x="376" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="450" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Mobile App</text>
 <rect x="369" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -86,7 +86,7 @@ A geospatial service that finds nearby users, drivers, restaurants, or stores ba
 <text x="721" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + Elasticsearch</text>
 <rect x="376" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="450" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\proximity-service" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-proximity-service" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/proximity-service.architecture.html](diagrams/system-design/proximity-service.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

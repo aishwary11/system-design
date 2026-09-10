@@ -39,21 +39,21 @@ Two-sided marketplace connecting hosts and guests with search, booking, payments
 <rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
 <title>Airbnb — System Architecture</title>
 <rect x="52" y="288" width="742" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Airbnb</text>
-<path d="M423 132 L423 156 L440 156 L440 298 L424 298 L424 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M424 384 L424 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M410 636 L410 731 L165 731 L165 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M424 636 L424 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M438 636 L438 731 L681 731 L681 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M165 888 L165 912 L181 912 L181 1054 L160 1054 L160 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M423 888 L423 983 L439 983 L439 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M681 888 L681 983 L702 983 L702 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M160 1140 L160 1235 L409 1235 L409 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M439 1140 L439 1235 L423 1235 L423 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M702 1140 L702 1235 L437 1235 L437 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M409 1392 L409 1487 L165 1487 L165 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M423 1392 L423 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
-<path d="M437 1392 L437 1487 L681 1487 L681 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb)"/>
+<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">Airbnb</text>
+<path d="M423 132 L423 156 L440 156 L440 298 L424 298 L424 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M424 384 L424 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M404 636 L404 731 L165 731 L165 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M424 636 L424 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M444 636 L444 731 L681 731 L681 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M165 888 L165 912 L181 912 L181 1054 L160 1054 L160 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M423 888 L423 983 L439 983 L439 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M681 888 L681 983 L702 983 L702 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M160 1140 L160 1235 L403 1235 L403 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M439 1140 L439 1235 L423 1235 L423 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M702 1140 L702 1235 L443 1235 L443 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M403 1392 L403 1487 L165 1487 L165 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M423 1392 L423 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
+<path d="M443 1392 L443 1487 L681 1487 L681 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-airbnb)"/>
 <rect x="337" y="70" width="172" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="423" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Guest App / Host App</text>
 <rect x="343" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -80,7 +80,7 @@ Two-sided marketplace connecting hosts and guests with search, booking, payments
 <text x="702" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Stripe + Ledger</text>
 <rect x="349" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="423" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\airbnb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-airbnb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/airbnb.architecture.html](diagrams/system-design/airbnb.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

@@ -45,21 +45,21 @@ Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporti
 <rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
 <title>Hotstar — System Architecture</title>
 <rect x="52" y="288" width="720" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Hotstar</text>
-<path d="M412 132 L412 156 L429 156 L429 298 L413 298 L413 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M413 384 L413 408 L429 408 L429 550 L412 550 L412 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M398 636 L398 731 L154 731 L154 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M412 636 L412 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M426 636 L426 731 L670 731 L670 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M154 888 L154 912 L170 912 L170 1054 L144 1054 L144 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M412 888 L412 912 L428 912 L428 1054 L411 1054 L411 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M670 888 L670 912 L695 912 L695 1054 L679 1054 L679 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M144 1140 L144 1235 L398 1235 L398 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M412 1140 L412 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M679 1140 L679 1235 L426 1235 L426 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M398 1392 L398 1487 L155 1487 L155 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M412 1392 L412 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
-<path d="M426 1392 L426 1487 L679 1487 L679 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar)"/>
+<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">Hotstar</text>
+<path d="M412 132 L412 156 L429 156 L429 298 L413 298 L413 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M413 384 L413 408 L429 408 L429 550 L412 550 L412 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M392 636 L392 731 L154 731 L154 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M412 636 L412 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M432 636 L432 731 L670 731 L670 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M154 888 L154 912 L170 912 L170 1054 L144 1054 L144 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M412 888 L412 912 L428 912 L428 1054 L411 1054 L411 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M670 888 L670 912 L695 912 L695 1054 L679 1054 L679 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M144 1140 L144 1235 L392 1235 L392 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M412 1140 L412 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M679 1140 L679 1235 L432 1235 L432 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M392 1392 L392 1487 L155 1487 L155 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M412 1392 L412 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
+<path d="M432 1392 L432 1487 L679 1487 L679 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-hotstar)"/>
 <rect x="338" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="412" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Mobile / Web</text>
 <rect x="332" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -86,7 +86,7 @@ Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporti
 <text x="678.5" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">WebSocket + Redis</text>
 <rect x="338" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="412" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\hotstar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-hotstar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/hotstar.architecture.html](diagrams/system-design/hotstar.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

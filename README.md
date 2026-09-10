@@ -172,13 +172,13 @@ Regenerate after editing a spec: `node tools/archify-all.mjs validate && node to
 <rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
 <title>Reference Architecture Template</title>
 <rect x="52" y="288" width="201" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">System Name</text>
-<path d="M153 132 L153 156 L169 156 L169 298 L153 298 L153 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\template)"/>
-<path d="M153 384 L153 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\template)"/>
-<path d="M153 636 L153 660 L169 660 L169 802 L153 802 L153 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\template)"/>
-<path d="M153 888 L153 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\template)"/>
-<path d="M153 1140 L153 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\template)"/>
-<path d="M153 1392 L153 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\template)"/>
+<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">System Name</text>
+<path d="M153 132 L153 156 L169 156 L169 298 L153 298 L153 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
+<path d="M153 384 L153 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
+<path d="M153 636 L153 660 L169 660 L169 802 L153 802 L153 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
+<path d="M153 888 L153 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
+<path d="M153 1140 L153 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
+<path d="M153 1392 L153 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
 <rect x="79" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="153" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
 <rect x="72" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -193,7 +193,7 @@ Regenerate after editing a spec: `node tools/archify-all.mjs validate && node to
 <text x="153" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + Redis</text>
 <rect x="79" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="153" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\template" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-template" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/template.html](diagrams/template.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

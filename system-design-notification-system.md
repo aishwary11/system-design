@@ -44,21 +44,21 @@ A multi-channel notification system supporting push, email, SMS, and in-app noti
 <rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
 <title>Notification System — System Architecture</title>
 <rect x="52" y="288" width="720" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Notification System</text>
-<path d="M412 132 L412 156 L429 156 L429 298 L413 298 L413 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M413 384 L413 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M399 636 L399 731 L154 731 L154 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M413 636 L413 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M427 636 L427 731 L670 731 L670 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M154 888 L154 912 L170 912 L170 1054 L149 1054 L149 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M412 888 L412 912 L433 912 L433 1054 L417 1054 L417 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M670 888 L670 912 L696 912 L696 1054 L680 1054 L680 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M149 1140 L149 1235 L398 1235 L398 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M412 1140 L412 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M680 1140 L680 1235 L426 1235 L426 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M398 1392 L398 1487 L154 1487 L154 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M412 1392 L412 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
-<path d="M426 1392 L426 1487 L670 1487 L670 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system)"/>
+<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">Notification System</text>
+<path d="M412 132 L412 156 L429 156 L429 298 L413 298 L413 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M413 384 L413 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M393 636 L393 731 L154 731 L154 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M413 636 L413 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M433 636 L433 731 L670 731 L670 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M154 888 L154 912 L170 912 L170 1054 L149 1054 L149 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M412 888 L412 912 L433 912 L433 1054 L417 1054 L417 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M670 888 L670 912 L696 912 L696 1054 L680 1054 L680 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M149 1140 L149 1235 L392 1235 L392 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M412 1140 L412 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M680 1140 L680 1235 L432 1235 L432 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M392 1392 L392 1487 L154 1487 L154 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M412 1392 L412 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
+<path d="M432 1392 L432 1487 L670 1487 L670 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-notification-system)"/>
 <rect x="338" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="412" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
 <rect x="332" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -85,7 +85,7 @@ A multi-channel notification system supporting push, email, SMS, and in-app noti
 <text x="680" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL</text>
 <rect x="338" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="412" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\notification-system" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-notification-system" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/notification-system.architecture.html](diagrams/system-design/notification-system.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

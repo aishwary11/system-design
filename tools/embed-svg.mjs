@@ -5,7 +5,7 @@
  * For each mermaid block (same discovery order as convert-mermaid.mjs) this
  * takes the spec's VALIDATED layout (`archify validate --layout-json`: exact
  * boxes, orthogonal route points, label positions, viewBox) and renders a
- * self-contained light-themed SVG that GitHub renders inline. The mermaid
+ * self-contained SVG (opaque white canvas, contrast-hardened inks so it stays legible on GitHub dark mode) that GitHub renders inline. The mermaid
  * block is replaced with the SVG plus one link line to the interactive HTML
  * in its topic folder (diagrams/system-design|concepts|features|template).
  *
@@ -13,7 +13,7 @@
  */
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { join, resolve, dirname } from 'node:path';
+import { join, resolve, dirname, basename } from 'node:path';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
@@ -41,7 +41,7 @@ function layoutFor(specPath) {
 }
 
 function svgFor(specPath, title) {
-  const stem = specPath.replace(/.*[\/]/, '').replace(/.architecture.json$/, '');
+  const stem = basename(specPath).replace(/\.architecture\.json$/, '').replace(/[^A-Za-z0-9_-]/g, '');
   const L = layoutFor(specPath);
   const [vw, vh] = L.viewBox;
   const byId = new Map((L.components ?? []).map(c => [c.id, c]));
@@ -58,7 +58,7 @@ function svgFor(specPath, title) {
     const x0 = Math.min(...boxes.map(b2 => b2.x)) - 18, y0 = Math.min(...boxes.map(b2 => b2.y)) - 34;
     const x1 = Math.max(...boxes.map(b2 => b2.x + b2.width)) + 18, y1 = Math.max(...boxes.map(b2 => b2.y + b2.height)) + 18;
     out.push(`<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>`);
-    out.push(`<text x="${x0 + 14}" y="${y0 + 20}" ${FONT} font-size="12" fill="#475569">${esc(b.label)}</text>`);
+    out.push(`<text x="${x0 + 14}" y="${y0 + 20}" ${FONT} font-size="12" fill="#334155">${esc(b.label)}</text>`);
   }
 
   // ---- connections (routes + labels under the nodes)
@@ -67,13 +67,13 @@ function svgFor(specPath, title) {
     if (pts.length < 2) continue;
     const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0]} ${p[1]}`).join(' ');
     const dashed = c.variant === 'dashed' ? ' stroke-dasharray="5 4"' : '';
-    const emph = c.variant === 'emphasis' ? ' stroke="#059669" stroke-width="2.4"' : ' stroke="#64748b" stroke-width="1.6"';
+    const emph = c.variant === 'emphasis' ? ' stroke="#059669" stroke-width="2.4"' : ' stroke="#334155" stroke-width="1.6"';
     out.push(`<path d="${d}" fill="none"${emph}${dashed} marker-end="url(#arr-${stem})"/>`);
     if (c.labelAt && c.label) {
       const [lx, ly] = c.labelAt;
       const w = Math.max(...String(c.label).split(' ').map(t => t.length)) * 6.6 + 10;
-      out.push(`<rect x="${lx - w / 2}" y="${ly - 9}" width="${w}" height="18" rx="4" fill="#ffffff" stroke="#e2e8f0"/>`);
-      out.push(`<text x="${lx}" y="${ly + 4}" text-anchor="middle" ${FONT} font-size="11" fill="#475569">${esc(c.label)}</text>`);
+      out.push(`<rect x="${lx - w / 2}" y="${ly - 9}" width="${w}" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>`);
+      out.push(`<text x="${lx}" y="${ly + 4}" text-anchor="middle" ${FONT} font-size="11" fill="#334155">${esc(c.label)}</text>`);
     }
   }
 
@@ -84,13 +84,13 @@ function svgFor(specPath, title) {
     const cx = c.x + c.width / 2;
     if (c.sublabel) {
       out.push(`<text x="${cx}" y="${c.y + 27}" text-anchor="middle" ${FONT} font-size="13" font-weight="bold" fill="${t.text}">${esc(c.label)}</text>`);
-      out.push(`<text x="${cx}" y="${c.y + 45}" text-anchor="middle" ${FONT} font-size="10" fill="#64748b">${esc(c.sublabel)}</text>`);
+      out.push(`<text x="${cx}" y="${c.y + 45}" text-anchor="middle" ${FONT} font-size="10" fill="#334155">${esc(c.sublabel)}</text>`);
     } else {
       out.push(`<text x="${cx}" y="${c.y + 36}" text-anchor="middle" ${FONT} font-size="13" font-weight="bold" fill="${t.text}">${esc(c.label)}</text>`);
     }
   }
 
-  out.push(`<defs><marker id="arr-${stem}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>`);
+  out.push(`<defs><marker id="arr-${stem}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>`);
   out.push(`</svg>`);
   return out.join('\n');
 }
@@ -148,7 +148,7 @@ for (const file of files) {
   });
 
   // Pass 2 (idempotent): refresh existing svg + link blocks, keyed by the link target.
-  out = out.replace(/<svg\b[\s\S]*?<\/svg>\n+\*\*[^*]*\*\* \[[^\]]+\]\((diagrams\/[^)\s]+)\)[^\n]*\n/g, (m, target) => {
+  out = out.replace(/<svg\b[\s\S]*?<\/svg>\s*\n\*\*Interactive diagram:\*\* \[[^\]]*\]\((diagrams\/[^)\s]+)\)[^\n]*(\r?\n)?/g, (m, target) => {
     const stem = target.split('/').pop().replace(/(\.architecture)?\.html$/, '');
     const title = titleFor(stem, file);
     try {

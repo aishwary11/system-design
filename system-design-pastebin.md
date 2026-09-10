@@ -41,21 +41,21 @@ Handles 500M+ monthly views, 10M+ pastes/day, write-heavy workload.
 <rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
 <title>Pastebin — System Architecture</title>
 <rect x="52" y="288" width="713" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#475569">Pastebin</text>
-<path d="M409 132 L409 156 L425 156 L425 298 L409 298 L409 322" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M409 384 L409 574" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M395 636 L395 731 L151 731 L151 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M409 636 L409 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M423 636 L423 731 L667 731 L667 826" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M151 888 L151 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M409 888 L409 912 L430 912 L430 1054 L414 1054 L414 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M667 888 L667 912 L688 912 L688 1054 L672 1054 L672 1078" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M151 1140 L151 1235 L395 1235 L395 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M409 1140 L409 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M672 1140 L672 1235 L423 1235 L423 1330" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M395 1392 L395 1487 L146 1487 L146 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M409 1392 L409 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
-<path d="M423 1392 L423 1487 L668 1487 L668 1582" fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin)"/>
+<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">Pastebin</text>
+<path d="M409 132 L409 156 L425 156 L425 298 L409 298 L409 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M409 384 L409 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M389 636 L389 731 L151 731 L151 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M409 636 L409 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M429 636 L429 731 L667 731 L667 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M151 888 L151 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M409 888 L409 912 L430 912 L430 1054 L414 1054 L414 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M667 888 L667 912 L688 912 L688 1054 L672 1054 L672 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M151 1140 L151 1235 L389 1235 L389 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M409 1140 L409 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M672 1140 L672 1235 L429 1235 L429 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M389 1392 L389 1487 L146 1487 L146 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M409 1392 L409 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
+<path d="M429 1392 L429 1487 L668 1487 L668 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-pastebin)"/>
 <rect x="335" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
 <text x="409" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
 <rect x="328" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
@@ -82,7 +82,7 @@ Handles 500M+ monthly views, 10M+ pastes/day, write-heavy workload.
 <text x="672" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">ClickHouse</text>
 <rect x="335" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
 <text x="409" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-D:\Aish\Coding\System-Design\diagrams\json\pastebin" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker></defs>
+<defs><marker id="arr-pastebin" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/pastebin.architecture.html](diagrams/system-design/pastebin.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
