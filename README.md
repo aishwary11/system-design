@@ -5,10 +5,10 @@
 
 **32 system designs · 4 technology guides · 41 interactive diagrams · 20 JS algorithm implementations**
 
-![Docs](https://img.shields.io/badge/system%20designs-32-3B82F6?style=flat-square)
-![Guides](https://img.shields.io/badge/tech%20guides-4-8B5CF6?style=flat-square)
-![Diagrams](https://img.shields.io/badge/Archify%20diagrams-41-10B981?style=flat-square)
-![Algorithms](https://img.shields.io/badge/algorithms%20in%20JS-20-F59E0B?style=flat-square)
+[![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
+[![Contributors](https://img.shields.io/github/contributors/aishwary11/system-design?style=flat-square&color=8B5CF6)](https://github.com/aishwary11/system-design/graphs/contributors)
+[![Stars](https://img.shields.io/github/stars/aishwary11/system-design?style=flat-square&color=F59E0B)](https://github.com/aishwary11/system-design/stargazers)
 
 High-Level Architecture → Low-Level Design → database design → scaling tiers → interview prep,
 each with an **inline SVG diagram** plus a **self-contained interactive HTML** (pan/zoom, search, dark/light, export).
