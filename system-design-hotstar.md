@@ -694,16 +694,16 @@ class LiveChat {
 }
 ```
 
+```text
+Quality    | Resolution | Bitrate  | Codec  | FPS
+---------- | ---------- | -------- | ------ | ---
 Low        | 480p       | 1.2 Mbps | H.264  | 30
 Medium     | 720p       | 2.5 Mbps | H.264  | 30
 High       | 720p       | 3.5 Mbps | H.265  | 30
 Very High  | 1080p      | 5.0 Mbps | H.265  | 30
 Ultra HD   | 4K         | 12 Mbps  | H.265  | 60
 
-# Per-title adjustment for cricket
-
-# Fast motion (boundaries)
-
+# Per-title adjustment: cricket (fast motion, boundaries)
 ```
 
 ```text
@@ -738,7 +738,6 @@ class ViewTracker {
 }
 ```
 
-```
 ### Real-World Insights & Best Practices (2024-2025)
 
 ### Hotstar's Actual Architecture (Based on Engineering Blog)
