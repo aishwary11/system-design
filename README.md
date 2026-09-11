@@ -1,11 +1,13 @@
 <a id="top"></a>
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Waving%20Hand.png" width="44" alt="👋"/>
+
 # 📚 System Design & Technology Guides
 
 **32 system designs · 4 technology guides · 41 interactive diagrams · 20 JS algorithm implementations**
 
-[![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="30" alt="📚"/> [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
 [![Contributors](https://img.shields.io/github/contributors/aishwary11/system-design?style=flat-square&color=8B5CF6)](https://github.com/aishwary11/system-design/graphs/contributors)
 [![Stars](https://img.shields.io/github/stars/aishwary11/system-design?style=flat-square&color=F59E0B)](https://github.com/aishwary11/system-design/stargazers)
@@ -13,7 +15,7 @@
 High-Level Architecture → Low-Level Design → database design → scaling tiers → interview prep,
 each with an **inline SVG diagram** plus a **self-contained interactive HTML** (pan/zoom, search, dark/light, export).
 
-[Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Feature Guides](#feature-guides)
+[Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · 🧰 [Feature Guides](#feature-guides)
 
 </div>
 
@@ -23,16 +25,16 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 
 | | | |
 | :--- | :--- | :--- |
-| 🗂️ **32 system designs** | Streaming, Social, E-Commerce, Transport, Infra, Productivity & more | [Browse topics](#system-designs) |
-| 🧰 **4 feature guides** | PostgreSQL · Redis · Kafka · Core Concepts, with runnable examples | [Jump to guides](#feature-guides) |
-| 🎨 **41 Archify diagrams** | Inline SVG in every doc + interactive HTML per diagram | [Diagram style](#diagrams-archify) |
-| ⚙️ **20 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
-| 🧠 **22 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **32 system designs** | Streaming, Social, E-Commerce, Transport, Infra, Productivity & more | [Browse topics](#system-designs) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **4 feature guides** | PostgreSQL · Redis · Kafka · Core Concepts, with runnable examples | [Jump to guides](#feature-guides) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **41 Archify diagrams** | Inline SVG in every doc + interactive HTML per diagram | [Diagram style](#diagrams-archify) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **20 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **22 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
 
 ---
 
 <a id="system-designs"></a>
-## 🗂️ System Designs by Topic
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="28" alt=""/> System Designs by Topic
 
 <details open>
 <summary><b>📺 Streaming & Media</b> · 5 docs</summary>
@@ -151,7 +153,7 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 ---
 
 <a id="feature-guides"></a>
-## 🧰 Technology Feature Guides
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="28" alt=""/> Technology Feature Guides
 
 The four guides cover the technology stack behind the design documents, each with runnable examples:
 
@@ -308,7 +310,7 @@ Technologies referenced across the system design documents:
 ---
 
 <a id="algorithms-library"></a>
-## ⚙️ Algorithms Library (JavaScript)
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="28" alt=""/> Algorithms Library (JavaScript)
 
 Executable implementations of the algorithms used across the designs:
 
@@ -340,7 +342,7 @@ Executable implementations of the algorithms used across the designs:
 ---
 
 <a id="techniques--patterns"></a>
-## 🧠 Techniques & Patterns
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="28" alt=""/> Techniques & Patterns
 
 <details>
 <summary><b>22 patterns</b> — click to expand the full table</summary>
@@ -408,5 +410,7 @@ To add a new document:
 
 2. **Feature guide** — create `<technology>-features.md` (e.g. `mongodb-features.md`), follow the catalog layout used by the PostgreSQL/Redis/Kafka guides (TOC → feature sections with examples → takeaways → related docs), and add it to the [Technology Feature Guides](#feature-guides) table.
 3. Verify the Markdown structure and code examples locally.
+
+<p align="center"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="34" alt="🚀"/> &nbsp;<b>Happy system designing!</b></p>
 
 <p align="right"><a href="#top">↑ back to top</a></p>
