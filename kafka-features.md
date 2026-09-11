@@ -171,7 +171,7 @@ producer.send(new ProducerRecord<>("orders", "user-42", "{\"amount\": 99.5}"),
 producer.flush();
 ```
 
-```js
+```text
 // Same idea in Node.js (kafkajs) — pseudo-code for brevity
 const producer = kafka.producer();
 await producer.connect();

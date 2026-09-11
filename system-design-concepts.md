@@ -310,7 +310,7 @@ function charge(type, amount) { return strategies[type].charge(amount); }
 
 Subtypes must be usable wherever their base type is expected, **without breaking behavior**.
 
-```js
+```text
 // ✗ BAD: a Square is-a Rectangle, but breaks setWidth's contract
 class Rectangle { setWidth(w) { this.w = w; } }
 class Square extends Rectangle {
@@ -325,7 +325,7 @@ class Square { constructor(side) { this.side = side; } }
 
 Don't force clients to depend on methods they don't use — split fat interfaces.
 
-```js
+```text
 // ✗ BAD: an InkjetPrinter must implement scan(), which it can't do
 class Printer { print(); scan(); fax(); }
 
@@ -339,7 +339,7 @@ class MultiFunctionPrinter extends Printer, Scanner { /* has both */ }
 
 Depend on **abstractions**, not concrete details.
 
-```js
+```text
 // ✗ BAD: NotificationService is welded to the concrete email sender
 class NotificationService {
   constructor() { this.sender = new EmailSender(); }  // hard to test / swap
@@ -403,7 +403,15 @@ balance now = 0 + 500 - 100 + 25 = $425     ← derived by replay
 ```
 
 ```js
-// Replay = reduce over events
+// The event log (append-only) — in production this lives in Kafka or a DB
+const events = [
+  { accountId: 42, type: 'AccountOpened',  amount:   0 },
+  { accountId: 42, type: 'MoneyDeposited', amount: 500 },
+  { accountId: 42, type: 'MoneyWithdrawn', amount: 100 },
+  { accountId: 42, type: 'MoneyDeposited', amount:  25 },
+];
+
+// Replay = reduce over events → current balance ($425)
 const balance = events
   .filter(e => e.accountId === 42)
   .reduce((bal, e) =>
@@ -626,7 +634,7 @@ A crashes  → no renewals → after 10s the key expires
 Replica B  → SET leader_lock "B" NX PX 10000 → OK               → B is the new leader
 ```
 
-```js
+```text
 // Pseudocode: the standby loop
 while (true) {
   if (acquireLock('leader_lock', 'B', ttlMs)) {   // SET NX PX
@@ -935,6 +943,7 @@ Rule of thumb: within one database → transaction. Across services → saga + i
 
 ```js
 // G-Counter: each replica only increments its own entry; merge = max per entry
+const count = c => Object.values(c).reduce((s, n) => s + n, 0);
 const a = { r1: 5, r2: 0 };          // replica A saw 5 local increments
 const b = { r1: 2, r2: 7 };          // replica B saw 7 local increments
 const merged = { r1: Math.max(a.r1, b.r1), r2: Math.max(a.r2, b.r2) };
