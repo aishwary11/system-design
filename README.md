@@ -15,6 +15,8 @@
 High-Level Architecture → Low-Level Design → database design → scaling tiers → interview prep,
 each with an **inline SVG diagram** plus a **self-contained interactive HTML** (pan/zoom, search, dark/light, export).
 
+<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=32+system+designs+with+interactive+diagrams;4+technology+guides+with+runnable+examples;20+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
+
 [Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · 🧰 [Feature Guides](#feature-guides)
 
 </div>
