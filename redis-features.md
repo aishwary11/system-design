@@ -1,4 +1,8 @@
+<div align="center">
+
 # Redis — Features Guide with Basic Examples
+
+</div>
 
 A quick-reference catalog of Redis features used in real backends: the data structures (String, Hash, List, Set, Sorted Set, Bitmap, Bitfield, HyperLogLog, Geo, Stream — plus module types JSON, Time Series, Vector set, Array, and probabilistic filters), caching patterns, distributed locking, rate limiting, Pub/Sub, reliable queues via Streams, transactions, Lua scripting, persistence, and high availability — each with a small, copy-paste-able `redis-cli` example.
 
@@ -7,33 +11,47 @@ A quick-reference catalog of Redis features used in real backends: the data stru
 ### Where Redis sits in a system
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1510" width="900" role="img" aria-label="Redis at a Glance">
-<rect x="0" y="0" width="960" height="1510" fill="#ffffff"/>
+<rect x="0.5" y="0.5" width="959" height="1509" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 <title>Redis at a Glance</title>
-<path d="M273 132 L273 156 L290 156 L290 298 L274 298 L274 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-redis-at-a-glance)"/>
-<path d="M274 384 L274 408 L290 408 L290 550 L273 550 L273 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-redis-at-a-glance)"/>
-<path d="M273 636 L273 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-redis-at-a-glance)"/>
-<path d="M263 888 L263 983 L144 983 L144 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-redis-at-a-glance)"/>
-<rect x="175.9" y="964" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="204" y="977" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">GET/SET ops</text>
-<path d="M283 888 L283 983 L402 983 L402 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-redis-at-a-glance)"/>
-<rect x="328.1" y="964" width="29.799999999999997" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="343" y="977" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">SQL</text>
-<path d="M144 1140 L144 1235 L274 1235 L274 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-redis-at-a-glance)"/>
-<rect x="199" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="273" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
-<rect x="198" y="322" width="151" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="273.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">API Gateway / TLS</text>
-<rect x="199" y="574" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="273" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer</text>
-<rect x="187" y="826" width="172" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="273" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Application Services</text>
-<rect x="70" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="144" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis</text>
-<rect x="328" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="402" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL</text>
-<rect x="193" y="1330" width="161" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="273.5" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis replicas</text>
-<defs><marker id="arr-redis-at-a-glance" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<path d="M273 132 L273 156 L290 156 L290 298 L274 298 L274 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-redis-at-a-glance)"/>
+<path d="M274 384 L274 408 L290 408 L290 550 L273 550 L273 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-redis-at-a-glance)"/>
+<path d="M273 636 L273 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-redis-at-a-glance)"/>
+<path d="M263 888 L263 983 L144 983 L144 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-redis-at-a-glance)"/>
+<rect x="175.9" y="963" width="56.199999999999996" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="204" y="977" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#475569">GET/SET ops</text>
+<path d="M283 888 L283 983 L402 983 L402 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-redis-at-a-glance)"/>
+<rect x="328.1" y="963" width="29.799999999999997" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="343" y="977" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#475569">SQL</text>
+<path d="M144 1140 L144 1235 L274 1235 L274 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-redis-at-a-glance)"/>
+<rect x="199" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="199" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="202" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="273" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Web / Mobile</text>
+<rect x="198" y="325" width="151" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="198" y="322" width="151" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="201" y="325" width="145" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="273.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">API Gateway / TLS</text>
+<rect x="199" y="577" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="199" y="574" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="202" y="577" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="273" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Load Balancer</text>
+<rect x="187" y="829" width="172" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="187" y="826" width="172" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="190" y="829" width="166" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="273" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Application Services</text>
+<rect x="70" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="70" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="73" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="144" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Redis</text>
+<rect x="328" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="328" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="331" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="402" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">PostgreSQL</text>
+<rect x="193" y="1333" width="161" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="193" y="1330" width="161" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="196" y="1333" width="155" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="273.5" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Redis replicas</text>
+<defs><marker id="arr-redis-at-a-glance" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-redis-at-a-glance" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/features/redis-at-a-glance.architecture.html](diagrams/features/redis-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -44,6 +62,9 @@ A quick-reference catalog of Redis features used in real backends: the data stru
 ---
 
 ## Table of Contents
+
+<details>
+<summary><b>📑 Jump to a section</b></summary>
 
 1. [Data Structures (Core Types & Modules)](#1-data-structures-core-types--modules)
 2. [Caching (TTL, Eviction, Patterns)](#2-caching-ttl-eviction-patterns)
@@ -64,6 +85,8 @@ A quick-reference catalog of Redis features used in real backends: the data stru
 17. [High Availability — Sentinel & Cluster](#17-high-availability--sentinel--cluster)
 18. [Caching Anti-Patterns & Pitfalls](#18-caching-anti-patterns--pitfalls)
 19. [Key Takeaways](#19-key-takeaways)
+
+</details>
 
 ---
 

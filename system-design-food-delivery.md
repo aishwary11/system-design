@@ -1,4 +1,11 @@
+<div align="center">
+
 # System Design: Food Delivery (Zomato/Uber Eats)
+
+</div>
+
+> [!TIP]
+> **TL;DR** — A food delivery platform supporting restaurant discovery, order placement, real-time tracking, and delivery partner management.
 
 ## Overview
 
@@ -6,10 +13,12 @@ A food delivery platform supporting restaurant discovery, order placement, real-
 
 ### Key Numbers
 
-- 50M+ monthly active users
-- 500K+ restaurant partners
-- 5M+ orders per day
-- 2M+ delivery partners
+| Metric | Value |
+| :--- | :--- |
+| **monthly active users** | 50M+ |
+| **restaurant partners** | 500K+ |
+| **orders per day** | 5M+ |
+| **delivery partners** | 2M+ |
 
 ---
 
@@ -25,11 +34,13 @@ A food delivery platform supporting restaurant discovery, order placement, real-
 
 ### Non-Functional Requirements
 
-- Latency: Search < 200ms
-- Throughput: 1M+ orders/day
-- Availability: 99.99% uptime
-- Consistency: Strong for orders
-- Scale: 10M+ users, 500K+ partners
+| Attribute | Target |
+| :--- | :--- |
+| **Latency** | Search < 200ms |
+| **Throughput** | 1M+ orders/day |
+| **Availability** | 99.99% uptime |
+| **Consistency** | Strong for orders |
+| **Scale** | 10M+ users, 500K+ partners |
 
 ---
 
@@ -38,51 +49,78 @@ A food delivery platform supporting restaurant discovery, order placement, real-
 ### Architecture Diagram
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="Food Delivery — System Architecture">
-<rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
+<rect x="0.5" y="0.5" width="959" height="1761" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 <title>Food Delivery — System Architecture</title>
-<rect x="52" y="288" width="723" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#334155">Food Delivery</text>
-<path d="M414 132 L414 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M414 384 L414 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M394 636 L394 731 L156 731 L156 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M414 636 L414 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M434 636 L434 731 L672 731 L672 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M156 888 L156 912 L172 912 L172 1054 L149 1054 L149 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M414 888 L414 912 L430 912 L430 1054 L414 1054 L414 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M672 888 L672 912 L694 912 L694 1054 L678 1054 L678 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M149 1140 L149 1235 L394 1235 L394 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M414 1140 L414 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M678 1140 L678 1235 L434 1235 L434 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M394 1392 L394 1487 L156 1487 L156 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M414 1392 L414 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<path d="M434 1392 L434 1487 L672 1487 L672 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-food-delivery)"/>
-<rect x="295" y="70" width="237" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="413.5" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Customer App / Restaurant App</text>
-<rect x="333" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="413.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">WAF / API Gateway</text>
-<rect x="331" y="574" width="165" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="413.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer (ALB)</text>
-<rect x="82" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="156" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Order Svc</text>
-<rect x="340" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="414" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Delivery Svc</text>
-<rect x="598" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="672" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Restaurant Svc</text>
-<rect x="82" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="156" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">ETA Workers</text>
-<rect x="340" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="414" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Analytics</text>
-<rect x="598" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="672" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Notifications</text>
-<rect x="70" y="1078" width="158" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="149" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + Redis</text>
-<rect x="338" y="1078" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="413.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis GEO + Kafka</text>
-<rect x="599" y="1078" width="158" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="678" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + Redis</text>
-<rect x="340" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
-<text x="414" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-food-delivery" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<rect x="52" y="288" width="723" height="1374" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>
+<rect x="64" y="296" width="113.60000000000001" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="120.80000000000001" y="310" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">Food Delivery</text>
+<path d="M414 132 L414 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M414 384 L414 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M394 636 L394 731 L156 731 L156 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M414 636 L414 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M434 636 L434 731 L672 731 L672 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M156 888 L156 912 L172 912 L172 1054 L149 1054 L149 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M414 888 L414 912 L430 912 L430 1054 L414 1054 L414 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M672 888 L672 912 L694 912 L694 1054 L678 1054 L678 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M149 1140 L149 1235 L394 1235 L394 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M414 1140 L414 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M678 1140 L678 1235 L434 1235 L434 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M394 1392 L394 1487 L156 1487 L156 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M414 1392 L414 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<path d="M434 1392 L434 1487 L672 1487 L672 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-food-delivery)"/>
+<rect x="295" y="73" width="237" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="295" y="70" width="237" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="298" y="73" width="231" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="413.5" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Customer App / Restaurant App</text>
+<rect x="333" y="325" width="161" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="333" y="322" width="161" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="336" y="325" width="155" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="413.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">WAF / API Gateway</text>
+<rect x="331" y="577" width="165" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="331" y="574" width="165" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="334" y="577" width="159" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="413.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Load Balancer (ALB)</text>
+<rect x="82" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="82" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="85" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="156" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Order Svc</text>
+<rect x="340" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="340" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="343" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="414" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Delivery Svc</text>
+<rect x="598" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="598" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="601" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="672" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Restaurant Svc</text>
+<rect x="82" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="82" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="85" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="156" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">ETA Workers</text>
+<rect x="340" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="340" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="343" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="414" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Analytics</text>
+<rect x="598" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="598" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="601" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="672" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Notifications</text>
+<rect x="70" y="1081" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="70" y="1078" width="158" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="73" y="1081" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="149" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">PostgreSQL + Redis</text>
+<rect x="338" y="1081" width="151" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="338" y="1078" width="151" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="341" y="1081" width="145" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="413.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Redis GEO + Kafka</text>
+<rect x="599" y="1081" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="599" y="1078" width="158" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="602" y="1081" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="678" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">PostgreSQL + Redis</text>
+<rect x="340" y="1333" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="340" y="1330" width="148" height="62" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.4"/>
+<rect x="343" y="1333" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="414" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#7c2d12">Kafka</text>
+<defs><marker id="arr-food-delivery" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-food-delivery" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/food-delivery.architecture.html](diagrams/system-design/food-delivery.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -223,8 +261,6 @@ CREATE TABLE order_items (
 | **Location** | S2 Cells + Redis GEO |
 | **Queue** | Kafka (15+ brokers) |
 | **ML** | Route optimization, demand prediction |
-
----
 
 ---
 

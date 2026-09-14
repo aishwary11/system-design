@@ -5,7 +5,7 @@
  * For each mermaid block (same discovery order as convert-mermaid.mjs) this
  * takes the spec's VALIDATED layout (`archify validate --layout-json`: exact
  * boxes, orthogonal route points, label positions, viewBox) and renders a
- * self-contained SVG (opaque white canvas, contrast-hardened inks so it stays legible on GitHub dark mode) that GitHub renders inline. The mermaid
+ * self-contained SVG (card-style canvas with modern palette, contrast-hardened inks so it stays legible on GitHub dark mode) that GitHub renders inline. The mermaid
  * block is replaced with the SVG plus one link line to the interactive HTML
  * in its topic folder (diagrams/system-design|concepts|features|template).
  *
@@ -24,11 +24,11 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 
 // ---- component-type palette (light theme, matches the delivered HTML) -------
 const TYPE = {
-  external:   { fill: '#ecfdf5', stroke: '#059669', text: '#065f46', icon: '' },
-  backend:    { fill: '#eef2ff', stroke: '#6366f1', text: '#3730a3', icon: '' },
-  database:   { fill: '#f5f3ff', stroke: '#7c3aed', text: '#5b21b6', icon: '' },
-  messagebus: { fill: '#fff7ed', stroke: '#ea580c', text: '#9a3412', icon: '' },
-  cloud:      { fill: '#f0f9ff', stroke: '#0284c7', text: '#075985', icon: '' },
+  external:   { fill: '#ecfdf5', stroke: '#10b981', text: '#064e3b' },
+  backend:    { fill: '#eef2ff', stroke: '#6366f1', text: '#312e81' },
+  database:   { fill: '#f5f3ff', stroke: '#8b5cf6', text: '#4c1d95' },
+  messagebus: { fill: '#fff7ed', stroke: '#f97316', text: '#7c2d12' },
+  cloud:      { fill: '#f0f9ff', stroke: '#0ea5e9', text: '#0c4a6e' },
 };
 const FONT = 'font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"';
 
@@ -48,7 +48,7 @@ function svgFor(specPath, title) {
   const out = [];
 
   out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vw} ${vh}" width="${Math.min(vw, 900)}" role="img" aria-label="${esc(title)}">`);
-  out.push(`<rect x="0" y="0" width="${vw}" height="${vh}" fill="#ffffff"/>`);
+  out.push(`<rect x="0.5" y="0.5" width="${vw - 1}" height="${vh - 1}" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>`);
   out.push(`<title>${esc(title)}</title>`);
 
   // ---- boundaries
@@ -57,8 +57,10 @@ function svgFor(specPath, title) {
     if (!boxes.length) continue;
     const x0 = Math.min(...boxes.map(b2 => b2.x)) - 18, y0 = Math.min(...boxes.map(b2 => b2.y)) - 34;
     const x1 = Math.max(...boxes.map(b2 => b2.x + b2.width)) + 18, y1 = Math.max(...boxes.map(b2 => b2.y + b2.height)) + 18;
-    out.push(`<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>`);
-    out.push(`<text x="${x0 + 14}" y="${y0 + 20}" ${FONT} font-size="12" fill="#334155">${esc(b.label)}</text>`);
+    out.push(`<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>`);
+    const blw = String(b.label).length * 7.2 + 20;
+    out.push(`<rect x="${x0 + 12}" y="${y0 + 8}" width="${blw}" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>`);
+    out.push(`<text x="${x0 + 12 + blw / 2}" y="${y0 + 22}" text-anchor="middle" ${FONT} font-size="11" fill="#475569">${esc(b.label)}</text>`);
   }
 
   // ---- connections (routes + labels under the nodes)
@@ -67,30 +69,34 @@ function svgFor(specPath, title) {
     if (pts.length < 2) continue;
     const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0]} ${p[1]}`).join(' ');
     const dashed = c.variant === 'dashed' ? ' stroke-dasharray="5 4"' : '';
-    const emph = c.variant === 'emphasis' ? ' stroke="#059669" stroke-width="2.4"' : ' stroke="#334155" stroke-width="1.6"';
-    out.push(`<path d="${d}" fill="none"${emph}${dashed} marker-end="url(#arr-${stem})"/>`);
+    const emph = c.variant === 'emphasis'
+      ? ` stroke="#10b981" stroke-width="2.2" marker-end="url(#arrEm-${stem})"`
+      : ` stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-${stem})"`
+    out.push(`<path d="${d}" fill="none"${emph}${dashed}/>`);
     if (c.labelAt && c.label) {
       const [lx, ly] = c.labelAt;
       const w = Math.max(...String(c.label).split(' ').map(t => t.length)) * 6.6 + 10;
-      out.push(`<rect x="${lx - w / 2}" y="${ly - 9}" width="${w}" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>`);
-      out.push(`<text x="${lx}" y="${ly + 4}" text-anchor="middle" ${FONT} font-size="11" fill="#334155">${esc(c.label)}</text>`);
+      out.push(`<rect x="${lx - w / 2}" y="${ly - 10}" width="${w}" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>`);
+      out.push(`<text x="${lx}" y="${ly + 4}" text-anchor="middle" ${FONT} font-size="10.5" fill="#475569">${esc(c.label)}</text>`);
     }
   }
 
   // ---- components
   for (const c of L.components ?? []) {
     const t = TYPE[c.type] ?? TYPE.backend;
-    out.push(`<rect x="${c.x}" y="${c.y}" width="${c.width}" height="${c.height}" rx="9" fill="${t.fill}" stroke="${t.stroke}" stroke-width="1.6"/>`);
+    out.push(`<rect x="${c.x}" y="${c.y + 3}" width="${c.width}" height="${c.height}" rx="12" fill="#0f172a" fill-opacity="0.08"/>`);
+    out.push(`<rect x="${c.x}" y="${c.y}" width="${c.width}" height="${c.height}" rx="12" fill="${t.fill}" stroke="${t.stroke}" stroke-width="1.4"/>`);
+    out.push(`<rect x="${c.x + 3}" y="${c.y + 3}" width="${c.width - 6}" height="${c.height - 6}" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>`);
     const cx = c.x + c.width / 2;
     if (c.sublabel) {
       out.push(`<text x="${cx}" y="${c.y + 27}" text-anchor="middle" ${FONT} font-size="13" font-weight="bold" fill="${t.text}">${esc(c.label)}</text>`);
-      out.push(`<text x="${cx}" y="${c.y + 45}" text-anchor="middle" ${FONT} font-size="10" fill="#334155">${esc(c.sublabel)}</text>`);
+      out.push(`<text x="${cx}" y="${c.y + 45}" text-anchor="middle" ${FONT} font-size="10.5" fill="#475569">${esc(c.sublabel)}</text>`);
     } else {
       out.push(`<text x="${cx}" y="${c.y + 36}" text-anchor="middle" ${FONT} font-size="13" font-weight="bold" fill="${t.text}">${esc(c.label)}</text>`);
     }
   }
 
-  out.push(`<defs><marker id="arr-${stem}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>`);
+  out.push(`<defs><marker id="arr-${stem}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-${stem}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>`);
   out.push(`</svg>`);
   return out.join('\n');
 }

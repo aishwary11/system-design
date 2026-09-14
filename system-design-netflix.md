@@ -1,4 +1,11 @@
+<div align="center">
+
 # System Design: Netflix (Video Streaming Platform)
+
+</div>
+
+> [!TIP]
+> **TL;DR** — Netflix is the world's leading subscription-based video streaming platform with 260M+ subscribers across 190+ countries.
 
 ## Overview
 
@@ -6,11 +13,13 @@ Netflix is the world's leading subscription-based video streaming platform with 
 
 ### Key Numbers
 
-- 260M+ subscribers globally
-- 100K+ titles in content library
-- 1 billion+ hours streamed per month
-- 1000+ Open Connect CDN appliances in ISPs
-- Supports 2000+ device types
+| Metric | Value |
+| :--- | :--- |
+| **subscribers globally** | 260M+ |
+| **titles in content library** | 100K+ |
+| **hours streamed per month** | 1 billion+ |
+| **Open Connect CDN appliances in ISPs** | 1000+ |
+| **Supports** | 2000+ device types |
 
 ---
 
@@ -26,15 +35,13 @@ Netflix is the world's leading subscription-based video streaming platform with 
 
 ### Non-Functional Requirements
 
-- Latency: Video start < 2s, seek < 500ms
-- Throughput: 250M+ subscribers
-- Availability: 99.99% uptime
-- Consistency: Eventually consistent recs
-- Scale: 15% of global bandwidth
-
----
-
----
+| Attribute | Target |
+| :--- | :--- |
+| **Latency** | Video start < 2s, seek < 500ms |
+| **Throughput** | 250M+ subscribers |
+| **Availability** | 99.99% uptime |
+| **Consistency** | Eventually consistent recs |
+| **Scale** | 15% of global bandwidth |
 
 ---
 
@@ -43,51 +50,78 @@ Netflix is the world's leading subscription-based video streaming platform with 
 ### Architecture Diagram
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="Netflix — System Architecture">
-<rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
+<rect x="0.5" y="0.5" width="959" height="1761" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 <title>Netflix — System Architecture</title>
-<rect x="52" y="288" width="759" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#334155">Netflix</text>
-<path d="M432 132 L432 156 L448 156 L448 298 L432 298 L432 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M432 384 L432 408 L448 408 L448 550 L432 550 L432 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M412 636 L412 731 L169 731 L169 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M432 636 L432 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M452 636 L452 731 L695 731 L695 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M169 888 L169 983 L153 983 L153 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M432 888 L432 912 L448 912 L448 1054 L424 1054 L424 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M695 888 L695 912 L719 912 L719 1054 L703 1054 L703 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M153 1140 L153 1235 L412 1235 L412 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M432 1140 L432 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M703 1140 L703 1235 L452 1235 L452 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M412 1392 L412 1487 L174 1487 L174 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M432 1392 L432 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<path d="M452 1392 L452 1487 L690 1487 L690 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-netflix)"/>
-<rect x="358" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="432" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Mobile / Web</text>
-<rect x="351" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="431.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">WAF / API Gateway</text>
-<rect x="353" y="574" width="158" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="432" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer (ALB</text>
-<rect x="95" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="169" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Content Svc</text>
-<rect x="353" y="826" width="158" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="432" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Recommendation Svc</text>
-<rect x="621" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="695" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Streaming Svc</text>
-<rect x="100" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="174" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Encoding Workers</text>
-<rect x="358" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="432" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Analytics</text>
-<rect x="616" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="690" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Notifications</text>
-<rect x="70" y="1078" width="165" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="152.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Cassandra + EVCache</text>
-<rect x="345" y="1078" width="158" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="424" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + Spark</text>
-<rect x="613" y="1078" width="180" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="703" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">FFmpeg + Open Connect</text>
-<rect x="358" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
-<text x="432" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-netflix" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<rect x="52" y="288" width="759" height="1374" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>
+<rect x="64" y="296" width="70.4" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="99.2" y="310" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">Netflix</text>
+<path d="M432 132 L432 156 L448 156 L448 298 L432 298 L432 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M432 384 L432 408 L448 408 L448 550 L432 550 L432 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M412 636 L412 731 L169 731 L169 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M432 636 L432 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M452 636 L452 731 L695 731 L695 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M169 888 L169 983 L153 983 L153 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M432 888 L432 912 L448 912 L448 1054 L424 1054 L424 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M695 888 L695 912 L719 912 L719 1054 L703 1054 L703 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M153 1140 L153 1235 L412 1235 L412 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M432 1140 L432 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M703 1140 L703 1235 L452 1235 L452 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M412 1392 L412 1487 L174 1487 L174 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M432 1392 L432 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<path d="M452 1392 L452 1487 L690 1487 L690 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-netflix)"/>
+<rect x="358" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="358" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="361" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="432" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Mobile / Web</text>
+<rect x="351" y="325" width="161" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="351" y="322" width="161" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="354" y="325" width="155" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="431.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">WAF / API Gateway</text>
+<rect x="353" y="577" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="353" y="574" width="158" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="356" y="577" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="432" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Load Balancer (ALB</text>
+<rect x="95" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="95" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="98" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="169" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Content Svc</text>
+<rect x="353" y="829" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="353" y="826" width="158" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="356" y="829" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="432" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Recommendation Svc</text>
+<rect x="621" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="621" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="624" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="695" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Streaming Svc</text>
+<rect x="100" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="100" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="103" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="174" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Encoding Workers</text>
+<rect x="358" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="358" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="361" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="432" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Analytics</text>
+<rect x="616" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="616" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="619" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="690" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Notifications</text>
+<rect x="70" y="1081" width="165" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="70" y="1078" width="165" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="73" y="1081" width="159" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="152.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Cassandra + EVCache</text>
+<rect x="345" y="1081" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="345" y="1078" width="158" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="348" y="1081" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="424" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">PostgreSQL + Spark</text>
+<rect x="613" y="1081" width="180" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="613" y="1078" width="180" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="616" y="1081" width="174" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="703" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">FFmpeg + Open Connect</text>
+<rect x="358" y="1333" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="358" y="1330" width="148" height="62" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.4"/>
+<rect x="361" y="1333" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="432" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#7c2d12">Kafka</text>
+<defs><marker id="arr-netflix" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-netflix" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/netflix.architecture.html](diagrams/system-design/netflix.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -785,7 +819,5 @@ Play video to user
 5. **Invest in Tooling**: Netflix built and open-sourced their own tools
 6. **Data-Driven Decisions**: A/B testing at massive scale (1000+ concurrent experiments)
 7. **Domain-Driven Design**: Moving from microservice-first to domain-driven (2024-2025 trend)
-
----
 
 ---

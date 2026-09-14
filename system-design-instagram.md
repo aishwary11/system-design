@@ -1,4 +1,11 @@
+<div align="center">
+
 # System Design: Instagram
+
+</div>
+
+> [!TIP]
+> **TL;DR** — A photo/video sharing social platform supporting content upload, following, personalized feed, stories, likes/comments, and search for 2B+ users.
 
 ## Overview
 
@@ -6,10 +13,12 @@ A photo/video sharing social platform supporting content upload, following, pers
 
 ### Key Numbers
 
-- 2B+ monthly active users
-- 500M+ daily stories
-- 100M+ photos/videos uploaded daily
-- Peak: 1M+ likes per second
+| Metric | Value |
+| :--- | :--- |
+| **monthly active users** | 2B+ |
+| **daily stories** | 500M+ |
+| **photos/videos uploaded daily** | 100M+ |
+| **Peak** | 1M+ likes per second |
 
 ---
 
@@ -25,11 +34,13 @@ A photo/video sharing social platform supporting content upload, following, pers
 
 ### Non-Functional Requirements
 
-- Latency: Feed < 200ms, upload < 5s
-- Throughput: 100M+ photos/day
-- Availability: 99.99% uptime
-- Consistency: Eventually consistent feed
-- Scale: 2B+ monthly active users
+| Attribute | Target |
+| :--- | :--- |
+| **Latency** | Feed < 200ms, upload < 5s |
+| **Throughput** | 100M+ photos/day |
+| **Availability** | 99.99% uptime |
+| **Consistency** | Eventually consistent feed |
+| **Scale** | 2B+ monthly active users |
 
 ---
 
@@ -38,51 +49,78 @@ A photo/video sharing social platform supporting content upload, following, pers
 ### Architecture Diagram
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="Instagram — System Architecture">
-<rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
+<rect x="0.5" y="0.5" width="959" height="1761" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 <title>Instagram — System Architecture</title>
-<rect x="52" y="288" width="709" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#334155">Instagram</text>
-<path d="M407 132 L407 156 L423 156 L423 298 L407 298 L407 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M407 384 L407 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M387 636 L387 731 L149 731 L149 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M407 636 L407 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M427 636 L427 731 L665 731 L665 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M149 888 L149 912 L165 912 L165 1054 L146 1054 L146 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M407 888 L407 912 L423 912 L423 1054 L407 1054 L407 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M665 888 L665 912 L684 912 L684 1054 L668 1054 L668 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M146 1140 L146 1235 L387 1235 L387 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M407 1140 L407 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M668 1140 L668 1235 L427 1235 L427 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M387 1392 L387 1487 L149 1487 L149 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M407 1392 L407 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<path d="M427 1392 L427 1487 L665 1487 L665 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-instagram)"/>
-<rect x="333" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="407" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Mobile / Web</text>
-<rect x="326" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="406.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">WAF / API Gateway</text>
-<rect x="324" y="574" width="165" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="406.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer (ALB)</text>
-<rect x="75" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="149" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Feed Service</text>
-<rect x="333" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="407" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Media Svc</text>
-<rect x="591" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="665" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Story Service</text>
-<rect x="75" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="149" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Feed Workers</text>
-<rect x="333" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="407" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Analytics</text>
-<rect x="591" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="665" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Notifications</text>
-<rect x="70" y="1078" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="145.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis + Cassandra</text>
-<rect x="331" y="1078" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="406.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">S3 + CDN + FFmpeg</text>
-<rect x="592" y="1078" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="667.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis + WebSocket</text>
-<rect x="333" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
-<text x="407" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-instagram" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<rect x="52" y="288" width="709" height="1374" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>
+<rect x="64" y="296" width="84.8" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="106.4" y="310" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">Instagram</text>
+<path d="M407 132 L407 156 L423 156 L423 298 L407 298 L407 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M407 384 L407 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M387 636 L387 731 L149 731 L149 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M407 636 L407 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M427 636 L427 731 L665 731 L665 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M149 888 L149 912 L165 912 L165 1054 L146 1054 L146 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M407 888 L407 912 L423 912 L423 1054 L407 1054 L407 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M665 888 L665 912 L684 912 L684 1054 L668 1054 L668 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M146 1140 L146 1235 L387 1235 L387 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M407 1140 L407 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M668 1140 L668 1235 L427 1235 L427 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M387 1392 L387 1487 L149 1487 L149 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M407 1392 L407 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<path d="M427 1392 L427 1487 L665 1487 L665 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-instagram)"/>
+<rect x="333" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="333" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="336" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="407" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Mobile / Web</text>
+<rect x="326" y="325" width="161" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="326" y="322" width="161" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="329" y="325" width="155" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="406.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">WAF / API Gateway</text>
+<rect x="324" y="577" width="165" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="324" y="574" width="165" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="327" y="577" width="159" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="406.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Load Balancer (ALB)</text>
+<rect x="75" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="75" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="78" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="149" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Feed Service</text>
+<rect x="333" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="333" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="336" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="407" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Media Svc</text>
+<rect x="591" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="591" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="594" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="665" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Story Service</text>
+<rect x="75" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="75" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="78" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="149" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Feed Workers</text>
+<rect x="333" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="333" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="336" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="407" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Analytics</text>
+<rect x="591" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="591" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="594" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="665" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Notifications</text>
+<rect x="70" y="1081" width="151" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="70" y="1078" width="151" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="73" y="1081" width="145" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="145.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Redis + Cassandra</text>
+<rect x="331" y="1081" width="151" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="331" y="1078" width="151" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="334" y="1081" width="145" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="406.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">S3 + CDN + FFmpeg</text>
+<rect x="592" y="1081" width="151" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="592" y="1078" width="151" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="595" y="1081" width="145" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="667.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Redis + WebSocket</text>
+<rect x="333" y="1333" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="333" y="1330" width="148" height="62" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.4"/>
+<rect x="336" y="1333" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="407" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#7c2d12">Kafka</text>
+<defs><marker id="arr-instagram" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-instagram" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/instagram.architecture.html](diagrams/system-design/instagram.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -365,8 +403,6 @@ The metrics that signal system health, with alert thresholds:
 | Search latency (p99) | < 500ms |
 | System availability | 99.95% |
 | Image processing queue depth | < 1000 |
-
----
 
 ---
 

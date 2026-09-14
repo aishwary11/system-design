@@ -1,4 +1,11 @@
+<div align="center">
+
 # System Design: File Storage (Google Drive/Dropbox)
+
+</div>
+
+> [!TIP]
+> **TL;DR** — A cloud file storage system supporting file upload/download, sync, sharing, and versioning for millions of users.
 
 ## Overview
 
@@ -25,11 +32,13 @@ A cloud file storage system supporting file upload/download, sync, sharing, and 
 
 ### Non-Functional Requirements
 
-- Latency: Metadata < 200ms
-- Throughput: 10M+ files/day
-- Availability: 99.999% uptime
-- Consistency: Strong for metadata
-- Scale: 500M+ users, 50EB+ storage
+| Attribute | Target |
+| :--- | :--- |
+| **Latency** | Metadata < 200ms |
+| **Throughput** | 10M+ files/day |
+| **Availability** | 99.999% uptime |
+| **Consistency** | Strong for metadata |
+| **Scale** | 500M+ users, 50EB+ storage |
 
 ---
 
@@ -38,51 +47,78 @@ A cloud file storage system supporting file upload/download, sync, sharing, and 
 ### Architecture Diagram
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="File Storage — System Architecture">
-<rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
+<rect x="0.5" y="0.5" width="959" height="1761" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 <title>File Storage — System Architecture</title>
-<rect x="52" y="288" width="724" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#334155">File Storage</text>
-<path d="M414 132 L414 156 L431 156 L431 298 L415 298 L415 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M415 384 L415 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M395 636 L395 731 L156 731 L156 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M415 636 L415 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M435 636 L435 731 L672 731 L672 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M156 888 L156 912 L172 912 L172 1054 L155 1054 L155 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M414 888 L414 912 L431 912 L431 1054 L415 1054 L415 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M672 888 L672 912 L690 912 L690 1054 L674 1054 L674 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M155 1140 L155 1235 L394 1235 L394 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M414 1140 L414 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M674 1140 L674 1235 L434 1235 L434 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M394 1392 L394 1487 L144 1487 L144 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M414 1392 L414 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<path d="M434 1392 L434 1487 L672 1487 L672 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-file-storage)"/>
-<rect x="340" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="414" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
-<rect x="334" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="414.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">WAF / API Gateway</text>
-<rect x="332" y="574" width="165" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="414.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer (ALB)</text>
-<rect x="82" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="156" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Upload Svc</text>
-<rect x="340" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="414" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Sync Service</text>
-<rect x="598" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="672" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Share Service</text>
-<rect x="70" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="144" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Sync Workers</text>
-<rect x="328" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="402" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Analytics</text>
-<rect x="586" y="1582" width="172" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="672" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Notification Workers</text>
-<rect x="81" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="155" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">S3 + Multipart</text>
-<rect x="339" y="1078" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="414.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">WebSocket + Redis</text>
-<rect x="600" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="674" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + CDN</text>
-<rect x="340" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
-<text x="414" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-file-storage" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<rect x="52" y="288" width="724" height="1374" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>
+<rect x="64" y="296" width="106.4" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="117.2" y="310" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">File Storage</text>
+<path d="M414 132 L414 156 L431 156 L431 298 L415 298 L415 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M415 384 L415 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M395 636 L395 731 L156 731 L156 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M415 636 L415 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M435 636 L435 731 L672 731 L672 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M156 888 L156 912 L172 912 L172 1054 L155 1054 L155 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M414 888 L414 912 L431 912 L431 1054 L415 1054 L415 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M672 888 L672 912 L690 912 L690 1054 L674 1054 L674 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M155 1140 L155 1235 L394 1235 L394 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M414 1140 L414 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M674 1140 L674 1235 L434 1235 L434 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M394 1392 L394 1487 L144 1487 L144 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M414 1392 L414 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<path d="M434 1392 L434 1487 L672 1487 L672 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-file-storage)"/>
+<rect x="340" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="340" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="343" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="414" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Web / Mobile</text>
+<rect x="334" y="325" width="161" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="334" y="322" width="161" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="337" y="325" width="155" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="414.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">WAF / API Gateway</text>
+<rect x="332" y="577" width="165" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="332" y="574" width="165" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="335" y="577" width="159" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="414.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Load Balancer (ALB)</text>
+<rect x="82" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="82" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="85" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="156" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Upload Svc</text>
+<rect x="340" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="340" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="343" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="414" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Sync Service</text>
+<rect x="598" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="598" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="601" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="672" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Share Service</text>
+<rect x="70" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="70" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="73" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="144" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Sync Workers</text>
+<rect x="328" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="328" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="331" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="402" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Analytics</text>
+<rect x="586" y="1585" width="172" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="586" y="1582" width="172" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="589" y="1585" width="166" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="672" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Notification Workers</text>
+<rect x="81" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="81" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="84" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="155" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">S3 + Multipart</text>
+<rect x="339" y="1081" width="151" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="339" y="1078" width="151" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="342" y="1081" width="145" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="414.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">WebSocket + Redis</text>
+<rect x="600" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="600" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="603" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="674" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">PostgreSQL + CDN</text>
+<rect x="340" y="1333" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="340" y="1330" width="148" height="62" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.4"/>
+<rect x="343" y="1333" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="414" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#7c2d12">Kafka</text>
+<defs><marker id="arr-file-storage" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-file-storage" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/file-storage.architecture.html](diagrams/system-design/file-storage.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -200,8 +236,6 @@ CREATE TABLE file_shares (
 | **Database** | PostgreSQL (sharded) + Cassandra |
 | **Storage** | S3 + custom storage layer |
 | **Sync** | CRDT-based conflict resolution |
-
----
 
 ---
 

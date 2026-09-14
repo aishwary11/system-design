@@ -1,4 +1,11 @@
+<div align="center">
+
 # System Design: Messaging Application (WhatsApp)
+
+</div>
+
+> [!TIP]
+> **TL;DR** — A real-time messaging platform supporting one-to-one and group messaging, media sharing, online/offline status, delivery receipts, and push notifications for 2B+ users globally.
 
 ## Overview
 
@@ -6,10 +13,12 @@ A real-time messaging platform supporting one-to-one and group messaging, media 
 
 ### Key Numbers
 
-- 2B+ registered users
-- 100B+ messages per day
-- 500M+ daily active users
-- Peak: 10M+ messages per second
+| Metric | Value |
+| :--- | :--- |
+| **registered users** | 2B+ |
+| **messages per day** | 100B+ |
+| **daily active users** | 500M+ |
+| **Peak** | 10M+ messages per second |
 
 ---
 
@@ -25,11 +34,13 @@ A real-time messaging platform supporting one-to-one and group messaging, media 
 
 ### Non-Functional Requirements
 
-- Latency: Message delivery < 200ms
-- Throughput: 100B+ messages/day
-- Availability: 99.99% uptime
-- Consistency: Message ordering
-- Scale: 2B+ users, 180+ countries
+| Attribute | Target |
+| :--- | :--- |
+| **Latency** | Message delivery < 200ms |
+| **Throughput** | 100B+ messages/day |
+| **Availability** | 99.99% uptime |
+| **Consistency** | Message ordering |
+| **Scale** | 2B+ users, 180+ countries |
 
 ---
 
@@ -38,51 +49,78 @@ A real-time messaging platform supporting one-to-one and group messaging, media 
 ### Architecture Diagram
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="Messaging App — System Architecture">
-<rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
+<rect x="0.5" y="0.5" width="959" height="1761" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 <title>Messaging App — System Architecture</title>
-<rect x="52" y="288" width="713" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#334155">Messaging App</text>
-<path d="M409 132 L409 156 L425 156 L425 298 L409 298 L409 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M409 384 L409 408 L425 408 L425 550 L409 550 L409 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M389 636 L389 731 L151 731 L151 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M409 636 L409 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M429 636 L429 731 L667 731 L667 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M151 888 L151 912 L167 912 L167 1054 L146 1054 L146 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M409 888 L409 912 L425 912 L425 1054 L405 1054 L405 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M667 888 L667 912 L684 912 L684 1054 L668 1054 L668 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M146 1140 L146 1235 L389 1235 L389 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M409 1140 L409 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M668 1140 L668 1235 L429 1235 L429 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M389 1392 L389 1487 L151 1487 L151 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M409 1392 L409 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<path d="M429 1392 L429 1487 L667 1487 L667 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-messaging-app)"/>
-<rect x="335" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="409" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Mobile / Web</text>
-<rect x="328" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="408.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">WAF / API Gateway</text>
-<rect x="335" y="574" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="409" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer</text>
-<rect x="77" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="151" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Chat Service</text>
-<rect x="335" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="409" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Media Service</text>
-<rect x="593" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="667" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Presence Svc</text>
-<rect x="77" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="151" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Push Workers</text>
-<rect x="335" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="409" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Analytics</text>
-<rect x="593" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="667" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Media Transcoder</text>
-<rect x="70" y="1078" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="145.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Cassandra + Redis</text>
-<rect x="331" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="405" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">S3 + CDN</text>
-<rect x="589" y="1078" width="158" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="668" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Redis (heartbeats)</text>
-<rect x="335" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
-<text x="409" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-messaging-app" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<rect x="52" y="288" width="713" height="1374" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>
+<rect x="64" y="296" width="113.60000000000001" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="120.80000000000001" y="310" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">Messaging App</text>
+<path d="M409 132 L409 156 L425 156 L425 298 L409 298 L409 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M409 384 L409 408 L425 408 L425 550 L409 550 L409 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M389 636 L389 731 L151 731 L151 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M409 636 L409 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M429 636 L429 731 L667 731 L667 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M151 888 L151 912 L167 912 L167 1054 L146 1054 L146 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M409 888 L409 912 L425 912 L425 1054 L405 1054 L405 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M667 888 L667 912 L684 912 L684 1054 L668 1054 L668 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M146 1140 L146 1235 L389 1235 L389 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M409 1140 L409 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M668 1140 L668 1235 L429 1235 L429 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M389 1392 L389 1487 L151 1487 L151 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M409 1392 L409 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<path d="M429 1392 L429 1487 L667 1487 L667 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-messaging-app)"/>
+<rect x="335" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="335" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="338" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="409" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Mobile / Web</text>
+<rect x="328" y="325" width="161" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="328" y="322" width="161" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="331" y="325" width="155" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="408.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">WAF / API Gateway</text>
+<rect x="335" y="577" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="335" y="574" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="338" y="577" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="409" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Load Balancer</text>
+<rect x="77" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="77" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="80" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="151" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Chat Service</text>
+<rect x="335" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="335" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="338" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="409" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Media Service</text>
+<rect x="593" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="593" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="596" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="667" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Presence Svc</text>
+<rect x="77" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="77" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="80" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="151" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Push Workers</text>
+<rect x="335" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="335" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="338" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="409" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Analytics</text>
+<rect x="593" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="593" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="596" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="667" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Media Transcoder</text>
+<rect x="70" y="1081" width="151" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="70" y="1078" width="151" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="73" y="1081" width="145" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="145.5" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Cassandra + Redis</text>
+<rect x="331" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="331" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="334" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="405" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">S3 + CDN</text>
+<rect x="589" y="1081" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="589" y="1078" width="158" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="592" y="1081" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="668" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Redis (heartbeats)</text>
+<rect x="335" y="1333" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="335" y="1330" width="148" height="62" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.4"/>
+<rect x="338" y="1333" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="409" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#7c2d12">Kafka</text>
+<defs><marker id="arr-messaging-app" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-messaging-app" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/messaging-app.architecture.html](diagrams/system-design/messaging-app.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -379,8 +417,6 @@ The metrics that signal system health, with alert thresholds:
 | Push notification delivery | > 95% |
 | System availability | 99.99% |
 | WebSocket connections per server | 2M+ |
-
----
 
 ---
 

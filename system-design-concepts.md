@@ -1,4 +1,8 @@
+<div align="center">
+
 # System Design Concepts — Quick Reference with Basic Examples
+
+</div>
 
 The foundational concepts behind every distributed system, each explained in a few lines with a tiny, concrete example: **sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus (Raft/Paxos), two-phase commit, CRDTs, event-driven architecture, DLQs, backpressure, quorum reads & writes, consistency models, PACELC, write-ahead logs, B-tree vs LSM storage engines, checksums, distributed locking, service discovery, API gateways vs service meshes, CDNs, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLIs/SLOs, multi-region disaster recovery, deployment strategies and geospatial indexing.**
 
@@ -7,6 +11,9 @@ The foundational concepts behind every distributed system, each explained in a f
 ---
 
 ## Table of Contents
+
+<details>
+<summary><b>📑 Jump to a section</b></summary>
 
 1. [Sharding (Data Partitioning)](#1-sharding-data-partitioning)
 2. [Consistent Hashing](#2-consistent-hashing)
@@ -57,6 +64,8 @@ The foundational concepts behind every distributed system, each explained in a f
 48. [Geospatial Indexing (Geohash & S2)](#48-geospatial-indexing-geohash--s2)
 49. [Quick Map: Concept → Problem Solved](#49-quick-map-concept--problem-solved)
 
+</details>
+
 **Part II — Classic Algorithms & Data Structures (LLD)**
 50. [Luhn's Algorithm (Credit Card Validation)](#50-luhns-algorithm-credit-card-validation)
 51. [Dijkstra's Shortest Path](#51-dijkstras-shortest-path)
@@ -87,32 +96,48 @@ The foundational concepts behind every distributed system, each explained in a f
 **Idea:** split the data horizontally across many database nodes; each node ("shard") owns a disjoint subset of rows. Together they serve the whole dataset.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1110 1258" width="900" role="img" aria-label="Sharding — Data Partitioning">
-<rect x="0" y="0" width="1110" height="1258" fill="#ffffff"/>
+<rect x="0.5" y="0.5" width="1109" height="1257" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 <title>Sharding — Data Partitioning</title>
-<path d="M531 132 L531 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
-<path d="M531 384 L531 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
-<path d="M531 636 L531 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
-<path d="M501 888 L501 983 L144 983 L144 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
-<path d="M521 888 L521 983 L402 983 L402 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
-<path d="M541 888 L541 983 L660 983 L660 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
-<path d="M561 888 L561 983 L918 983 L918 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
-<rect x="457" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="531" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Clients</text>
-<rect x="457" y="322" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="531" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">API Gateway</text>
-<rect x="445" y="574" width="172" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="531" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Application Services</text>
-<rect x="413" y="826" width="236" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="531" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Sharding layer</text>
-<rect x="70" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="144" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_0</text>
-<rect x="328" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="402" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_1</text>
-<rect x="586" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="660" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_2</text>
-<rect x="844" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="918" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_3</text>
-<defs><marker id="arr-concept-sharding" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<path d="M531 132 L531 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-sharding)"/>
+<path d="M531 384 L531 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-sharding)"/>
+<path d="M531 636 L531 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-sharding)"/>
+<path d="M501 888 L501 983 L144 983 L144 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-sharding)"/>
+<path d="M521 888 L521 983 L402 983 L402 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-sharding)"/>
+<path d="M541 888 L541 983 L660 983 L660 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-sharding)"/>
+<path d="M561 888 L561 983 L918 983 L918 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-sharding)"/>
+<rect x="457" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="457" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="460" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="531" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Clients</text>
+<rect x="457" y="325" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="457" y="322" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="460" y="325" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="531" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">API Gateway</text>
+<rect x="445" y="577" width="172" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="445" y="574" width="172" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="448" y="577" width="166" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="531" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Application Services</text>
+<rect x="413" y="829" width="236" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="413" y="826" width="236" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="416" y="829" width="230" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="531" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Sharding layer</text>
+<rect x="70" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="70" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="73" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="144" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">users_0</text>
+<rect x="328" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="328" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="331" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="402" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">users_1</text>
+<rect x="586" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="586" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="589" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="660" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">users_2</text>
+<rect x="844" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="844" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="847" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="918" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">users_3</text>
+<defs><marker id="arr-concept-sharding" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-concept-sharding" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/concepts/concept-sharding.architecture.html](diagrams/concepts/concept-sharding.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -658,31 +683,43 @@ while (true) {
 **Idea:** keep copies of data on multiple nodes and keep them in sync.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 754" width="900" role="img" aria-label="Replication Topologies">
-<rect x="0" y="0" width="960" height="754" fill="#ffffff"/>
+<rect x="0.5" y="0.5" width="959" height="753" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 <title>Replication Topologies</title>
-<path d="M146 132 L146 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
-<path d="M404 132 L404 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
-<path d="M478 353 L760 353 L760 680 L144 680 L144 636" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
-<path d="M414 384 L414 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
-<path d="M136 384 L136 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
-<rect x="177.8" y="389" width="36.4" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="196" y="402" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">sync repl</text>
-<path d="M156 384 L156 479 L394 479 L394 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
-<rect x="230.4" y="460" width="89.19999999999999" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="275" y="473" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">asynchronous replication</text>
-<rect x="72" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="146" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Write clients</text>
-<rect x="330" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="404" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Read clients</text>
-<rect x="330" y="322" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="404" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Read LB</text>
-<rect x="72" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="146" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Leader</text>
-<rect x="70" y="574" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="144" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Sync replica</text>
-<rect x="328" y="574" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="403.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Async replicas x2</text>
-<defs><marker id="arr-concept-replication" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<path d="M146 132 L146 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-replication)"/>
+<path d="M404 132 L404 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-replication)"/>
+<path d="M478 353 L760 353 L760 680 L144 680 L144 636" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-replication)"/>
+<path d="M414 384 L414 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-replication)"/>
+<path d="M136 384 L136 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-replication)"/>
+<rect x="177.8" y="388" width="36.4" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="196" y="402" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#475569">sync repl</text>
+<path d="M156 384 L156 479 L394 479 L394 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-replication)"/>
+<rect x="230.4" y="459" width="89.19999999999999" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="275" y="473" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#475569">asynchronous replication</text>
+<rect x="72" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="72" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="75" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="146" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Write clients</text>
+<rect x="330" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="330" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="333" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="404" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Read clients</text>
+<rect x="330" y="325" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="330" y="322" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="333" y="325" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="404" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Read LB</text>
+<rect x="72" y="325" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="72" y="322" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="75" y="325" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="146" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Leader</text>
+<rect x="70" y="577" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="70" y="574" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="73" y="577" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="144" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Sync replica</text>
+<rect x="328" y="577" width="151" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="328" y="574" width="151" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="331" y="577" width="145" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="403.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Async replicas x2</text>
+<defs><marker id="arr-concept-replication" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-concept-replication" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/concepts/concept-replication.architecture.html](diagrams/concepts/concept-replication.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -991,31 +1028,41 @@ Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the 
 **Idea:** require **W** nodes to acknowledge a write and **R** nodes to answer a read, with **`W + R > N`** — then any read set and any write set are guaranteed to *overlap*, so every read sees at least one node that acknowledged the write. Same math as majority quorum in consensus (§23): N=3 with W=2, R=2 tolerates 1 node down and still never reads fully stale data.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 502" width="900" role="img" aria-label="Quorum Reads &amp; Writes">
-<rect x="0" y="0" width="960" height="502" fill="#ffffff"/>
+<rect x="0.5" y="0.5" width="959" height="501" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 <title>Quorum Reads &amp; Writes</title>
-<path d="M263 132 L263 227 L144 227 L144 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
-<rect x="175.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="204" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">write W=2/N=3 / ack</text>
-<path d="M283 132 L283 227 L392 227 L392 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
-<rect x="316.5" y="208" width="43" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="338" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">write / ack</text>
-<path d="M521 132 L521 227 L412 227 L412 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
-<rect x="438.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="467" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">read R=2/N=3 / value</text>
-<path d="M541 132 L541 227 L660 227 L660 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
-<rect x="572.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="601" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">read / value (stale)</text>
-<rect x="199" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="273" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Writer</text>
-<rect x="457" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="531" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Reader</text>
-<rect x="70" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="144" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica A</text>
-<rect x="328" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="402" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica B</text>
-<rect x="586" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="660" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica C</text>
-<defs><marker id="arr-concept-quorum" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<path d="M263 132 L263 227 L144 227 L144 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-quorum)"/>
+<rect x="175.9" y="207" width="56.199999999999996" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="204" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#475569">write W=2/N=3 / ack</text>
+<path d="M283 132 L283 227 L392 227 L392 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-quorum)"/>
+<rect x="316.5" y="207" width="43" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="338" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#475569">write / ack</text>
+<path d="M521 132 L521 227 L412 227 L412 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-quorum)"/>
+<rect x="438.9" y="207" width="56.199999999999996" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="467" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#475569">read R=2/N=3 / value</text>
+<path d="M541 132 L541 227 L660 227 L660 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-quorum)"/>
+<rect x="572.9" y="207" width="56.199999999999996" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="601" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#475569">read / value (stale)</text>
+<rect x="199" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="199" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="202" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="273" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Writer</text>
+<rect x="457" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="457" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="460" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="531" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Reader</text>
+<rect x="70" y="325" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="70" y="322" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="73" y="325" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="144" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Replica A</text>
+<rect x="328" y="325" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="328" y="322" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="331" y="325" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="402" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Replica B</text>
+<rect x="586" y="325" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="586" y="322" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="589" y="325" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="660" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Replica C</text>
+<defs><marker id="arr-concept-quorum" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-concept-quorum" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/concepts/concept-quorum.architecture.html](diagrams/concepts/concept-quorum.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.

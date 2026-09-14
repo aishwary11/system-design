@@ -1,4 +1,11 @@
+<div align="center">
+
 # System Design: Twitter / X
+
+</div>
+
+> [!TIP]
+> **TL;DR** — A social media platform supporting tweet posting, following, personalized timeline, likes/retweets, search, and trending topics for 500M+ users.
 
 ## Overview
 
@@ -6,10 +13,12 @@ A social media platform supporting tweet posting, following, personalized timeli
 
 ### Key Numbers
 
-- 500M+ monthly active users
-- 500M+ tweets per day
-- Peak: 100K+ tweets per second
-- Trending: 1M+ tweets per topic per hour
+| Metric | Value |
+| :--- | :--- |
+| **monthly active users** | 500M+ |
+| **tweets per day** | 500M+ |
+| **Peak** | 100K+ tweets per second |
+| **Trending** | 1M+ tweets per topic per hour |
 
 ---
 
@@ -25,11 +34,13 @@ A social media platform supporting tweet posting, following, personalized timeli
 
 ### Non-Functional Requirements
 
-- Latency: Timeline < 200ms, publish < 500ms
-- Throughput: 500M+ tweets/day
-- Availability: 99.99% uptime
-- Consistency: Eventually consistent timeline
-- Scale: 400M+ monthly active users
+| Attribute | Target |
+| :--- | :--- |
+| **Latency** | Timeline < 200ms, publish < 500ms |
+| **Throughput** | 500M+ tweets/day |
+| **Availability** | 99.99% uptime |
+| **Consistency** | Eventually consistent timeline |
+| **Scale** | 400M+ monthly active users |
 
 ---
 
@@ -38,51 +49,78 @@ A social media platform supporting tweet posting, following, personalized timeli
 ### Architecture Diagram
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="Twitter — System Architecture">
-<rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
+<rect x="0.5" y="0.5" width="959" height="1761" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 <title>Twitter — System Architecture</title>
-<rect x="52" y="288" width="710" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#334155">Twitter / X</text>
-<path d="M407 132 L407 156 L424 156 L424 298 L408 298 L408 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M408 384 L408 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M388 636 L388 731 L149 731 L149 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M408 636 L408 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M428 636 L428 731 L665 731 L665 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M149 888 L149 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M407 888 L407 912 L428 912 L428 1054 L412 1054 L412 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M665 888 L665 912 L686 912 L686 1054 L670 1054 L670 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M149 1140 L149 1235 L387 1235 L387 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M407 1140 L407 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M670 1140 L670 1235 L427 1235 L427 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M387 1392 L387 1487 L149 1487 L149 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M407 1392 L407 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<path d="M427 1392 L427 1487 L665 1487 L665 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-twitter)"/>
-<rect x="333" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="407" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Mobile / Web</text>
-<rect x="327" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="407.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">WAF / API Gateway</text>
-<rect x="325" y="574" width="165" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="407.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer (ALB)</text>
-<rect x="75" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="149" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Tweet Service</text>
-<rect x="333" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="407" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Timeline Svc</text>
-<rect x="591" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="665" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Search Svc</text>
-<rect x="75" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="149" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Timeline Workers</text>
-<rect x="333" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="407" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Analytics</text>
-<rect x="591" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="665" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Notifications</text>
-<rect x="70" y="1078" width="158" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="149" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + Redis</text>
-<rect x="338" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="412" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Fan-out + Redis</text>
-<rect x="596" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="670" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Elasticsearch</text>
-<rect x="333" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
-<text x="407" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
-<defs><marker id="arr-twitter" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<rect x="52" y="288" width="710" height="1374" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>
+<rect x="64" y="296" width="99.2" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="113.6" y="310" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">Twitter / X</text>
+<path d="M407 132 L407 156 L424 156 L424 298 L408 298 L408 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M408 384 L408 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M388 636 L388 731 L149 731 L149 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M408 636 L408 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M428 636 L428 731 L665 731 L665 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M149 888 L149 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M407 888 L407 912 L428 912 L428 1054 L412 1054 L412 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M665 888 L665 912 L686 912 L686 1054 L670 1054 L670 1078" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M149 1140 L149 1235 L387 1235 L387 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M407 1140 L407 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M670 1140 L670 1235 L427 1235 L427 1330" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M387 1392 L387 1487 L149 1487 L149 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M407 1392 L407 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<path d="M427 1392 L427 1487 L665 1487 L665 1582" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-twitter)"/>
+<rect x="333" y="73" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="333" y="70" width="148" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="336" y="73" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="407" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Mobile / Web</text>
+<rect x="327" y="325" width="161" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="327" y="322" width="161" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="330" y="325" width="155" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="407.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">WAF / API Gateway</text>
+<rect x="325" y="577" width="165" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="325" y="574" width="165" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="328" y="577" width="159" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="407.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Load Balancer (ALB)</text>
+<rect x="75" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="75" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="78" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="149" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Tweet Service</text>
+<rect x="333" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="333" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="336" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="407" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Timeline Svc</text>
+<rect x="591" y="829" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="591" y="826" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="594" y="829" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="665" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Search Svc</text>
+<rect x="75" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="75" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="78" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="149" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Timeline Workers</text>
+<rect x="333" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="333" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="336" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="407" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Analytics</text>
+<rect x="591" y="1585" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="591" y="1582" width="148" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="594" y="1585" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="665" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Notifications</text>
+<rect x="70" y="1081" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="70" y="1078" width="158" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="73" y="1081" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="149" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">PostgreSQL + Redis</text>
+<rect x="338" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="338" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="341" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="412" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Fan-out + Redis</text>
+<rect x="596" y="1081" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="596" y="1078" width="148" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="599" y="1081" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="670" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Elasticsearch</text>
+<rect x="333" y="1333" width="148" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="333" y="1330" width="148" height="62" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.4"/>
+<rect x="336" y="1333" width="142" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="407" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#7c2d12">Kafka</text>
+<defs><marker id="arr-twitter" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-twitter" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
 </svg>
 
 **Interactive diagram:** [diagrams/system-design/twitter.architecture.html](diagrams/system-design/twitter.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
@@ -387,8 +425,6 @@ The metrics that signal system health, with alert thresholds:
 | CDN cache hit ratio | > 95% |
 | System availability | 99.95% |
 | Tweet ordering accuracy | 100% |
-
----
 
 ---
 
