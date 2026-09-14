@@ -5,7 +5,7 @@
 
 # 📚 System Design & Technology Guides
 
-**32 system designs · 4 technology guides · 41 interactive diagrams · 20 JS algorithm implementations**
+**36 system designs · 4 technology guides · 45 interactive diagrams · 25 JS algorithm implementations**
 
 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="30" alt="📚"/> [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
@@ -15,9 +15,9 @@
 High-Level Architecture → Low-Level Design → database design → scaling tiers → interview prep,
 each with an **inline SVG diagram** plus a **self-contained interactive HTML** (pan/zoom, search, dark/light, export).
 
-<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=32+system+designs+with+interactive+diagrams;4+technology+guides+with+runnable+examples;20+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
+<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=36+system+designs+with+interactive+diagrams;4+technology+guides+with+runnable+examples;25+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
 
-[Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · 🧰 [Feature Guides](#feature-guides)
+[Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Trust & Safety](#trust-safety) · [AI Infra](#ai-infra) · 🧰 [Feature Guides](#feature-guides)
 
 </div>
 
@@ -27,11 +27,11 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 
 | | | |
 | :--- | :--- | :--- |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **32 system designs** | Streaming, Social, E-Commerce, Transport, Infra, Productivity & more | [Browse topics](#system-designs) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **36 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **4 feature guides** | PostgreSQL · Redis · Kafka · Core Concepts, with runnable examples | [Jump to guides](#feature-guides) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **41 Archify diagrams** | Inline SVG in every doc + interactive HTML per diagram | [Diagram style](#diagrams-archify) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **20 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **22 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **45 Archify diagrams** | Inline SVG in every doc + interactive HTML per diagram | [Diagram style](#diagrams-archify) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **25 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **26 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
 
 ---
 
@@ -94,7 +94,7 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 
 <a id="infra"></a>
 <details open>
-<summary><b>🏗️ Infrastructure</b> · 9 docs</summary>
+<summary><b>🏗️ Infrastructure</b> · 10 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
@@ -107,6 +107,7 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 | 7 | Distributed Cache (Redis) | [View](system-design-distributed-cache.md) |
 | 8 | Key-Value Store (DynamoDB) | [View](system-design-key-value-store.md) |
 | 9 | Pastebin | [View](system-design-pastebin.md) |
+| 10 | Alerting & Monitoring (Prometheus) | [View](system-design-alerting.md) |
 
 </details>
 
@@ -132,11 +133,32 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 
 <a id="finance"></a>
 <details open>
-<summary><b>💳 Finance</b> · 1 doc</summary>
+<summary><b>💳 Finance</b> · 2 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
 | 1 | Payment System (Stripe) | [View](system-design-payment-system.md) |
+| 2 | Stock Exchange (Matching Engine) | [View](system-design-stock-exchange.md) |
+
+</details>
+
+<a id="trust-safety"></a>
+<details open>
+<summary><b>🛡️ Trust & Safety</b> · 1 doc</summary>
+
+| # | Topic | File |
+| :- | :--- | :--- |
+| 1 | Fraud Detection (Real-Time Risk) | [View](system-design-fraud-detection.md) |
+
+</details>
+
+<a id="ai-infra"></a>
+<details open>
+<summary><b>🤖 AI Infrastructure</b> · 1 doc</summary>
+
+| # | Topic | File |
+| :- | :--- | :--- |
+| 1 | LLM Inference (Production Serving) | [View](system-design-llm-inference.md) |
 
 </details>
 
@@ -248,7 +270,7 @@ Most system-design docs close their diagram with the caption: *Solid = data flow
 <rect x="0" y="0" width="960" height="1762" fill="#ffffff"/>
 <title>Reference Architecture Template</title>
 <rect x="52" y="288" width="201" height="1374" rx="10" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="66" y="308" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#334155">System Name</text>
+<text x="66" y="308" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#334155">System Name</text>
 <path d="M153 132 L153 156 L169 156 L169 298 L153 298 L153 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
 <path d="M153 384 L153 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
 <path d="M153 636 L153 660 L169 660 L169 802 L153 802 L153 826" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
@@ -256,19 +278,19 @@ Most system-design docs close their diagram with the caption: *Solid = data flow
 <path d="M153 1140 L153 1330" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
 <path d="M153 1392 L153 1582" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-template)"/>
 <rect x="79" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="153" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
+<text x="153" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Web / Mobile</text>
 <rect x="72" y="322" width="161" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="152.5" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">WAF / API Gateway</text>
+<text x="152.5" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">WAF / API Gateway</text>
 <rect x="70" y="574" width="165" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="152.5" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer (ALB)</text>
+<text x="152.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Load Balancer (ALB)</text>
 <rect x="79" y="826" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="153" y="862" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Service A</text>
+<text x="153" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Service A</text>
 <rect x="79" y="1582" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="153" y="1618" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Workers</text>
+<text x="153" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Workers</text>
 <rect x="74" y="1078" width="158" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="153" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + Redis</text>
+<text x="153" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">PostgreSQL + Redis</text>
 <rect x="79" y="1330" width="148" height="62" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
-<text x="153" y="1366" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
+<text x="153" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#9a3412">Kafka</text>
 <defs><marker id="arr-template" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
@@ -338,6 +360,11 @@ Executable implementations of the algorithms used across the designs:
 | BFS Crawler | web-crawler | Web page traversal |
 | Geohash Encoder | proximity-service | Location indexing |
 | Surge Pricing | uber, food-delivery | Dynamic pricing |
+| Price-Time Matching Engine | stock-exchange | Deterministic order matching |
+| Fraud Ring Detector | fraud-detection | Shared-attribute ring clustering |
+| Continuous Batching Scheduler | llm-inference | KV-budget GPU admission |
+| EMA Anomaly Baseline | alerting | Streaming deviation detection |
+| Audio Fingerprinting (Shazam-style) | concepts | Song matching from short, noisy excerpts |
 
 <p align="right"><a href="#top">↑ back to top</a></p>
 
@@ -347,7 +374,7 @@ Executable implementations of the algorithms used across the designs:
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="28" alt=""/> Techniques & Patterns
 
 <details>
-<summary><b>22 patterns</b> — click to expand the full table</summary>
+<summary><b>26 patterns</b> — click to expand the full table</summary>
 
 | Technique | Description | Used In |
 | :--- | :--- | :--- |
@@ -373,6 +400,10 @@ Executable implementations of the algorithms used across the designs:
 | Gossip Protocol | Membership and failure detection | key-value-store, distributed-cache |
 | Fan-out on Read | Feed generation at read time | linkedin, instagram, twitter |
 | Graph Traversal | Relationship queries | linkedin, instagram (Neo4j) |
+| Price-Time Priority | Deterministic order matching fairness | stock-exchange |
+| Union-Find Ring Detection | Streaming graph clustering of fraud rings | fraud-detection |
+| Continuous Batching | Dynamic GPU batch admission at every decode step | llm-inference |
+| Downsampling & Retention | Tiered time-series storage (raw → 1m → 1h) | alerting |
 
 </details>
 

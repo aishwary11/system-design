@@ -76,6 +76,9 @@ The foundational concepts behind every distributed system, each explained in a f
 65. [Base62 Encoding & Snowflake IDs](#65-base62-encoding--snowflake-ids)
 66. [Sliding Window & Two Pointers](#66-sliding-window--two-pointers)
 
+**Part III — Tricky "Magic" Questions (How Does It Even Work?)**
+67. [The "Magic" Questions — With Answers](#67-the-magic-questions--with-answers)
+
 ---
 
 ## 1. Sharding (Data Partitioning)
@@ -94,21 +97,21 @@ The foundational concepts behind every distributed system, each explained in a f
 <path d="M541 888 L541 983 L660 983 L660 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
 <path d="M561 888 L561 983 L918 983 L918 1078" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-sharding)"/>
 <rect x="457" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="531" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Clients</text>
+<text x="531" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Clients</text>
 <rect x="457" y="322" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="531" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">API Gateway</text>
+<text x="531" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">API Gateway</text>
 <rect x="445" y="574" width="172" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="531" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Application Services</text>
+<text x="531" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Application Services</text>
 <rect x="413" y="826" width="236" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="531" y="862" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Sharding layer</text>
+<text x="531" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Sharding layer</text>
 <rect x="70" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="144" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_0</text>
+<text x="144" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_0</text>
 <rect x="328" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="402" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_1</text>
+<text x="402" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_1</text>
 <rect x="586" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="660" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_2</text>
+<text x="660" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_2</text>
 <rect x="844" y="1078" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="918" y="1114" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_3</text>
+<text x="918" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">users_3</text>
 <defs><marker id="arr-concept-sharding" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
@@ -663,22 +666,22 @@ while (true) {
 <path d="M414 384 L414 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
 <path d="M136 384 L136 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
 <rect x="177.8" y="389" width="36.4" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="196" y="402" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">sync repl</text>
+<text x="196" y="402" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">sync repl</text>
 <path d="M156 384 L156 479 L394 479 L394 574" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-replication)"/>
 <rect x="230.4" y="460" width="89.19999999999999" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="275" y="473" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">asynchronous replication</text>
+<text x="275" y="473" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">asynchronous replication</text>
 <rect x="72" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="146" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Write clients</text>
+<text x="146" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Write clients</text>
 <rect x="330" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="404" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Read clients</text>
+<text x="404" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Read clients</text>
 <rect x="330" y="322" width="148" height="62" rx="9" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
-<text x="404" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#3730a3">Read LB</text>
+<text x="404" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#3730a3">Read LB</text>
 <rect x="72" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="146" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Leader</text>
+<text x="146" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Leader</text>
 <rect x="70" y="574" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="144" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Sync replica</text>
+<text x="144" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Sync replica</text>
 <rect x="328" y="574" width="151" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="403.5" y="610" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Async replicas x2</text>
+<text x="403.5" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Async replicas x2</text>
 <defs><marker id="arr-concept-replication" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
@@ -992,26 +995,26 @@ Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the 
 <title>Quorum Reads &amp; Writes</title>
 <path d="M263 132 L263 227 L144 227 L144 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
 <rect x="175.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="204" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">write W=2/N=3 / ack</text>
+<text x="204" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">write W=2/N=3 / ack</text>
 <path d="M283 132 L283 227 L392 227 L392 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
 <rect x="316.5" y="208" width="43" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="338" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">write / ack</text>
+<text x="338" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">write / ack</text>
 <path d="M521 132 L521 227 L412 227 L412 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
 <rect x="438.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="467" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">read R=2/N=3 / value</text>
+<text x="467" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">read R=2/N=3 / value</text>
 <path d="M541 132 L541 227 L660 227 L660 322" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arr-concept-quorum)"/>
 <rect x="572.9" y="208" width="56.199999999999996" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
-<text x="601" y="221" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#334155">read / value (stale)</text>
+<text x="601" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">read / value (stale)</text>
 <rect x="199" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="273" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Writer</text>
+<text x="273" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Writer</text>
 <rect x="457" y="70" width="148" height="62" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
-<text x="531" y="106" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#065f46">Reader</text>
+<text x="531" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#065f46">Reader</text>
 <rect x="70" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="144" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica A</text>
+<text x="144" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica A</text>
 <rect x="328" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="402" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica B</text>
+<text x="402" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica B</text>
 <rect x="586" y="322" width="148" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
-<text x="660" y="358" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica C</text>
+<text x="660" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#5b21b6">Replica C</text>
 <defs><marker id="arr-concept-quorum" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
 </svg>
 
@@ -2018,6 +2021,117 @@ class SlidingWindowRateLimiter {
 ```
 
 Where: rate-limiter.md (token bucket vs sliding window trade-offs), metrics aggregation, session windows — see `system-design-rate-limiter.md`.
+
+---
+
+## Part III — Tricky "Magic" Questions (How Does It Even Work?)
+
+The interview questions that sound impossible — *how does Shazam identify a song from two seconds of noisy audio?* Each answer below shows the magic is a real system built from the concepts in Parts I and II.
+
+## 67. The "Magic" Questions — With Answers
+
+**Q1. How does Shazam identify a song from just 2 seconds of noisy audio?**
+
+It never "listens" to the song — it matches a fingerprint. Offline, every catalog track is converted to a spectrogram (frequency bands × time), and only **peak points** are kept — the (time, band) coordinates where energy spikes. Peak pairs within a small target zone are comb-hashed into one integer `(band1, band2, Δt) → hash` and stored in a Map: `hash → [(songId, anchorTime)]`. At query time the same pipeline runs on the noisy clip. Noise destroys amplitude but rarely *moves* peaks, so most query hashes still hit the DB; each hit votes for `(songId, estimated start time)`. The true song accumulates thousands of votes at one consistent offset while every other song scatters single-digit votes. That's the whole trick — **constellation hashing + offset voting**: O(1) lookups instead of audio comparison, robust to compression, background chatter, and 30-year-old cassette hiss.
+
+**Q2. How does Google Maps know there's a traffic jam right now?**
+
+Your phone (with consent) periodically reports an anonymous location ping. Streams of pings are matched onto road segments, and per-segment speed = median of the last N probe speeds — a streaming aggregation over sliding windows (§66). Sparse segments fall back to the historical profile for that segment/weekday/minute. Privacy comes from aggregation: pings are grouped (k-anonymity) and only segment-level speeds are stored, never individual traces. Incidents (crashes, closures) come from authorities and user reports (Waze-style), and ETA predictions come from years of historical per-segment profiles. The colored lines are the output of a massive continuous fold over probe pings — no cameras required.
+
+**Q3. How does YouTube's Content ID flag a re-uploaded movie clip?**
+
+Shazam's idea at video scale. Rights holders upload reference copies; the system precomputes fingerprints robust to re-encoding — audio constellation hashes (Q1) plus video perceptual hashes of keyframes (thumbnail-like signatures that survive scaling, bitrate changes, and mild crops). Incoming uploads are fingerprinted the same way and matched against the reference index — a classic inverted-index / similarity-join problem: candidate generation via shared hashes, verification on the actual media. On a match the *policy* engine runs: block, track views, or redirect monetization to the rights holder. The elegance: matching happens on derived fingerprints, so cost is independent of video length or resolution.
+
+**Q4. How does face unlock work with no internet connection?**
+
+Everything runs on-device. Enrollment: camera image → on-device neural net → a **128-dimensional embedding** (a point in vector space) stored in secure hardware — the photo itself is discarded. Unlock: the same net produces an embedding for the presented face, and matching is a simple distance check (Euclidean) against the enrolled templates — below threshold → unlock. No server, no database lookup: the "database" is 1-5 vectors in the enclave. Anti-spoofing uses depth maps and blink/texture liveness; the enclave signs the result so the OS can trust it. It's the same embedding-similarity pattern as semantic search, shrunk to run offline on a phone NPU.
+
+**Q5. How does your keyboard predict the next word before you type it?**
+
+A tiny language model, running locally. Classic keyboards used n-gram statistics — `P(next | last 2 words)` stored as tries over the vocabulary with counts — plus a cache of your recent words. Modern ones run a quantized neural LM (a few MB) over the current sentence and return the top-k next tokens; the keyboard shows three, re-ranked with your personal contacts/slang dictionary that adapts on-device. Swipe typing is the same pipeline over a *path*: the sequence of keys touched is matched against word-shape traces with dynamic programming (Levenshtein-like alignment, §62). All of it is latency-critical, hence tiny models + tries + aggressive caching.
+
+**Q6. How do speed cameras read a plate on a car moving at 100 km/h?**
+
+The edge does the work. An induction loop or radar triggers capture; a burst of frames goes straight into an on-device OCR pipeline: plate localization (object detector), perspective correction, character segmentation, a small CNN per character. Crucially, the plate *format is checksummed* — most countries encode region/year patterns, so an impossible plate is rejected before it ever leaves the camera. Only high-confidence events (plate text + crop image + timestamp) are uploaded, not video — the uplink is the expensive resource. Watchlist matching happens server-side; the camera itself is a filter that turns 30 fps of traffic into a few KB of events.
+
+**Q7. How does Google search the entire web in under 200 ms?**
+
+Almost all the work happened before your query. The crawler builds an **inverted index**: for every term, a sorted posting list of document IDs with positions and term weights. Query time is: tokenize → intersect posting lists by doc-id with skip pointers (§63's cousin at planetary scale) → rank survivors with a learned scoring function over hundreds of precomputed signals (static quality scores, freshness, anchor text) → fetch cached snippets. Two more tricks keep it fast: the index is **tiered** (the hot top-of-web index fits in RAM; the long tail lives on disk) and popular queries hit a result cache. 200 ms is not "search everything" — it's intersect a few short lists in RAM and rank a few thousand candidates.
+
+**Q8. How does WhatsApp deliver messages to someone who's offline?**
+
+Store-and-forward with per-device queues. The server holds each recipient *device's* encrypted queue — it can't read the ciphertext (E2E encryption), it just stores it. The sender's single grey tick means "at the server"; when the recipient's device connects, it drains its queue, acks with a watermark (last-delivered sequence), and the tick turns blue. Each device has its own queue and watermark — that's how multi-device stays consistent. Delivery is at-least-once, made exactly-once *in effect* by idempotency keys on the client (§10). Offline queues have TTLs (else they'd grow forever), and long-outage gaps degrade to "you may have missed messages" hints rather than unbounded retries.
+
+> 💡 The recurring pattern behind every "magic" system: **convert the hard real-world signal into a small, robust fingerprint, index the fingerprints, and let lookups vote.** Shazam (audio peaks), Content ID (keyframe hashes), face unlock (embeddings), search (inverted index), ANPR (checksummed plate text) — the same shape at different scales. Cousins that fingerprint *streams* instead of songs: Bloom filters (§17), Count-Min Sketch (§60), HyperLogLog (§61).
+
+### Fingerprint Matching Demo (Shazam-style)
+
+```javascript
+// Shazam-style song matching: spectrogram peaks -> constellation hashes -> offset voting.
+const mulberry32 = (seed) => () => {
+  seed = (seed + 0x6d2b79f5) | 0;
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
+
+// Synthetic "spectrogram": 32 frequency bands x 400 frames; one dominant band per song.
+function makeSong(seed, leadBand, frames = 400, bands = 32) {
+  const r = mulberry32(seed), spec = [];
+  for (let t = 0; t < frames; t++) {
+    const row = [];
+    for (let b = 0; b < bands; b++) row.push(b === leadBand ? 0.9 + 0.1 * r() : 0.1 + 0.25 * r());
+    spec.push(row);
+  }
+  return spec;
+}
+
+function peaksOf(spec, dropSeed) {   // 2 strongest bands per frame; 5% peak dropout = noise
+  const r = mulberry32(dropSeed), pts = [];
+  spec.forEach((row, t) => {
+    row.map((e, b) => [e, b]).sort((x, y) => y[0] - x[0]).slice(0, 2)
+      .forEach(([, b]) => { if (r() > 0.05) pts.push([t, b]); });
+  });
+  return pts;
+}
+
+function constellationHashes(pts) {  // anchor -> target pairs inside a 10-frame target zone
+  const out = [];
+  for (let i = 0; i < pts.length; i++)
+    for (let j = i + 1; j < pts.length; j++) {
+      const dt = pts[j][0] - pts[i][0];
+      if (dt < 1) continue;
+      if (dt > 10) break;
+      out.push({ t: pts[i][0], h: (pts[i][1] << 10) | (pts[j][1] << 5) | dt });
+    }
+  return out;
+}
+
+// Fingerprint DB: hash -> [(songId, anchorTime)]
+const db = new Map();
+const songs = [["Song A", 1], ["Song B", 3], ["Song C", 5]];
+songs.forEach(([name, lead], id) => {
+  constellationHashes(peaksOf(makeSong(id * 7 + 11, lead), id * 3 + 5)).forEach(({ t, h }) => {
+    if (!db.has(h)) db.set(h, []);
+    db.get(h).push([id, t]);
+  });
+});
+
+// Query: 60-frame noisy excerpt of Song B starting at frame 120 (re-fingerprinted independently)
+const qHashes = constellationHashes(peaksOf(makeSong(18, 3).slice(120, 180), 99));
+const votes = new Map();
+qHashes.forEach(({ t, h }) =>
+  (db.get(h) || []).forEach(([id, dbT]) => {
+    const key = `${id}|${dbT - t}`;            // vote for (song, estimated start)
+    votes.set(key, (votes.get(key) || 0) + 1);
+  }));
+const top = [...votes.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3)
+  .map(([k, v]) => { const [id, off] = k.split("|"); return { song: songs[+id][0], start: +off, votes: v }; });
+console.log("top matches:", JSON.stringify(top));
+console.log("winner:", top[0].song, "starts at frame", top[0].start, "-", top[0].votes, "votes");
+```
+
+Expected: `winner: Song B starts at frame 120` by a landslide — the true (song, offset) key collects orders of magnitude more votes than any scatter key, even though the query was re-fingerprinted with independent 5% peak dropout. Exact counts are deterministic for these seeds.
 
 ---
 

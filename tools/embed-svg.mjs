@@ -30,7 +30,7 @@ const TYPE = {
   messagebus: { fill: '#fff7ed', stroke: '#ea580c', text: '#9a3412', icon: '' },
   cloud:      { fill: '#f0f9ff', stroke: '#0284c7', text: '#075985', icon: '' },
 };
-const FONT = 'font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"';
+const FONT = 'font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"';
 
 function layoutFor(specPath) {
   const out = execFileSync('node',
