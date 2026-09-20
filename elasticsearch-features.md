@@ -7,6 +7,8 @@
 A quick-reference catalog of Elasticsearch features used in search-heavy backends: inverted indexes & analyzers, mappings, CRUD & bulk indexing, queries (full-text vs term), aggregations, scoring (BM25), completion & fuzzy search, sharding & replication, near-real-time refresh, ILM (index lifecycle), and security — each with a small, concrete example.
 
 **Elasticsearch in one line:** a distributed **search and analytics engine** built on Apache Lucene — you index JSON documents, it maintains an inverted index, and queries scatter across shards with sub-second latency. It is the default answer to "make this searchable" between Postgres FTS and a bespoke postings engine.
+> **Latest stable (Sep 2026): Elasticsearch 9.5** (9.5.4, Sep 2026) — the "context and retrieval layer for AI" release line: better vector/BM25 hybrid retrieval, ES|QL everywhere. 8.x is in security-only maintenance.
+
 
 ### Search engine at a glance
 

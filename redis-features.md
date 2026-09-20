@@ -7,6 +7,8 @@
 A quick-reference catalog of Redis features used in real backends: the data structures (String, Hash, List, Set, Sorted Set, Bitmap, Bitfield, HyperLogLog, Geo, Stream — plus module types JSON, Time Series, Vector set, Array, and probabilistic filters), caching patterns, distributed locking, rate limiting, Pub/Sub, reliable queues via Streams, transactions, Lua scripting, persistence, and high availability — each with a small, copy-paste-able `redis-cli` example.
 
 **Redis in one line:** an in-memory, single-threaded data-structure server with sub-millisecond operations, built-in replication/clustering, optional persistence (RDB/AOF), and scripting — the default cache, lock, counter, and lightweight queue in system design.
+> **Latest stable (Sep 2026): Redis 8.4** (Nov 2025 GA — fastest per the official benchmarks, improved vector search, atomic ops; the 8.6 line (Feb 2026) adds streams/performance improvements). License: tri-licensed RSAL/SSPL/**AGPL** since 8.0 — open-source again. Watch: Valkey (the BSD fork) tracks Redis 7.x+ protocol if you need a fully OSS drop-in.
+
 
 ### Where Redis sits in a system
 

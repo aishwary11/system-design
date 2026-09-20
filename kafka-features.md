@@ -7,6 +7,8 @@
 A quick-reference catalog of Apache Kafka features used in event-driven backends: topics, partitions, offsets, ordering, producers, consumer groups, replication, retention & compaction, delivery semantics, exactly-once, Kafka Connect, Kafka Streams, Schema Registry, and the classic use cases (event sourcing, CDC, log aggregation, outbox) — each with a small, concrete example.
 
 **Kafka in one line:** a distributed, partitioned, replicated **commit log** — you publish immutable events to topics; consumers read them in order, at their own pace, and can replay from any point in history. It is the backbone of event-driven architectures.
+> **Latest stable (Sep 2026): Kafka 4.3** (4.3.0 May 2026, 4.3.1 Jun 2026 patch) — KRaft-only since 4.0, **Kafka Queues production-ready in 4.2**, share groups for queue-style consumption. ZooKeeper-mode clusters lost official support Nov 2025.
+
 
 ### Event streaming at a glance
 

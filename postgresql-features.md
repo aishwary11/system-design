@@ -7,6 +7,8 @@
 A quick-reference catalog of PostgreSQL features used in everyday backends: data types, constraints, indexes, triggers, `LISTEN`/`NOTIFY`, stored functions, CTEs, window functions, full-text search, JSONB, MVCC & transactions, locking, partitioning, replication, CDC, caching, and the extension ecosystem — each with a small, copy-paste-able example.
 
 **PostgreSQL in one line:** an advanced open-source relational database that is fully ACID, uses MVCC for concurrency, speaks strong SQL, stores JSONB documents, does full-text search, supports triggers / pub-sub (`LISTEN`/`NOTIFY`) / stored procedures, scales with partitioning + streaming & logical replication, and grows via extensions (PostGIS, pgvector, pg_trgm, ...). In system design it is usually the *system of record*, often fronted by Redis as a cache.
+> **Latest stable (Sep 2026): PostgreSQL 18.6** (Aug 2026 patch set) — async I/O subsystem, UUIDv7, skip scans from 18.0. **PostgreSQL 19 is in Beta 3, targeted Sep 2026.** OAuth 2.0 auth landed in 18.
+
 
 ### PostgreSQL in a typical stack
 

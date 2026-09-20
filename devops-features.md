@@ -88,6 +88,7 @@ A quick-reference catalog of the DevOps toolchain behind every design in this re
 13. [The Golden Pipeline (Reference Flow)](#13-the-golden-pipeline-reference-flow)
 14. [DevOps in This Repo's Designs](#14-devops-in-this-repos-designs)
 15. [Key Takeaways](#15-key-takeaways)
+16. [Version Matrix (verified September 2026)](#16-version-matrix-verified-september-2026)
 
 </details>
 
@@ -159,7 +160,7 @@ spec:
 
 The mental model: a **pod** is the unit of scheduling (containers sharing localhost), a **Deployment** keeps N replicas alive and rolls them forward revision by revision, and a **Service** is the stable virtual IP fronting the ever-changing pod set. `kubectl rollout undo deployment/api` is your panic button — revisions are kept for exactly this.
 
-> **Version note (2025–26):** examples target **Kubernetes 1.34+** ("Of Wind & Will", Aug 2025 — Dynamic Resource Allocation, Mutating Admission Policies, 58 enhancements) and all manifests use stable APIs only. The same Deployment/Service/HPA YAML runs unmodified on EKS/GKE/AKS current channels.
+> **Latest stable (Sep 2026): Kubernetes 1.37** (Aug 2026; 1.34 went EOL Oct 2026 — plan upgrades yearly, 3 releases supported at a time). 1.35 leaned into "Kubernetes as AI's OS" (coordinated placement, DRA maturity). All manifests here use stable APIs and run unmodified on current EKS/GKE/AKS channels.
 
 ## 3. Scheduling & Scaling — Requests, Limits, HPA
 
@@ -407,3 +408,20 @@ Every gate answers one question: *what is the cheapest place this defect could h
 - **Canary everything user-facing**: progressive delivery + automated analysis turns bad releases into 5% 10-minute stories.
 - **Observability is a design input, not an afterthought**: metrics/logs/traces designed in from day one (§38 tracing, §45 SLOs).
 
+
+## 16. Version Matrix (verified September 2026)
+
+Pin your mental model to current releases — "which version?" is a real interview question, and stale versions in a design doc are a red flag. Verify against official release pages before quoting.
+
+| Tool | Latest stable (Sep 2026) | What changed recently |
+| :--- | :--- | :--- |
+| Kubernetes | **1.37** (Aug 2026) | 1.35 leaned into "Kubernetes as AI's OS" (coordinated placement, DRA maturity); only 3 minors supported at once — 1.34 hit EOL Oct 2026 |
+| Redis | **8.4** (Nov 2025; 8.6 line Feb 2026) | Vector search improvements, streams perf; tri-license AGPL since 8.0 |
+| Apache Kafka | **4.3** (May 2026) | KRaft-only since 4.0; Kafka Queues production-ready in 4.2 |
+| PostgreSQL | **18.6** (Aug 2026); 19 in beta for Sep 2026 | Async I/O subsystem, UUIDv7, OAuth 2.0 auth |
+| MongoDB | **8.3** (May 2026) | Security hardening + expanded queries |
+| Elasticsearch | **9.5** (Sep 2026) | AI-retrieval focus: vector/BM25 hybrid, ES|QL |
+| RabbitMQ | **4.3** (4.3.6) | Quorum-queue enhancements, Khepri Raft metadata; 4.2 EOL Jul 2026 |
+| Argo CD | **3.6** (Sep 15, 2026) | Quarterly minor cadence; Helm 4.2 in 3.5 |
+
+*Rule of thumb: track N and N-1 majors for anything user-facing; upgrade managed services (EKS/GKE/AKS, Atlas, Elastic Cloud) within one minor of latest.*
