@@ -472,7 +472,7 @@ Production Kafka needs more than topics - these features keep a cluster healthy 
 
 | Feature | Purpose | Notes |
 | ------- | ------- | ----- |
-| **KRaft (ZooKeeper removal)** | Internal metadata quorum | Modern Kafka (3.3+) runs without ZooKeeper |
+| **KRaft (ZooKeeper removal)** | Internal metadata quorum (Raft) | **Kafka 4.0 (Mar 2025) removed ZooKeeper entirely** — KRaft is the only mode; ZooKeeper-based clusters lost official support Nov 2025 |
 | **Quotas** | Throttle producers/consumers per client | `--alter --config producer_byte_rate=...` |
 | **Rack awareness** | Replicas spread across racks/AZs | replica placement avoids correlated failure |
 | **MirrorMaker 2** | Cross-cluster / cross-region replication | disaster recovery, active-active |

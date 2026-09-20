@@ -554,6 +554,8 @@ SELECT jsonb_build_object(
 FROM users u WHERE u.id = 42;
 
 -- SQL/JSON standard: JSON_TABLE turns a JSON array into rows (PG 17+)
+-- PG 18 (Sep 2025): async I/O subsystem (faster seq scans, bitmap scans, VACUUM),
+-- UUIDv7, composite-index skip scans, faster major-version upgrades
 SELECT id, name
 FROM json_table(
     '[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}]'::jsonb,

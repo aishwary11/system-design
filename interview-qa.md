@@ -16,7 +16,7 @@ Section numbering continues from `system-design-concepts.md` (Parts I–III end 
 <summary><b>📑 Jump to a section</b></summary>
 
 **Part IV — Failure Terminology (every technology, one glossary)**
-73. [Cache Failure Terminology (Stampede, Avalanche, Penetration, Breakdown…)](#73-cache-failure-terminology-stampede-avalanche-penetration-breakdown)
+73. [Cache Terminology — Placement Patterns & Failure Modes (cache-aside, write-through, stampede, avalanche…)](#73-cache-terminology--placement-patterns--failure-modes)
 74. [Queue & Stream Failure Terminology (Lag, Rebalance Storms, Poison Messages…)](#74-queue--stream-failure-terminology-lag-rebalance-storms-poison-messages)
 75. [Database & Replication Failure Terminology (Lag, Split-Brain, Pool Exhaustion…)](#75-database--replication-failure-terminology-lag-split-brain-pool-exhaustion)
 76. [Kubernetes & Platform Failure Terminology (OOMKilled, CrashLoopBackOff, Evictions…)](#76-kubernetes--platform-failure-terminology-oomkilled-crashloopbackoff-evictions)
@@ -35,9 +35,31 @@ Section numbering continues from `system-design-concepts.md` (Parts I–III end 
 
 > 💡 The pattern: every "named" failure is one of four physics — **synchronized load** (herd/storm/avalanche), **skew** (hot key/partition/noisy neighbor), **unbounded accumulation** (lag/tombstones/compaction debt), or **ambiguous state after failure** (split-brain/duplicates/gray failure). Learn the four shapes and you can reason about any technology's outage.
 
-## 73. Cache Failure Terminology (Stampede, Avalanche, Penetration, Breakdown)
+## 73. Cache Terminology — Placement Patterns & Failure Modes
 
 The canonical Redis vocabulary — and the same taxonomy applies to **any** cache: CDN, Memcached, Caffeine, CloudFront, or the write-through cache in your design docs (§16).
+
+### The five *placement* patterns (where data lives and when it moves)
+
+| Pattern | Read path | Write path | Use when | Watch out |
+| :--- | :--- | :--- | :--- | :--- |
+| **Cache-Aside** (lazy loading) | App checks cache → miss → read DB → fill cache → return | App writes DB → invalidates cache (`DEL`) | Default choice; cache is optional (Redis down = slower, not broken) | First read always a miss (cold start); stale window between DB write and invalidation; every app re-implements it |
+| **Read-Through** | Cache itself loads from DB on miss (app never touches DB) | App writes DB → invalidate | Same as aside but the fill logic lives in the cache layer/library — one implementation, not N services | Sync fill adds latency to first read; needs a cache that supports loaders |
+| **Write-Through** | Read from cache (always warm) | App writes **cache** → cache synchronously writes DB | Strong read consistency, write-opens-cache; feeds/leaderboards where reads dominate | Every write pays cache+DB latency; writes to data never read are wasted; cache outage blocks writes |
+| **Write-Behind** (write-back) | Read from cache | App writes cache → cache acks → **async** flush to DB (batched) | Write-heavy (metrics, counters, view counts) where losing ≤N seconds is tolerable | **Data loss window** on cache crash — only with durable DB backstop or acceptable loss; harder eviction (dirty entries) |
+| **Write-Around** (write-behind-the-cache) | Cache-aside reads | App writes **DB only**; cache fills only on first read | Data written once, rarely read (logs, archives) — keeps the cache from churn | First read after write = guaranteed miss; poor for read-after-write flows |
+
+```text
+cache-aside:   read:  cache → miss → db → set(cache, ttl)          write: db → del(cache)
+write-through: write: cache ↔ db (sync)      read:  cache (hot always)
+write-behind:  write: cache → ack → async db (batch)  read: cache   ← loses tail on crash!
+write-around:  write: db only                read:  cache-aside (first read misses)
+```
+
+**Which one?** The 80/20: **cache-aside everywhere** (safe, degrade-able), **write-through** when read-after-write consistency matters, **write-behind** only for loss-tolerant counters/metrics, **write-around** for cold data. Mixed pipelines are normal: user profiles aside, counters behind, sessions aside with short TTL.
+
+### The five *failure* patterns (what goes wrong once it's in place)
+
 
 | Term | What happens | Production solutions |
 | :--- | :--- | :--- |
@@ -55,7 +77,28 @@ stampede:   1 key ("feed:42"), 30k req/s, TTL hits → 30k parallel DB queries i
 fix:        single-flight + logical TTL → 1 query; the other 29,999 await the same promise
 ```
 
-**Pairs with:** §16 caching strategies, §17 Bloom filters, §43 hot keys & single-flight, §11 circuit breakers, the distributed-cache design doc.
+### Kafka & queue terms that interviewers actually probe (extend §74)
+
+| Term | What happens | Production solutions |
+| :--- | :--- | :--- |
+| **ISR (In-Sync Replicas) shrink/expand** | Replicas fall behind `replica.lag.time.max.ms` and are dropped from ISR; the partition's quorum shrinks → durability margin drops. | Alert on ISR size < replication factor; fix slow replicas (disk, network, GC) before ISR shrinks to 1. |
+| **Under-Replicated Partitions (URP)** | Partitions whose replica count < configured factor — the single most important Kafka health metric. | URP > 0 pages on-call: dead broker, stuck leader, or network partition; never let it ride. |
+| **Unclean Leader Election** | With `unclean.leader.election.enable=true`, an out-of-ISR replica can become leader → **committed data loss** in exchange for availability. | Money paths: keep `false` (default since 0.11); accept downtime over silent loss; know which topics are unclean-election-safe (analytics) vs not (orders). |
+| **`__consumer_offsets`** | The internal compacted topic storing group commit watermarks — consumers' state IS a Kafka topic. | Keep it healthy (default 50 partitions); group rebalances write here — rebalance storms (§74) hammer it. |
+| **Log Compaction vs Retention** | Retention deletes by age/size; compaction keeps the *latest* value per key forever (changelog topics, KTable state). | Compacted topics for state stores/CDC snapshots; time retention for events; never compact topics where per-event history matters. |
+| **min.insync.replicas + acks=all** | The durability contract: producer waits for ALL ISR acks; if ISR < min.insync.replicas, writes fail *closed*. | Classic trio for no-loss: `acks=all`, `min.insync.replicas=2`, RF=3 — write failures beat silent loss. |
+
+### Database terms that complete §75
+
+| Term | What happens | Production solutions |
+| :--- | :--- | :--- |
+| **Phantom Read** | Two identical range queries return different row *sets* (a new row appeared — a write committed in between). | `SERIALIZABLE` isolation or range locks (`SELECT ... FOR SHARE` on the range); for most apps, MVCC's snapshot isolation is the pragmatic answer. |
+| **Isolation-Level Anomalies** | Read committed → non-repeatable reads; repeatable read → phantoms (PG's RR actually blocks them via MVCC); serialization failures under SERIALIZABLE require retry. | Pick per path: `READ COMMITTED` default, `REPEATABLE READ` for reports, `SERIALIZABLE` + retry loop for invariants that must hold across a range. |
+| **VACUUM / Bloat** | MVCC dead tuples accumulate; autotuning falls behind on update-heavy tables → tables and indexes swell, scans slow (§32 LSM analogy in SQL land). | Monitor `n_dead_tup` ratio; tune autovacuum per table (aggressive on hot tables); PG 18's async-I/O makes vacuum batches cheaper; `REINDEX CONCURRENTLY` for bloated indexes. |
+| **Replication Slot Leak** | A forgotten logical replication slot pins WAL forever → disk fills → primary halts writes. | Alert on slot lag + disk; drop stale slots; `max_slot_wal_keep_size` as the circuit breaker. |
+| **Snapshot Too Old / Long Transactions** | One long-running transaction holds back vacuum and pinpoints the oldest snapshot → bloat everywhere. | Cap transaction time (`idle_in_transaction_session_timeout`); queue long jobs outside the OLTP primary. |
+
+**Pairs with:** §16 caching strategies, §17 Bloom filters, §43 hot keys & single-flight, §11 circuit breakers, the distributed-cache design doc. Placement/failure patterns apply to every cached layer in this repo: `redis-features.md` (Redis 8 in-core modules), CDN sections, and the distributed-cache design doc.
 
 ---
 
@@ -207,5 +250,6 @@ The cluster **pulls** declared state from Git and reconciles continuously. Wins:
 <div align="center">
 
 *Part IV says the quiet part out loud: every technology's failure zoo is four shapes — synchronized load, skew, unbounded accumulation, ambiguous state. Name the shape, and the solution menu writes itself.*
+
 
 </div>

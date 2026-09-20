@@ -556,7 +556,7 @@ return stock - tonumber(ARGV[1])    -- remaining
 EVAL "..." 1 stock:sku:9 2
 ```
 
-Scripts are cached with `SCRIPT LOAD`/`EVALSHA` so the app sends only the hash. Modern Redis (7+) also has server-side **functions** (`FUNCTION LOAD`) for versioned, deployable scripts.
+Scripts are cached with `SCRIPT LOAD`/`EVALSHA` so the app sends only the hash. Redis 7+ adds server-side **functions** (`FUNCTION LOAD`) for versioned, deployable scripts; **Redis 8 (May 2025 GA)** ships under the tri-license (RSAL / SSPL / **AGPL** — open-source again) and runs the former modules (JSON, Time Series, Bloom, vector sets) in-core.
 
 ---
 

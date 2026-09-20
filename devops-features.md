@@ -66,9 +66,6 @@ A quick-reference catalog of the DevOps toolchain behind every design in this re
 
 **Interactive diagram:** [diagrams/features/devops-at-a-glance.architecture.html](diagrams/features/devops-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
-
-**Interactive diagram:** [diagrams/features/devops-at-a-glance.architecture.html](diagrams/features/devops-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ---
 
 ## Table of Contents
@@ -161,6 +158,8 @@ spec:
 ```
 
 The mental model: a **pod** is the unit of scheduling (containers sharing localhost), a **Deployment** keeps N replicas alive and rolls them forward revision by revision, and a **Service** is the stable virtual IP fronting the ever-changing pod set. `kubectl rollout undo deployment/api` is your panic button — revisions are kept for exactly this.
+
+> **Version note (2025–26):** examples target **Kubernetes 1.34+** ("Of Wind & Will", Aug 2025 — Dynamic Resource Allocation, Mutating Admission Policies, 58 enhancements) and all manifests use stable APIs only. The same Deployment/Service/HPA YAML runs unmodified on EKS/GKE/AKS current channels.
 
 ## 3. Scheduling & Scaling — Requests, Limits, HPA
 

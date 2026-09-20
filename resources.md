@@ -23,6 +23,7 @@ A curated map of the best **GitHub repositories, engineering-blog deep dives, Me
 6. [AI-Era Design Resources (LLM/Agents/RAG)](#6-ai-era-design-resources-llmagentsrag)
 7. [Topic → Best Modern Resource Map](#7-topic--best-modern-resource-map)
 8. [How to Use This List](#8-how-to-use-this-list)
+9. [Hidden Tips & Tricks — What Actually Passes the Interview](#9-hidden-tips--tricks--what-actually-passes-the-interview)
 
 </details>
 
@@ -183,3 +184,24 @@ The single table to consult before an interview: each row = a topic this repo co
 2. **For depth on one topic:** pick the §2 engineering article + the §5 paper behind it; both, in that order.
 3. **For AI-era roles:** §6 is the track — MCP/A2A specs are short and worth reading raw.
 4. **To contribute a doc here:** find the topic's deep source in §7, build the design against it, and cite both in the doc's "Deep Dive Prompts".
+
+---
+
+## 9. Hidden Tips & Tricks — What Actually Passes the Interview
+
+The unwritten rubric, distilled from interviewer write-ups (DesignGurus' "9 habits / 9 misconceptions", Hello Interview's rubric-by-level, 2026 coaching retrospectives). These pair with every design doc in this repo.
+
+| # | Tip | Why it works | Practice with |
+| :--- | :--- | :--- | :--- |
+| 1 | **Name the trade-off before the interviewer asks** | The rubric scores "articulated alternatives"; volunteering "this costs us X to buy Y" is the single highest-signal move | every doc's Trade-off Analysis table |
+| 2 | **Estimate before you design** | Back-of-envelope (§49) kills 3 of 4 wrong architectures in the first 2 minutes — 10K QPS write-heavy rules out SQL-as-source-of-truth for feeds | §49 + each doc's Key Numbers |
+| 3 | **Requirements first, boxed** | Spend the first 5 minutes listing functional/non-functional explicitly; "jumped straight to boxes" is the #1 written misconception | every doc's Requirements section |
+| 4 | **Say "it depends" — then say what it depends on** | Senior signal is scoping: "for 1M users, X; at 100M, Y" — level the answer to the level being hired | Scaling Tiers sections |
+| 5 | **Draw the failure, not just the flow** | After any component, ask "what if this dies?" — interviewers probe failure modes to separate memorized designs from understood ones | Failure Modes & Recovery tables |
+| 6 | **Idempotency, always, unprompted** | Mentioning idempotency keys on any money/notification path (§10) is a known fast-hire signal | payment & notification docs |
+| 7 | **Know one number for everything** | "Redis p99 ~1ms, cross-AZ ~1ms, cross-region ~70ms" — dropping correct magnitudes makes every estimate believable | §49 latency table |
+| 8 | **Drive the interview like a design review** | Ask "which part should we go deep on?" — candidates who steer score higher on communication regardless of technical depth | Deep Dive Prompts sections |
+| 9 | **Reject your own design once** | "What breaks this?" shows calibration; the 2026 meta: *predict before you look, break what you build, name the trade-off first* | Trade-off + Failure sections |
+| 10 | **Match the rubric level you're hired for** | Mid: works + reasons; Senior: failure modes + ops; Staff: org-level trade-offs, migrations, cost — same question, three depths | rubric-by-level sources below |
+
+**Sources:** DesignGurus — [9 Habits I See in Engineers Who Pass the System Design Interview](https://designgurus.substack.com/p/9-habits-i-see-in-engineers-who-pass) · Hello Interview rubric-by-level write-ups · [How to Prepare for System Design Interviews in 2026](https://blog.stackademic.com/how-to-prepare-for-system-design-interviews-in-2026-17caa3ef6daa) ("predict before you look, break what you build") · [I've Coached Hundreds of Engineers Through System Design Interviews](https://interviewnoodle.com/ive-coached-hundreds-of-engineers-through-system-design-interviews-a2e143f44475)
