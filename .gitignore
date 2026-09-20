@@ -3,3 +3,6 @@
 
 # freebuff desktop app state
 .freebuff/
+
+# generated site (GitHub Pages build output)
+site/
