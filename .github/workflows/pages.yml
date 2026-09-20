@@ -1,3 +1,6 @@
+# Publishes the diagrams site by force-pushing ./site to the gh-pages branch.
+# Pages source: Settings → Pages → Build and deployment → Deploy from a branch
+#               → gh-pages / (root)
 name: pages
 on:
   push:
@@ -9,35 +12,26 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write   # push the gh-pages branch
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: node tools/build-pages.mjs
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
-# Pages site: https://aishwary11.github.io/system-design/
-# Pages site: https://aishwary11.github.io/system-design/ (deploy: GitHub Actions -> pages workflow)
-# Pages site: https://aishwary11.github.io/system-design/ (Source: GitHub Actions)
+      - name: Publish to gh-pages
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan gh-pages
+          find . -mindepth 1 -maxdepth 1 -not -name site -not -name .git -exec rm -rf {} +
+          git add -A
+          git commit -q -m "Deploy diagrams site from ${GITHUB_SHA}"
+          git push --force origin gh-pages
