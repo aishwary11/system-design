@@ -12,7 +12,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  administration: write   # lets configure-pages flip the one-time Pages enablement
 
 concurrency:
   group: pages
@@ -26,9 +25,6 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: node tools/build-pages.mjs
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true   # create the Pages site with source=GitHub Actions if missing
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
