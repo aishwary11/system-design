@@ -103,6 +103,8 @@ A quick-reference catalog of MongoDB features used in document-oriented backends
 14. [Security](#14-security)
 15. [MongoDB in This Repo's Designs](#15-mongodb-in-this-repos-designs)
 16. [Key Takeaways](#16-key-takeaways)
+17. [Hidden Tips & Tricks](#17-hidden-tips--tricks)
+18. [Do's & Don'ts](#18-dos--donts)
 
 </details>
 
@@ -429,3 +431,27 @@ See also: document-vs-relational trade-off tables in those docs' **Trade-off Ana
 5. Replica sets give HA; sharding gives scale — shard keys are forever, choose carefully
 6. Time-series collections + TTL indexes handle retention natively
 7. Related guides: `postgresql-features.md` (relational alternative), `redis-features.md` (hot-path cache in front), `kafka-features.md` (event backbone)
+
+## 17. Hidden Tips & Tricks
+
+**1. Compound index order follows ESR: Equality → Sort → Range.** `{user_id: 1, created_at: -1, status: 1}` vs `{status: 1, user_id: 1, created_at: -1}` are completely different indexes. Wrong order = index used, query still slow (in-memory sort).
+
+**2. Unbounded arrays are a time bomb.** Embedding `comments: []` on a hot post grows toward the **16 MB document limit** — writes start failing at the worst moment. Embed bounded data; reference anything that grows with popularity.
+
+**3. `updateOne` with no match is a silent no-op.** No error, `matchedCount: 0` — check the result or use `upsert: true` deliberately (and know that upsert races need a unique index to be safe).
+
+**4. `find().toArray()` loads everything.** Cursors batch (default ~101 docs) — a 1M-doc export via `toArray` is a RAM incident. Iterate the cursor; it streams batches.
+
+**5. The shard key is forever.** Pick it once, live with it: hashed user-id keys spread writes but kill range queries; range keys do the opposite. "We'll re-shard later" = a migration project with a live database.
+
+**6. Default write concern can acknowledge lost writes.** `w:1` confirms on the primary *before* replication — a primary failover can roll back writes the app believes committed. Money paths: `writeConcern: { w: "majority" }`.
+
+## 18. Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Design indexes ESR (Equality → Sort → Range) and verify with `explain` | Don't index every field — every index taxes every write |
+| Use `w: "majority"` on money paths | Don't trust `w:1` acks where failover rollbacks cost real money |
+| Embed bounded, read-together data; reference anything unbounded | Don't let arrays grow toward 16 MB on popular documents |
+| Iterate cursors with batch sizing you chose | Don't `toArray()` a million-document result into RAM |
+| Choose the shard key with query patterns in front of you | Don't pick a shard key by gut feel — it's effectively forever |

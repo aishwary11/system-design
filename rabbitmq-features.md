@@ -105,6 +105,8 @@ A quick-reference catalog of RabbitMQ features used in task-oriented messaging: 
 12. [RabbitMQ vs Kafka — The Real Decision](#12-rabbitmq-vs-kafka--the-real-decision)
 13. [RabbitMQ in This Repo's Designs](#13-rabbitmq-in-this-repos-designs)
 14. [Key Takeaways](#14-key-takeaways)
+15. [Hidden Tips & Tricks](#15-hidden-tips--tricks)
+16. [Do's & Don'ts](#16-dos--donts)
 
 </details>
 
@@ -349,3 +351,27 @@ Kafka counterparts live in each doc's architecture diagram — most designs show
 5. Quorum queues are the default; streams add replay when a queue isn't enough
 6. RabbitMQ for work items, Kafka for facts — most platforms eventually use both
 7. Related guides: `kafka-features.md` (the streaming alternative), `redis-features.md` (Streams & delayed queues), `cloud.md` (managed offerings: Amazon MQ, CloudAMQP)
+
+## 15. Hidden Tips & Tricks
+
+**1. Prefetch is the throughput dial.** `prefetch=1`: perfectly fair, brutally slow (a round-trip per message). `prefetch=∞`: one fast consumer hoards the queue while others starve. Start around 10–100 and tune from ack patterns.
+
+**2. Unacked messages aren't lost — they're *pending*.** Consumer dies → broker redelivers everything unacked (at-least-once). Downstream must dedupe; "it processed exactly once because we didn't ack" is wrong twice over.
+
+**3. Durability needs BOTH knobs.** Durable queue + persistent messages (+ durable exchange) survives a broker restart; miss the message flag and everything in the queue evaporates on restart.
+
+**4. `requeue: true` on a poison message = infinite loop.** Bad payload → reject → requeue → crash → repeat, burning the broker. Cap redeliveries (x-death header count) and route to a DLX — never raw-requeue blindly.
+
+**5. vhosts are the isolation unit.** A publish to the wrong vhost isn't an error — the exchange simply doesn't exist there, and the message vanishes. Use `mandatory` + returned-message handlers for critical publishes.
+
+**6. Quorum queues change the feature matrix.** Quorum ≠ classic: no priority queues, no transient mode, different TTL semantics — flipping a fleet to quorum for safety silently drops features you depended on.
+
+## 16. Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Set prefetch to a tuned finite value per consumer | Don't ship `prefetch=1` everywhere (slow) or unbounded (hoarding) |
+| Make queues durable AND messages persistent for anything that must survive restart | Don't flip one knob and call the pipeline durable |
+| Cap redeliveries and route failures to a DLX | Don't `requeue: true` poison messages into an infinite crash loop |
+| Dedupe downstream (idempotent consumers) | Don't assume ack-later semantics give you exactly-once |
+| Use `mandatory` + returned-message handlers for critical publishes | Don't publish to a wrong-vhost exchange and watch messages vanish silently |

@@ -232,7 +232,7 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 <a id="feature-guides"></a>
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="28" alt=""/> Technology Feature Guides
 
-The guides cover the technology stack behind the design documents, each with runnable examples:
+The guides cover the technology stack behind the design documents, each with runnable examples — and every guide ends with **Hidden Tips & Tricks** (the operational "aha"s) and **Do's & Don'ts** distilled from production incidents:
 
 | # | Guide | Highlights | File |
 | :- | :--- | :--- | :--- |

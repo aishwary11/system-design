@@ -88,6 +88,8 @@ A quick-reference catalog of the DevOps toolchain behind every design in this re
 13. [The Golden Pipeline (Reference Flow)](#13-the-golden-pipeline-reference-flow)
 14. [DevOps in This Repo's Designs](#14-devops-in-this-repos-designs)
 15. [Key Takeaways](#15-key-takeaways)
+17. [Hidden Tips & Tricks](#17-hidden-tips--tricks)
+18. [Do's & Don'ts](#18-dos--donts)
 16. [Version Matrix (verified September 2026)](#16-version-matrix-verified-september-2026)
 
 </details>
@@ -425,3 +427,28 @@ Pin your mental model to current releases — "which version?" is a real intervi
 | Argo CD | **3.6** (Sep 15, 2026) | Quarterly minor cadence; Helm 4.2 in 3.5 |
 
 *Rule of thumb: track N and N-1 majors for anything user-facing; upgrade managed services (EKS/GKE/AKS, Atlas, Elastic Cloud) within one minor of latest.*
+
+## 17. Hidden Tips & Tricks
+
+**1. `revisionHistoryLimit: 0` deletes your panic button.** `kubectl rollout undo` works because old ReplicaSets exist. Zero-history "clean" clusters roll back by re-deploying old YAML from memory.
+
+**2. Requests schedule; limits throttle.** A pod with tiny requests and huge limits still gets starved at node pressure — the scheduler only sees requests. Sizing limits high and requests low "to be safe" produces exactly the noisy-neighbor p99 you were avoiding.
+
+**3. ConfigMap env-vars don't update — mounted files do (eventually).** Env-backed config requires a rollout to change; volume-mounted ConfigMaps refresh on kubelet sync (~1 min) *if the app re-reads the file*. "I updated the ConfigMap" is not "the pods changed".
+
+**4. `:latest` + `IfNotPresent` = the node runs the old image forever.** The pull policy sees the tag cached and skips — "works on the new node, stale on the old one" is the classic ghost deploy. Immutable tags + digest pinning kill the whole class.
+
+**5. HPA floors and PDB ceilings are real constraints.** HPA never scales below minReplicas (idle money, by design); the cluster autoscaler won't remove a node holding a PDB-protected pod — a mis-set PDB quietly pins dead capacity.
+
+**6. `maxUnavailable: 0` costs 2× memory *during* every rollout.** Zero-downtime rolling updates surge one extra replica per deployment — 50 deployments rolling simultaneously after a CVE = capacity incident. Stage rollouts or budget surge capacity.
+
+## 18. Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Set requests on every pod; right-size with VPA in staging | Don't ship BestEffort pods or requests=limits everywhere blindly |
+| Pin immutable image tags (or digests) | Don't deploy `:latest` — ghost deploys are guaranteed |
+| Keep `revisionHistoryLimit` ≥ 5 so `rollout undo` works | Don't zero the history for a "clean" cluster and lose the panic button |
+| Probe readiness honestly (dependencies), liveness narrowly (wedged process) | Don't probe the database in liveness — a DB blip restarts the whole fleet |
+| Gate deploys with canary analysis + quality gates (Sonar/Trivy) | Don't push straight to prod because "it worked on my machine" |
+| Manage infra with Terraform plan reviews + remote state locking | Don't `terraform apply` from a laptop with local state at 2 a.m. |

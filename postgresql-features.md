@@ -116,6 +116,8 @@ A quick-reference catalog of PostgreSQL features used in everyday backends: data
 22. [Foreign Data Wrappers (Cross-DB Queries)](#22-foreign-data-wrappers-cross-db-queries)
 23. [Bulk Load & Data Movement](#23-bulk-load--data-movement)
 24. [Key Takeaways](#24-key-takeaways)
+25. [Hidden Tips & Tricks](#25-hidden-tips--tricks)
+26. [Do's & Don'ts](#26-dos--donts)
 
 </details>
 
@@ -1030,3 +1032,27 @@ Also useful: **UNLOGGED** tables (fast, crash-unsafe — great for staging), **T
 - [Payment System (Stripe)](system-design-payment-system.md)
 - [IRCTC (Railway Booking)](system-design-irctc.md)
 - [Uber (Ride-Hailing)](system-design-uber.md) — PostGIS + geospatial indexing
+
+## 25. Hidden Tips & Tricks
+
+**1. UPDATE is INSERT + DELETE in disguise.** MVCC writes a new row version; the old one lingers until VACUUM. That's why update-heavy tables bloat, why indexes hold dead entries, and why autovacuum tuning is a production skill, not trivia.
+
+**2. The planner ignores your index if you wrap the column.** `WHERE lower(email) = ?` can't use an `email` index — you need `CREATE INDEX ON users (lower(email))`. Same story for `ILIKE '%x'`: btree can't help leading wildcards; pg_trgm can.
+
+**3. There is no free `COUNT(*)`.** Postgres always scans (MVCC has no trusted row count). Dashboards should read `pg_class.reltuples` estimates; exact counts are a full-scan cost you pay knowingly.
+
+**4. Row locks don't stop phantoms.** `SELECT ... FOR UPDATE` locks existing rows; a concurrent INSERT into the same range sails through. True "no new rows while I work" needs `SERIALIZABLE` (+ retry on serialization failure).
+
+**5. Every connection is a process.** ~1–10 MB each plus context-switch cost — 500 direct connections melts a healthy box. Put PgBouncer in **transaction** mode in front (and know what that breaks: prepared statements and session state need care).
+
+**6. Result order without ORDER BY is a coin flip.** It *looks* stable because small tables read in physical order — then autovacuum rewrites the heap and your "implicit sort" shuffles. No ORDER BY = no promise.
+
+## 26. Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Put PgBouncer in transaction mode in front of app fleets | Don't let apps open 500 direct connections "for concurrency" |
+| Index for the *query shape* (expression indexes, partial indexes, covering) | Don't wrap indexed columns in functions and wonder why the index is ignored |
+| Tune autovacuum per hot table; monitor `n_dead_tup` | Don't run VACUUM FULL on a busy production table (ACCESS EXCLUSIVE lock) |
+| Wrap multi-statement money mutations in transactions with explicit retries | Don't hold transactions open across HTTP calls or user think-time |
+| Use `RETURNING` and `ON CONFLICT` for upsert-round-trips | Don't SELECT-then-INSERT and hope no one races you |

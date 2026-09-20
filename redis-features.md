@@ -87,6 +87,8 @@ A quick-reference catalog of Redis features used in real backends: the data stru
 17. [High Availability — Sentinel & Cluster](#17-high-availability--sentinel--cluster)
 18. [Caching Anti-Patterns & Pitfalls](#18-caching-anti-patterns--pitfalls)
 19. [Key Takeaways](#19-key-takeaways)
+20. [Hidden Tips & Tricks](#20-hidden-tips--tricks)
+21. [Do's & Don'ts](#21-dos--donts)
 
 </details>
 
@@ -781,3 +783,29 @@ Caches fail in predictable ways - here are the classic traps and how to avoid th
 - [Key-Value Store (DynamoDB)](system-design-key-value-store.md)
 - [PostgreSQL Features Guide](postgresql-features.md)
 - [Kafka Features Guide](kafka-features.md)
+
+## 20. Hidden Tips & Tricks
+
+**1. `KEYS` freezes the whole server.** Command execution is single-threaded — `KEYS *` on 10M keys blocks *every* client for seconds. Always `SCAN` (cursor-based, incremental, non-blocking).
+
+**2. `DEL` of a big key blocks too.** A 5M-element hash is freed synchronously — use `UNLINK` (async free) and `SCAN`-based progressive deletes for hot-path cleanup.
+
+**3. TTLs are per-key, not per-field** — except hash-field TTL (`HEXPIRE`, Redis 7.4+/8). "Session fields expiring independently" needs field TTL or separate keys; nobody discovers this until the bug report.
+
+**4. `INCR` is atomic; GET-then-SET isn't.** Two workers read 5, both SET 6, one increment lost. Counters must be `INCR`/`INCRBY` or Lua — the race is invisible in single-user tests.
+
+**5. `maxmemory` without a policy = writes start failing.** "(error) OOM command not allowed" is the #1 Redis 2 a.m. page. Choose `allkeys-lru`/`volatile-lfu` *before* the fill, not after.
+
+**6. Pub/Sub is fire-and-forget.** Subscriber down = messages gone forever — no persistence, no redelivery. Anything that must survive a disconnect belongs in Streams (consumer groups) or a real queue.
+
+**7. One slow Lua script stalls everyone.** Scripts are atomic *and* blocking — a 200 ms script is a 200 ms global pause. Keep scripts O(small); heavy work belongs in the app or a worker.
+
+## 21. Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Use `SCAN` for iteration, `UNLINK` for deletes | Don't run `KEYS *` or `DEL bigkey` in production — single-threaded blocking |
+| Set `maxmemory` + an eviction policy before filling the cache | Don't let Redis hit the OOM wall and start rejecting writes |
+| Add TTL jitter to bulk-loaded keys (§ avalanche) | Don't bulk-load with identical TTLs — synchronized expiry stampedes the DB |
+| Treat Redis as an accelerator with a circuit breaker and DB fallback | Don't make Redis the system of record without persistence + a durability plan |
+| Use `INCR`/Lua for atomic counters, pipelines for batching | Don't GET-then-SET across workers, or issue one command per item in loops |

@@ -100,6 +100,8 @@ A vendor-neutral map of cloud services across **AWS, GCP, and Azure**, organized
 14. [Which Tool When — Decision Table](#14-which-tool-when--decision-table)
 15. [Mapping to This Repo's Designs](#15-mapping-to-this-repos-designs)
 16. [Key Takeaways](#16-key-takeaways)
+17. [Hidden Tips & Tricks](#17-hidden-tips--tricks)
+18. [Do's & Don'ts](#18-dos--donts)
 
 </details>
 
@@ -373,3 +375,28 @@ aws sqs send-message --queue-url tasks --message-body '{"job":"render","id":"7"}
 5. **Kubernetes is a commitment** — EKS/GKE/AKS pay off at scale; below that pick Fargate/Cloud Run/Container Apps
 6. **Egress is the hidden bill** — multi-cloud looks cheap until data crosses providers
 7. Related guides: `postgresql-features.md`, `redis-features.md`, `kafka-features.md`, `mongodb-features.md`, `elasticsearch-features.md`, `rabbitmq-features.md`, `agentic-ai-features.md`
+
+## 17. Hidden Tips & Tricks
+
+**1. Egress is the silent bill.** ~$90/TB out of AWS — a "cheap" $50 EC2 box streaming 5 TB/month is a $500 mistake. CDN egress is usually cheaper than raw origin egress; architect the bytes path before the compute.
+
+**2. Cross-AZ traffic costs money *both* ways.** Chatty microservices spread across AZs can out-bill the compute running them. AZ-aware routing isn't just latency hygiene, it's line-item savings.
+
+**3. One NAT Gateway = cross-AZ charges + a single point of failure.** Per-AZ NAT costs more upfront and less at scale — and survives an AZ outage.
+
+**4. Spot isn't a discount, it's a contract: eviction with 2 minutes' notice.** Stateless, checkpointable, or shard-replicated workloads take the 60–90% off; anything stateful needs the eviction path *designed* (drain, checkpoint, rebalance).
+
+**5. Object storage pricing is request-shaped, not just byte-shaped.** Millions of small GET/PUTs can out-bill the storage itself — batch, compress, cache at the edge; tier cold data (S3 Glacier ↔ GCS Archive ↔ Azure Archive) *with* the retrieval-cost table in hand.
+
+**6. DR doesn't replicate by default.** Most managed services are regional — cross-region replication is an explicit enable per service (S3 CRR, Aurora Global, geo-DR). The first DR drill is where you learn which ones you forgot.
+
+## 18. Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Budget egress before architecture; use CDNs for repeated bytes | Don't discover the egress line item on the first invoice |
+| Spread NAT gateways per AZ; keep traffic AZ-local where possible | Don't funnel a whole region through one NAT Gateway |
+| Use spot for stateless/checkpointable work with drain paths | Don't run an unreplicated stateful primary on spot instances |
+| Tier cold data to archive classes deliberately (with retrieval costs) | Don't leave 500 TB of once-a-year data in Standard "just in case" |
+| Enable cross-region replication explicitly per service; drill the DR runbook | Don't assume "it's in the cloud" means it survived a region outage |
+| Tag everything (owner, cost-center, env) from day one | Don't build cost allocation as a forensic archaeology project later |

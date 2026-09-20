@@ -26,6 +26,7 @@ Section numbering continues from `system-design-concepts.md` (Parts I–III end 
 78. [Caching & Redis — "What if Redis goes down?", "How does Redis Cluster work?"](#78-caching--redis)
 79. [Messaging & Storage — "Why is Kafka fast?", "Kafka vs RabbitMQ?"](#79-messaging--storage)
 80. [Kubernetes & DevOps — pods/clusters, Jenkins vs Actions, GitOps, rollbacks](#80-kubernetes--devops)
+81. [Universal Do's & Don'ts — cross-technology rules](#81-universal-dos--donts-applies-to-every-technology-in-this-repo)
 
 </details>
 
@@ -253,3 +254,20 @@ The cluster **pulls** declared state from Git and reconciles continuously. Wins:
 
 
 </div>
+
+## 81. Universal Do's & Don'ts (applies to every technology in this repo)
+
+The cross-cutting rules — when in doubt, these win.
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Design every write path to be **idempotent** (§10) | Don't assume exactly-once delivery anywhere in a distributed system |
+| Set **timeouts** on every network call, with backoff + jitter on retries (§39, §40) | Don't retry immediately and infinitely — that's a retry storm (§77) |
+| Add a **circuit breaker** per dependency and fail *stale/static*, not *hard* (§11, §27) | Don't let one slow dependency cascade into the whole call graph |
+| Spread expirations with **TTL jitter**; fill caches with single-flight (§43, §73) | Don't synchronize loads — stampedes/avalanches are self-inflicted |
+| Put quotas and **load shedding** at the edge, degrade features by tier (§27) | Don't accept unbounded work and then OOM fairly |
+| Track consumer lag, replication lag, URP, pool wait — **leading** indicators | Don't alert on CPU; it pages late and means nothing |
+| Keep **requests** on every pod, **immutable** image tags, **PDBs** on critical sets | Don't ship BestEffort pods, `:latest` tags, or unprotected fleets |
+| Verify versions and pin them (see the Version Matrix in `devops-features.md`) | Don't quote "latest" from memory in an interview — check, then quote |
+| Run **DR drills** and restore-from-backup rehearsals | Don't let backups be write-only history that has never been restored |
+| Name the trade-off before being asked — cost, consistency, complexity (resources §9) | Don't present a design with no alternatives; that's a spec, not a design |

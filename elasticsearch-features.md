@@ -105,6 +105,8 @@ A quick-reference catalog of Elasticsearch features used in search-heavy backend
 12. [Security](#12-security)
 13. [Elasticsearch in This Repo's Designs](#13-elasticsearch-in-this-repos-designs)
 14. [Key Takeaways](#14-key-takeaways)
+15. [Hidden Tips & Tricks](#15-hidden-tips--tricks)
+16. [Do's & Don'ts](#16-dos--donts)
 
 </details>
 
@@ -390,3 +392,27 @@ PUT /_security/role/analyst_readonly
 5. ILM automates the hot/warm/cold tiering that cost-estimation sections assume
 6. kNN + `dense_vector` make ES a legit RAG retrieval tier (see `agentic-ai-features.md`)
 7. Related guides: `postgresql-features.md` (full-text alternative below 1B docs), `kafka-features.md` (ingest backbone), `cloud.md` (managed offerings)
+
+## 15. Hidden Tips & Tricks
+
+**1. `filter` context is the free lunch.** Filters skip scoring **and** are cached — `bool: { must: [score this], filter: [everything else] }` is routinely 10× faster than putting the same clauses in `must`.
+
+**2. Deep pagination is a trap.** `from: 10000` asks *every* shard for 10,010 docs to sort globally — ES refuses past 10K for a reason. UI pagination: `search_after` + PIT; crawlers: scroll.
+
+**3. `term` on a `text` field almost never matches.** `text` is analyzed (lowercased, split); `term` compares raw. Query the raw value via the `field.keyword` sub-field — or map the field as `keyword` if you never analyze it.
+
+**4. Indexed ≠ searchable.** A doc is invisible for ~1 s until the next refresh (near-real-time). `?refresh=wait_for` is for tests; design production flows for eventual visibility instead.
+
+**5. Shard count is chosen at index creation.** Over-sharding (tiny 1 GB indices × 50 shards) drowns the cluster in per-shard overhead; under-sharding caps parallelism. Target ~10–50 GB per shard and use ILM to roll time-series indices.
+
+**6. Deletes don't free space.** Deleted docs are tombstones until segment merge — disk keeps climbing during heavy delete churn. Watch merge pressure; force-merge read-only indices.
+
+## 16. Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Put non-scoring clauses in `filter` context (cached, fast) | Don't score what you only need to match |
+| Use `search_after` + PIT for deep pagination | Don't `from: 10000` — every shard sorts 10,010 docs for you |
+| Query `field.keyword` (or map `keyword`) for exact matches | Don't `term`-query analyzed `text` fields and expect hits |
+| Size shards ~10–50 GB with ILM rolling time-series indices | Don't create 50 shards for a 1 GB index (or 1 shard for 1 TB) |
+| Model aliases + zero-downtime reindex flows | Don't reindex in place and hold your breath — mappings are near-immutable |

@@ -103,6 +103,8 @@ A quick-reference catalog of the LLM and agentic-AI building blocks used in prod
 12. [Production Concerns — Cost, Latency, Caching](#12-production-concerns--cost-latency-caching)
 13. [Agentic AI in This Repo's Designs](#13-agentic-ai-in-this-repos-designs)
 14. [Key Takeaways](#14-key-takeaways)
+15. [Hidden Tips & Tricks](#15-hidden-tips--tricks)
+16. [Do's & Don'ts](#16-dos--donts)
 
 </details>
 
@@ -454,3 +456,27 @@ const messages = [{ role: "system", content: SYSTEM },
 6. **Treat model outputs as untrusted input** — injection defense and confirmation gates are table stakes
 7. **Evals are the tests of AI engineering** — no green eval suite, no deploy
 8. Related: `system-design-llm-inference.md` (self-hosted serving), `cloud.md` (managed AI stack), `postgresql-features.md` (pgvector)
+
+## 15. Hidden Tips & Tricks
+
+**1. Temperature 0 isn't determinism.** Batching, paging, and MoE routing make identical prompts diverge across runs and providers. Pin model *versions* (not aliases), set seeds where supported, and evaluate with N-run samples — "but it worked when I tried it" is not a test.
+
+**2. Context quality beats context quantity.** Accuracy degrades as the window fills ("lost in the middle" — models recall the start and end best). Put hard instructions first and last; compress or drop the middle; retrieve less, retrieve better.
+
+**3. Agent loops need a guillotine.** Cap tool-call iterations and token budget per run, and give the agent a literal `give_up` tool to emit. Runaway loops burn money silently at 3 a.m. — budget alarms are part of the agent, not the FinOps team.
+
+**4. Prompt-prefix caching has an ordering contract.** Static content first, dynamic content last — reordering (even a timestamp early in the prompt) invalidates the cached prefix and 10×'s your token bill.
+
+**5. Tool schemas are suggestions until validated.** The model *will* invent a parameter name you never defined. Validate tool args against the JSON schema before execution and return schema-violation errors as tool results — the model self-corrects next turn.
+
+**6. Model upgrades are dependency upgrades.** "Better on benchmarks" can flip tool-call formatting or system-prompt obedience. Keep the golden-set eval suite (§14) as the gate: no model version change ships without it.
+
+## 16. Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Pin model versions; gate changes behind golden-set evals | Don't swap model aliases in prod and hope behavior holds |
+| Validate every tool call against its JSON schema before executing | Don't execute unvalidated model-invented arguments |
+| Cap agent iterations and token budget; provide a `give_up` exit | Don't let the ReAct loop run unbounded overnight |
+| Keep secrets in tool servers (MCP), scoped per agent | Don't paste API keys into system prompts |
+| Log traces (inputs, tool calls, token counts) for every run | Don't debug agents from user screenshots — observability first |

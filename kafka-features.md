@@ -93,6 +93,8 @@ A quick-reference catalog of Apache Kafka features used in event-driven backends
 14. [Kafka as the Backbone — Classic Use Cases](#14-kafka-as-the-backbone--classic-use-cases)
 15. [Operational Features](#15-operational-features)
 16. [Key Takeaways](#16-key-takeaways)
+17. [Hidden Tips & Tricks](#17-hidden-tips--tricks)
+18. [Do's & Don'ts](#18-dos--donts)
 
 </details>
 
@@ -522,3 +524,38 @@ kafka-acls.sh --bootstrap-server localhost:9092 --add \
 - [PostgreSQL Features Guide](postgresql-features.md) — logical replication / CDC source
 - [Redis Features Guide](redis-features.md) — the lighter-weight queue/cache alternative
 - [System Design Concepts](system-design-concepts.md) — outbox, event sourcing, DLQ
+
+## 17. Hidden Tips & Tricks
+
+The operational "aha"s that never make it into hello-world tutorials.
+
+**1. Consumers can outnumber partitions — the extras just sit idle.**
+
+| If your topic has 3 partitions… | …and your consumer group has 4 consumers |
+| :--- | :--- |
+| Partition 0 | Assigned to **Consumer A** |
+| Partition 1 | Assigned to **Consumer B** |
+| Partition 2 | Assigned to **Consumer C** |
+| *(no partitions left)* | **Consumer D sits idle** doing nothing |
+
+Parallelism ceiling = partition count. Want to speed up reading by adding consumers? Make sure the topic has enough partitions to hand out first.
+
+**2. What happens when Consumer A crashes?** The group coordinator notices (heartbeat/session timeout), triggers a **rebalance**, and A's partitions reassign to B/C/D — committed offsets are preserved, processing pauses briefly. With **cooperative-sticky** only the moved partitions pause; with **static membership** (`group.instance.id`), a restart inside `session.timeout.ms` triggers *no* rebalance at all.
+
+**3. Ordering is per-partition only.** Two events for the same user land on the same partition (same key) — ordered. Change the key format once and ordering silently breaks. Never re-key a topic whose consumers depend on ordering.
+
+**4. Partitions can grow, never shrink.** `--alter --partitions 8` works; going back to 4 does not exist. And adding partitions changes key→partition mapping for *new* keys — scale before consumers depend on key-affinity.
+
+**5. Retention can eat data a slow consumer never read.** `retention.ms=24h` + a consumer offline for 3 days = it resumes past the deleted segments (or into `OffsetOutOfRange`). Size retention to worst-case consumer downtime, not average.
+
+**6. Replication factor alone guarantees nothing.** RF=3 with `min.insync.replicas=1` tolerates *zero* broker loss on writes — the durability contract is the pair (`acks=all` + `min.insync.replicas`), not the factor.
+
+## 18. Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Set `acks=all` + `min.insync.replicas=2` (RF≥3) on anything that must not lose data | Don't treat replication factor as a durability guarantee by itself |
+| Key messages by entity (`user_id`, `order_id`) for ordering where it matters | Don't use `null` keys round-robin and then expect per-entity ordering |
+| Size partitions for peak × headroom at topic creation (they never shrink) | Don't add 500 partitions "just in case" — per-partition cost is real (fds, rebalance time, controller load) |
+| Use cooperative-sticky + static membership for long-running services | Don't deploy consumer fleets with eager rebalancing and tight probes (rebalance storms) |
+| Monitor consumer lag slope and URP count; alert on both | Don't restart brokers during a rebalance to "fix" lag — you'll make it worse |
