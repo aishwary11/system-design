@@ -119,6 +119,7 @@ const STEM_BY_FILE_BLOCK = (file, blockIdx) => {
   if (file === 'system-design-concepts.md') return 'concept-' + ['sharding', 'replication', 'quorum'][blockIdx];
   if (/^system-design-/.test(file)) return file.replace(/^system-design-/, '').replace(/\.md$/, '');
   if (file === 'README.md') return 'template';
+  if (file === 'cloud.md') return 'cloud-at-a-glance';
   return file.replace(/-features\.md$/, '') + '-at-a-glance';
 };
 

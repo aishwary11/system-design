@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "DevOps at a Glance",
+    "output": "devops-at-a-glance.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      996,
+      1150
+    ]
+  },
+  "components": [
+    {
+      "id": "dev",
+      "type": "external",
+      "label": "Developer PR",
+      "sublabel": "commit + push",
+      "pos": [
+        396,
+        70
+      ],
+      "size": [
+        168,
+        62
+      ]
+    },
+    {
+      "id": "ci",
+      "type": "backend",
+      "label": "CI Pipeline",
+      "sublabel": "lint - test - SAST - build",
+      "pos": [
+        86,
+        322
+      ],
+      "size": [
+        190,
+        62
+      ]
+    },
+    {
+      "id": "reg",
+      "type": "backend",
+      "label": "Registry",
+      "sublabel": "signed image + SBOM",
+      "pos": [
+        385,
+        322
+      ],
+      "size": [
+        190,
+        62
+      ]
+    },
+    {
+      "id": "gate",
+      "type": "security",
+      "label": "Quality Gates",
+      "sublabel": "SonarQube - Trivy",
+      "pos": [
+        684,
+        322
+      ],
+      "size": [
+        190,
+        62
+      ]
+    },
+    {
+      "id": "gitops",
+      "type": "messagebus",
+      "label": "GitOps Repo",
+      "sublabel": "manifests + tag bump",
+      "pos": [
+        86,
+        626
+      ],
+      "size": [
+        190,
+        62
+      ]
+    },
+    {
+      "id": "argo",
+      "type": "backend",
+      "label": "ArgoCD",
+      "sublabel": "reconcile - canary",
+      "pos": [
+        385,
+        626
+      ],
+      "size": [
+        190,
+        62
+      ]
+    },
+    {
+      "id": "k8s",
+      "type": "database",
+      "label": "Kubernetes",
+      "sublabel": "pods - services - HPA",
+      "pos": [
+        684,
+        626
+      ],
+      "size": [
+        190,
+        62
+      ]
+    },
+    {
+      "id": "obs",
+      "type": "backend",
+      "label": "Observability",
+      "sublabel": "Prometheus - Grafana",
+      "pos": [
+        235,
+        930
+      ],
+      "size": [
+        190,
+        62
+      ]
+    },
+    {
+      "id": "sre",
+      "type": "external",
+      "label": "SLOs & Error Budgets",
+      "sublabel": "burn-rate alerts",
+      "pos": [
+        535,
+        930
+      ],
+      "size": [
+        190,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Delivery Platform",
+      "wraps": [
+        "ci",
+        "reg",
+        "gate",
+        "gitops",
+        "argo",
+        "k8s",
+        "obs",
+        "sre"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e-dev-ci",
+      "from": "dev",
+      "to": "ci",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-ci-reg",
+      "from": "ci",
+      "to": "reg",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "e-reg-gate",
+      "from": "reg",
+      "to": "gate",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "e-gate-gitops",
+      "from": "gate",
+      "to": "gitops",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-gitops-argo",
+      "from": "gitops",
+      "to": "argo",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "e-argo-k8s",
+      "from": "argo",
+      "to": "k8s",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "e-k8s-obs",
+      "from": "k8s",
+      "to": "obs",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-obs-argo",
+      "from": "obs",
+      "to": "argo",
+      "fromSide": "left",
+      "toSide": "bottom"
+    },
+    {
+      "id": "e-obs-sre",
+      "from": "obs",
+      "to": "sre",
+      "fromSide": "right",
+      "toSide": "left"
+    }
+  ]
+}

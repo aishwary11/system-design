@@ -4,7 +4,7 @@
 
 </div>
 
-The foundational concepts behind every distributed system, each explained in a few lines with a tiny, concrete example: **sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus (Raft/Paxos), two-phase commit, CRDTs, event-driven architecture, DLQs, backpressure, quorum reads & writes, consistency models, PACELC, write-ahead logs, B-tree vs LSM storage engines, checksums, distributed locking, service discovery, API gateways vs service meshes, CDNs, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLIs/SLOs, multi-region disaster recovery, deployment strategies and geospatial indexing.**
+The foundational concepts behind every distributed system, each explained in a few lines with a tiny, concrete example: **sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus (Raft/Paxos), two-phase commit, CRDTs, event-driven architecture, DLQs, backpressure, quorum reads & writes, consistency models, PACELC, write-ahead logs, B-tree vs LSM storage engines, checksums, distributed locking, service discovery, API gateways vs service meshes, CDNs, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLIs/SLOs, multi-region disaster recovery, deployment strategies, load shedding & graceful degradation, geospatial indexing, back-of-the-envelope estimation, DNS, security & auth (OAuth2/JWT/mTLS), API styles (REST/gRPC/GraphQL) and performance vs scalability.**
 
 **Part II adds 17 classic algorithms** — Luhn's (credit card validation), Dijkstra, A*, BFS/DFS, topological sort, union-find, trie, LRU cache, external sort, reservoir sampling, count-min sketch, HyperLogLog, Levenshtein, KMP/Rabin-Karp, haversine, Base62/Snowflake IDs, sliding window — each with a runnable JavaScript implementation and where it's used in system design.
 
@@ -41,6 +41,7 @@ The foundational concepts behind every distributed system, each explained in a f
 24. [Two-Phase Commit (2PC) vs Saga](#24-two-phase-commit-2pc-vs-saga)
 25. [CRDTs — Conflict-Free Replicated Data Types](#25-crdts--conflict-free-replicated-data-types)
 26. [Event-Driven Architecture](#26-event-driven-architecture)
+27. [Load Shedding & Graceful Degradation](#27-load-shedding--graceful-degradation)
 28. [Quorum Reads & Writes](#28-quorum-reads--writes)
 29. [Consistency Models](#29-consistency-models)
 30. [PACELC Theorem](#30-pacelc-theorem)
@@ -62,31 +63,36 @@ The foundational concepts behind every distributed system, each explained in a f
 46. [Multi-Region & Disaster Recovery](#46-multi-region--disaster-recovery)
 47. [Deployment Strategies](#47-deployment-strategies)
 48. [Geospatial Indexing (Geohash & S2)](#48-geospatial-indexing-geohash--s2)
-49. [Quick Map: Concept → Problem Solved](#49-quick-map-concept--problem-solved)
+49. [Back-of-the-Envelope Estimation](#49-back-of-the-envelope-estimation)
+50. [DNS — The Internet's Directory](#50-dns--the-internets-directory)
+51. [Security & AuthN/AuthZ (OAuth2, JWT, mTLS)](#51-security--authnauthz-oauth2-jwt-mtls)
+52. [API Styles — REST vs gRPC vs GraphQL](#52-api-styles--rest-vs-grpc-vs-graphql)
+53. [Performance vs Scalability (and Latency vs Throughput)](#53-performance-vs-scalability-and-latency-vs-throughput)
+54. [Quick Map: Concept → Problem Solved](#54-quick-map-concept--problem-solved)
 
 </details>
 
 **Part II — Classic Algorithms & Data Structures (LLD)**
-50. [Luhn's Algorithm (Credit Card Validation)](#50-luhns-algorithm-credit-card-validation)
-51. [Dijkstra's Shortest Path](#51-dijkstras-shortest-path)
-52. [A* Search](#52-a-search)
-53. [BFS & DFS Graph Traversal](#53-bfs--dfs-graph-traversal)
-54. [Topological Sort (Kahn's Algorithm)](#54-topological-sort-kahns-algorithm)
-55. [Union-Find (Disjoint Set)](#55-union-find-disjoint-set)
-56. [Trie (Prefix Tree)](#56-trie-prefix-tree)
-57. [LRU Cache](#57-lru-cache)
-58. [External Sort & K-Way Merge](#58-external-sort--k-way-merge)
-59. [Reservoir Sampling](#59-reservoir-sampling)
-60. [Count-Min Sketch](#60-count-min-sketch)
-61. [HyperLogLog (Cardinality Estimation)](#61-hyperloglog-cardinality-estimation)
-62. [Levenshtein Distance (Edit Distance)](#62-levenshtein-distance-edit-distance)
-63. [String Matching (KMP & Rabin-Karp)](#63-string-matching-kmp--rabin-karp)
-64. [Haversine Distance](#64-haversine-distance)
-65. [Base62 Encoding & Snowflake IDs](#65-base62-encoding--snowflake-ids)
-66. [Sliding Window & Two Pointers](#66-sliding-window--two-pointers)
+55. [Luhn's Algorithm (Credit Card Validation)](#55-luhns-algorithm-credit-card-validation)
+56. [Dijkstra's Shortest Path](#56-dijkstras-shortest-path)
+57. [A* Search](#57-a-search)
+58. [BFS & DFS Graph Traversal](#58-bfs--dfs-graph-traversal)
+59. [Topological Sort (Kahn's Algorithm)](#59-topological-sort-kahns-algorithm)
+60. [Union-Find (Disjoint Set)](#60-union-find-disjoint-set)
+61. [Trie (Prefix Tree)](#61-trie-prefix-tree)
+62. [LRU Cache](#62-lru-cache)
+63. [External Sort & K-Way Merge](#63-external-sort--k-way-merge)
+64. [Reservoir Sampling](#64-reservoir-sampling)
+65. [Count-Min Sketch](#65-count-min-sketch)
+66. [HyperLogLog (Cardinality Estimation)](#66-hyperloglog-cardinality-estimation)
+67. [Levenshtein Distance (Edit Distance)](#67-levenshtein-distance-edit-distance)
+68. [String Matching (KMP & Rabin-Karp)](#68-string-matching-kmp--rabin-karp)
+69. [Haversine Distance](#69-haversine-distance)
+70. [Base62 Encoding & Snowflake IDs](#70-base62-encoding--snowflake-ids)
+71. [Sliding Window & Two Pointers](#71-sliding-window--two-pointers)
 
 **Part III — Tricky "Magic" Questions (How Does It Even Work?)**
-67. [The "Magic" Questions — With Answers](#67-the-magic-questions--with-answers)
+72. [The "Magic" Questions — With Answers](#72-the-magic-questions--with-answers)
 
 ---
 
@@ -1022,6 +1028,30 @@ OrderService ──OrderCreated──► Kafka topic "orders"
 
 Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the log is the source of truth, and Kafka as the durable backbone (`kafka-features.md`).
 
+## 27. Load Shedding & Graceful Degradation
+
+**Problem:** when load exceeds capacity (flash sale, viral moment, dependency outage), queues grow and latency explodes everywhere — a totally overloaded service is *less* useful than a partially available one, and unbounded queues just delay the failure.
+**Idea:** measure saturation (queue depth, concurrency, CPU), and when above a threshold **reject excess work early** with a clear signal (`503` + `Retry-After`), dropping the cheapest requests first — shed reads before writes, unauthenticated traffic before logged-in users, background jobs before interactive requests. Combine with **graceful degradation**: pre-planned reduced-quality modes (skip recommendations, drop images, serve cached pages, disable non-critical features) so the core flow survives.
+
+```text
+                saturation = queue_depth / queue_capacity
+                ┌────────────────────────────────────────────┐
+  requests ───► │ < 70%: admit all                           │
+                │ 70-90%: admit priority users, shed others  │
+                │ > 90%: admit writes/critical only, 503 rest│
+                └────────────────────────────────────────────┘
+   degraded mode: homepage serves cached HTML, checkout stays up
+```
+
+| Mechanism | What it does | Cost |
+| --------- | ------------ | ---- |
+| Load shedding | reject excess requests at the door | callers see errors instead of timeouts |
+| Priority classes | VIP/paid/interactive traffic survives | fairness rules must be defined up front |
+| Feature flags | turn off non-critical features under load | product must accept reduced functionality |
+| Static fallback | serve last-known-good cached content | data may be stale |
+
+Pairs with: backpressure (§21) to slow producers before shedding, rate limiting (§12) to cap per-client load, circuit breaker (§11) so downstream failures trigger degradation, and timeouts & hedging (§40) so rejected requests fail fast elsewhere.
+
 ## 28. Quorum Reads & Writes
 
 **Problem:** with N replicas, a write must reach enough nodes to be safe and a read must not return stale data — but you can't wait for *all* nodes (one slow node would block everything), and you don't know which are up.
@@ -1573,7 +1603,129 @@ Two-tier pattern everywhere: coarse index (geohash prefix / bbox / S2 cell) gets
 
 ---
 
-## 49. Quick Map: Concept → Problem Solved
+## 49. Back-of-the-Envelope Estimation
+
+**Problem:** interviews and design reviews start with "can this even work?" — you need order-of-magnitude answers from first principles, fast.
+**Idea:** memorize a small table of powers and latency numbers, express a workload in one line (users → QPS → bytes/day), and do arithmetic in your head. Precision is pointless; magnitude is everything.
+
+```text
+Powers of two & decimal
+  2^10 ≈ 1K      2^20 ≈ 1M      2^30 ≈ 1G      2^40 ≈ 1T
+  1 day   ≈ 86,400s  ≈ 100Ks       1M QPS-day writes = 1M rows × 1KB = 1GB/day
+
+Latency numbers every programmer should know (2026 hardware)
+  L1 cache      0.5ns      |  SSD random read  100µs (16µs NVMe)
+  Branch mispredict 3ns    |  1Gbps network     10ms/10GB
+  L2 cache      7ns        |  HDD seek          10ms
+  Mutex lock    25ns       |  CA→NL RTT         ~70ms
+  Main memory   100ns      |  TLS handshake     ~50ms (0 with resumption)
+  SSD seq read  4µs        |  LLM TTFT          300–800ms
+```
+
+| Step | Question | Example (Twitter-scale) |
+| :--- | :--- | :--- |
+| 1 | users → DAU | 300M DAU |
+| 2 | DAU → actions | each posts 2×, reads 100× |
+| 3 | actions → QPS | 600M posts/day ≈ 7K write QPS avg, 35K peak (5×) |
+| 4 | QPS → storage | 7K/s × 1KB × 86,400s ≈ 600GB/day ≈ 200TB/yr |
+| 5 | storage → servers | 7K QPS at 1K/instance = 7 + replicas; feed reads 100× that → cache-heavy |
+
+Pairs with: every design doc's **Key Numbers** table is a worked example; sharding math (§1), cache sizing (§16), and cost tiers in each doc all fall out of this arithmetic.
+
+---
+
+## 50. DNS — The Internet's Directory
+
+**Problem:** clients need IPs, but IPs change (failover, autoscaling, multi-region) and humans need names.
+**Idea:** a hierarchical, globally cached lookup system: **client → resolver → root → TLD (.com) → authoritative nameserver** — with TTLs at every hop so the world doesn't query roots constantly.
+
+```text
+api.example.com  →  CNAME  →  edge.example-cdn.net
+                 →  A      →  151.101.1.10    (TTL 300s)
+Record types: A/AAAA (IP), CNAME (alias), NS (delegation), MX (mail), TXT (proof/SPF/DNS-01)
+```
+
+| Record choice | Design impact |
+| :--- | :--- |
+| Low TTL (30–300s) | fast failover — but resolver-cache load |
+| Weighted / latency routing | traffic shifting for canaries (§47) |
+| Health checks + failover records | region down → DNS stops answering with it |
+| TXT DNS-01 | TLS wildcard certs without opening ports |
+
+Pairs with: multi-region DR (§46) uses DNS failover as the last switch; CDN & edge caching (§37) starts at the CNAME; Route 53/Cloud DNS/Azure DNS in `cloud.md` §10.
+
+---
+
+## 51. Security & AuthN/AuthZ (OAuth2, JWT, mTLS)
+
+**Problem:** every request needs two answers — **who are you** (authentication) and **what may you do** (authorization) — across services, browsers, and mobile apps, without shipping passwords around.
+**Idea:** standard tokens and trust chains: **JWT** for self-contained claims, **OAuth2/OIDC** flows for delegated access, **mTLS** for service-to-service identity, plus TLS everywhere.
+
+```text
+JWT = header.payload.signature (base64url, signed — not encrypted)
+  header  {alg: RS256}          payload {sub: user42, scope: "orders:read", exp: +15m}
+OAuth2 flows: authorization-code (+PKCE for SPA/mobile) · client-credentials (service→service)
+mTLS: both sides present certs; mesh sidecars (§36) handle it per-hop
+```
+
+| Mechanism | Use | Pitfall it avoids |
+| :--- | :--- | :--- |
+| Short-lived JWT (5–15m) + refresh | stateless API auth | revocation pain of forever tokens |
+| OIDC on top of OAuth2 | identity (who), not just access | ad-hoc login protocols |
+| Client-credentials + mTLS | service-to-service | shared secrets in config |
+| Per-service scopes | least privilege | one god-token |
+
+**Webhook signatures** (HMAC of body + timestamp) and **idempotency keys** (§10) complete the money-flow story (`system-design-payment-system.md`). Security review should also cover the LLM surface — see `agentic-ai-features.md` §9.
+
+---
+
+## 52. API Styles — REST vs gRPC vs GraphQL
+
+**Problem:** the wire contract shapes latency, cacheability, and team autonomy — picking wrong costs months.
+**Idea:** match the style to the caller and the workload.
+
+| Style | Sweet spot | Trade-off |
+| :--- | :--- | :--- |
+| **REST/JSON** | public APIs, browsers, cacheability (HTTP verbs + status codes) | chatty for fine-grained needs; versioning discipline needed |
+| **gRPC** | internal service-to-service, streaming, polyglot contracts (proto) | binary (harder browser/CDN story); requires proto discipline |
+| **GraphQL** | mobile/web aggregating many resources in one round trip | server complexity; query-cost limits; caching is harder |
+| **WebSockets/SSE** | server-push (feeds, chat, docs) | stateful connections (sticky LB / gateway) |
+
+```text
+Public:      REST + JSON + OAuth2 (cacheable, boring, universal)
+Internal:    gRPC + mTLS (typed, fast, contracts in git)
+Mobile BFF:  GraphQL gateway over domain REST/gRPC (one round trip)
+Realtime:    WebSocket gateway → fan-out (messaging-app, discord docs)
+```
+
+Pairs with: API gateway vs mesh (§36) — the gateway terminates the public style, the mesh carries the internal one; JSON is the interoperability baseline covered in `mongodb-features.md`.
+
+---
+
+## 53. Performance vs Scalability (and Latency vs Throughput)
+
+**Problem:** "it's fast" and "it scales" are different properties — teams optimize the wrong one and get paged anyway.
+**Idea:** a service is **scalable** if adding resources improves performance proportionally; it is **performant** if it meets latency targets for the current load. **Latency** = time per request; **throughput** = requests per second. They trade off until you attack the bottleneck class itself.
+
+```text
+Load test: 1 node serves 1K QPS @ 20ms.
+  Throughput problem: 5K QPS arrives → add nodes → 5K QPS @ 20ms  (scaled!)
+  Latency problem:    1K QPS now takes 200ms → more nodes DON'T fix it
+                      → fix the query, the lock, the GC, the chatty loop
+```
+
+| Signal | Diagnosis | Lever |
+| :--- | :--- | :--- |
+| p50 fine, p99 awful | tail latency (GC, retries, hot keys §43) | hedging (§40), caching, sharding |
+| CPU < 30%, latency high | lock contention / IO wait | concurrency redesign, async |
+| Latency rises with fleet size | coordination overhead | shard further, remove consensus from hot path |
+| Throughput fine at 2× cost | throwing hardware at a bad algorithm | fix the O(n²) |
+
+Pairs with: back-of-the-envelope (§49) sets the targets; SLIs/SLOs (§45) measure them; load shedding (§27) protects them under overload.
+
+---
+
+## 54. Quick Map: Concept → Problem Solved
 Lost? Start here - find the concept that matches the problem you are solving:
 
 | Concept | Solves | See also |
@@ -1625,13 +1777,13 @@ Lost? Start here - find the concept that matches the problem you are solving:
 | Multi-region & DR | survive a region outage | — |
 | Deployment strategies | ship safely, roll back fast | — |
 | Geospatial indexing | "near me" at scale | system-design-proximity-service.md |
-| Algorithms (Luhn, Dijkstra, LRU, …) | classic LLD interview tools, JS included | Part II — §50–§66 |
+| Algorithms (Luhn, Dijkstra, LRU, …) | classic LLD interview tools, JS included | Part II — §55–§71 |
 
 ---
 
 ## Part II — Classic Algorithms & Data Structures (LLD)
 
-## 50. Luhn's Algorithm (Credit Card Validation)
+## 55. Luhn's Algorithm (Credit Card Validation)
 
 **Problem:** a user typos a 16-digit card number — you want to reject it before it reaches the payment provider, without a database lookup.
 **Idea:** a checksum-style format check: from the rightmost (check) digit, double every second digit; any doubled digit > 9 subtracts 9; the total must be divisible by 10. Catches every single-digit error and ~90% of adjacent-transposition errors.
@@ -1656,7 +1808,7 @@ Luhn is a *format* check, not security: still verify with the issuer, tokenize (
 
 ---
 
-## 51. Dijkstra's Shortest Path
+## 56. Dijkstra's Shortest Path
 
 **Problem:** cheapest route from A to B on a weighted graph (roads with travel times, network hops with latency) — exploring every path is exponential.
 **Idea:** expand nodes in order of current best known distance: pop the closest unsettled node, relax its neighbors, stop when the destination is popped. O((V + E) log V) with a min-heap.
@@ -1684,10 +1836,10 @@ Where: route engines (Google Maps), network routing (OSPF), P2P overlays. Positi
 
 ---
 
-## 52. A* Search
+## 57. A* Search
 
 **Problem:** Dijkstra expands in all directions; with an estimate of where the goal is, you can skip most of the map.
-**Idea:** score every node f(n) = g(n) + h(n): known cost so far + an **admissible heuristic** (straight-line / haversine §64 distance). Expand lowest f first — optimal whenever h never overestimates.
+**Idea:** score every node f(n) = g(n) + h(n): known cost so far + an **admissible heuristic** (straight-line / haversine §69 distance). Expand lowest f first — optimal whenever h never overestimates.
 
 ```js
 // grid: 2D array of walkable cells; h: heuristic (e.g. straight-line distance to goal)
@@ -1717,7 +1869,7 @@ Where: navigation, delivery routing, games — the heuristic is what turns Dijks
 
 ---
 
-## 53. BFS & DFS Graph Traversal
+## 58. BFS & DFS Graph Traversal
 
 **Problem:** explore a graph: shortest number of hops (BFS) or deep traversal / cycle detection (DFS).
 **Idea:** BFS = queue, visits by layers — the first time you see a node is the fewest-edge path (unweighted graphs). DFS = stack / recursion — finds cycles, connected components, and post-order.
@@ -1749,7 +1901,7 @@ Where: web-crawler.md (BFS frontier), social graphs (friends-of-friends), metro 
 
 ---
 
-## 54. Topological Sort (Kahn's Algorithm)
+## 59. Topological Sort (Kahn's Algorithm)
 
 **Problem:** order tasks where some depend on others — build pipelines, DB migrations, stream-processing DAGs, Spark stages — and detect circular dependencies.
 **Idea (Kahn):** repeatedly remove nodes with in-degree 0; the removal order is a valid order; if nodes remain, there's a cycle.
@@ -1773,7 +1925,7 @@ Where: delayed-job-scheduler.md (job DAGs), schema migrations, Airflow/DAG orche
 
 ---
 
-## 55. Union-Find (Disjoint Set)
+## 60. Union-Find (Disjoint Set)
 
 **Problem:** maintain connected components dynamically — friend circles, fraud-related accounts, dedupe clusters — with near-constant-time operations.
 **Idea:** parent pointers + **union by rank** + **path compression** → amortized α(n), practically O(1).
@@ -1800,7 +1952,7 @@ Where: social networks (mutual friends), fraud detection (linked accounts), craw
 
 ---
 
-## 56. Trie (Prefix Tree)
+## 61. Trie (Prefix Tree)
 
 **Problem:** prefix queries at scale — autocomplete, dictionary lookup, IP routing — where comparing full strings repeatedly is wasteful.
 **Idea:** a tree where each edge is one character and every node is a prefix. Insert / search / prefix-walk cost O(key length), independent of dictionary size.
@@ -1830,7 +1982,7 @@ Where: search-autocomplete.md (prefix → top-k suggestions; each node holds a r
 
 ---
 
-## 57. LRU Cache
+## 62. LRU Cache
 
 **Problem:** a bounded cache must evict the least-recently-used entry, and both get and put must be O(1).
 **Idea:** hash map for O(1) lookup + recency tracking; get touches the entry, put evicts the least-recent one when full. (Interview version: doubly-linked list + hash map — same complexity, no reliance on Map ordering.)
@@ -1855,7 +2007,7 @@ Where: system-design-distributed-cache.md, Redis `allkeys-lru`, CDN edge caches,
 
 ---
 
-## 58. External Sort & K-Way Merge
+## 63. External Sort & K-Way Merge
 
 **Problem:** sorting 1 TB of URLs on a machine with 8 GB RAM (crawler dedupe, index building) — the data never fits in memory.
 **Idea:** split into chunks that fit in RAM → sort each in memory → write sorted runs to disk → **k-way merge** with a heap, streaming the output.
@@ -1880,7 +2032,7 @@ Where: web-crawler.md URL dedupe, search index building, MapReduce shuffle phase
 
 ---
 
-## 59. Reservoir Sampling
+## 64. Reservoir Sampling
 
 **Problem:** pick k uniform-random items from a stream of unknown (or unbounded) size — without storing the stream.
 **Idea:** keep the first k items; for item i ≥ k, replace a random slot with probability k/i. Every item ends up selected with equal probability k/n.
@@ -1903,7 +2055,7 @@ Where: canary selection (§47), A/B test assignment, metrics/tracing sampling (�
 
 ---
 
-## 60. Count-Min Sketch
+## 65. Count-Min Sketch
 
 **Problem:** track frequencies of top items in a stream (trending topics, hot keys §43, per-key rate limiting) with bounded memory — exact counts for every key don't fit.
 **Idea:** d rows of counters, each row hashed by a different hash function; estimate = **min** across rows. Never undercounts; may overcount (hash collisions).
@@ -1931,11 +2083,11 @@ const cms = new CountMinSketch();
 cms.count("video:42");   // ≥ 2 — exact or overcount, never under
 ```
 
-Where: hot-key detection (§43), trending hashtags, heavy hitters — pairs with bloom filter (§17, membership) and HLL (§61, distinct counts).
+Where: hot-key detection (§43), trending hashtags, heavy hitters — pairs with bloom filter (§17, membership) and HLL (§66, distinct counts).
 
 ---
 
-## 61. HyperLogLog (Cardinality Estimation)
+## 66. HyperLogLog (Cardinality Estimation)
 
 **Problem:** "how many distinct visitors today?" on a stream of billions — exact counting needs memory proportional to the set size.
 **Idea:** hash each element; keep the maximum run of leading zeros per register bucket; estimate ≈ 2^maxZeros averaged across registers. Redis PFADD/PFCOUNT: ~12 KB regardless of cardinality, ~0.8% error.
@@ -1959,7 +2111,7 @@ Where: redis-features.md (HLL data type), analytics dashboards, ad-tech reach co
 
 ---
 
-## 62. Levenshtein Distance (Edit Distance)
+## 67. Levenshtein Distance (Edit Distance)
 
 **Problem:** fuzzy match — "did the user mean 'resturant'?" — or dedupe similar records (addresses, names) where exact equality fails.
 **Idea:** dynamic programming: edit distance between prefixes; cost 1 per insert / delete / substitute. O(m·n) time; O(n) space with two rows.
@@ -1982,7 +2134,7 @@ Where: search "did you mean", contact/address dedupe, OCR correction. O(n·m) is
 
 ---
 
-## 63. String Matching (KMP & Rabin-Karp)
+## 68. String Matching (KMP & Rabin-Karp)
 
 **Problem:** find a pattern in text (fraud-pattern scan, log search, content fingerprinting) without re-scanning matched characters on every mismatch.
 **Idea:** **KMP** precomputes the longest-prefix-suffix (LPS) table and never backtracks — O(n + m). **Rabin-Karp** hashes a sliding window and compares hashes — O(n) average, and one pass can check *many* patterns simultaneously (verify on hash match).
@@ -2008,7 +2160,7 @@ Where: intrusion/abuse pattern scanning, streaming content fingerprinting (rolli
 
 ---
 
-## 64. Haversine Distance
+## 69. Haversine Distance
 
 **Problem:** exact distance between two (lat, lng) points — courier ETAs, "within 5 km", driver matching.
 **Idea:** spherical-law formula (haversine) over Earth's radius R ≈ 6371 km. Below ~1 km a flat-earth approximation is fine.
@@ -2028,7 +2180,7 @@ Where: proximity-service.md, uber.md, food-delivery.md — always as the *final 
 
 ---
 
-## 65. Base62 Encoding & Snowflake IDs
+## 70. Base62 Encoding & Snowflake IDs
 
 **Problem:** URL-shortener keys must be short and URL-safe; globally unique IDs must be generated without a central sequence and ideally sort by time.
 **Idea:** **Base62** (0-9a-zA-Z) shrinks IDs: 7 characters encode ~3.5×10^12 values. **Snowflake** packs 41-bit ms timestamp + 10-bit machine + 12-bit sequence → 4096 IDs/ms/machine, ~69 years, time-ordered, zero coordination.
@@ -2050,7 +2202,7 @@ Where: url-shortener.md (Base62 keys), payment-system.md and messaging-app.md (t
 
 ---
 
-## 66. Sliding Window & Two Pointers
+## 71. Sliding Window & Two Pointers
 
 **Problem:** windowed stats over streams — per-second rate limits, moving averages, anomaly detection — needing O(1) amortized add/evict, not a full recount.
 **Idea:** keep a queue (or circular buffer) of events; on each event, append and drop everything outside the window. Sliding-window *log* (exact), fixed-window *counter* (cheap, bursty), or sliding-window *counter* (buckets, approximate).
@@ -2071,11 +2223,13 @@ Where: rate-limiter.md (token bucket vs sliding window trade-offs), metrics aggr
 
 ---
 
+<a id="72-the-magic-questions--with-answers"></a>
+
 ## Part III — Tricky "Magic" Questions (How Does It Even Work?)
 
 The interview questions that sound impossible — *how does Shazam identify a song from two seconds of noisy audio?* Each answer below shows the magic is a real system built from the concepts in Parts I and II.
 
-## 67. The "Magic" Questions — With Answers
+## 72. The "Magic" Questions — With Answers
 
 **Q1. How does Shazam identify a song from just 2 seconds of noisy audio?**
 
@@ -2083,7 +2237,7 @@ It matches on frequencies, never on audio. The clip is sampled at 44.1 kHz and r
 
 **Q2. How does Google Maps know there's a traffic jam right now?**
 
-Phones (with consent) emit anonymized pings every few seconds. **Map-matching** snaps each noisy GPS fix onto road segments with a Hidden Markov Model solved by Viterbi: emission probability = distance from the point to candidate segments, transition probability = implausibility of jumping across the road graph. Per-segment speed is then a streaming, outlier-trimmed **median over a sliding window** of probe updates (§66) — 1–2% probe coverage suffices for a segment carrying dozens of vehicles. Sparse segments fall back to a historical model keyed `(segment, weekday, minute)`. Privacy is structural, not policy: pings are k-anonymized (aggregated only once ≥ k devices share a segment-window) and only segment-level aggregates are persisted — no individual traces survive. Incidents arrive from authorities and user reports; ETAs fold years of per-segment speed profiles with today's live deviations.
+Phones (with consent) emit anonymized pings every few seconds. **Map-matching** snaps each noisy GPS fix onto road segments with a Hidden Markov Model solved by Viterbi: emission probability = distance from the point to candidate segments, transition probability = implausibility of jumping across the road graph. Per-segment speed is then a streaming, outlier-trimmed **median over a sliding window** of probe updates (§71) — 1–2% probe coverage suffices for a segment carrying dozens of vehicles. Sparse segments fall back to a historical model keyed `(segment, weekday, minute)`. Privacy is structural, not policy: pings are k-anonymized (aggregated only once ≥ k devices share a segment-window) and only segment-level aggregates are persisted — no individual traces survive. Incidents arrive from authorities and user reports; ETAs fold years of per-segment speed profiles with today's live deviations.
 
 **Q3. How does YouTube's Content ID flag a re-uploaded movie clip?**
 
@@ -2095,7 +2249,7 @@ It's a 1:1 vector match that never leaves the phone. **Enrollment**: the camera 
 
 **Q5. How does your keyboard predict the next word before you type it?**
 
-A tiny language model with a hard latency budget (< 20 ms per keystroke, so it runs locally). **Next-word**: a quantized n-gram trie — backoff bigram/trigram counts over a ~50K-word vocabulary, a few MB of RAM — scores `P(w | last 2 words)` and returns top-k; a personal model (contacts, slang, recent words) is unioned and re-ranks the suggestions. Modern keyboards swap the trie for a distilled transformer of a few MB, quantized to INT8 for the phone NPU. **Swipe**: the touched-key sequence is scored as a geometric path — every dictionary word has an ideal x-y trace, and a dynamic-programming alignment (Levenshtein-like, §62) over per-key Gaussian hit costs picks the best word. Keystrokes never leave the phone for latency reasons; personalization syncs via **federated learning** — model deltas, not keystrokes, are what gets uploaded.
+A tiny language model with a hard latency budget (< 20 ms per keystroke, so it runs locally). **Next-word**: a quantized n-gram trie — backoff bigram/trigram counts over a ~50K-word vocabulary, a few MB of RAM — scores `P(w | last 2 words)` and returns top-k; a personal model (contacts, slang, recent words) is unioned and re-ranks the suggestions. Modern keyboards swap the trie for a distilled transformer of a few MB, quantized to INT8 for the phone NPU. **Swipe**: the touched-key sequence is scored as a geometric path — every dictionary word has an ideal x-y trace, and a dynamic-programming alignment (Levenshtein-like, §67) over per-key Gaussian hit costs picks the best word. Keystrokes never leave the phone for latency reasons; personalization syncs via **federated learning** — model deltas, not keystrokes, are what gets uploaded.
 
 **Q6. How do speed cameras read a plate on a car moving at 100 km/h?**
 
@@ -2109,7 +2263,7 @@ The work happened before your query. The crawler builds an **inverted index**: p
 
 Store-and-forward over ciphertext. Each recipient *device* owns a server-side queue; the Signal protocol's double ratchet means the server stores encrypted blobs it cannot read — it manages ordering and TTLs, nothing else. Every message carries a monotonic ID per conversation: one grey tick = queued at the server; on reconnect the device drains its queue and acks a **watermark** (highest contiguous ID delivered), turning ticks blue. Multi-device works because each device has its own queue and watermark. Transport is at-least-once; clients **dedup by message ID** (§10) so redelivery is invisible. Queues carry a TTL (~30 days) — after that the server drops, the sender sees explicit failure rather than silent loss, and the queue can't grow unbounded.
 
-> 💡 The recurring pattern behind every "magic" system: **convert the hard real-world signal into a small, robust fingerprint, index the fingerprints, and let lookups vote.** Shazam (audio peaks), Content ID (keyframe hashes), face unlock (embeddings), search (inverted index), ANPR (checksummed plate text) — the same shape at different scales. Cousins that fingerprint *streams* instead of songs: Bloom filters (§17), Count-Min Sketch (§60), HyperLogLog (§61).
+> 💡 The recurring pattern behind every "magic" system: **convert the hard real-world signal into a small, robust fingerprint, index the fingerprints, and let lookups vote.** Shazam (audio peaks), Content ID (keyframe hashes), face unlock (embeddings), search (inverted index), ANPR (checksummed plate text) — the same shape at different scales. Cousins that fingerprint *streams* instead of songs: Bloom filters (§17), Count-Min Sketch (§65), HyperLogLog (§66).
 
 ### Fingerprint Matching Demo (Shazam-style)
 

@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Route Reconstruction — System Architecture",
+    "output": "route-reconstruction.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      1762
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "Rider Phones",
+      "sublabel": "GPS Pings",
+      "pos": [
+        335,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "Ping Ingest",
+      "sublabel": "Kafka Producer",
+      "pos": [
+        328,
+        322
+      ],
+      "size": [
+        161,
+        62
+      ]
+    },
+    {
+      "id": "lb",
+      "type": "backend",
+      "label": "Trip Closer",
+      "sublabel": "trip end trigger",
+      "pos": [
+        326,
+        574
+      ],
+      "size": [
+        165,
+        62
+      ]
+    },
+    {
+      "id": "svc0",
+      "type": "backend",
+      "label": "Cleaning Svc",
+      "sublabel": "anomaly + Kalman",
+      "pos": [
+        77,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ],
+      "tag": "→ Spark job"
+    },
+    {
+      "id": "svc1",
+      "type": "backend",
+      "label": "Map-Match Svc",
+      "sublabel": "OSRM pool",
+      "pos": [
+        335,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ],
+      "tag": "→ Rate limited"
+    },
+    {
+      "id": "svc2",
+      "type": "backend",
+      "label": "Confidence Tagger",
+      "sublabel": "4-signal gate",
+      "pos": [
+        593,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ],
+      "tag": "→ Service Mesh"
+    },
+    {
+      "id": "store0",
+      "type": "database",
+      "label": "Delta Lake",
+      "sublabel": "trips / matches",
+      "pos": [
+        72,
+        1078
+      ],
+      "size": [
+        158,
+        62
+      ],
+      "tag": "→ S3 backed"
+    },
+    {
+      "id": "store1",
+      "type": "database",
+      "label": "OSRM Road Graph",
+      "sublabel": "OSM extract",
+      "pos": [
+        340,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "store2",
+      "type": "database",
+      "label": "Redis Consensus",
+      "sublabel": "hot OD pairs",
+      "pos": [
+        598,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "stream",
+      "type": "messagebus",
+      "label": "Kafka",
+      "tag": "→ DLQ",
+      "pos": [
+        335,
+        1330
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker0",
+      "type": "backend",
+      "label": "Consensus Builder",
+      "sublabel": "HMM / Viterbi",
+      "pos": [
+        70,
+        1582
+      ],
+      "size": [
+        151,
+        62
+      ]
+    },
+    {
+      "id": "worker1",
+      "type": "backend",
+      "label": "Deviation Scorer",
+      "sublabel": "online alerts",
+      "pos": [
+        331,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker2",
+      "type": "backend",
+      "label": "ETA Feature Jobs",
+      "sublabel": "ML training feed",
+      "pos": [
+        589,
+        1582
+      ],
+      "size": [
+        158,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Route Reconstruction (Route IQ)",
+      "wraps": [
+        "edge",
+        "lb",
+        "svc0",
+        "svc1",
+        "svc2",
+        "worker0",
+        "worker1",
+        "worker2",
+        "store0",
+        "store1",
+        "store2",
+        "stream"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1",
+      "from": "clients",
+      "to": "edge",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2",
+      "from": "edge",
+      "to": "lb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3",
+      "from": "lb",
+      "to": "svc0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4",
+      "from": "lb",
+      "to": "svc1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5",
+      "from": "lb",
+      "to": "svc2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6",
+      "from": "svc0",
+      "to": "store0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e7",
+      "from": "svc1",
+      "to": "store1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e8",
+      "from": "svc2",
+      "to": "store2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e9",
+      "from": "store0",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e10",
+      "from": "store1",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e11",
+      "from": "store2",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e12",
+      "from": "stream",
+      "to": "worker0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e13",
+      "from": "stream",
+      "to": "worker1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e14",
+      "from": "stream",
+      "to": "worker2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "RabbitMQ at a Glance",
+    "output": "rabbitmq-at-a-glance.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      996,
+      1338
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "Producers",
+      "pos": [
+        396,
+        70
+      ],
+      "size": [
+        168,
+        62
+      ],
+      "sublabel": "API Clients"
+    },
+    {
+      "id": "svc0",
+      "type": "backend",
+      "label": "Exchanges",
+      "pos": [
+        86,
+        322
+      ],
+      "size": [
+        190,
+        62
+      ],
+      "sublabel": "direct / topic / fanout"
+    },
+    {
+      "id": "svc1",
+      "type": "backend",
+      "label": "RPC Workers",
+      "pos": [
+        385,
+        322
+      ],
+      "size": [
+        190,
+        62
+      ],
+      "sublabel": "reply_to queues"
+    },
+    {
+      "id": "svc2",
+      "type": "backend",
+      "label": "Delayed Exchange",
+      "pos": [
+        684,
+        322
+      ],
+      "size": [
+        190,
+        62
+      ],
+      "sublabel": "x-delayed-message"
+    },
+    {
+      "id": "store0",
+      "type": "database",
+      "label": "Quorum Queues",
+      "pos": [
+        86,
+        626
+      ],
+      "size": [
+        190,
+        62
+      ],
+      "sublabel": "Raft-replicated",
+      "tag": "→ Multi-AZ Replica"
+    },
+    {
+      "id": "store1",
+      "type": "database",
+      "label": "DLX Parked",
+      "pos": [
+        385,
+        626
+      ],
+      "size": [
+        190,
+        62
+      ],
+      "sublabel": "poison messages"
+    },
+    {
+      "id": "store2",
+      "type": "database",
+      "label": "Streams",
+      "pos": [
+        684,
+        626
+      ],
+      "size": [
+        190,
+        62
+      ],
+      "sublabel": "offset replay",
+      "tag": "→ Multi-AZ Replica"
+    },
+    {
+      "id": "stream",
+      "type": "messagebus",
+      "label": "Federation",
+      "pos": [
+        395,
+        902
+      ],
+      "size": [
+        170,
+        62
+      ],
+      "tag": "→ DLQ"
+    },
+    {
+      "id": "worker0",
+      "type": "backend",
+      "label": "Competing Consumers",
+      "pos": [
+        86,
+        1158
+      ],
+      "size": [
+        178,
+        62
+      ]
+    },
+    {
+      "id": "worker1",
+      "type": "backend",
+      "label": "Retry / Backoff",
+      "pos": [
+        391,
+        1158
+      ],
+      "size": [
+        178,
+        62
+      ]
+    },
+    {
+      "id": "worker2",
+      "type": "backend",
+      "label": "Shovel Tasks",
+      "pos": [
+        696,
+        1158
+      ],
+      "size": [
+        178,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "RabbitMQ",
+      "wraps": [
+        "svc0",
+        "svc1",
+        "svc2",
+        "worker0",
+        "worker1",
+        "worker2",
+        "store0",
+        "store1",
+        "store2",
+        "stream"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e-clients-svc0",
+      "from": "clients",
+      "to": "svc0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-clients-svc1",
+      "from": "clients",
+      "to": "svc1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-clients-svc2",
+      "from": "clients",
+      "to": "svc2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-svc0-store0",
+      "from": "svc0",
+      "to": "store0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-svc1-store1",
+      "from": "svc1",
+      "to": "store1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-svc2-store2",
+      "from": "svc2",
+      "to": "store2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-store0-stream",
+      "from": "store0",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-store1-stream",
+      "from": "store1",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-store2-stream",
+      "from": "store2",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-stream-worker0",
+      "from": "stream",
+      "to": "worker0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-stream-worker1",
+      "from": "stream",
+      "to": "worker1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-stream-worker2",
+      "from": "stream",
+      "to": "worker2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

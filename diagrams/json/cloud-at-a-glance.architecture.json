@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Cloud Services Map",
+    "output": "cloud-at-a-glance.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [996, 1338]
+  },
+  "components": [
+    { "id": "clients", "type": "external", "label": "Your Workload", "sublabel": "apps · pipelines · agents", "pos": [396, 70], "size": [168, 62] },
+    { "id": "svc0", "type": "backend", "label": "Compute Tier", "sublabel": "VMs · k8s · serverless", "pos": [86, 322], "size": [190, 62] },
+    { "id": "svc1", "type": "backend", "label": "App & Data Tier", "sublabel": "APIs · queues · streams", "pos": [385, 322], "size": [190, 62] },
+    { "id": "svc2", "type": "backend", "label": "AI Tier", "sublabel": "model APIs · training", "pos": [684, 322], "size": [190, 62] },
+    { "id": "store0", "type": "database", "label": "Object + Block Storage", "sublabel": "S3/GCS/Blob + EBS/PD", "pos": [86, 626], "size": [190, 62], "tag": "→ lifecycle tiers" },
+    { "id": "store1", "type": "database", "label": "Databases", "sublabel": "relational · NoSQL · cache", "pos": [385, 626], "size": [190, 62], "tag": "→ Multi-AZ" },
+    { "id": "store2", "type": "database", "label": "Warehouses + Lake", "sublabel": "BigQuery · Redshift · Fabric", "pos": [684, 626], "size": [190, 62] },
+    { "id": "stream", "type": "messagebus", "label": "Eventing", "sublabel": "Kafka/MSK · Pub/Sub · SQS", "pos": [395, 902], "size": [170, 62], "tag": "→ DLQ" },
+    { "id": "worker0", "type": "backend", "label": "Networking Edge", "sublabel": "DNS · CDN · WAF · LB", "pos": [86, 1158], "size": [178, 62] },
+    { "id": "worker1", "type": "backend", "label": "Identity + Secrets", "sublabel": "IAM · KMS · workload identity", "pos": [391, 1158], "size": [178, 62] },
+    { "id": "worker2", "type": "backend", "label": "Observability", "sublabel": "metrics · logs · traces", "pos": [696, 1158], "size": [178, 62] }
+  ],
+  "boundaries": [{
+    "kind": "region",
+    "label": "One Cloud, Three Vendors",
+    "wraps": ["svc0", "svc1", "svc2", "worker0", "worker1", "worker2", "store0", "store1", "store2", "stream"]
+  }],
+  "connections": [
+    { "id": "e1", "from": "clients", "to": "svc0", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e2", "from": "clients", "to": "svc1", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e3", "from": "clients", "to": "svc2", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e4", "from": "svc0", "to": "store0", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e5", "from": "svc1", "to": "store1", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e6", "from": "svc2", "to": "store2", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e7", "from": "store0", "to": "stream", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e8", "from": "store1", "to": "stream", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e9", "from": "store2", "to": "stream", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e10", "from": "stream", "to": "worker0", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e11", "from": "stream", "to": "worker1", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e12", "from": "stream", "to": "worker2", "fromSide": "bottom", "toSide": "top" }
+  ]
+}

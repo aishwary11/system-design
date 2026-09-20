@@ -9,7 +9,7 @@
 
 </div>
 
-**36 system designs · 4 technology guides · 45 interactive diagrams · 25 JS algorithm implementations**
+**49 system designs · 12 technology & reference guides · 64 interactive diagrams · 25 JS algorithm implementations**
 
 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="30" alt="📚"/> [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
@@ -19,9 +19,9 @@
 High-Level Architecture → Low-Level Design → database design → scaling tiers → interview prep,
 each with an **inline SVG diagram** plus a **self-contained interactive HTML** (pan/zoom, search, dark/light, export).
 
-<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=36+system+designs+with+interactive+diagrams;4+technology+guides+with+runnable+examples;25+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
+<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=49+system+designs+with+interactive+diagrams;12+technology+%26+interview+guides+with+runnable+examples;25+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
 
-[Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Trust & Safety](#trust-safety) · [AI Infra](#ai-infra) · 🧰 [Feature Guides](#feature-guides)
+[Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Trust & Safety](#trust-safety) · [AI Infra](#ai-infra) · [Communities](#communities) · [Primitives](#primitives) · 🧰 [Guides](#feature-guides) · ☁️ [Cloud](#cloud-guide) · 🤖 [AI](#agentic-ai-guide) · 🛠️ [DevOps](#feature-guides) · 📚 [Resources](#feature-guides) · ❓ [Q&A](#feature-guides)
 
 </div>
 
@@ -31,11 +31,11 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 
 | | | |
 | :--- | :--- | :--- |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **36 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **4 feature guides** | PostgreSQL · Redis · Kafka · Core Concepts, with runnable examples | [Jump to guides](#feature-guides) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **49 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **12 feature & reference guides** | PostgreSQL · Redis · Kafka · MongoDB · Elasticsearch · RabbitMQ · Cloud Services · Agentic AI · Core Concepts | [Jump to guides](#feature-guides) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **45 Archify diagrams** | Inline SVG in every doc + interactive HTML per diagram | [Diagram style](#diagrams-archify) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **25 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **26 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **27 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
 
 ---
 
@@ -57,7 +57,7 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 
 <a id="social"></a>
 <details open>
-<summary><b>💬 Social & Messaging</b> · 4 docs</summary>
+<summary><b>💬 Social & Messaging</b> · 6 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
@@ -98,7 +98,7 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 
 <a id="infra"></a>
 <details open>
-<summary><b>🏗️ Infrastructure</b> · 10 docs</summary>
+<summary><b>🏗️ Infrastructure</b> · 14 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
@@ -112,16 +112,21 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 | 8 | Key-Value Store (DynamoDB) | [View](system-design-key-value-store.md) |
 | 9 | Pastebin | [View](system-design-pastebin.md) |
 | 10 | Alerting & Monitoring (Prometheus) | [View](system-design-alerting.md) |
+| 11 | Search Engine (Google-Style) | [View](system-design-search-engine.md) |
+| 12 | Recommendation System (Two-Stage Funnel) | [View](system-design-recommendation-system.md) |
+| 13 | Serverless Platform (Lambda-style) | [View](system-design-serverless.md) |
+| 14 | Online Judge (Sandboxed Execution) | [View](system-design-online-judge.md) |
 
 </details>
 
 <a id="productivity"></a>
 <details open>
-<summary><b>🤝 Collaborative & Productivity</b> · 1 doc</summary>
+<summary><b>🤝 Collaborative & Productivity</b> · 2 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
 | 1 | Google Docs (Collaborative Editing) | [View](system-design-google-docs.md) |
+| 2 | Google Calendar (Scheduling & Free-Busy) | [View](system-design-google-calendar.md) |
 
 </details>
 
@@ -137,12 +142,13 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 
 <a id="finance"></a>
 <details open>
-<summary><b>💳 Finance</b> · 2 docs</summary>
+<summary><b>💳 Finance & Ads</b> · 3 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
 | 1 | Payment System (Stripe) | [View](system-design-payment-system.md) |
 | 2 | Stock Exchange (Matching Engine) | [View](system-design-stock-exchange.md) |
+| 3 | Google Ads (Auction & Budget Pacing) | [View](system-design-google-ads.md) |
 
 </details>
 
@@ -166,6 +172,26 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 
 </details>
 
+<a id="devops"></a>
+<details open>
+<summary><b>🚚 DevOps & Delivery</b> · 1 doc</summary>
+
+| # | Topic | File |
+| :- | :--- | :--- |
+| 1 | Code Deployment System (CI/CD) | [View](system-design-code-deployment.md) |
+
+</details>
+
+<a id="geospatial-ops"></a>
+<details open>
+<summary><b>🗺️ Geospatial Operations</b> · 1 doc</summary>
+
+| # | Topic | File |
+| :- | :--- | :--- |
+| 1 | Route Reconstruction from Noisy GPS (Route IQ) | [View](system-design-route-reconstruction.md) |
+
+</details>
+
 <a id="scheduling"></a>
 <details open>
 <summary><b>⏰ Scheduling</b> · 1 doc</summary>
@@ -176,6 +202,29 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 
 </details>
 
+<a id="communities"></a>
+<details open>
+<summary><b>🌐 Communities & Content</b> · 2 docs</summary>
+
+| # | Topic | File |
+| :- | :--- | :--- |
+| 1 | Reddit (Threaded Discussions & Ranking) | [View](system-design-reddit.md) |
+| 2 | Discord (Community Chat & Voice) | [View](system-design-discord.md) |
+
+</details>
+
+<a id="primitives"></a>
+<details open>
+<summary><b>🧱 Core Primitives & Platform</b> · 3 docs</summary>
+
+| # | Topic | File |
+| :- | :--- | :--- |
+| 1 | Unique ID Generator (Snowflake) | [View](system-design-unique-id-generator.md) |
+| 2 | Leaderboard (Ranked Counters) | [View](system-design-leaderboard.md) |
+| 3 | Distributed Lock Manager (Chubby/ZooKeeper) | [View](system-design-distributed-lock-manager.md) |
+
+</details>
+
 <p align="right"><a href="#top">↑ back to top</a></p>
 
 ---
@@ -183,14 +232,22 @@ each with an **inline SVG diagram** plus a **self-contained interactive HTML** (
 <a id="feature-guides"></a>
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="28" alt=""/> Technology Feature Guides
 
-The four guides cover the technology stack behind the design documents, each with runnable examples:
+The guides cover the technology stack behind the design documents, each with runnable examples:
 
 | # | Guide | Highlights | File |
 | :- | :--- | :--- | :--- |
 | 1 | 🐘 **PostgreSQL** | Data types, constraints, 10+ index types, triggers, LISTEN/NOTIFY pub-sub, PL/pgSQL functions, CTEs, window functions, full-text search, JSONB + SQL/JSON, upsert/RETURNING, MVCC & isolation, locks, materialized views (caching), partitioning, replication + PITR, CDC, VACUUM, extensions, row/column security, FDWs | [View](postgresql-features.md) |
 | 2 | 🔴 **Redis** | 15+ data structures (incl. JSON, Time Series, Vector sets), caching patterns & eviction, distributed locking, rate limiting, Pub/Sub, Streams, delayed queues, transactions, Lua, pipelining, ACL security, persistence, Sentinel/Cluster | [View](redis-features.md) |
 | 3 | ⚫ **Kafka** | Topics/partitions/offsets, producers & acks, consumer groups, ordering, exactly-once, replication/ISR, retention vs compaction, Connect + CDC, Kafka Streams, Schema Registry, DLQs, security | [View](kafka-features.md) |
-| 4 | 🧩 **Core Concepts** | Sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus, 2PC, CRDTs, event-driven architecture, DLQ, backpressure, quorum reads & writes, consistency models, PACELC, WAL, B-tree vs LSM, checksums, distributed locking, service discovery, API gateway vs service mesh, CDN, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLI/SLO, multi-region DR, deployment strategies, geospatial indexing — plus 17 classic algorithms with runnable JS (Luhn, Dijkstra, A*, BFS/DFS, topological sort, union-find, trie, LRU cache, external sort, reservoir sampling, count-min sketch, HyperLogLog, Levenshtein, KMP/Rabin-Karp, haversine, Base62/Snowflake, sliding window), each with an example | [View](system-design-concepts.md) |
+| 4 | 🍃 **MongoDB** | Documents, CRUD & upserts, indexes (ESR), aggregation pipeline, embedding vs referencing, multi-doc transactions, change streams, replica sets, sharding & shard keys, time-series collections, GridFS, explain plans, security | [View](mongodb-features.md) |
+| 5 | 🔎 **Elasticsearch** | Inverted index & analyzers, mappings (text vs keyword, dense_vector), bulk indexing, bool queries (filter context), aggregations, BM25 & function_score, fuzzy/completion/highlighting, sharding & routing, NRT refresh + ILM, geo, security | [View](elasticsearch-features.md) |
+| 6 | 🐰 **RabbitMQ** | Exchanges (direct/fanout/topic/headers), bindings & routing keys, acks & publisher confirms, prefetch/backpressure, DLX, quorum queues & streams, delayed messages, priority queues, RPC, federation/shovel, RabbitMQ-vs-Kafka | [View](rabbitmq-features.md) |
+| 7 | ☁️ **Cloud Services Map** | AWS/GCP/Azure side-by-side: storage & archive tiers, block/file, compute & EKS/GKE/AKS, databases, NoSQL, caching, warehouses & lakehouses, messaging, networking/CDN/DNS, AI platforms, identity, observability, "which tool when" decision table | [View](cloud.md) |
+| 8 | 🤖 **Agentic AI & LLMs** | Tokens/context, ReAct agent loop, MCP tool integration, A2A agent-to-agent, context engineering, memory, RAG, orchestration patterns (supervisor/handoffs/graphs), guardrails, evals, model routing, prompt-prefix caching | [View](agentic-ai-features.md) |
+| 9 | 🧩 **Core Concepts** | Sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus, 2PC, CRDTs, event-driven architecture, DLQ, backpressure, quorum reads & writes, consistency models, PACELC, WAL, B-tree vs LSM, checksums, distributed locking, service discovery, API gateway vs service mesh, CDN, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLI/SLO, multi-region DR, deployment strategies, geospatial indexing — plus 17 classic algorithms with runnable JS (Luhn, Dijkstra, A*, BFS/DFS, topological sort, union-find, trie, LRU cache, external sort, reservoir sampling, count-min sketch, HyperLogLog, Levenshtein, KMP/Rabin-Karp, haversine, Base62/Snowflake, sliding window), each with an example | [View](system-design-concepts.md) |
+| 10 | 🛠️ **DevOps & Kubernetes** | Docker multi-stage builds, pods/deployments/services, requests/limits & HPA, ConfigMaps/Secrets/RBAC, probes, ingress & mesh, Jenkins vs GitHub Actions vs GitLab CI, ArgoCD GitOps & canary rollouts, SonarQube/Trivy gates, Terraform, Prometheus/Grafana/Loki, SLOs & error budgets, the golden pipeline | [View](devops-features.md) |
+| 11 | 📚 **Curated Resources** | The canon GitHub repos, engineering deep dives (Discord, Slack, Uber, Netflix, Stripe…), Medium/newsletter picks, interview platforms, classic papers, AI-era (MCP/A2A/vLLM) — plus a topic → best modern resource map | [View](resources.md) |
+| 12 | ❓ **Interview Q&A** | Cross-tech failure glossary with solutions (cache stampede/avalanche/penetration, rebalance storms, split-brain, OOMKilled, gray failure…) + high-level answers: why Kafka is fast, the Redis-down playbook, Redis Cluster internals, GitOps, the bad-deploy first-5-minutes | [View](interview-qa.md) |
 
 <p align="right"><a href="#top">↑ back to top</a></p>
 
@@ -384,6 +441,19 @@ Executable implementations of the algorithms used across the designs:
 | Continuous Batching Scheduler | llm-inference | KV-budget GPU admission |
 | EMA Anomaly Baseline | alerting | Streaming deviation detection |
 | Audio Fingerprinting (Shazam-style) | concepts | Song matching from short, noisy excerpts |
+| Snowflake ID Minting | unique-id-generator | Clock-safe distributed ID generation |
+| Top-K Heap Merge | leaderboard | Global top-K from sharded boards |
+| Hot Ranking (Reddit) | reddit | Time-decayed score ranking |
+| Hierarchical Fan-Out | discord | Massive-room message delivery |
+| RRULE + Free/Busy | google-calendar | Recurrence expansion & slot intersection |
+| Canary Rollout Machine | code-deployment | Health-gated deploys with auto-rollback |
+| Inverted Index (Mini) | search-engine | Postings, delta-varint encoding, top-k merge |
+| Two-Tower + MMR | recommendation-system | Retrieval then diversity re-ranking |
+| GSP Auction + Pacer | google-ads | Second-price auction with budgets |
+| Leases + Fencing Tokens | distributed-lock-manager | Safe mutual exclusion under failures |
+| Placement + Pre-Warm | serverless | Bin-packing and predictive warming |
+| Fair Queue + Early-Exit | online-judge | Per-user fairness, short-circuit grading |
+| GPS Cleaning + Viterbi | route-reconstruction | Anomaly removal, HMM consensus paths |
 
 <p align="right"><a href="#top">↑ back to top</a></p>
 
@@ -393,7 +463,7 @@ Executable implementations of the algorithms used across the designs:
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="28" alt=""/> Techniques & Patterns
 
 <details>
-<summary><b>26 patterns</b> — click to expand the full table</summary>
+<summary><b>27 patterns</b> — click to expand the full table</summary>
 
 | Technique | Description | Used In |
 | :--- | :--- | :--- |
@@ -423,6 +493,7 @@ Executable implementations of the algorithms used across the designs:
 | Union-Find Ring Detection | Streaming graph clustering of fraud rings | fraud-detection |
 | Continuous Batching | Dynamic GPU batch admission at every decode step | llm-inference |
 | Downsampling & Retention | Tiered time-series storage (raw → 1m → 1h) | alerting |
+| Load Shedding & Degradation | Admit-by-priority under overload; reduced-quality modes | concepts §27, all API gateways |
 
 </details>
 
@@ -437,7 +508,7 @@ Executable implementations of the algorithms used across the designs:
 - ✅ **Browse by topic** — click any link in the tables above
 - ✅ **Study scaling** — each system design doc shows infrastructure at 3 scale tiers
 - ✅ **Review LLD** — all code examples are executable JavaScript
-- ✅ **Master the technology** — read the PostgreSQL / Redis / Kafka guides before their system design docs
+- ✅ **Master the technology** — read the PostgreSQL / Redis / Kafka / MongoDB / Elasticsearch / RabbitMQ guides, then the Cloud and Agentic AI maps, before their system design docs
 - ✅ **Interview prep** — each document includes common follow-up Q&A
 - ✅ **Understand patterns** — concepts are explained with examples in the [Concepts guide](system-design-concepts.md)
 
