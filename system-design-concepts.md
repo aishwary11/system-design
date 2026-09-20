@@ -103,7 +103,6 @@ The foundational concepts behind every distributed system, each explained in a f
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1110 1258" width="900" role="img" aria-label="Sharding — Data Partitioning">
 <rect x="0.5" y="0.5" width="1109" height="1257" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-<title>Sharding — Data Partitioning</title>
 <path d="M531 132 L531 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-sharding)"/>
 <path d="M531 384 L531 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-sharding)"/>
 <path d="M531 636 L531 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-sharding)"/>
@@ -690,7 +689,6 @@ while (true) {
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 754" width="900" role="img" aria-label="Replication Topologies">
 <rect x="0.5" y="0.5" width="959" height="753" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-<title>Replication Topologies</title>
 <path d="M146 132 L146 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-replication)"/>
 <path d="M404 132 L404 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-replication)"/>
 <path d="M478 353 L760 353 L760 680 L144 680 L144 636" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-replication)"/>
@@ -1059,7 +1057,6 @@ Pairs with: backpressure (§21) to slow producers before shedding, rate limiting
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 502" width="900" role="img" aria-label="Quorum Reads &amp; Writes">
 <rect x="0.5" y="0.5" width="959" height="501" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-<title>Quorum Reads &amp; Writes</title>
 <path d="M263 132 L263 227 L144 227 L144 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-concept-quorum)"/>
 <rect x="175.9" y="207" width="56.199999999999996" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
 <text x="204" y="221" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#475569">write W=2/N=3 / ack</text>

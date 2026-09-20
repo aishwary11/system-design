@@ -50,7 +50,6 @@ A rider's phone emits a GPS ping every few seconds, but in narrow alleys, flyove
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="Route Reconstruction — System Architecture">
 <rect x="0.5" y="0.5" width="959" height="1761" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-<title>Route Reconstruction — System Architecture</title>
 <rect x="52" y="288" width="713" height="1374" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>
 <rect x="64" y="296" width="243.20000000000002" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
 <text x="185.60000000000002" y="310" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">Route Reconstruction (Route IQ)</text>

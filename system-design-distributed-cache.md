@@ -47,7 +47,6 @@ High-performance in-memory caching layer providing sub-millisecond reads for fre
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="Distributed Cache — System Architecture">
 <rect x="0.5" y="0.5" width="959" height="1761" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-<title>Distributed Cache — System Architecture</title>
 <rect x="52" y="288" width="717" height="1374" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>
 <rect x="64" y="296" width="142.4" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
 <text x="135.2" y="310" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">Distributed Cache</text>

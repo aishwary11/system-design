@@ -14,7 +14,6 @@ A quick-reference catalog of PostgreSQL features used in everyday backends: data
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1762" width="900" role="img" aria-label="Postgresql at a Glance">
 <rect x="0.5" y="0.5" width="959" height="1761" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-<title>Postgresql at a Glance</title>
 <path d="M169 132 L169 156 L186 156 L186 298 L170 298 L170 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-postgresql-at-a-glance)"/>
 <path d="M170 384 L170 479 L153 479 L153 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-postgresql-at-a-glance)"/>
 <path d="M153 636 L153 731 L298 731 L298 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-postgresql-at-a-glance)"/>

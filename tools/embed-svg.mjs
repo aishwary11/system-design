@@ -49,7 +49,8 @@ function svgFor(specPath, title) {
 
   out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vw} ${vh}" width="${Math.min(vw, 900)}" role="img" aria-label="${esc(title)}">`);
   out.push(`<rect x="0.5" y="0.5" width="${vw - 1}" height="${vh - 1}" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>`);
-  out.push(`<title>${esc(title)}</title>`);
+  // NOTE: no <title> child here — GitHub's markdown renderer shows it as visible
+  // text inside the sanitized SVG. The svg's aria-label keeps the accessible name.
 
   // ---- boundaries
   for (const b of L.boundaries ?? []) {

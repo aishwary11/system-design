@@ -14,7 +14,6 @@ A quick-reference catalog of Redis features used in real backends: the data stru
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1510" width="900" role="img" aria-label="Redis at a Glance">
 <rect x="0.5" y="0.5" width="959" height="1509" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-<title>Redis at a Glance</title>
 <path d="M273 132 L273 156 L290 156 L290 298 L274 298 L274 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-redis-at-a-glance)"/>
 <path d="M274 384 L274 408 L290 408 L290 550 L273 550 L273 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-redis-at-a-glance)"/>
 <path d="M273 636 L273 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-redis-at-a-glance)"/>
