@@ -124,7 +124,15 @@ function svgTarget(stem) {
   return `diagrams/system-design/${stem}.svg`;
 }
 
-// ---- diagram stem -> doc title (kept in sync with convert-mermaid.mjs naming) -
+// ---- diagram stem -> doc title (spec's meta.title is the source of truth) ---
+function specTitle(stem, file) {
+  try {
+    const j = JSON.parse(readFileSync(join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`), 'utf8'));
+    if (j.meta?.title) return j.meta.title;
+  } catch { /* fall through to derived title */ }
+  return titleFor(stem, file);
+}
+
 const titleFor = (stem, file) =>
   ({ 'template': 'Reference Architecture Template' }[stem])
   ?? (file === 'system-design-concepts.md'
@@ -174,7 +182,7 @@ const STEM_BY_FILE_BLOCK = (file, blockIdx) => {
 
 for (const file of files) {
   const src = readFileSync(join(ROOT, file), 'utf8');
-  if (!src.includes('<svg') && !src.includes('```mermaid')) continue;
+  if (!src.includes('<svg') && !src.includes('```mermaid') && !/!\[[^\]]*\]\(diagrams\/[^)]+\.svg\)/.test(src)) continue;
   let blockIdx = 0;
   let out = src;
 
@@ -185,6 +193,7 @@ for (const file of files) {
     try {
       const svgPath = svgTarget(stem);
       const target = htmlTarget(stem);
+      const title = specTitle(stem, file);
       const svg = svgMarkupFor(join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`), title);
       writeFileSync(join(ROOT, svgPath), svg + '\n');
       converted++;
@@ -200,7 +209,7 @@ for (const file of files) {
   // visible text). Keyed by the link target; regenerates the .svg file too.
   out = out.replace(/<svg\b[\s\S]*?<\/svg>\s*\n?\s*\*\*Interactive diagram:\*\* \[[^\]]*\]\((diagrams\/[^)\s]+)\)[^\n]*(\r?\n)?/g, (m, target) => {
     const stem = target.split('/').pop().replace(/(\.architecture)?\.html$/, '');
-    const title = titleFor(stem, file);
+    const title = specTitle(stem, file);
     try {
       const svgPath = svgTarget(stem);
       const svg = svgMarkupFor(join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`), title);
@@ -213,7 +222,17 @@ for (const file of files) {
     }
   });
 
+  // Pass 3 (idempotent): refresh existing image embeds — keep alt text in sync
+  // with the spec's meta.title (paths and link lines unchanged).
+  out = out.replace(/!\[([^\]]*)\]\((diagrams\/[^)]+\.svg)\)/g, (m, alt, svgPath) => {
+    const stem = svgPath.split('/').pop().replace(/\.svg$/, '');
+    const title = specTitle(stem, file);
+    if (alt === title) return m;
+    converted++;
+    return m.replace(/^!\[[^\]]*\]/, `![${title}]`);
+  });
+
   if (out !== src) writeFileSync(join(ROOT, file), out);
 }
-console.log(`converted ${converted} markdown embeds to image references${problems.length ? '\nPROBLEMS:\n' + problems.join('\n') : ''}`);
+console.log(`refreshed ${converted} markdown embeds${problems.length ? '\nPROBLEMS:\n' + problems.join('\n') : ''}`);
 if (problems.length) process.exit(1);

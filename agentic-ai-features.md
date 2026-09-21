@@ -10,7 +10,7 @@ A quick-reference catalog of the LLM and agentic-AI building blocks used in prod
 
 ### Agent stack at a glance
 
-![Agentic Ai at a Glance](diagrams/features/agentic-ai-at-a-glance.svg)
+![Agentic AI at a Glance](diagrams/features/agentic-ai-at-a-glance.svg)
 
 **Interactive diagram:** [diagrams/features/agentic-ai-at-a-glance.architecture.html](diagrams/features/agentic-ai-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 

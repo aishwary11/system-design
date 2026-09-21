@@ -2228,3 +2228,14 @@ Expected: `winner: Song B starts at frame 120` by a landslide — the true (song
 - [E-Commerce (Amazon)](system-design-ecommerce.md) — sharding, caching, outbox
 - [Proximity Service](system-design-proximity-service.md) — geohash, spatial indexes, "near me" queries
 - [PostgreSQL Features Guide](postgresql-features.md) · [Redis Features Guide](redis-features.md) · [Kafka Features Guide](kafka-features.md)
+
+## Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :-- | :-- |
+| Pin down the 1. sharding (data partitioning) before drawing boxes | Don't hand-wave the hardest component — concepts lives or dies there |
+| Justify the 2. consistent hashing choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
+| State the failure mode of 3. cap theorem explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
+| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
+
+*More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*

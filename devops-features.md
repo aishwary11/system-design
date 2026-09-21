@@ -10,7 +10,7 @@ A quick-reference catalog of the DevOps toolchain behind every design in this re
 
 ### DevOps toolchain at a glance
 
-![Devops at a Glance](diagrams/features/devops-at-a-glance.svg)
+![DevOps at a Glance](diagrams/features/devops-at-a-glance.svg)
 
 **Interactive diagram:** [diagrams/features/devops-at-a-glance.architecture.html](diagrams/features/devops-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 

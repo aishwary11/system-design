@@ -270,3 +270,14 @@ console.log(expandRRULE(Date.UTC(2026, 0, 1), 'monthly', 1, null, null,
 ```
 
 Production notes: real systems expand with a **materialized-occurrences cache** (expand 90 days ahead on write, background job extends the watermark before it lapses — same shape as the feed-materializer in §42); DST is handled by storing *local time + IANA zone* and re-localizing each occurrence (never store epoch-shifted recurring events); exceptions (single-instance edits/deletes) are stored as `EXDATE`/override rows keyed `(series_id, original_time)` and filtered at expansion.
+
+## Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :-- | :-- |
+| Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — google calendar lives or dies there |
+| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
+| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
+| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
+
+*More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*

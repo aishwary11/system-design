@@ -48,7 +48,7 @@ Design the serving platform behind a production LLM product: stream tokens to mi
 
 ### Architecture Diagram
 
-![Llm Inference — System Architecture](diagrams/system-design/llm-inference.svg)
+![LLM Inference — System Architecture](diagrams/system-design/llm-inference.svg)
 
 **Interactive diagram:** [diagrams/system-design/llm-inference.architecture.html](diagrams/system-design/llm-inference.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
@@ -295,3 +295,14 @@ console.log('completed:', JSON.stringify(b.completed));
 ```
 
 Expected: user A's second request is rejected by the token limiter while user B passes; the batcher admits both requests, retires `r2` at step 3 and `r1` at step 8 (each visible as a `completedNow: 1` pulse), with KV usage dropping after each retirement — demonstrating admission control, continuous batching, and retirement in one trace.
+
+## Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :-- | :-- |
+| Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — llm inference lives or dies there |
+| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
+| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
+| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
+
+*More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*

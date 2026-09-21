@@ -253,3 +253,14 @@ ORDER BY path;
 ```
 
 Why Reddit-style ranking pairs well with this: `score` is denormalized and updated by the vote pipeline; hotness = `log10(max(|score|,1)) + sign(score)·(age_hours)/12.5` — computed at read time per visible page (a page shows ~200 comments, so 200 log() calls beat maintaining a sorted structure per parent). Deletion keeps the row, nulls the body, and flags `deleted` — children keep their path (threads don't vanish).
+
+## Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :-- | :-- |
+| Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — reddit lives or dies there |
+| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
+| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
+| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
+
+*More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*

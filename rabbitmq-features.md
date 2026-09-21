@@ -12,7 +12,7 @@ A quick-reference catalog of RabbitMQ features used in task-oriented messaging: 
 
 ### Task messaging at a glance
 
-![Rabbitmq at a Glance](diagrams/features/rabbitmq-at-a-glance.svg)
+![RabbitMQ at a Glance](diagrams/features/rabbitmq-at-a-glance.svg)
 
 **Interactive diagram:** [diagrams/features/rabbitmq-at-a-glance.architecture.html](diagrams/features/rabbitmq-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 

@@ -49,7 +49,7 @@ Design the observability backend for a fleet of thousands of services: metrics a
 
 ### Architecture Diagram
 
-![Alerting — System Architecture](diagrams/system-design/alerting.svg)
+![Alerting & Monitoring — System Architecture](diagrams/system-design/alerting.svg)
 
 **Interactive diagram:** [diagrams/system-design/alerting.architecture.html](diagrams/system-design/alerting.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
@@ -74,7 +74,7 @@ Design the observability backend for a fleet of thousands of services: metrics a
 | Query Svc | PromQL parse/plan/fan-out/merge | Stateless, N replicas |
 | Alertmanager Svc | Rule eval, dedup, group, route | HA pair (gossip), sharded rules |
 | Downsamplers | 1m/1h rollups, retention enforcement | Scheduled workers |
-| Anomaly Detector | EMA/seasonal baselines, deviation series | Stream consumers |
+| Anomaly Detector | EMA/seasonal baselines, deviation series | Stream consumers (reads TSDB) |
 | On-Call Pager | Schedules, escalations, acks | HA, stateful |
 | Meta-Monitor | Watches the monitoring stack itself | Separate, independent stack |
 
@@ -300,3 +300,14 @@ console.log('resolve api:', JSON.stringify(grouper.resolve(mk('api'), 4000)));
 ```
 
 Expected: the QPS spike at sample 7 (and its echo at 8) exceed z=6 → page once; in the grouper, the first `api` alert notifies, its repeat and the `db` alert are deduped/silenced into the same `payments|critical` group, and resolve removes only the matching fingerprint — demonstrating dedup, grouping, and silencing in one trace.
+
+## Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :-- | :-- |
+| Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — alerting lives or dies there |
+| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
+| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
+| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
+
+*More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*

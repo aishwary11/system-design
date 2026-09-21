@@ -290,3 +290,14 @@ class ConsistentHash {
 
 const cache = new LRUCache(1000); cache.put("key", "value"); console.log("Cache:", cache.get("key"));
 ```
+
+## Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :-- | :-- |
+| Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — distributed cache lives or dies there |
+| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
+| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
+| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
+
+*More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*

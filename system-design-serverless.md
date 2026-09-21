@@ -48,7 +48,7 @@ Serverless = a container/microVM orchestrator with brutal constraints: cold-star
 
 ### Architecture Diagram
 
-![Serverless — System Architecture](diagrams/system-design/serverless.svg)
+![Serverless Platform — System Architecture](diagrams/system-design/serverless.svg)
 
 **Interactive diagram:** [diagrams/system-design/serverless.architecture.html](diagrams/system-design/serverless.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
@@ -280,3 +280,14 @@ console.log(g.acquire(Date.now() + 400).cold);    // false — after spawn time,
 ```
 
 Real systems add snapshot-restore (Firecracker VM snapshots restore in ~10 ms vs 400 ms boot), tiered pre-warming by function popularity (top-100 functions always warm, tail on demand), and **keep-alive pingers** on cloud FaaS where the provider reaps idle instances at 10–15 min.
+
+## Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :-- | :-- |
+| Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — serverless lives or dies there |
+| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
+| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
+| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
+
+*More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*

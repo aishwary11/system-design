@@ -5,7 +5,10 @@
     "title": "Alerting & Monitoring — System Architecture",
     "output": "alerting.architecture.html",
     "quality_profile": "showcase",
-    "viewBox": [960, 1762]
+    "viewBox": [
+      1100,
+      890
+    ]
   },
   "components": [
     {
@@ -13,103 +16,179 @@
       "type": "external",
       "label": "Services / Probes",
       "sublabel": "Metric Emitters",
-      "pos": [335, 70],
-      "size": [148, 62]
-    },
-    {
-      "id": "edge",
-      "type": "backend",
-      "label": "Ingest Gateway",
-      "sublabel": "Auth / Batching / Limit",
-      "pos": [328, 322],
-      "size": [161, 62]
+      "pos": [
+        460,
+        60
+      ],
+      "size": [
+        180,
+        62
+      ]
     },
     {
       "id": "lb",
       "type": "backend",
       "label": "Load Balancer (ALB)",
-      "pos": [326, 574],
-      "size": [165, 62]
+      "pos": [
+        460,
+        175
+      ],
+      "size": [
+        180,
+        62
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "Ingest Gateway",
+      "sublabel": "Auth / Quota / Batch",
+      "pos": [
+        460,
+        290
+      ],
+      "size": [
+        180,
+        62
+      ]
+    },
+    {
+      "id": "stream",
+      "type": "messagebus",
+      "label": "Kafka (Metrics Stream)",
+      "pos": [
+        460,
+        405
+      ],
+      "size": [
+        180,
+        62
+      ]
     },
     {
       "id": "svc0",
       "type": "backend",
       "label": "Metrics Ingest Svc",
-      "tag": "→ Service Mesh · → Metrics",
-      "pos": [77, 826],
-      "size": [148, 62]
+      "sublabel": "Kafka → TSDB",
+      "pos": [
+        60,
+        520
+      ],
+      "size": [
+        180,
+        62
+      ]
     },
     {
       "id": "svc1",
       "type": "backend",
       "label": "Query Svc",
       "sublabel": "PromQL / M3QL",
-      "tag": "→ Service Mesh · → Metrics",
-      "pos": [335, 826],
-      "size": [148, 62]
+      "pos": [
+        330,
+        520
+      ],
+      "size": [
+        180,
+        62
+      ]
     },
     {
       "id": "svc2",
       "type": "backend",
       "label": "Alertmanager Svc",
-      "tag": "→ Service Mesh · → Metrics",
-      "pos": [593, 826],
-      "size": [148, 62]
+      "sublabel": "Rules / Dedup / Route",
+      "pos": [
+        600,
+        520
+      ],
+      "size": [
+        180,
+        62
+      ]
+    },
+    {
+      "id": "worker2",
+      "type": "backend",
+      "label": "On-Call Pager",
+      "sublabel": "Escalations / Acks",
+      "pos": [
+        870,
+        520
+      ],
+      "size": [
+        180,
+        62
+      ]
+    },
+    {
+      "id": "store0",
+      "type": "database",
+      "label": "TSDB (M3 / Cortex)",
+      "pos": [
+        60,
+        640
+      ],
+      "size": [
+        180,
+        62
+      ]
+    },
+    {
+      "id": "store1",
+      "type": "database",
+      "label": "Redis",
+      "sublabel": "Active Alerts",
+      "pos": [
+        600,
+        640
+      ],
+      "size": [
+        180,
+        62
+      ]
     },
     {
       "id": "worker0",
       "type": "backend",
       "label": "Downsamplers",
-      "pos": [70, 1582],
-      "size": [151, 62]
+      "sublabel": "1m / 1h Rollups",
+      "pos": [
+        60,
+        760
+      ],
+      "size": [
+        180,
+        62
+      ]
+    },
+    {
+      "id": "store2",
+      "type": "database",
+      "label": "ClickHouse (LTS)",
+      "sublabel": "Incident History",
+      "pos": [
+        330,
+        760
+      ],
+      "size": [
+        180,
+        62
+      ]
     },
     {
       "id": "worker1",
       "type": "backend",
       "label": "Anomaly Detector",
       "sublabel": "EMA / Seasonal",
-      "pos": [331, 1582],
-      "size": [148, 62]
-    },
-    {
-      "id": "worker2",
-      "type": "backend",
-      "label": "On-Call Pager",
-      "tag": "→ PagerDuty / Slack",
-      "pos": [589, 1582],
-      "size": [158, 62]
-    },
-    {
-      "id": "store0",
-      "type": "database",
-      "label": "TSDB (M3 / Cortex)",
-      "tag": "→ Multi-AZ Replica",
-      "pos": [72, 1078],
-      "size": [158, 62]
-    },
-    {
-      "id": "store1",
-      "type": "database",
-      "label": "Redis (Active Alerts)",
-      "tag": "→ Multi-AZ Replica",
-      "pos": [340, 1078],
-      "size": [148, 62]
-    },
-    {
-      "id": "store2",
-      "type": "database",
-      "label": "ClickHouse (LTS)",
-      "tag": "→ Multi-AZ Replica",
-      "pos": [598, 1078],
-      "size": [148, 62]
-    },
-    {
-      "id": "stream",
-      "type": "messagebus",
-      "label": "Kafka (Metrics Stream)",
-      "tag": "→ DLQ",
-      "pos": [335, 1330],
-      "size": [148, 62]
+      "pos": [
+        600,
+        760
+      ],
+      "size": [
+        180,
+        62
+      ]
     }
   ],
   "boundaries": [
@@ -133,19 +212,134 @@
     }
   ],
   "connections": [
-    { "id": "e1-clients-edge", "from": "clients", "to": "edge", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e2-edge-lb", "from": "edge", "to": "lb", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e3-lb-svc0", "from": "lb", "to": "svc0", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e4-lb-svc1", "from": "lb", "to": "svc1", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e5-lb-svc2", "from": "lb", "to": "svc2", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e6-svc0-store0", "from": "svc0", "to": "store0", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e7-svc1-store1", "from": "svc1", "to": "store1", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e8-svc2-store2", "from": "svc2", "to": "store2", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e9-store0-stream", "from": "store0", "to": "stream", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e10-store1-stream", "from": "store1", "to": "stream", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e11-store2-stream", "from": "store2", "to": "stream", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e12-stream-worker0", "from": "stream", "to": "worker0", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e13-stream-worker1", "from": "stream", "to": "worker1", "fromSide": "bottom", "toSide": "top" },
-    { "id": "e14-stream-worker2", "from": "stream", "to": "worker2", "fromSide": "bottom", "toSide": "top" }
+    {
+      "id": "e-cli-lb",
+      "from": "clients",
+      "to": "lb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-lb-edge",
+      "from": "lb",
+      "to": "edge",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e-edge-str",
+      "from": "edge",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "produce",
+      "labelAt": [
+        560,
+        368
+      ]
+    },
+    {
+      "id": "e-str-svc0",
+      "from": "stream",
+      "to": "svc0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "consume",
+      "labelAt": [
+        350,
+        470
+      ]
+    },
+    {
+      "id": "e-svc0-st0",
+      "from": "svc0",
+      "to": "store0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "head blocks",
+      "labelAt": [
+        150,
+        600
+      ]
+    },
+    {
+      "id": "e-svc1-st0",
+      "from": "svc1",
+      "to": "store0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "range queries",
+      "labelAt": [
+        300,
+        600
+      ]
+    },
+    {
+      "id": "e-svc2-st0",
+      "from": "svc2",
+      "to": "store0",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "e-svc2-st1",
+      "from": "svc2",
+      "to": "store1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "alert state",
+      "labelAt": [
+        690,
+        600
+      ]
+    },
+    {
+      "id": "e-svc2-w2",
+      "from": "svc2",
+      "to": "worker2",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "dispatch",
+      "labelAt": [
+        825,
+        551
+      ]
+    },
+    {
+      "id": "e-st0-w0",
+      "from": "store0",
+      "to": "worker0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "raw series",
+      "labelAt": [
+        150,
+        716
+      ]
+    },
+    {
+      "id": "e-w0-st2",
+      "from": "worker0",
+      "to": "store2",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "rollups",
+      "labelAt": [
+        285,
+        791
+      ]
+    },
+    {
+      "id": "e-st0-w1",
+      "from": "store0",
+      "to": "worker1",
+      "fromSide": "left",
+      "toSide": "bottom",
+      "label": "baselines",
+      "labelAt": [
+        300,
+        830
+      ]
+    }
   ]
 }

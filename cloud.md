@@ -10,7 +10,7 @@ A vendor-neutral map of cloud services across **AWS, GCP, and Azure**, organized
 
 ### Multi-cloud service map at a glance
 
-![Cloud at a Glance](diagrams/features/cloud-at-a-glance.svg)
+![Cloud Services Map](diagrams/features/cloud-at-a-glance.svg)
 
 **Interactive diagram:** [diagrams/features/cloud-at-a-glance.architecture.html](diagrams/features/cloud-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
@@ -39,6 +39,7 @@ A vendor-neutral map of cloud services across **AWS, GCP, and Azure**, organized
 16. [Key Takeaways](#16-key-takeaways)
 17. [Hidden Tips & Tricks](#17-hidden-tips--tricks)
 18. [Do's & Don'ts](#18-dos--donts)
+19. [Full Service Catalog — Everything Worth Knowing](#19-full-service-catalog--everything-worth-knowing)
 
 </details>
 
@@ -337,3 +338,122 @@ aws sqs send-message --queue-url tasks --message-body '{"job":"render","id":"7"}
 | Tier cold data to archive classes deliberately (with retrieval costs) | Don't leave 500 TB of once-a-year data in Standard "just in case" |
 | Enable cross-region replication explicitly per service; drill the DR runbook | Don't assume "it's in the cloud" means it survived a region outage |
 | Tag everything (owner, cost-center, env) from day one | Don't build cost allocation as a forensic archaeology project later |
+
+## 19. Full Service Catalog — Everything Worth Knowing
+
+The sections above are the daily-driver core. This is the **long tail**, organized by category: every service you might name-drop in a design or reach for in production, with the one-liner that tells you when it's the right tool. Rule of thumb still applies: master the §14 decision table first — catalogs are for lookup, not for choosing.
+
+### 19.1 Compute & Serverless (beyond EC2/EKS)
+
+| AWS | GCP | Azure | Pick it when |
+| :-- | :-- | :-- | :-- |
+| **Lambda** (15 min max, 10 GB RAM, SnapStart for Java) | **Cloud Functions gen2** (Cloud Run under the hood) | **Azure Functions** (durable functions for state) | Event-driven glue; scale-to-zero; spiky fan-out. Never for long-running stateful work |
+| **Fargate** (serverless containers) | **Cloud Run** (concurrency per instance!) | **Container Apps** (KEDA scaling) | Containers without node management |
+| **App Runner** | **Cloud Run services** | **App Service** | Simple web apps from repo/container to URL |
+| **App Engine** (standard/flexible) | — | — | Legacy PaaS; still fine for simple Python/Node/PHP apps |
+| **Lightsail** | — | — | Fixed-price VPS-style for tiny projects |
+| **Batch** / **Fargate Spot** | **Batch** | **Batch** | Embarrassingly parallel jobs with queue-based scheduling |
+| Outposts / Local Zones | GDC (distributed cloud) | Azure Stack / Arc | Cloud APIs in your datacenter / on-prem |
+
+### 19.2 Workflow & Integration Orchestration
+
+| AWS | GCP | Azure | Pick it when |
+| :-- | :-- | :-- | :-- |
+| **Step Functions** (Standard vs Express) | **Workflows** | **Logic Apps** (low-code) / **Durable Functions** | Multi-step orchestration with retries, branches, human approval. Standard for long (up to 1 yr), Express for high-volume short |
+| **EventBridge** (bus + scheduler + schema registry) | **Eventarc** | **Event Grid** | Event routing between services with filtering; cron without servers |
+| **SWF** (legacy) | **Tasks** (queue + lease) | — | Don't start new work here; Step Functions replaced it |
+| Amazon AppFlow | Application Integration | Logic Apps connectors | SaaS-to-SaaS data sync (Salesforce → S3 etc.) |
+
+### 19.3 Messaging — the full menu (beyond SQS/MSK)
+
+| AWS | GCP | Azure | Pick it when |
+| :-- | :-- | :-- | :-- |
+| **SQS** (standard vs FIFO) | — | **Queue Storage** | Dumb reliable buffer; FIFO when order+exactly-once matter (max 300 TPS batching) |
+| **SNS** (topics; fan-out; mobile push) | **Pub/Sub** (the GCP default) | **Service Bus** (topics+sessions, DLQ, AMQP) | Pub/sub fan-out; Service Bus when you need message sessions, transactions, geo-DR |
+| **EventBridge** | **Eventarc** | **Event Grid** | Fine-grained event routing/filtering (not payloads-in-flight) |
+| **MSK** (Kafka) / MSK Serverless | **Managed Kafka / Confluent** | **Event Hubs** (Kafka protocol endpoint!) | Kafka ecosystem; Event Hubs if you want Kafka API on Azure |
+| **Kinesis Data Streams** (shards) | **Pub/Sub** (ordering keys) | **Event Hubs** (partitions/throughput units) | High-volume telemetry ingest with shard-level ordering |
+| Kinesis Data Firehose | — | — | Stream → S3/Redshift/OpenSearch delivery with transform |
+| IoT Core (device MQTT) | IoT Core | IoT Hub | Device fleets at scale with per-device identity |
+
+### 19.4 Databases — the specialized engines
+
+| AWS | GCP | Azure | Pick it when |
+| :-- | :-- | :-- | :-- |
+| **DynamoDB** (single-digit ms, any scale) | **Bigtable** (wide-column, PB) / **Firestore** (doc, real-time) | **Cosmos DB** (multi-model, 5 consistency levels) | Key-value/wide-column at massive scale. Dynamo: known access patterns + partition-key design; Cosmos: global distribution + tunable consistency |
+| **DocumentDB** (Mongo API) / **Keyspaces** (Cassandra API) | — | Cosmos DB (Mongo/Cassandra APIs) | Compatibility with existing drivers; native engines usually outperform |
+| **Neptune** (graph: Gremlin/openCypher/SPARQL) | **Spanner Graph** / Neo4j EO | Cosmos DB Gremlin | Relationship queries: fraud rings, social graphs, knowledge graphs |
+| **QLDB** (ledger, immutable journal) | — | — | Cryptographic audit trail (now legacy-notice: prefer Aurora w/ ledger-like design) |
+| **Timestream** | **BigQuery** (time-series patterns) | **Azure Data Explorer** (Kusto!) | IoT/metrics time-series; ADX is the strongest of the three for ad-hoc analytics |
+| **MemoryDB** (Redis-compatible, durable) / **ElastiCache** | **Memorystore** (Redis/Valkey) | **Cache for Redis** (Enterprise = Raft) | Cache vs durable-primary: ElastiCache/Memorystore = cache; MemoryDB/Enterprise = write-durable |
+| Aurora (MySQL/PG) + Aurora Serverless v2 + Aurora DSQL | **AlloyDB** / Cloud SQL / **Spanner** (99.999%) | **Azure SQL** / Database for PG/MySQL | Spanner is the only truly global strongly-consistent relational; pick it for planetary ACID |
+
+### 19.5 Analytics, Warehouses & Streaming Data
+
+| AWS | GCP | Azure | Pick it when |
+| :-- | :-- | :-- | :-- |
+| **Redshift** (+ Redshift Serverless) | **BigQuery** (serverless, storage-compute split) | **Synapse** / **Fabric** (OneLake) | BigQuery is the lowest-ops; Redshift when deep AWS/RA3; Fabric is the new MS default |
+| **Glue** (ETL + catalog) / **Athena** (SQL on S3) | **Dataform** / **Dataproc** | **Data Factory** / **Databricks** | Glue catalog is the AWS metastore; Athena = pay-per-query S3 SQL; Data Factory for Azure pipelines |
+| **EMR** (Hadoop/Spark) | **Dataproc** | **HDInsight** / Databricks | Managed Spark clusters; Databricks on Azure is first-class |
+| **MSK + Kinesis Data Analytics** / Managed Flink | **Dataflow** (Beam) | **Stream Analytics** | Streaming SQL over Kafka/Kinesis (Dataflow over Pub/Sub) |
+| **QuickSight** | **Looker / Looker Studio** | **Power BI** | BI dashboards; Power BI dominates enterprises |
+| **OpenSearch** (search + logs) | **Elastic Cloud** (partner) | **Azure AI Search** (was Cognitive Search) | Full-text search + log analytics; AI Search when you need vector+keyword hybrid for RAG |
+
+### 19.6 AI/ML — the model services (beyond SageMaker/Vertex/AML)
+
+| AWS | GCP | Azure | Pick it when |
+| :-- | :-- | :-- | :-- |
+| **Bedrock** (Claude/Llama/Nova/Mistral; Agents, Knowledge Bases, Guardrails) | **Vertex AI Model Garden** (Gemini; Agent Builder) | **Azure OpenAI** (GPT-5/o-series) + **AI Foundry** | Managed LLM APIs + RAG/agent scaffolding without owning inference |
+| **SageMaker** (train/host/tune; Studio; AI) | **Vertex AI** (Pipelines, Feature Store) | **Azure ML** | Custom training/fine-tuning with full MLOps |
+| **Rekognition** (vision) | Vision AI | Computer Vision | Labels, moderation, face search — prebuilt vision |
+| **Textract** (documents) | **Document AI** | Document Intelligence | Forms/invoices/tables extraction |
+| **Transcribe / Polly / Translate** | Speech-to-Text / TTS / Translation | Speech / Translator | ASR + TTS + translation |
+| **Comprehend** (NLP) | Natural Language AI | Language Service | Entity/sentiment/classification |
+| **Personalize** | Recommendations AI | Personalizer (retired→AI Foundry) | Recsys without building one |
+| Bedrock **Agents** + Knowledge Bases | Vertex **Agent Builder** / ADK | **AI Foundry agents** | Agentic AI on managed rails (see `agentic-ai-features.md` for self-built) |
+
+### 19.7 Networking — the advanced pieces
+
+| AWS | GCP | Azure | Pick it when |
+| :-- | :-- | :-- | :-- |
+| **Global Accelerator** (anycast IPs → regional endpoints) | **Premium Tier** (Google backbone) | — | TCP/UDP acceleration; GA gives static anycast IPs + health-based failover |
+| **Transit Gateway** (hub-and-spoke) | **Network Connectivity Center** | **Virtual WAN** | Many VPCs/VNets — hub-spoke instead of peering mesh |
+| **PrivateLink / VPC endpoints** | **Private Service Connect** | **Private Endpoints** | Private service access without internet detours |
+| **Direct Connect** | **Cloud Interconnect** | **ExpressRoute** | Dedicated private circuits (1/10/100 Gbps) |
+| **CloudFront** (+ Functions @ edge) | **Cloud CDN + Media CDN** | **Front Door** (+ CDN) | Global edge; Front Door = Azure's smart L7 global LB |
+| **Route 53** (latency/geo/failover policies) | **Cloud DNS** | **Traffic Manager 
+| **API Gateway** (REST/HTTP/WS) | **API Gateway / Apigee** | **API Management** | Managed API front door; Apigee for enterprise monetization |
+| **AppSync** (GraphQL) | — (GraphQL hosting via Cloud Run) | — | Managed GraphQL with subscriptions + JS resolvers |
+
+### 19.8 Identity, Security & Secrets
+
+| AWS | GCP | Azure | Pick it when |
+| :-- | :-- | :-- | :-- |
+| **Cognito** (user pools; OIDC/SAML) | **Identity Platform** | **Entra External ID** (was B2C) | Consumer/B2B app auth without building it |
+| **IAM Identity Center** (SSO) | **Cloud Identity** | **Entra ID** (was AAD) | Workforce SSO + federation |
+| **Secrets Manager** (rotation) / SSM Parameter Store | **Secret Manager** | **Key Vault** | Secrets with rotation & audit; Parameter Store for cheap config |
+| **KMS** / CloudHSM | Cloud KMS / Cloud HSM | Key Vault HSM | Envelope encryption; HSM for compliance (FIPS 140-2 L3) |
+| **WAF + Shield** (DDoS) | **Cloud Armor** | **Front Door WAF + DDoS protection** | L7 rules + volumetric DDoS absorption |
+| **GuardDuty / Inspector / Macie / Security Hub** | **Security Command Center** | **Defender for Cloud / Sentinel** | Threat detection posture; Sentinel = cloud-native SIEM |
+| **Certificate Manager** (ACM) | Certificate Manager | Key Vault / App Service Certs | Free managed TLS with auto-renewal |
+
+### 19.9 Developer Tooling & Governance
+
+| AWS | GCP | Azure | Pick it when |
+| :-- | :-- | :-- | :-- |
+| **ECR** (registry + scanning) | **Artifact Registry** | **Container Registry / ACR** | First-party registries with vulnerability scans |
+| **CodePipeline / CodeBuild / CodeDeploy** | **Cloud Build / Cloud Deploy** | **Azure DevOps / GitHub Actions** | Native CI/CD; most teams standardize on Actions + deploy hooks |
+| **CloudFormation** / **CDK** | **Infrastructure Manager** | **ARM / Bicep** | IaC; CDK/Bicep beat raw JSON/YAML; Terraform stays the multi-cloud default |
+| **Systems Manager** (fleet ops, patch, run command) | OS Config | **Arc + Guest Configuration** | Fleet management without SSH |
+| **Control Tower / Organizations / SCPs** | **Organization / Folders / Org Policies** | **Management Groups / Azure Policy / Landing Zones** | Multi-account governance; guardrails-as-code |
+
+### 19.10 Observability & Cost Management
+
+| AWS | GCP | Azure | Pick it when |
+| :-- | :-- | :-- | :-- |
+| **CloudWatch** (logs/metrics/alarms; Logs Insights) | **Cloud Logging / Monitoring** | **Azure Monitor + Log Analytics** | First-party telemetry; all three are OpenTelemetry-friendly now |
+| **X-Ray** (traces) | **Cloud Trace** | **Application Insights** (KQL) | Distributed tracing; App Insights is the deepest of the three |
+| **Cost Explorer / Budgets / CUR** | **Billing export / Recommender** | **Cost Management + Advisor** | FinOps: the CUR/billing export is the source of truth for showback |
+| **Compute Optimizer / Trusted Advisor** | **Recommender** | **Advisor** | Rightsizing recommendations from actual utilization |
+
+**How to use this catalog:** (1) find the **capability**, not the brand — "I need pub/sub" before "I want SNS"; (2) check the §14 decision table for the top-80% choices; (3) the deciding factors are almost always the same four: **ops burden vs control, egress/data gravity, consistency needs, and exit cost**; (4) map what you pick back to this repo's designs — §15 lists which doc drills each capability's internals (Kafka → `kafka-features.md`, Spanner-style → `system-design-key-value-store.md`, Bedrock → `agentic-ai-features.md`, Lambda → `system-design-serverless.md`, CloudFront → `system-design-url-shortener.md`).

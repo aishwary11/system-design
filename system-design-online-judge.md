@@ -281,3 +281,14 @@ console.log(diff('1 2 3\n', ' 1  2 3'));            // true — whitespace-toler
 ```
 
 Production notes: sandboxing is **gVisor/Firecracker + cgroups + seccomp + rootless namespaces** (never bare Docker — kernel escape = pwned judge); TLE is detected on **CPU time**, wall clock only as a backstop (an I/O-blocked process burning wall time shouldn't fail an honest solution); tests execute in **parallel workers with per-test timeout budgets** and stop at first fatal verdict; and the queue is priority-fair per user (one user can't submit-storm the judge fleet — token bucket per account, see the rate-limiter doc).
+
+## Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :-- | :-- |
+| Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — online judge lives or dies there |
+| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
+| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
+| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
+
+*More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*

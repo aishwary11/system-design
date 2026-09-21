@@ -12,7 +12,7 @@ A quick-reference catalog of MongoDB features used in document-oriented backends
 
 ### Document database at a glance
 
-![Mongodb at a Glance](diagrams/features/mongodb-at-a-glance.svg)
+![MongoDB at a Glance](diagrams/features/mongodb-at-a-glance.svg)
 
 **Interactive diagram:** [diagrams/features/mongodb-at-a-glance.architecture.html](diagrams/features/mongodb-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 *Solid = query/mutation flow. Router §10, replica sets §9, shards §10, change streams §8, transactions §7.

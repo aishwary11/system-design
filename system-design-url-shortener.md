@@ -47,7 +47,7 @@ A URL shortening service that converts long URLs to short, shareable links with 
 
 ### Architecture Diagram
 
-![Url Shortener — System Architecture](diagrams/system-design/url-shortener.svg)
+![URL Shortener — System Architecture](diagrams/system-design/url-shortener.svg)
 
 **Interactive diagram:** [diagrams/system-design/url-shortener.architecture.html](diagrams/system-design/url-shortener.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
@@ -480,3 +480,14 @@ class CacheService {
 }
 
 const gen = new URLGenerator(); console.log("Short URL:", gen.generate());
+
+## Do's & Don'ts
+
+| ✅ Do | ❌ Don't |
+| :-- | :-- |
+| Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — url shortener lives or dies there |
+| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
+| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
+| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
+
+*More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
