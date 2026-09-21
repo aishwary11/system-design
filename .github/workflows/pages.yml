@@ -28,10 +28,12 @@ jobs:
       - run: node tools/build-pages.mjs
       - name: Publish to gh-pages
         run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan gh-pages
-          find . -mindepth 1 -maxdepth 1 -not -name site -not -name .git -exec rm -rf {} +
+          git config user.name  "aishwary11"
+          git config user.email "aishwary46@gmail.com"
+          cd site
+          touch .nojekyll
+          git init -q -b gh-pages .
           git add -A
           git commit -q -m "Deploy diagrams site from ${GITHUB_SHA}"
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
           git push --force origin gh-pages

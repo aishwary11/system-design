@@ -28,6 +28,7 @@ const lc = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 rmSync(SITE, { recursive: true, force: true });
 mkdirSync(SITE, { recursive: true });
 cpSync(join(ROOT, 'diagrams'), join(SITE, 'diagrams'), { recursive: true });
+writeFileSync(join(SITE, '.nojekyll'), ''); // skip Jekyll processing on Pages
 
 // ── 2. collect diagram metadata from specs ──────────────────────────────────
 const specs = readdirSync(join(ROOT, 'diagrams', 'json')).filter((f) => f.endsWith('.architecture.json'));
