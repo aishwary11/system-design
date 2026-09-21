@@ -30,11 +30,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          git config user.name  "aishwary11"
-          git config user.email "aishwary46@gmail.com"
           cd site
           touch .nojekyll
           git init -q -b gh-pages .
+          git config user.name  "aishwary11"
+          git config user.email "aishwary46@gmail.com"
           git add -A
           git commit -q -m "Deploy diagrams site from ${GITHUB_SHA}"
           git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
