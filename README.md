@@ -9,7 +9,7 @@
 
 </div>
 
-**49 system designs · 12 technology & reference guides · 64 interactive diagrams · 25 JS algorithm implementations · 30-day roadmap · [🌐 live diagram site](https://aishwary11.github.io/system-design/)**
+**49 system designs · 12 technology & reference guides · 64 interactive diagrams · 25 JS algorithm implementations · 30-day roadmap**
 
 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="30" alt="📚"/> [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
@@ -325,7 +325,7 @@ Every architecture diagram is an [Archify](https://github.com/tt-a1i/archify) di
 node tools/archify-all.mjs validate   # quality-check every spec (showcase profile)
 node tools/archify-all.mjs deliver    # re-render the interactive HTML per spec
 node tools/embed-svg.mjs              # export SVGs + refresh markdown diagram embeds
-node tools/build-pages.mjs            # build the GitHub Pages site into ./site (auto-deployed on push)
+node tools/build-pages.mjs            # build a local browsable site into ./site (optional)
 ```
 
 (`tools/convert-mermaid.mjs` is the one-time Mermaid→spec converter kept for reference.)
