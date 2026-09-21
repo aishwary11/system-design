@@ -1,17 +1,21 @@
 #!/usr/bin/env node
 /**
- * Embed GitHub-safe inline SVGs + interactive-diagram links into the markdown.
+ * Embed GitHub-safe diagram references + interactive-diagram links into the markdown.
  *
- * For each mermaid block (same discovery order as convert-mermaid.mjs) this
- * takes the spec's VALIDATED layout (`archify validate --layout-json`: exact
- * boxes, orthogonal route points, label positions, viewBox) and renders a
- * self-contained SVG (card-style canvas with modern palette, contrast-hardened inks so it stays legible on GitHub dark mode) that GitHub renders inline. The mermaid
- * block is replaced with the SVG plus one link line to the interactive HTML
- * in its topic folder (diagrams/system-design|concepts|features|template).
+ * `--export` mode: writes every spec's VALIDATED layout (archify validate
+ * --layout-json) as a standalone .svg file next to its interactive HTML
+ * (diagrams/system-design|concepts|features|template) so markdown, IDEs and the
+ * Pages site can all reference real image files.
  *
- * Usage: node tools/embed-svg.mjs
+ * Default mode: rewrites the markdown so each diagram is a plain image
+ * reference (`![Title](diagrams/....svg)`) followed by the interactive-HTML
+ * link line. GitHub's markdown sanitizer strips inline <svg> elements (leaving
+ * their text content as a flattened paragraph with a visible <title>), so
+ * markdown must reference images instead of inlining SVG markup.
+ *
+ * Usage: node tools/embed-svg.mjs [--export]
  */
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join, resolve, dirname, basename } from 'node:path';
 import { homedir } from 'node:os';
@@ -19,6 +23,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SKILL = join(homedir(), '.agents', 'skills', 'archify');
+const EXPORT = process.argv.includes('--export');
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -40,7 +45,7 @@ function layoutFor(specPath) {
   return JSON.parse(out.slice(start));
 }
 
-function svgFor(specPath, title) {
+function svgMarkupFor(specPath, title) {
   const stem = basename(specPath).replace(/\.architecture\.json$/, '').replace(/[^A-Za-z0-9_-]/g, '');
   const L = layoutFor(specPath);
   const [vw, vh] = L.viewBox;
@@ -48,9 +53,8 @@ function svgFor(specPath, title) {
   const out = [];
 
   out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vw} ${vh}" width="${Math.min(vw, 900)}" role="img" aria-label="${esc(title)}">`);
+  out.push(`<title>${esc(title)}</title>`);
   out.push(`<rect x="0.5" y="0.5" width="${vw - 1}" height="${vh - 1}" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>`);
-  // NOTE: no <title> child here — GitHub's markdown renderer shows it as visible
-  // text inside the sanitized SVG. The svg's aria-label keeps the accessible name.
 
   // ---- boundaries
   for (const b of L.boundaries ?? []) {
@@ -111,9 +115,53 @@ function htmlTarget(stem) {
   return `diagrams/system-design/${stem}.architecture.html`;
 }
 
-// ---- walk the markdown, same order as the converter --------------------------
+// ---- standalone .svg file target (sits beside its interactive HTML) ----------
+function svgTarget(stem) {
+  if (stem === 'template') return 'diagrams/template.svg';
+  if (stem.startsWith('concept-')) return `diagrams/concepts/${stem}.svg`;
+  if (stem.endsWith('-at-a-glance')) return `diagrams/features/${stem}.svg`;
+  if (stem === 'redis-ai-context-layer' || stem === 'langcache-semantic-cache') return `diagrams/features/${stem}.svg`;
+  return `diagrams/system-design/${stem}.svg`;
+}
+
+// ---- diagram stem -> doc title (kept in sync with convert-mermaid.mjs naming) -
+const titleFor = (stem, file) =>
+  ({ 'template': 'Reference Architecture Template' }[stem])
+  ?? (file === 'system-design-concepts.md'
+    ? ['Sharding — Data Partitioning', 'Replication Topologies', 'Quorum Reads & Writes'][['concept-sharding', 'concept-replication', 'concept-quorum'].indexOf(stem)] ?? 'Concept'
+    : null)
+  ?? (/^system-design-/.test(file)
+    ? stem.replace(/(^|-)(\w)/g, (_, a, b) => (a ? ' ' : '') + b.toUpperCase()) + ' — System Architecture'
+    : stem.replace(/-at-a-glance$/, '').replace(/(^|-)(\w)/g, (_, a, b) => (a ? ' ' : '') + b.toUpperCase()) + ' at a Glance');
+
+// ---- --export: write every spec's diagram as a standalone .svg file ----------
+if (EXPORT) {
+  const specsDir = join(ROOT, 'diagrams', 'json');
+  const specs = readdirSync(specsDir).filter(f => f.endsWith('.architecture.json') && f !== 'template.architecture.json');
+  specs.push('template.architecture.json'); // README embeds it; still export a real file
+  let exported = 0;
+  const problems = [];
+  for (const f of specs) {
+    const stem = f.replace(/\.architecture\.json$/, '');
+    const title = titleFor(stem, stem.startsWith('concept-') ? 'system-design-concepts.md' : stem === 'template' ? 'README.md' : stem.endsWith('-at-a-glance') ? stem.replace(/-at-a-glance$/, '') + '-features.md' : 'system-design-' + stem + '.md');
+    try {
+      const svg = svgMarkupFor(join(specsDir, f), title);
+      const target = svgTarget(stem);
+      mkdirSync(dirname(join(ROOT, target)), { recursive: true });
+      writeFileSync(join(ROOT, target), svg + '\n');
+      exported++;
+    } catch (e) {
+      problems.push(`${stem}: ${e.message}`);
+    }
+  }
+  console.log(`exported ${exported} standalone svg files${problems.length ? '\nPROBLEMS:\n' + problems.join('\n') : ''}`);
+  if (problems.length) process.exit(1);
+  process.exit(0);
+}
+
+// ---- walk the markdown: image reference + interactive link -------------------
 const files = readdirSync(ROOT).filter(f => /\.md$/.test(f)).sort();
-let replaced = 0;
+let converted = 0;
 const problems = [];
 
 const STEM_BY_FILE_BLOCK = (file, blockIdx) => {
@@ -124,45 +172,41 @@ const STEM_BY_FILE_BLOCK = (file, blockIdx) => {
   return file.replace(/-features\.md$/, '') + '-at-a-glance';
 };
 
-// diagram stem -> doc title (kept in sync with convert-mermaid.mjs naming)
-const titleFor = (stem, file) =>
-  ({ 'template': 'Reference Architecture Template' }[stem])
-  ?? (file === 'system-design-concepts.md'
-    ? ['Sharding — Data Partitioning', 'Replication Topologies', 'Quorum Reads & Writes'][['concept-sharding', 'concept-replication', 'concept-quorum'].indexOf(stem)] ?? 'Concept'
-    : null)
-  ?? (/^system-design-/.test(file)
-    ? stem.replace(/(^|-)(\w)/g, (_, a, b) => (a ? ' ' : '') + b.toUpperCase()) + ' — System Architecture'
-    : stem.replace(/-at-a-glance$/, '').replace(/(^|-)(\w)/g, (_, a, b) => (a ? ' ' : '') + b.toUpperCase()) + ' at a Glance');
-
 for (const file of files) {
   const src = readFileSync(join(ROOT, file), 'utf8');
   if (!src.includes('<svg') && !src.includes('```mermaid')) continue;
   let blockIdx = 0;
   let out = src;
 
-  // Pass 1 (historical): swap mermaid fences for svg + standard link.
+  // Pass 1 (historical): swap mermaid fences for an image ref + standard link.
   out = out.replace(/```mermaid\r?\n[\s\S]*?```/g, () => {
     const stem = STEM_BY_FILE_BLOCK(file, blockIdx++);
     const title = titleFor(stem, file);
     try {
+      const svgPath = svgTarget(stem);
       const target = htmlTarget(stem);
-      const svg = svgFor(join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`), title);
-      replaced++;
-      return svg + '\n' + `**Interactive diagram:** [${target}](${target}) — pan/zoom, search, dark/light theme, PNG/SVG export.\n`;
+      const svg = svgMarkupFor(join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`), title);
+      writeFileSync(join(ROOT, svgPath), svg + '\n');
+      converted++;
+      return `![${title}](${svgPath})\n\n**Interactive diagram:** [${target}](${target}) — pan/zoom, search, dark/light theme, PNG/SVG export.\n`;
     } catch (e) {
       problems.push(`${file} [${stem}]: ${e.message}`);
       return '```mermaid (conversion failed)```';
     }
   });
 
-  // Pass 2 (idempotent): refresh existing svg + link blocks, keyed by the link target.
-  out = out.replace(/<svg\b[\s\S]*?<\/svg>\s*\n\*\*Interactive diagram:\*\* \[[^\]]*\]\((diagrams\/[^)\s]+)\)[^\n]*(\r?\n)?/g, (m, target) => {
+  // Pass 2 (legacy): convert previously-inlined <svg>…</svg> blocks into image
+  // references (GitHub strips inline SVGs from markdown, flattening them into
+  // visible text). Keyed by the link target; regenerates the .svg file too.
+  out = out.replace(/<svg\b[\s\S]*?<\/svg>\s*\n?\s*\*\*Interactive diagram:\*\* \[[^\]]*\]\((diagrams\/[^)\s]+)\)[^\n]*(\r?\n)?/g, (m, target) => {
     const stem = target.split('/').pop().replace(/(\.architecture)?\.html$/, '');
     const title = titleFor(stem, file);
     try {
-      const svg = svgFor(join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`), title);
-      replaced++;
-      return svg + '\n\n' + m.slice(m.indexOf('**'));
+      const svgPath = svgTarget(stem);
+      const svg = svgMarkupFor(join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`), title);
+      writeFileSync(join(ROOT, svgPath), svg + '\n');
+      converted++;
+      return `![${title}](${svgPath})\n\n**Interactive diagram:** [${target}](${target}) — pan/zoom, search, dark/light theme, PNG/SVG export.\n`;
     } catch (e) {
       problems.push(`${file} [${stem}]: ${e.message}`);
       return m;
@@ -171,4 +215,5 @@ for (const file of files) {
 
   if (out !== src) writeFileSync(join(ROOT, file), out);
 }
-console.log(`embedded ${replaced} svg diagrams${problems.length ? '\nPROBLEMS:\n' + problems.join('\n') : ''}`);
+console.log(`converted ${converted} markdown embeds to image references${problems.length ? '\nPROBLEMS:\n' + problems.join('\n') : ''}`);
+if (problems.length) process.exit(1);

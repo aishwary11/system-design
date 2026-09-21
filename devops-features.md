@@ -10,58 +10,7 @@ A quick-reference catalog of the DevOps toolchain behind every design in this re
 
 ### DevOps toolchain at a glance
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 996 1150" width="900" role="img" aria-label="Devops at a Glance">
-<rect x="0.5" y="0.5" width="995" height="1149" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-<rect x="68" y="288" width="824" height="722" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>
-<rect x="80" y="296" width="142.4" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
-<text x="151.2" y="310" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">Delivery Platform</text>
-<path d="M480 132 L480 227 L181 227 L181 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-devops-at-a-glance)"/>
-<path d="M276 353 L385 353" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-devops-at-a-glance)"/>
-<path d="M575 353 L684 353" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-devops-at-a-glance)"/>
-<path d="M779 384 L779 505 L181 505 L181 626" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-devops-at-a-glance)"/>
-<path d="M276 657 L385 657" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-devops-at-a-glance)"/>
-<path d="M575 657 L684 657" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-devops-at-a-glance)"/>
-<path d="M779 688 L779 809 L330 809 L330 930" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-devops-at-a-glance)"/>
-<path d="M235 961 L211 961 L211 712 L480 712 L480 688" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-devops-at-a-glance)"/>
-<path d="M425 961 L535 961" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-devops-at-a-glance)"/>
-<rect x="396" y="73" width="168" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
-<rect x="396" y="70" width="168" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
-<rect x="399" y="73" width="162" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
-<text x="480" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Developer PR</text>
-<rect x="86" y="325" width="190" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
-<rect x="86" y="322" width="190" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
-<rect x="89" y="325" width="184" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
-<text x="181" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">CI Pipeline</text>
-<rect x="385" y="325" width="190" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
-<rect x="385" y="322" width="190" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
-<rect x="388" y="325" width="184" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
-<text x="480" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Registry</text>
-<rect x="684" y="325" width="190" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
-<rect x="684" y="322" width="190" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
-<rect x="687" y="325" width="184" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
-<text x="779" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Quality Gates</text>
-<rect x="86" y="629" width="190" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
-<rect x="86" y="626" width="190" height="62" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.4"/>
-<rect x="89" y="629" width="184" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
-<text x="181" y="662" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#7c2d12">GitOps Repo</text>
-<rect x="385" y="629" width="190" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
-<rect x="385" y="626" width="190" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
-<rect x="388" y="629" width="184" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
-<text x="480" y="662" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">ArgoCD</text>
-<rect x="684" y="629" width="190" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
-<rect x="684" y="626" width="190" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
-<rect x="687" y="629" width="184" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
-<text x="779" y="662" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Kubernetes</text>
-<rect x="235" y="933" width="190" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
-<rect x="235" y="930" width="190" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
-<rect x="238" y="933" width="184" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
-<text x="330" y="966" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Observability</text>
-<rect x="535" y="933" width="190" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
-<rect x="535" y="930" width="190" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
-<rect x="538" y="933" width="184" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
-<text x="630" y="966" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">SLOs &amp; Error Budgets</text>
-<defs><marker id="arr-devops-at-a-glance" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-devops-at-a-glance" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
-</svg>
+![Devops at a Glance](diagrams/features/devops-at-a-glance.svg)
 
 **Interactive diagram:** [diagrams/features/devops-at-a-glance.architecture.html](diagrams/features/devops-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
