@@ -7,6 +7,34 @@
 > [!TIP]
 > **TL;DR** — Design the observability backend for a fleet of thousands of services: metrics are scraped/emitted at scale, stored in a time-series database, queried by dashboards, evaluated by rule engines, and converted into deduplicated, routed, escalating **alerts** with on-call paging.
 
+## Table of Contents
+
+<details>
+<summary><b>📑 Jump to a section</b></summary>
+
+1. [Overview](#overview)
+2. [Requirements](#requirements)
+3. [High-Level Architecture](#high-level-architecture)
+4. [Microservices](#microservices)
+5. [Database Design](#database-design)
+6. [Scaling Tiers](#scaling-tiers)
+7. [Key Techniques & Patterns](#key-techniques--patterns)
+8. [Key Design Decisions](#key-design-decisions)
+9. [Failure Modes & Recovery](#failure-modes--recovery)
+10. [Cost Estimation (1M users)](#cost-estimation-1m-users)
+11. [Trade-off Analysis](#trade-off-analysis)
+12. [Key Metrics to Monitor](#key-metrics-to-monitor)
+13. [Production Readiness Checklist](#production-readiness-checklist)
+14. [Deep Dive Prompts](#deep-dive-prompts)
+15. [Common Interview Follow-ups (with answers)](#common-interview-follow-ups-with-answers)
+16. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
+17. [Do's & Don'ts](#dos--donts)
+
+</details>
+
+---
+
+
 ## Overview
 
 Design the observability backend for a fleet of thousands of services: metrics are scraped/emitted at scale, stored in a time-series database, queried by dashboards, evaluated by rule engines, and converted into deduplicated, routed, escalating **alerts** with on-call paging. The hard problems are **write-heavy cardinality** (millions of active series), cheap **downsampling/retention** so 2-year-old data stays queryable, **anomaly detection** that doesn't cry wolf, and an alert pipeline whose own failure must never go unnoticed (meta-monitoring). This is the system that watches all the other systems — it must be the most reliable one you own.
@@ -311,3 +339,7 @@ Expected: the QPS spike at sample 7 (and its echo at 8) exceed z=6 → page once
 | Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
+
+---
+
+<nav>← [airbnb](system-design-airbnb.md) · [📖 All guides](README.md) · [code deployment](system-design-code-deployment.md) →</nav>

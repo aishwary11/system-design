@@ -7,6 +7,33 @@
 > [!TIP]
 > **TL;DR** — Professional networking platform with job matching, feed, messaging, learning, and recruiter tools for 900M+ members.
 
+## Table of Contents
+
+<details>
+<summary><b>📑 Jump to a section</b></summary>
+
+1. [Overview](#overview)
+2. [Requirements](#requirements)
+3. [High-Level Architecture](#high-level-architecture)
+4. [Microservices](#microservices)
+5. [Database Design](#database-design)
+6. [Scaling Tiers](#scaling-tiers)
+7. [Key Techniques & Patterns](#key-techniques--patterns)
+8. [Key Design Decisions](#key-design-decisions)
+9. [Failure Modes & Recovery](#failure-modes--recovery)
+10. [Cost Estimation (1M Users)](#cost-estimation-1m-users)
+11. [Trade-off Analysis](#trade-off-analysis)
+12. [Key Metrics to Monitor](#key-metrics-to-monitor)
+13. [Deep Dive Prompts](#deep-dive-prompts)
+14. [Common Interview Follow-ups](#common-interview-follow-ups)
+15. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
+16. [Do's & Don'ts](#dos--donts)
+
+</details>
+
+---
+
+
 ## Overview
 
 Professional networking platform with job matching, feed, messaging, learning, and recruiter tools for 900M+ members.
@@ -337,3 +364,7 @@ const feed = new FeedGenerator(); console.log("Feed generator ready");
 | Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
+
+---
+
+<nav>← [leaderboard](system-design-leaderboard.md) · [📖 All guides](README.md) · [llm inference](system-design-llm-inference.md) →</nav>

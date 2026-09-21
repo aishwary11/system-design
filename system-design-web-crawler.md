@@ -7,6 +7,33 @@
 > [!TIP]
 > **TL;DR** — A distributed web crawler that systematically browses and downloads web pages for indexing, archiving, or data analysis.
 
+## Table of Contents
+
+<details>
+<summary><b>📑 Jump to a section</b></summary>
+
+1. [Overview](#overview)
+2. [Requirements](#requirements)
+3. [High-Level Architecture](#high-level-architecture)
+4. [Microservices](#microservices)
+5. [Database Design](#database-design)
+6. [Scaling Tiers](#scaling-tiers)
+7. [Key Design Decisions](#key-design-decisions)
+8. [Failure Modes & Recovery](#failure-modes--recovery)
+9. [Cost Estimation (1M Users)](#cost-estimation-1m-users)
+10. [Trade-off Analysis](#trade-off-analysis)
+11. [Key Metrics to Monitor](#key-metrics-to-monitor)
+12. [Deep Dive Prompts](#deep-dive-prompts)
+13. [Key Techniques & Patterns](#key-techniques--patterns)
+14. [Common Interview Follow-ups](#common-interview-follow-ups)
+15. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
+16. [Do's & Don'ts](#dos--donts)
+
+</details>
+
+---
+
+
 ## Overview
 
 A distributed web crawler that systematically browses and downloads web pages for indexing, archiving, or data analysis.
@@ -461,3 +488,7 @@ function check_robots_txt(url, user_agent) {
 | Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
+
+---
+
+<nav>← [video conferencing](system-design-video-conferencing.md) · [📖 All guides](README.md) · [youtube](system-design-youtube.md) →</nav>

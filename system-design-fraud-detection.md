@@ -4,6 +4,34 @@
 
 </div>
 
+
+## Table of Contents
+
+<details>
+<summary><b>📑 Jump to a section</b></summary>
+
+1. [Overview](#overview)
+2. [Requirements](#requirements)
+3. [High-Level Architecture](#high-level-architecture)
+4. [Microservices](#microservices)
+5. [Database Design](#database-design)
+6. [Scaling Tiers](#scaling-tiers)
+7. [Key Techniques & Patterns](#key-techniques--patterns)
+8. [Key Design Decisions](#key-design-decisions)
+9. [Failure Modes & Recovery](#failure-modes--recovery)
+10. [Cost Estimation (1M users)](#cost-estimation-1m-users)
+11. [Trade-off Analysis](#trade-off-analysis)
+12. [Key Metrics to Monitor](#key-metrics-to-monitor)
+13. [Production Readiness Checklist](#production-readiness-checklist)
+14. [Deep Dive Prompts](#deep-dive-prompts)
+15. [Common Interview Follow-ups (with answers)](#common-interview-follow-ups-with-answers)
+16. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
+17. [Do's & Don'ts](#dos--donts)
+
+</details>
+
+---
+
 ## Overview
 
 Design a real-time fraud-detection platform for a payments / fintech company (Stripe Radar / PayPal / Zomato-promo-abuse class): every transaction or user action is scored in milliseconds against velocity rules, device fingerprints, and ML models; confirmed fraud feeds back into training data; and linked accounts are clustered into **fraud rings** using graph algorithms. The hard problem is running deep, stateful analysis (hundreds of features per event) within a strict milliseconds budget, while cutting off confirmed fraud instantly.
@@ -275,3 +303,7 @@ Expected: the first link is a pair; linking `acc_3` forms a ring of 3 (flagged);
 | Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
+
+---
+
+<nav>← [food delivery](system-design-food-delivery.md) · [📖 All guides](README.md) · [google ads](system-design-google-ads.md) →</nav>

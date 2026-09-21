@@ -2239,3 +2239,7 @@ Expected: `winner: Song B starts at frame 120` by a landslide — the true (song
 | Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
+
+---
+
+<nav>← [code deployment](system-design-code-deployment.md) · [📖 All guides](README.md) · [delayed job scheduler](system-design-delayed-job-scheduler.md) →</nav>

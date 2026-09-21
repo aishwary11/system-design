@@ -7,6 +7,34 @@
 > [!TIP]
 > **TL;DR** — Design the core trading platform of a stock exchange (NSE / NASDAQ / BSE-style): order intake from broker OMSs, a deterministic matching engine that runs a continuous two-sided auction per symbol, tick-by-tick market data dissemination, and T+1 clearing & settlement.
 
+## Table of Contents
+
+<details>
+<summary><b>📑 Jump to a section</b></summary>
+
+1. [Overview](#overview)
+2. [Requirements](#requirements)
+3. [High-Level Architecture](#high-level-architecture)
+4. [Microservices](#microservices)
+5. [Database Design](#database-design)
+6. [Scaling Tiers](#scaling-tiers)
+7. [Key Techniques & Patterns](#key-techniques--patterns)
+8. [Key Design Decisions](#key-design-decisions)
+9. [Failure Modes & Recovery](#failure-modes--recovery)
+10. [Cost Estimation (1M users)](#cost-estimation-1m-users)
+11. [Trade-off Analysis](#trade-off-analysis)
+12. [Key Metrics to Monitor](#key-metrics-to-monitor)
+13. [Production Readiness Checklist](#production-readiness-checklist)
+14. [Deep Dive Prompts](#deep-dive-prompts)
+15. [Common Interview Follow-ups (with answers)](#common-interview-follow-ups-with-answers)
+16. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
+17. [Do's & Don'ts](#dos--donts)
+
+</details>
+
+---
+
+
 ## Overview
 
 Design the core trading platform of a stock exchange (NSE / NASDAQ / BSE-style): order intake from broker OMSs, a deterministic matching engine that runs a continuous two-sided auction per symbol, tick-by-tick market data dissemination, and T+1 clearing & settlement. Unlike generic e-commerce systems, the hot path is measured in **microseconds**, every fill must be **exactly-once and reproducible**, and the whole day's activity must be auditable to the last event.
@@ -319,3 +347,7 @@ Expected: order 3 fills 50 @ 100.0 against order 1 (time priority) then 10 @ 100
 | Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
+
+---
+
+<nav>← [spotify](system-design-spotify.md) · [📖 All guides](README.md) · [ticketing system](system-design-ticketing-system.md) →</nav>

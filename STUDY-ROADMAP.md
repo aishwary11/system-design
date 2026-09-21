@@ -10,6 +10,22 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 
 ---
 
+
+## Table of Contents
+
+<details>
+<summary><b>📑 Jump to a section</b></summary>
+
+1. [Week 1 — Foundations (the primitives everything reuses)](#week-1--foundations-the-primitives-everything-reuses)
+2. [Week 2 — Data & Messaging (state, streams, and consistency)](#week-2--data--messaging-state-streams-and-consistency)
+3. [Week 3 — Delivery & Infrastructure (geo, video, money, deploys)](#week-3--delivery--infrastructure-geo-video-money-deploys)
+4. [Week 4 — Interview simulation (hard docs, tips, mock loops)](#week-4--interview-simulation-hard-docs-tips-mock-loops)
+5. [Rules that make it stick](#rules-that-make-it-stick)
+
+</details>
+
+---
+
 ## Week 1 — Foundations (the primitives everything reuses)
 
 | Day | Read | Do |

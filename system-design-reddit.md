@@ -7,6 +7,33 @@
 > [!TIP]
 > **TL;DR** — A community/link-aggregation platform: threaded comment trees, vote-based ranking with time decay, per-subreddit feeds, and moderation. Distinct from Twitter/Instagram because the core object is a **mutable tree**, not a flat feed.
 
+## Table of Contents
+
+<details>
+<summary><b>📑 Jump to a section</b></summary>
+
+1. [Overview](#overview)
+2. [Requirements](#requirements)
+3. [High-Level Architecture](#high-level-architecture)
+4. [Microservices](#microservices)
+5. [Database Design](#database-design)
+6. [Scaling Tiers](#scaling-tiers)
+7. [Key Techniques & Patterns](#key-techniques--patterns)
+8. [Key Design Decisions](#key-design-decisions)
+9. [Failure Modes & Recovery](#failure-modes--recovery)
+10. [Cost Estimation (1M Users)](#cost-estimation-1m-users)
+11. [Trade-off Analysis](#trade-off-analysis)
+12. [Key Metrics to Monitor](#key-metrics-to-monitor)
+13. [Deep Dive Prompts](#deep-dive-prompts)
+14. [Common Interview Follow-ups](#common-interview-follow-ups)
+15. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
+16. [Do's & Don'ts](#dos--donts)
+
+</details>
+
+---
+
+
 ## Overview
 
 Users post links/text to subreddits; others vote and reply **in nested threads**. Feeds rank by score decayed over time (the classic Reddit "hot" algorithm), comment trees render lazily, and moderation (removal, locking, flair) mutates content after the fact. The design problems: hierarchical storage, decaying ranking, vote dedup, and vote-brigading defense.
@@ -264,3 +291,7 @@ Why Reddit-style ranking pairs well with this: `score` is denormalized and updat
 | Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
+
+---
+
+<nav>← [recommendation system](system-design-recommendation-system.md) · [📖 All guides](README.md) · [route reconstruction](system-design-route-reconstruction.md) →</nav>

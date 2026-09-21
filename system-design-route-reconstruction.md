@@ -7,6 +7,33 @@
 > [!TIP]
 > **TL;DR** — An end-to-end spatial pipeline that turns millions of chaotic last-mile GPS traces into high-fidelity ground truth: joint anomaly scoring → Kalman smoothing → OSRM map-matching with confidence labels → H3 + Hidden-Markov-Model consensus paths → real-time deviation scoring. Based on Zepto's Route IQ architecture.
 
+## Table of Contents
+
+<details>
+<summary><b>📑 Jump to a section</b></summary>
+
+1. [Overview](#overview)
+2. [Requirements](#requirements)
+3. [High-Level Architecture](#high-level-architecture)
+4. [Microservices](#microservices)
+5. [Database Design](#database-design)
+6. [Scaling Tiers](#scaling-tiers)
+7. [Key Techniques & Patterns](#key-techniques--patterns)
+8. [Key Design Decisions](#key-design-decisions)
+9. [Failure Modes & Recovery](#failure-modes--recovery)
+10. [Cost Estimation (1M Users)](#cost-estimation-1m-users)
+11. [Trade-off Analysis](#trade-off-analysis)
+12. [Key Metrics to Monitor](#key-metrics-to-monitor)
+13. [Deep Dive Prompts](#deep-dive-prompts)
+14. [Common Interview Follow-ups](#common-interview-follow-ups)
+15. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
+16. [Do's & Don'ts](#dos--donts)
+
+</details>
+
+---
+
+
 ## Overview
 
 A rider's phone emits a GPS ping every few seconds, but in narrow alleys, flyovers, and dense tech parks the trace "spatters": pings lag, vanish for minutes, bounce off glass facades, or teleport a rider into a lake. Computing Haversine distance over raw coordinates runs **30–40% off** actual distance — and rider distance feeds rider compensation, ETA models, and geofence optimization, so the error cascades across the business. Route IQ answers four questions: *what route did the rider take, are they stalled, what route should they have taken, and did they deviate?*
@@ -306,3 +333,7 @@ console.log(cleanTrace([{ lat: 0, lng: 0, ts: 0 }, { lat: 0.5, lng: 0, ts: 3000 
 | Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
+
+---
+
+<nav>← [reddit](system-design-reddit.md) · [📖 All guides](README.md) · [search autocomplete](system-design-search-autocomplete.md) →</nav>
