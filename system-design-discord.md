@@ -79,8 +79,6 @@ Unlike WhatsApp (1:1 and small groups), Discord rooms (channels in servers) rout
 **Interactive diagram:** [diagrams/system-design/discord.architecture.html](diagrams/system-design/discord.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/discord.architecture.html](diagrams/system-design/discord.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Client connects to the **Gateway** (WebSocket) — session state in Redis (session id, subscriptions, cursor)

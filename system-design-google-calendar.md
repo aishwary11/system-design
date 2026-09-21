@@ -80,8 +80,6 @@ Calendar looks like CRUD and isn't. The hard parts: recurring events (RRULE expa
 **Interactive diagram:** [diagrams/system-design/google-calendar.architecture.html](diagrams/system-design/google-calendar.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/google-calendar.architecture.html](diagrams/system-design/google-calendar.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Event write → Calendar API → PostgreSQL (event + recurrence rule) → outbox → Kafka

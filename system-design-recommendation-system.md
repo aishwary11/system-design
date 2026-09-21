@@ -79,8 +79,6 @@ A recommender can't score a 1B-item catalog per request. The answer is a **funne
 **Interactive diagram:** [diagrams/system-design/recommendation-system.architecture.html](diagrams/system-design/recommendation-system.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/recommendation-system.architecture.html](diagrams/system-design/recommendation-system.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Request → Recs API → **Retrieval Svc**: parallel retrievers (ANN on two-tower embeddings, i2i co-visitation, trending, editorial) each return ≤ 200 candidates, unioned

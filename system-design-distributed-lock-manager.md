@@ -81,8 +81,6 @@ Services need to agree on "who is the leader," "who owns this shard," "is this c
 **Interactive diagram:** [diagrams/system-design/distributed-lock-manager.architecture.html](diagrams/system-design/distributed-lock-manager.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/distributed-lock-manager.architecture.html](diagrams/system-design/distributed-lock-manager.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Client session → Frontend → **consensus group (5 nodes, Raft)** — every lock/config op is a Raft log entry

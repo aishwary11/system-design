@@ -80,8 +80,6 @@ Search = three subsystems: **crawl** (already covered — `system-design-web-cra
 **Interactive diagram:** [diagrams/system-design/search-engine.architecture.html](diagrams/system-design/search-engine.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/search-engine.architecture.html](diagrams/system-design/search-engine.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Crawler (existing doc) fetches pages → Kafka: raw content stream

@@ -79,8 +79,6 @@ Users post links/text to subreddits; others vote and reply **in nested threads**
 **Interactive diagram:** [diagrams/system-design/reddit.architecture.html](diagrams/system-design/reddit.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/reddit.architecture.html](diagrams/system-design/reddit.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Post/comment writes go to Content Service → Cassandra (partitioned by post/subreddit)

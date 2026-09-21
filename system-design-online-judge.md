@@ -80,8 +80,6 @@ Users submit code; the judge compiles and runs it against test suites inside **i
 **Interactive diagram:** [diagrams/system-design/online-judge.architecture.html](diagrams/system-design/online-judge.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/online-judge.architecture.html](diagrams/system-design/online-judge.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Submit → API → validate + store → enqueue to **per-language queue** (compilers warm)

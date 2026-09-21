@@ -15,8 +15,6 @@ A quick-reference catalog of the LLM and agentic-AI building blocks used in prod
 **Interactive diagram:** [diagrams/features/agentic-ai-at-a-glance.architecture.html](diagrams/features/agentic-ai-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/features/agentic-ai-at-a-glance.architecture.html](diagrams/features/agentic-ai-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 *Solid = inference/data flow. Agent loop §2, MCP §3, A2A §4, memory §6, RAG §7, orchestration §8, guardrails §9.
 
 ---

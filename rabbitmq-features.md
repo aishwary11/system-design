@@ -17,8 +17,6 @@ A quick-reference catalog of RabbitMQ features used in task-oriented messaging: 
 **Interactive diagram:** [diagrams/features/rabbitmq-at-a-glance.architecture.html](diagrams/features/rabbitmq-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/features/rabbitmq-at-a-glance.architecture.html](diagrams/features/rabbitmq-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 *Solid = message flow. Exchanges §2, reliability §4, DLX §6, quorum queues §7, delays §8.
 
 ---

@@ -78,8 +78,6 @@ Players post score updates ("user X gained 12 points"); viewers fetch top-K boar
 **Interactive diagram:** [diagrams/system-design/leaderboard.architecture.html](diagrams/system-design/leaderboard.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/leaderboard.architecture.html](diagrams/system-design/leaderboard.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Score update hits Leaderboard API → validated → written to Kafka (partitioned by `user_id`)

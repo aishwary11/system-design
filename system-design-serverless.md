@@ -80,8 +80,6 @@ Serverless = a container/microVM orchestrator with brutal constraints: cold-star
 **Interactive diagram:** [diagrams/system-design/serverless.architecture.html](diagrams/system-design/serverless.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/serverless.architecture.html](diagrams/system-design/serverless.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Invoke → Frontend → auth → **Placement Svc** decides: warm worker with matching (function, memory) → reuse; else cold path

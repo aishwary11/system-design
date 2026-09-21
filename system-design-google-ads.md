@@ -80,8 +80,6 @@ Search ads work like this: query arrives → keyword match → retrieve eligible
 **Interactive diagram:** [diagrams/system-design/google-ads.architecture.html](diagrams/system-design/google-ads.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/google-ads.architecture.html](diagrams/system-design/google-ads.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Query → Ad Retrieval: keyword match (inverted index over ads, not docs — reuse of search-engine principles), geo/language filters

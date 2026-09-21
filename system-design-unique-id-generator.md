@@ -78,8 +78,6 @@ A service that hands out unique 64-bit IDs to any caller (services, edge nodes) 
 **Interactive diagram:** [diagrams/system-design/unique-id-generator.architecture.html](diagrams/system-design/unique-id-generator.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/unique-id-generator.architecture.html](diagrams/system-design/unique-id-generator.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Each ID node boots with a unique `machine_id` (assigned by a coordinator or derived from instance metadata)

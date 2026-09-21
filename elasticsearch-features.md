@@ -17,8 +17,6 @@ A quick-reference catalog of Elasticsearch features used in search-heavy backend
 **Interactive diagram:** [diagrams/features/elasticsearch-at-a-glance.architecture.html](diagrams/features/elasticsearch-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/features/elasticsearch-at-a-glance.architecture.html](diagrams/features/elasticsearch-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 *Solid = data/query flow. Shards & replicas §9, analyzers §2, queries §5, aggregations §6, ILM §10.
 
 ---

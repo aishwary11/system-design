@@ -80,8 +80,6 @@ Every commit flows: build → test → artifact → register → deploy through 
 **Interactive diagram:** [diagrams/system-design/code-deployment.architecture.html](diagrams/system-design/code-deployment.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
 
-**Interactive diagram:** [diagrams/system-design/code-deployment.architecture.html](diagrams/system-design/code-deployment.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
-
 ### Data Flow
 
 1. Commit → webhook → CI Orchestrator: build container (cache layers), run test matrix
