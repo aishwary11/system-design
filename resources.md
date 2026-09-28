@@ -97,7 +97,7 @@ The articles where companies explain what they actually shipped — read these l
 | [Consensus in Distributed Systems](https://medium.com/@sourabhatta1819/consensus-in-distributed-system-ac79f8ba2b8c) | Raft/Paxos intuition |
 | [Gossip Protocol Explained (High Scalability)](http://highscalability.com/blog/2023/7/16/gossip-protocol-explained.html) | epidemic dissemination |
 | [8 Must-Read Company Blog Posts (Uber, Discord, Notion, Anthropic)](https://medium.com/@vaishnavikale/8-must-read-company-blog-posts-from-uber-discord-notion-and-anthropic-deep-dives-into-scale-df2babcfa7f3) | a taste of the deep-dive genre |
-| [How DNS actually works (AlgoMaster)](https://blog.algomaster.io/p/how-dns-actually-works) | pairs with concepts §50 |
+| [How DNS actually works (AlgoMaster)](https://blog.algomaster.io/p/how-dns-actually-works) | pairs with concepts §53 |
 | [Proxy vs Reverse Proxy (AlgoMaster)](https://blog.algomaster.io/p/proxy-vs-reverse-proxy-explained) | the gateway story |
 | [Load Balancing Algorithms with code (AlgoMaster)](https://blog.algomaster.io/p/load-balancing-algorithms-explained-with-code) | pairs with concepts §13 |
 | [15 Types of Databases (AlgoMaster)](https://blog.algomaster.io/p/15-types-of-databases) | choosing stores per workload |
@@ -194,12 +194,12 @@ The unwritten rubric, distilled from interviewer write-ups (DesignGurus' "9 habi
 | # | Tip | Why it works | Practice with |
 | :--- | :--- | :--- | :--- |
 | 1 | **Name the trade-off before the interviewer asks** | The rubric scores "articulated alternatives"; volunteering "this costs us X to buy Y" is the single highest-signal move | every doc's Trade-off Analysis table |
-| 2 | **Estimate before you design** | Back-of-envelope (§49) kills 3 of 4 wrong architectures in the first 2 minutes — 10K QPS write-heavy rules out SQL-as-source-of-truth for feeds | §49 + each doc's Key Numbers |
+| 2 | **Estimate before you design** | Back-of-envelope (§52) kills 3 of 4 wrong architectures in the first 2 minutes — 10K QPS write-heavy rules out SQL-as-source-of-truth for feeds | §52 + each doc's Key Numbers |
 | 3 | **Requirements first, boxed** | Spend the first 5 minutes listing functional/non-functional explicitly; "jumped straight to boxes" is the #1 written misconception | every doc's Requirements section |
 | 4 | **Say "it depends" — then say what it depends on** | Senior signal is scoping: "for 1M users, X; at 100M, Y" — level the answer to the level being hired | Scaling Tiers sections |
 | 5 | **Draw the failure, not just the flow** | After any component, ask "what if this dies?" — interviewers probe failure modes to separate memorized designs from understood ones | Failure Modes & Recovery tables |
 | 6 | **Idempotency, always, unprompted** | Mentioning idempotency keys on any money/notification path (§10) is a known fast-hire signal | payment & notification docs |
-| 7 | **Know one number for everything** | "Redis p99 ~1ms, cross-AZ ~1ms, cross-region ~70ms" — dropping correct magnitudes makes every estimate believable | §49 latency table |
+| 7 | **Know one number for everything** | "Redis p99 ~1ms, cross-AZ ~1ms, cross-region ~70ms" — dropping correct magnitudes makes every estimate believable | §52 latency table |
 | 8 | **Drive the interview like a design review** | Ask "which part should we go deep on?" — candidates who steer score higher on communication regardless of technical depth | Deep Dive Prompts sections |
 | 9 | **Reject your own design once** | "What breaks this?" shows calibration; the 2026 meta: *predict before you look, break what you build, name the trade-off first* | Trade-off + Failure sections |
 | 10 | **Match the rubric level you're hired for** | Mid: works + reasons; Senior: failure modes + ops; Staff: org-level trade-offs, migrations, cost — same question, three depths | rubric-by-level sources below |

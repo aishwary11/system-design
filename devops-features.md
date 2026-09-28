@@ -183,7 +183,7 @@ containers:
       timeoutSeconds: 3
 ```
 
-The rules that prevent the liveness death spiral (see `interview-qa.md` §76): **readiness** checks *can I serve* (dependencies OK, warmed up); **liveness** checks only *is the process wedged* — never probe a database in liveness, or a DB blip restarts your whole fleet; `startupProbe` buys slow boots their own budget.
+The rules that prevent the liveness death spiral (see interview-qa.md §79): **readiness** checks *can I serve* (dependencies OK, warmed up); **liveness** checks only *is the process wedged* — never probe a database in liveness, or a DB blip restarts your whole fleet; `startupProbe` buys slow boots their own budget.
 
 ## 6. Ingress, Service Mesh & Traffic Splitting
 
@@ -347,7 +347,7 @@ Every gate answers one question: *what is the cheapest place this defect could h
 | `system-design-serverless.md` | FaaS runtime, cold starts, scale-to-zero — k8s-alternative compute |
 | `system-design-online-judge.md` | Sandboxed pods per submission — k8s as the isolation + queueing substrate |
 | `cloud.md` | The AWS/GCP/Azure service mapping: EKS/GKE/AKS, registries, managed CI |
-| `interview-qa.md` §76 | The failure vocabulary (OOMKilled, CrashLoopBackOff, PDBs) in battle dress |
+| interview-qa.md §79 | The failure vocabulary (OOMKilled, CrashLoopBackOff, PDBs) in battle dress |
 
 ## 15. Key Takeaways
 

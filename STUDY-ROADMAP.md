@@ -31,11 +31,12 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 | Day | Read | Do |
 | :--- | :--- | :--- |
 | 1 | 🧩 Concepts §1–§8 (sharding, hashing, CAP, ACID/BASE, CQRS, event sourcing, saga, outbox) | Re-derive back-of-envelope math for a URL shortener on paper |
+| 1½ | 🧩 §49–§51 (data models vs access patterns, indexing & leftmost prefix, monolith vs microservices) | Write the 5 query shapes of your last project; check one EXPLAIN plan against the leftmost-prefix table |
 | 2 | 📐 URL shortener · 📐 Pastebin | Estimate keys/sec + storage for both; write the Key Numbers from memory |
 | 3 | 🧩 §9–§16 (idempotency, breaker, rate limiting, LB, leader election, replication, caching) | Implement the single-flight snippet; explain cache-aside vs write-through aloud |
-| 4 | 📐 Rate limiter · 📐 Distributed cache | Trace which pattern (§73) each doc uses and why |
-| 5 | 🧰 Redis guide (+ §20 tips, §21 do's) · ❓ §78 Q&A | Run every redis-cli example locally |
-| 6 | 📐 Unique ID generator · 🧩 §55–§70 algorithms (Base62/Snowflake) | Execute the drift-guard minter; break it on purpose (clock skew) |
+| 4 | 📐 Rate limiter · 📐 Distributed cache | Trace which pattern (§76) each doc uses and why |
+| 5 | 🧰 Redis guide (+ §20 tips, §21 do's) · ❓ §81 Q&A | Run every redis-cli example locally |
+| 6 | 📐 Unique ID generator · 🧩 §58–§73 algorithms (Base62/Snowflake) | Execute the drift-guard minter; break it on purpose (clock skew) |
 | 7 | **Checkpoint** | Whiteboard: design a pastebin end-to-end in 45 min. Compare against the doc's trade-off table |
 
 ## Week 2 — Data & Messaging (state, streams, and consistency)
@@ -45,7 +46,7 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 | 8 | 🧩 §17–§26 (Bloom, gossip, vector clocks, DLQ, backpressure, Merkle, consensus, 2PC, CRDT, EDA) | Simulate a Raft election on paper for a 3-node cluster |
 | 9 | 🧰 Kafka guide (+ §17 tips, §18 do's) · ❓ §79 Q&A ("why is Kafka fast?") | Explain the consumers>partitions table from memory |
 | 10 | 📐 Messaging app · 📐 Discord | Compare fan-out strategies; when does hierarchical fan-out win? |
-| 11 | 🧰 RabbitMQ guide · ❓ §74 queue failure terms | Write the Kafka-vs-RabbitMQ decision table from memory |
+| 11 | 🧰 RabbitMQ guide · ❓ §77 queue failure terms | Write the Kafka-vs-RabbitMQ decision table from memory |
 | 12 | 🧰 PostgreSQL guide · 🧰 MongoDB guide | Run the ESR example; explain MVCC bloat to a rubber duck |
 | 13 | 📐 Twitter · 📐 Instagram | Do the fan-out-on-write vs on-read math at 10M/100M DAU |
 | 14 | **Checkpoint** | Whiteboard: chat app with 500K-member rooms (Discord follow-ups) |
@@ -59,7 +60,7 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 | 17 | 📐 Netflix · 📐 YouTube · 📐 Hotstar | Compare CDN strategies; estimate bandwidth for 1M concurrent 4K streams |
 | 18 | 📐 Payment system · 📐 Stock exchange | Write the double-spend prevention flow; where do idempotency keys live? |
 | 19 | 🧰 DevOps guide (+ §17 tips, §18 do's) · ☁️ Cloud map | Explain blue-green vs canary vs rolling with cost trade-offs |
-| 20 | 📐 Code deployment (CI/CD) · ❓ §80 Q&A | Walk the bad-deploy 5-minute playbook aloud |
+| 20 | 📐 Code deployment (CI/CD) · ❓ §83 Q&A | Walk the bad-deploy 5-minute playbook aloud |
 | 21 | **Checkpoint** | Whiteboard: multi-region payments with reconciliation |
 
 ## Week 4 — Interview simulation (hard docs, tips, mock loops)
@@ -70,11 +71,11 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 | 23 | 📐 Google Ads · 📐 Distributed lock manager | Argue Kleppmann's fencing critique both sides |
 | 24 | 📐 Serverless · 📐 Online judge · 📐 Leaderboard | Estimate cold-start economics at 10K RPS |
 | 25 | 📐 Google Calendar · 📐 Reddit · 📐 Web crawler | Recurrence + threaded-comments data modeling |
-| 26 | ❓ Full interview-qa.md (§73–81) · 📚 resources §9 hidden tips | Self-quiz: every term table, closed book |
+| 26 | ❓ Full interview-qa.md (§76–84) · 📚 resources §9 hidden tips | Self-quiz: every term table, closed book |
 | 27 | 🧰 Elasticsearch · 🤖 Agentic AI guide · ☁️ Cloud §17 tips | Modern-stack follow-ups (RAG, vector search) |
 | 28 | Pick 2 weak docs; re-read trade-offs + failure modes | Teach-back: explain each to someone (or a camera) |
 | 29 | Full mock: 45-min design + 15-min follow-ups (record yourself) | Grade against the rubric-by-level (resources §9) |
-| 30 | Light review: Key Numbers tables + §49 estimation | Rest. You've earned it. |
+| 30 | Light review: Key Numbers tables + §52 estimation | Rest. You've earned it. |
 
 ---
 

@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Strangler Pattern — Incremental Monolith → Microservices Migration",
+    "output": "concept-strangler.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1110,
+      1258
+    ]
+  },
+  "components": [
+    {
+      "id": "users",
+      "type": "external",
+      "label": "Users",
+      "sublabel": "Web / Mobile",
+      "pos": [
+        481,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "facade",
+      "type": "backend",
+      "label": "Strangler Facade",
+      "sublabel": "routes per feature flag",
+      "tag": "→ Instant revert",
+      "pos": [
+        437,
+        322
+      ],
+      "size": [
+        236,
+        62
+      ]
+    },
+    {
+      "id": "monolith",
+      "type": "backend",
+      "label": "Monolith",
+      "sublabel": "remaining routes",
+      "pos": [
+        79,
+        574
+      ],
+      "size": [
+        220,
+        62
+      ]
+    },
+    {
+      "id": "orders",
+      "type": "backend",
+      "label": "Orders Service",
+      "sublabel": "migrated first",
+      "pos": [
+        811,
+        574
+      ],
+      "size": [
+        220,
+        62
+      ]
+    },
+    {
+      "id": "mono-db",
+      "type": "database",
+      "label": "Legacy DB",
+      "sublabel": "shared schema",
+      "pos": [
+        97,
+        826
+      ],
+      "size": [
+        184,
+        62
+      ]
+    },
+    {
+      "id": "orders-db",
+      "type": "database",
+      "label": "Orders DB",
+      "sublabel": "owned by service",
+      "pos": [
+        829,
+        826
+      ],
+      "size": [
+        184,
+        62
+      ]
+    },
+    {
+      "id": "bus",
+      "type": "messagebus",
+      "label": "Event Bus",
+      "sublabel": "Kafka",
+      "tag": "→ DLQ",
+      "pos": [
+        445,
+        1078
+      ],
+      "size": [
+        220,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Monolith — shrinking",
+      "wraps": [
+        "monolith",
+        "mono-db"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "New services — strangler fig",
+      "wraps": [
+        "orders",
+        "orders-db"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1-users-facade",
+      "from": "users",
+      "to": "facade",
+      "label": "traffic",
+      "variant": "emphasis",
+      "labelDy": 24,
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-facade-monolith",
+      "from": "facade",
+      "to": "monolith",
+      "label": "legacy routes",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-facade-orders",
+      "from": "facade",
+      "to": "orders",
+      "label": "migrated: /orders",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-monolith-db",
+      "from": "monolith",
+      "to": "mono-db",
+      "label": "SQL",
+      "labelDy": 24,
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-orders-db",
+      "from": "orders",
+      "to": "orders-db",
+      "label": "SQL",
+      "labelDy": 24,
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-db-bus",
+      "from": "mono-db",
+      "to": "bus",
+      "label": "events / CDC",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "left"
+    },
+    {
+      "id": "e7-bus-orders",
+      "from": "bus",
+      "to": "orders",
+      "label": "consume & sync",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    }
+  ]
+}

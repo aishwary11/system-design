@@ -281,4 +281,4 @@ epoll readiness multiplexing + non-blocking work: one thread serves thousands of
 
 ---
 
-*Pairs with:* `networking.md` (sockets, epoll's cousin problems, zero-copy NIC paths) · `kafka-features.md` (sequential I/O + sendfile in practice) · `redis-features.md` (single-thread + epoll + THP) · `postgresql-features.md` (page cache + WAL fsync) · `devops-features.md` §3 (requests/limits → cgroups) · `interview-qa.md` §74–77 (failure vocabulary).
+*Pairs with:* `networking.md` (sockets, epoll's cousin problems, zero-copy NIC paths) · `kafka-features.md` (sequential I/O + sendfile in practice) · `redis-features.md` (single-thread + epoll + THP) · `postgresql-features.md` (page cache + WAL fsync) · `devops-features.md` §3 (requests/limits → cgroups) · `interview-qa.md` §77–80 (failure vocabulary).

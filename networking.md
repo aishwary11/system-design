@@ -252,7 +252,7 @@ Browser cache → OS cache → [Recursive Resolver (ISP/8.8.8.8/1.1.1.1)]
 
 **Modern additions:** edge compute (Cloudflare Workers, CloudFront Functions, Fastly Compute@Edge) — logic runs next to the cache: auth checks, A/B bucketing, personalization without origin round trips.
 
-**Where this shows up in the repo:** URL shortener and video streaming designs lean on CDN edge caches; the cache-stampede discussion (`interview-qa.md` §73) applies directly to origin misses.
+**Where this shows up in the repo:** URL shortener and video streaming designs lean on CDN edge caches; the cache-stampede discussion (`interview-qa.md` §76) applies directly to origin misses.
 
 ---
 
@@ -389,4 +389,4 @@ Layer-hunt: LB health check path/code mismatch? → LB idle timeout < backend p9
 
 ---
 
-*Pairs with:* `cloud.md` (§10 networking services, §17 cloud costs) · `system-design-url-shortener.md` (CDN + aliasing) · `system-design-messaging-app.md` (WebSocket fan-out) · `system-design-rate-limiter.md` (edge limits) · `interview-qa.md` §81 (universal do's & don'ts) · `operating-systems.md` (sockets, epoll, zero-copy — the host side of this story).
+*Pairs with:* `cloud.md` (§10 networking services, §17 cloud costs) · `system-design-url-shortener.md` (CDN + aliasing) · `system-design-messaging-app.md` (WebSocket fan-out) · `system-design-rate-limiter.md` (edge limits) · `interview-qa.md` §84 (universal do's & don'ts) · `operating-systems.md` (sockets, epoll, zero-copy — the host side of this story).

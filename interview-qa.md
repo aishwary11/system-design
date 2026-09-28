@@ -6,7 +6,7 @@
 
 Every technology has its own failure vocabulary — Redis talks about *stampedes* and *avalanches*, Kafka about *lag* and *rebalance storms*, Kubernetes about *OOMKills* and *CrashLoopBackOff* — but they are the same handful of physics wearing different costumes. **Part IV** gives the cross-technology failure glossary with production-grade solutions. **Part V** answers the high-level questions that separate seniors from juniors: *why is Kafka fast? what do you do when Redis dies? how does Redis Cluster actually work?*
 
-Section numbering continues from `system-design-concepts.md` (Parts I–III end at §72).
+Section numbering continues from `system-design-concepts.md` (Parts I–III end at §75).
 
 ---
 
@@ -16,17 +16,17 @@ Section numbering continues from `system-design-concepts.md` (Parts I–III end 
 <summary><b>📑 Jump to a section</b></summary>
 
 **Part IV — Failure Terminology (every technology, one glossary)**
-73. [Cache Terminology — Placement Patterns & Failure Modes (cache-aside, write-through, stampede, avalanche…)](#73-cache-terminology--placement-patterns--failure-modes)
-74. [Queue & Stream Failure Terminology (Lag, Rebalance Storms, Poison Messages…)](#74-queue--stream-failure-terminology-lag-rebalance-storms-poison-messages)
-75. [Database & Replication Failure Terminology (Lag, Split-Brain, Pool Exhaustion…)](#75-database--replication-failure-terminology-lag-split-brain-pool-exhaustion)
-76. [Kubernetes & Platform Failure Terminology (OOMKilled, CrashLoopBackOff, Evictions…)](#76-kubernetes--platform-failure-terminology-oomkilled-crashloopbackoff-evictions)
-77. [Service & Network Failure Terminology (Cascades, Gray Failure, Brownouts…)](#77-service--network-failure-terminology-cascades-gray-failure-brownouts)
+76. [Cache Terminology — Placement Patterns & Failure Modes (cache-aside, write-through, stampede, avalanche…)](#76-cache-terminology--placement-patterns--failure-modes)
+77. [Queue & Stream Failure Terminology (Lag, Rebalance Storms, Poison Messages…)](#77-queue--stream-failure-terminology-lag-rebalance-storms-poison-messages)
+78. [Database & Replication Failure Terminology (Lag, Split-Brain, Pool Exhaustion…)](#78-database--replication-failure-terminology-lag-split-brain-pool-exhaustion)
+79. [Kubernetes & Platform Failure Terminology (OOMKilled, CrashLoopBackOff, Evictions…)](#79-kubernetes--platform-failure-terminology-oomkilled-crashloopbackoff-evictions)
+80. [Service & Network Failure Terminology (Cascades, Gray Failure, Brownouts…)](#80-service--network-failure-terminology-cascades-gray-failure-brownouts)
 
 **Part V — High-Level Q&A With Answers**
-78. [Caching & Redis — "What if Redis goes down?", "How does Redis Cluster work?"](#78-caching--redis)
-79. [Messaging & Storage — "Why is Kafka fast?", "Kafka vs RabbitMQ?"](#79-messaging--storage)
-80. [Kubernetes & DevOps — pods/clusters, Jenkins vs Actions, GitOps, rollbacks](#80-kubernetes--devops)
-81. [Universal Do's & Don'ts — cross-technology rules](#81-universal-dos--donts-applies-to-every-technology-in-this-repo)
+81. [Caching & Redis — "What if Redis goes down?", "How does Redis Cluster work?"](#81-caching--redis)
+82. [Messaging & Storage — "Why is Kafka fast?", "Kafka vs RabbitMQ?"](#82-messaging--storage)
+83. [Kubernetes & DevOps — pods/clusters, Jenkins vs Actions, GitOps, rollbacks](#83-kubernetes--devops)
+84. [Universal Do's & Don'ts — cross-technology rules](#84-universal-dos--donts-applies-to-every-technology-in-this-repo)
 
 </details>
 
@@ -36,7 +36,7 @@ Section numbering continues from `system-design-concepts.md` (Parts I–III end 
 
 > 💡 The pattern: every "named" failure is one of four physics — **synchronized load** (herd/storm/avalanche), **skew** (hot key/partition/noisy neighbor), **unbounded accumulation** (lag/tombstones/compaction debt), or **ambiguous state after failure** (split-brain/duplicates/gray failure). Learn the four shapes and you can reason about any technology's outage.
 
-## 73. Cache Terminology — Placement Patterns & Failure Modes
+## 76. Cache Terminology — Placement Patterns & Failure Modes
 
 The canonical Redis vocabulary — and the same taxonomy applies to **any** cache: CDN, Memcached, Caffeine, CloudFront, or the write-through cache in your design docs (§16).
 
@@ -78,18 +78,18 @@ stampede:   1 key ("feed:42"), 30k req/s, TTL hits → 30k parallel DB queries i
 fix:        single-flight + logical TTL → 1 query; the other 29,999 await the same promise
 ```
 
-### Kafka & queue terms that interviewers actually probe (extend §74)
+### Kafka & queue terms that interviewers actually probe (extend §77)
 
 | Term | What happens | Production solutions |
 | :--- | :--- | :--- |
 | **ISR (In-Sync Replicas) shrink/expand** | Replicas fall behind `replica.lag.time.max.ms` and are dropped from ISR; the partition's quorum shrinks → durability margin drops. | Alert on ISR size < replication factor; fix slow replicas (disk, network, GC) before ISR shrinks to 1. |
 | **Under-Replicated Partitions (URP)** | Partitions whose replica count < configured factor — the single most important Kafka health metric. | URP > 0 pages on-call: dead broker, stuck leader, or network partition; never let it ride. |
 | **Unclean Leader Election** | With `unclean.leader.election.enable=true`, an out-of-ISR replica can become leader → **committed data loss** in exchange for availability. | Money paths: keep `false` (default since 0.11); accept downtime over silent loss; know which topics are unclean-election-safe (analytics) vs not (orders). |
-| **`__consumer_offsets`** | The internal compacted topic storing group commit watermarks — consumers' state IS a Kafka topic. | Keep it healthy (default 50 partitions); group rebalances write here — rebalance storms (§74) hammer it. |
+| **`__consumer_offsets`** | The internal compacted topic storing group commit watermarks — consumers' state IS a Kafka topic. | Keep it healthy (default 50 partitions); group rebalances write here — rebalance storms (§77) hammer it. |
 | **Log Compaction vs Retention** | Retention deletes by age/size; compaction keeps the *latest* value per key forever (changelog topics, KTable state). | Compacted topics for state stores/CDC snapshots; time retention for events; never compact topics where per-event history matters. |
 | **min.insync.replicas + acks=all** | The durability contract: producer waits for ALL ISR acks; if ISR < min.insync.replicas, writes fail *closed*. | Classic trio for no-loss: `acks=all`, `min.insync.replicas=2`, RF=3 — write failures beat silent loss. |
 
-### Database terms that complete §75
+### Database terms that complete §78
 
 | Term | What happens | Production solutions |
 | :--- | :--- | :--- |
@@ -103,7 +103,7 @@ fix:        single-flight + logical TTL → 1 query; the other 29,999 await the 
 
 ---
 
-## 74. Queue & Stream Failure Terminology (Lag, Rebalance Storms, Poison Messages)
+## 77. Queue & Stream Failure Terminology (Lag, Rebalance Storms, Poison Messages)
 
 Kafka/Pulsar/RabbitMQ/SQS vocabulary — same physics, different brokers (messaging-app & code-deployment docs).
 
@@ -122,7 +122,7 @@ Kafka/Pulsar/RabbitMQ/SQS vocabulary — same physics, different brokers (messag
 
 ---
 
-## 75. Database & Replication Failure Terminology (Lag, Split-Brain, Pool Exhaustion)
+## 78. Database & Replication Failure Terminology (Lag, Split-Brain, Pool Exhaustion)
 
 | Term | What happens | Production solutions |
 | :--- | :--- | :--- |
@@ -139,7 +139,7 @@ Kafka/Pulsar/RabbitMQ/SQS vocabulary — same physics, different brokers (messag
 
 ---
 
-## 76. Kubernetes & Platform Failure Terminology (OOMKilled, CrashLoopBackOff, Evictions)
+## 79. Kubernetes & Platform Failure Terminology (OOMKilled, CrashLoopBackOff, Evictions)
 
 | Term | What happens | Production solutions |
 | :--- | :--- | :--- |
@@ -148,7 +148,7 @@ Kafka/Pulsar/RabbitMQ/SQS vocabulary — same physics, different brokers (messag
 | **ImagePullBackOff** | Node can't pull the image (registry outage, wrong tag, rate limit). | Registry mirror / pull-through cache, `imagePullSecrets`, pinned tags (never `:latest` in prod). |
 | **Eviction / Node Pressure** | Node runs out of memory/disk → kubelet evicts BestEffort/Burstable pods first. | Requests on **every** pod (no BestEffort in prod), PodDisruptionBudgets, priority classes, node-pressure alerting before hard limits. |
 | **Liveness Probe Death Spiral** | Probe timeout too tight under load → kubelet restarts healthy-but-slow pods → load shifts to siblings → they fail too → fleet-wide rolling restart. | Generous liveness thresholds, readiness-based load shedding instead of liveness kills, scale out before probe limits bind. |
-| **Scale-from-Zero Herd** | Autoscaler adds 50 pods at once; all start cold and fail readiness together — or stampede the DB on boot. | `minReadySeconds` + steady `maxSurge`, staged scale-up, warm-up hooks behind readiness, lazy pool init, cache warming (§73). |
+| **Scale-from-Zero Herd** | Autoscaler adds 50 pods at once; all start cold and fail readiness together — or stampede the DB on boot. | `minReadySeconds` + steady `maxSurge`, staged scale-up, warm-up hooks behind readiness, lazy pool init, cache warming (§76). |
 | **Noisy Neighbor** | One tenant/pod saturates shared CPU/network/disk; everyone's p99 suffers. | Requests/limits + QoS, taints & tolerations to isolate whales, separate node pools, per-tenant quotas at the gateway. |
 | **PDB Violation During Drains** | Node drains ignore disruption budgets → too many replicas down at once. | PodDisruptionBudgets (minAvailable/maxUnavailable), drains that respect them, surge upgrades one node at a time. |
 
@@ -156,7 +156,7 @@ Kafka/Pulsar/RabbitMQ/SQS vocabulary — same physics, different brokers (messag
 
 ---
 
-## 77. Service & Network Failure Terminology (Cascades, Gray Failure, Brownouts)
+## 80. Service & Network Failure Terminology (Cascades, Gray Failure, Brownouts)
 
 | Term | What happens | Production solutions |
 | :--- | :--- | :--- |
@@ -174,7 +174,7 @@ Kafka/Pulsar/RabbitMQ/SQS vocabulary — same physics, different brokers (messag
 
 # Part V — High-Level Q&A With Answers
 
-## 78. Caching & Redis
+## 81. Caching & Redis
 
 **Q1. Why is Redis so fast?**
 
@@ -182,7 +182,7 @@ Everything is tuned to make one thread absurdly efficient: data lives in **RAM**
 
 **Q2. What do you do when Redis goes down?** (the playbook answer)
 
-First: **it should degrade, not die.** ① The app treats Redis as an *optional accelerator* — a circuit breaker (§11) trips on connection errors and traffic falls through to the DB **with load shedding** so the DB survives the miss storm (§73 avalanche); ② serve **stale-while-error** from a last-known-good local copy for hot entities; ③ non-critical features (counters, session lookups → cookie fallback) switch off via feature flags; ④ recovery: Sentinel/Cluster auto-fails-over in seconds, AOF `everysec` caps loss at ~1 s, and a cold restart **warms hot keys** before full traffic returns. The anti-pattern to name: treating Redis as the system of record — if losing it loses data, the design is wrong (cache-aside over a durable DB, or streams with persistence).
+First: **it should degrade, not die.** ① The app treats Redis as an *optional accelerator* — a circuit breaker (§11) trips on connection errors and traffic falls through to the DB **with load shedding** so the DB survives the miss storm (§76 avalanche); ② serve **stale-while-error** from a last-known-good local copy for hot entities; ③ non-critical features (counters, session lookups → cookie fallback) switch off via feature flags; ④ recovery: Sentinel/Cluster auto-fails-over in seconds, AOF `everysec` caps loss at ~1 s, and a cold restart **warms hot keys** before full traffic returns. The anti-pattern to name: treating Redis as the system of record — if losing it loses data, the design is wrong (cache-aside over a durable DB, or streams with persistence).
 
 **Q3. How does distributed Redis (Cluster) work?**
 
@@ -198,7 +198,7 @@ Memcached: multithreaded, dead-simple flat KV, good for a handful of large value
 
 ---
 
-## 79. Messaging & Storage
+## 82. Messaging & Storage
 
 **Q6. Why is Kafka so fast?** (answer in layers)
 
@@ -218,7 +218,7 @@ No — since **December 2020** S3 has strong read-after-write consistency for al
 
 ---
 
-## 80. Kubernetes & DevOps
+## 83. Kubernetes & DevOps
 
 **Q10. Pod, node, cluster — the 30-second mental model.**
 
@@ -242,7 +242,7 @@ The cluster **pulls** declared state from Git and reconciles continuously. Wins:
 
 **Q15. A bad deploy is hitting prod right now — walk me through the first 5 minutes.**
 
-① **Stop the bleeding**: canary → halt the ramp; full rollout → `kubectl rollout undo` (seconds — this is why Deployments keep revision history) or flip the blue-green selector; ② **confirm blast radius**: SLO burn rate (§45), error cohorts — one region, one cohort, one endpoint?; ③ **protect dependencies**: shed load (§27), open breakers to flapping downstreams so one outage doesn't cascade (§77); ④ **communicate**: status page + incident channel, one incident commander; ⑤ *only now* debug root cause — with traffic protected you can think. After: blameless review, and add the missing gate (canary analysis, schema-compat check, Sonar gate) so this class of failure can't ship silently again.
+① **Stop the bleeding**: canary → halt the ramp; full rollout → `kubectl rollout undo` (seconds — this is why Deployments keep revision history) or flip the blue-green selector; ② **confirm blast radius**: SLO burn rate (§45), error cohorts — one region, one cohort, one endpoint?; ③ **protect dependencies**: shed load (§27), open breakers to flapping downstreams so one outage doesn't cascade (§80); ④ **communicate**: status page + incident channel, one incident commander; ⑤ *only now* debug root cause — with traffic protected you can think. After: blameless review, and add the missing gate (canary analysis, schema-compat check, Sonar gate) so this class of failure can't ship silently again.
 
 **Pairs with:** every section of `system-design-concepts.md` (§ references inline), `devops-features.md` for tooling detail, and the interview-adjacent designs (code-deployment, distributed lock manager, unique ID generator).
 
@@ -255,16 +255,18 @@ The cluster **pulls** declared state from Git and reconciles continuously. Wins:
 
 </div>
 
-## 81. Universal Do's & Don'ts (applies to every technology in this repo)
+<a id="84-universal-dos--donts"></a>
+
+## 84. Universal Do's & Don'ts (applies to every technology in this repo)
 
 The cross-cutting rules — when in doubt, these win.
 
 | ✅ Do | ❌ Don't |
 | :--- | :--- |
 | Design every write path to be **idempotent** (§10) | Don't assume exactly-once delivery anywhere in a distributed system |
-| Set **timeouts** on every network call, with backoff + jitter on retries (§39, §40) | Don't retry immediately and infinitely — that's a retry storm (§77) |
+| Set **timeouts** on every network call, with backoff + jitter on retries (§39, §40) | Don't retry immediately and infinitely — that's a retry storm (§80) |
 | Add a **circuit breaker** per dependency and fail *stale/static*, not *hard* (§11, §27) | Don't let one slow dependency cascade into the whole call graph |
-| Spread expirations with **TTL jitter**; fill caches with single-flight (§43, §73) | Don't synchronize loads — stampedes/avalanches are self-inflicted |
+| Spread expirations with **TTL jitter**; fill caches with single-flight (§43, §76) | Don't synchronize loads — stampedes/avalanches are self-inflicted |
 | Put quotas and **load shedding** at the edge, degrade features by tier (§27) | Don't accept unbounded work and then OOM fairly |
 | Track consumer lag, replication lag, URP, pool wait — **leading** indicators | Don't alert on CPU; it pages late and means nothing |
 | Keep **requests** on every pod, **immutable** image tags, **PDBs** on critical sets | Don't ship BestEffort pods, `:latest` tags, or unprotected fleets |

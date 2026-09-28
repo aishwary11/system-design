@@ -4,7 +4,7 @@
 
 </div>
 
-The foundational concepts behind every distributed system, each explained in a few lines with a tiny, concrete example: **sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus (Raft/Paxos), two-phase commit, CRDTs, event-driven architecture, DLQs, backpressure, quorum reads & writes, consistency models, PACELC, write-ahead logs, B-tree vs LSM storage engines, checksums, distributed locking, service discovery, API gateways vs service meshes, CDNs, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLIs/SLOs, multi-region disaster recovery, deployment strategies, load shedding & graceful degradation, geospatial indexing, back-of-the-envelope estimation, DNS, security & auth (OAuth2/JWT/mTLS), API styles (REST/gRPC/GraphQL) and performance vs scalability.**
+The foundational concepts behind every distributed system, each explained in a few lines with a tiny, concrete example: **sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus (Raft/Paxos), two-phase commit, CRDTs, event-driven architecture, DLQs, backpressure, quorum reads & writes, consistency models, PACELC, write-ahead logs, B-tree vs LSM storage engines, checksums, distributed locking, service discovery, API gateways vs service meshes, CDNs, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLIs/SLOs, multi-region disaster recovery, deployment strategies, load shedding & graceful degradation, geospatial indexing, data models vs access patterns, indexing fundamentals (leftmost prefix, clustered vs secondary), monolith vs microservices & service decomposition, back-of-the-envelope estimation, DNS, security & auth (OAuth2/JWT/mTLS), API styles (REST/gRPC/GraphQL) and performance vs scalability.**
 
 **Part II adds 17 classic algorithms** — Luhn's (credit card validation), Dijkstra, A*, BFS/DFS, topological sort, union-find, trie, LRU cache, external sort, reservoir sampling, count-min sketch, HyperLogLog, Levenshtein, KMP/Rabin-Karp, haversine, Base62/Snowflake IDs, sliding window — each with a runnable JavaScript implementation and where it's used in system design.
 
@@ -63,36 +63,39 @@ The foundational concepts behind every distributed system, each explained in a f
 46. [Multi-Region & Disaster Recovery](#46-multi-region--disaster-recovery)
 47. [Deployment Strategies](#47-deployment-strategies)
 48. [Geospatial Indexing (Geohash & S2)](#48-geospatial-indexing-geohash--s2)
-49. [Back-of-the-Envelope Estimation](#49-back-of-the-envelope-estimation)
-50. [DNS — The Internet's Directory](#50-dns--the-internets-directory)
-51. [Security & AuthN/AuthZ (OAuth2, JWT, mTLS)](#51-security--authnauthz-oauth2-jwt-mtls)
-52. [API Styles — REST vs gRPC vs GraphQL](#52-api-styles--rest-vs-grpc-vs-graphql)
-53. [Performance vs Scalability (and Latency vs Throughput)](#53-performance-vs-scalability-and-latency-vs-throughput)
-54. [Quick Map: Concept → Problem Solved](#54-quick-map-concept--problem-solved)
+49. [Data Models vs Access Patterns](#49-data-models-vs-access-patterns)
+50. [Indexing Fundamentals & Selection Strategy](#50-indexing-fundamentals--selection-strategy)
+51. [Monolith vs Microservices & Service Decomposition](#51-monolith-vs-microservices--service-decomposition)
+52. [Back-of-the-Envelope Estimation](#52-back-of-the-envelope-estimation)
+53. [DNS — The Internet's Directory](#53-dns--the-internets-directory)
+54. [Security & AuthN/AuthZ (OAuth2, JWT, mTLS)](#54-security--authnauthz-oauth2-jwt-mtls)
+55. [API Styles — REST vs gRPC vs GraphQL](#55-api-styles--rest-vs-grpc-vs-graphql)
+56. [Performance vs Scalability (and Latency vs Throughput)](#56-performance-vs-scalability-and-latency-vs-throughput)
+57. [Quick Map: Concept → Problem Solved](#57-quick-map-concept--problem-solved)
 
 </details>
 
 **Part II — Classic Algorithms & Data Structures (LLD)**
-55. [Luhn's Algorithm (Credit Card Validation)](#55-luhns-algorithm-credit-card-validation)
-56. [Dijkstra's Shortest Path](#56-dijkstras-shortest-path)
-57. [A* Search](#57-a-search)
-58. [BFS & DFS Graph Traversal](#58-bfs--dfs-graph-traversal)
-59. [Topological Sort (Kahn's Algorithm)](#59-topological-sort-kahns-algorithm)
-60. [Union-Find (Disjoint Set)](#60-union-find-disjoint-set)
-61. [Trie (Prefix Tree)](#61-trie-prefix-tree)
-62. [LRU Cache](#62-lru-cache)
-63. [External Sort & K-Way Merge](#63-external-sort--k-way-merge)
-64. [Reservoir Sampling](#64-reservoir-sampling)
-65. [Count-Min Sketch](#65-count-min-sketch)
-66. [HyperLogLog (Cardinality Estimation)](#66-hyperloglog-cardinality-estimation)
-67. [Levenshtein Distance (Edit Distance)](#67-levenshtein-distance-edit-distance)
-68. [String Matching (KMP & Rabin-Karp)](#68-string-matching-kmp--rabin-karp)
-69. [Haversine Distance](#69-haversine-distance)
-70. [Base62 Encoding & Snowflake IDs](#70-base62-encoding--snowflake-ids)
-71. [Sliding Window & Two Pointers](#71-sliding-window--two-pointers)
+58. [Luhn's Algorithm (Credit Card Validation)](#58-luhns-algorithm-credit-card-validation)
+59. [Dijkstra's Shortest Path](#59-dijkstras-shortest-path)
+60. [A* Search](#60-a-search)
+61. [BFS & DFS Graph Traversal](#61-bfs--dfs-graph-traversal)
+62. [Topological Sort (Kahn's Algorithm)](#62-topological-sort-kahns-algorithm)
+63. [Union-Find (Disjoint Set)](#63-union-find-disjoint-set)
+64. [Trie (Prefix Tree)](#64-trie-prefix-tree)
+65. [LRU Cache](#65-lru-cache)
+66. [External Sort & K-Way Merge](#66-external-sort--k-way-merge)
+67. [Reservoir Sampling](#67-reservoir-sampling)
+68. [Count-Min Sketch](#68-count-min-sketch)
+69. [HyperLogLog (Cardinality Estimation)](#69-hyperloglog-cardinality-estimation)
+70. [Levenshtein Distance (Edit Distance)](#70-levenshtein-distance-edit-distance)
+71. [String Matching (KMP & Rabin-Karp)](#71-string-matching-kmp--rabin-karp)
+72. [Haversine Distance](#72-haversine-distance)
+73. [Base62 Encoding & Snowflake IDs](#73-base62-encoding--snowflake-ids)
+74. [Sliding Window & Two Pointers](#74-sliding-window--two-pointers)
 
 **Part III — Tricky "Magic" Questions (How Does It Even Work?)**
-72. [The "Magic" Questions — With Answers](#72-the-magic-questions--with-answers)
+75. [The "Magic" Questions — With Answers](#75-the-magic-questions--with-answers)
 
 ---
 
@@ -1482,11 +1485,140 @@ function bboxQuery(lat, lng, radiusKm) {
 // SELECT * FROM venues WHERE lat BETWEEN ? AND ? AND lng BETWEEN ? AND ?  →  haversine filter
 ```
 
-Two-tier pattern everywhere: coarse index (geohash prefix / bbox / S2 cell) gets candidates, an exact haversine filter confirms — see `system-design-proximity-service.md` for the full design.
+Two-tier pattern everywhere: coarse index (geohash prefix / bbox / S2 cell) gets candidates, an exact haversine filter confirms — see `system-design-proximity-service.md` for the full design. For the deepest treatment of location-native storage (Google's S2 geometry library — how the Earth is cut into cells so "people near you" becomes a fast index lookup), see the S2 Geometry deep dive in that doc.
 
 ---
 
-## 49. Back-of-the-Envelope Estimation
+## 49. Data Models vs Access Patterns
+
+**Problem:** teams design the schema first ("users, orders, products — normalize it") and only later discover the queries: the dashboards need joins across three tables, the product page needs six lookups, and the leaderboard needs a sorted set SQL can't serve in one digit.
+**Idea:** invert the order — **start from the queries** your product needs, then shape the data model so each one is a single cheap operation. A relational schema is one choice; a KV/document/wide-column model is another; the same data often lives several times, shaped differently per query path (that's CQRS §6 and read replicas §15 in disguise).
+
+```text
+Access-pattern taxonomy — name the shape of every query before modeling:
+
+| Pattern | Example query | Natural store |
+| ------- | ------------- | ------------- |
+| Point lookup | "get user 42" | KV store / indexed PK (DynamoDB, Redis, Postgres PK) |
+| Equality multi-get | "all orders for user 42" | index on user_id (B-tree §50) or partition key |
+| Range / time-window | "events between T1 and T2" | time-partitioned table, sorted log, TSDB (alerting doc) |
+| Top-K / ranked | "top 100 scores" | sorted set (Redis ZSET), precomputed board (leaderboard doc) |
+| Aggregation | "revenue by day by region" | pre-rolled rollup table, OLAP store, Elastic aggregations |
+| Full-text / fuzzy | "products matching 'shose'" | inverted index (Elasticsearch §50) |
+| Relationship / graph | "friends of friends who like X" | graph store or recursive CTE / BFS §58 |
+| Geo | "venues within 5 km" | geohash / S2 (§48) |
+
+Single-table design (DynamoDB style): one table, multiple "views" via composite keys.
+
+  PK = USER#<id>        SK = PROFILE            → user profile
+  PK = USER#<id>        SK = ORDER#<ts>#<id>    → that user's orders (newest first)
+  PK = ORDER#<id>       SK = ITEMS              → order detail
+  PK = GSI1PK = TS#<day> GSI1SK = TS#<ts>       → GSI: all orders that day, time-sorted
+
+One table serves every access pattern because each query maps to one key shape —
+no joins, no scans. The cost: denormalization is mandatory, and you maintain
+the copies yourself (or via streams — see outbox §9, CDC in the Postgres guide).
+```
+
+**Why it matters:** in DynamoDB/Cassandra, a scan is the sound of a wrong data model; in SQL, every N+1 is an access pattern nobody named. Write down each query with its QPS before writing the first `CREATE TABLE` — the doc template's "Database Design" section is exactly this exercise per system.
+
+**Pairs with:** indexing (§50) is how a relational DB claims a query shape; CQRS (§6) is what happens when one model can't serve both read and write shapes; sharding (§1) picks partition keys *from* access patterns; the DynamoDB-style design lives in `system-design-key-value-store.md`.
+
+---
+
+## 50. Indexing Fundamentals & Selection Strategy
+
+**Problem:** queries scan millions of rows to answer a 10-row question — or, the other failure, every column gets an index and every write pays for all of them.
+**Idea:** an index is a **second sorted copy of part of the data**, built to answer one query shape without touching the whole table. Choosing them is a four-step decision: which query shapes matter, which structure answers each, which column order for composites, and what write-amplification you accept.
+
+**Primary vs secondary, clustered vs non-clustered.** The **primary key index** (usually B-tree) sorts the table's rows themselves by the key — Postgres calls this the heap with a PK index; MySQL InnoDB stores rows *inside* the B-tree (clustered). A **secondary index** is a separate structure holding `(indexed-cols → PK)`; a hit then does a second lookup ("bookmark lookup") to fetch full rows — which is why a covering index (below) can skip it.
+
+```text
+clustered (InnoDB):     secondary (everywhere):
+  B-tree of the table      B-tree of (user_id → PK)
+  leaf = whole row         hit → fetch row by PK (2nd lookup)
+  range scans read once    unless the index covers the query
+```
+
+**Composite indexes & the leftmost-prefix principle.** A composite index `(a, b, c)` is sorted by `a`, then `b` within equal `a`, then `c`. Queries can use it only when they constrain a **leftmost prefix** of the columns:
+
+| Query | Uses index `(a, b, c)`? | How |
+| ----- | ----------------------- | --- |
+| `WHERE a = ?` | ✅ | prefix `(a)` |
+| `WHERE a = ? AND b = ?` | ✅ | prefix `(a, b)` |
+| `WHERE a = ? AND b = ? AND c = ?` | ✅ | full key |
+| `WHERE a = ? AND c = ?` | ⚠️ | `(a)` only; `c` filtered after the fetch |
+| `WHERE b = ?` | ❌ | not leftmost — full scan |
+| `WHERE b = ? AND c = ?` | ❌ | full scan |
+| `WHERE a = ? ORDER BY b` | ✅ | index order serves the sort |
+| `WHERE a > ? AND b = ?` | ⚠️ | range on `a` ends usable prefix; `b` not seekable |
+
+Column order rule: **equality columns first, then the range/sort column** — `(user_id, status, created_at)` serves "user's recent orders by status" perfectly.
+
+**Which index structure for which shape:**
+
+| Query shape | Structure | Notes |
+| ----------- | --------- | ----- |
+| equality + range + sort | **B-tree** (default) | the 90% answer (Postgres §3 of the guide) |
+| pure equality, huge keys | Hash | no range support; rarely beats B-tree |
+| prefix match / autocomplete | Trie-ish (trie §61), ES completion, pg_trgm | see search-autocomplete doc |
+| full-text / relevance | **Inverted index** | Elasticsearch, Postgres tsvector |
+| JSON containment / arrays | GIN | Postgres |
+| geo "near me" | Geohash / S2 / GiST R-tree | §48 |
+| time-series huge tables | BRIN (tiny) | Postgres; LSM TSDB (alerting doc) |
+| vector similarity | HNSW / IVF | pgvector, Elasticsearch dense_vector |
+
+**Covering indexes** add the selected columns to the index (`INCLUDE`) so the query is answered from the index alone — no second lookup. **When NOT to index:** low-selectivity columns (gender, boolean), tiny tables (planner ignores it anyway), and write-heavy paths — every index is an extra structure updated per insert/update, the same write amplification §32 warns about. Index the query shapes you run at high QPS; measure with `EXPLAIN` (Postgres guide §19, Mongo explain §13) before and after.
+
+**Pairs with:** B-tree vs LSM (§32) for the storage-engine side; data models vs access patterns (§49) for where the shapes come from; Postgres guide §3 for concrete DDL; `mongodb-features.md` (ESR rule) and `elasticsearch-features.md` for the non-relational side.
+
+---
+
+## 51. Monolith vs Microservices & Service Decomposition
+
+**Problem:** every new hire asks "why is this one app?" — and two years later asks the opposite: "why are there 40 services for 4 engineers?"
+**Idea:** a **monolith** (one deployable, one DB) is the correct *start*: simplest to build, test, debug, and deploy; it scales further than folklore suggests (single machine → read replicas → vertical + caching → *then* split). Split into **microservices** only when a forcing function appears: independent scaling needs, independent deploy cadence per team, different storage engines per domain, or org size where team ownership boundaries must be enforced by the network. The split decision is about **organizational scaling** more than technical scaling — Conway's law made executable.
+
+```text
+Forcing functions (any ONE justifies splitting a piece out):
+  · load: one domain needs 10× the servers of the rest (scale it alone)
+  · cadence: team A ships hourly, team B quarterly (deploys couple them today)
+  · storage: search needs Elasticsearch, media needs object storage
+  · availability: payment must survive a feed-service outage
+
+Decomposition heuristics (how to draw the lines):
+  · split by business capability (orders, inventory, payments) — not by
+    technical layers ("a service for controllers, one for DB access")
+  · one database per service — shared tables are a shared mutex
+  · service owns its data; others read via API/events, never direct DB queries
+  · data duplicated across services is normal; sync via events (EDA §26)
+  · if two services always deploy together, they are one service
+```
+
+**Sync vs async communication.** Synchronous (REST/gRPC §55) couples availability: service A's p99 inherits B's p99, so timeouts (§40), retries with backoff (§39), and circuit breakers (§11) are mandatory on every hop. Asynchronous (events via Kafka/RabbitMQ — §26) decouples it: the producer moves on once the event is durable; consumers process at their own pace, with DLQs (§20) and idempotency (§10) for the failure cases. The production default: **sync for queries that need an answer now** ("is this card stolen?"), **async for everything that can be a fact later** ("order was placed").
+
+**Strangler pattern** (the safe migration): the monolith keeps running; a **facade** routes traffic at the edge. New functionality is built as services; a route at a time is moved behind the facade; each moved route removes monolith code. Feature flags (§47) make each flip instant to revert. Named for vines that slowly replace a tree — never a big-bang rewrite.
+
+```text
+Phase 0:  [ facade ]──►[ monolith (all routes) ]
+Phase 1:  [ facade ]──►[ orders-svc ] / [ monolith (rest) ]   ← orders moved
+Phase 2:  [ facade ]──►[ orders-svc ] / [ inventory-svc ] / [ monolith ]
+Phase N:  monolith shrinks until only trivial routes remain (or dies)
+```
+
+![Strangler Pattern — Incremental Monolith → Microservices Migration](diagrams/concepts/concept-strangler.svg)
+
+**Interactive diagram:** [diagrams/concepts/concept-strangler.architecture.html](diagrams/concepts/concept-strangler.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
+*The facade routes `/orders` to the new service while everything else still lands on the monolith; a CDC/event path keeps data in sync while both write paths coexist (solid = traffic, dashed = event sync).*
+
+**When NOT to split:** small team + unclear domain + early product = premature microservices, distributed spaghetti with network bills and no business win. The scaling-tier sections in every design doc start at Tier 1 "MVP" for exactly this reason — see `system-design-netflix.md` (started as a monolith, split over a decade) and `devops-features.md` for the deployment machinery the split adds (service discovery §35, gateway vs mesh §36).
+
+**Pairs with:** CQRS (§6), saga (§8) and outbox (§9) — the transaction patterns split services force; event-driven architecture (§26); service discovery (§35) and API gateway vs mesh (§36) for the runtime plumbing; `interview-qa.md` §79–80 for the failure vocabulary the split adds.
+
+---
+
+## 52. Back-of-the-Envelope Estimation
 
 **Problem:** interviews and design reviews start with "can this even work?" — you need order-of-magnitude answers from first principles, fast.
 **Idea:** memorize a small table of powers and latency numbers, express a workload in one line (users → QPS → bytes/day), and do arithmetic in your head. Precision is pointless; magnitude is everything.
@@ -1517,7 +1649,7 @@ Pairs with: every design doc's **Key Numbers** table is a worked example; shardi
 
 ---
 
-## 50. DNS — The Internet's Directory
+## 53. DNS — The Internet's Directory
 
 **Problem:** clients need IPs, but IPs change (failover, autoscaling, multi-region) and humans need names.
 **Idea:** a hierarchical, globally cached lookup system: **client → resolver → root → TLD (.com) → authoritative nameserver** — with TTLs at every hop so the world doesn't query roots constantly.
@@ -1539,7 +1671,7 @@ Pairs with: multi-region DR (§46) uses DNS failover as the last switch; CDN & e
 
 ---
 
-## 51. Security & AuthN/AuthZ (OAuth2, JWT, mTLS)
+## 54. Security & AuthN/AuthZ (OAuth2, JWT, mTLS)
 
 **Problem:** every request needs two answers — **who are you** (authentication) and **what may you do** (authorization) — across services, browsers, and mobile apps, without shipping passwords around.
 **Idea:** standard tokens and trust chains: **JWT** for self-contained claims, **OAuth2/OIDC** flows for delegated access, **mTLS** for service-to-service identity, plus TLS everywhere.
@@ -1562,7 +1694,7 @@ mTLS: both sides present certs; mesh sidecars (§36) handle it per-hop
 
 ---
 
-## 52. API Styles — REST vs gRPC vs GraphQL
+## 55. API Styles — REST vs gRPC vs GraphQL
 
 **Problem:** the wire contract shapes latency, cacheability, and team autonomy — picking wrong costs months.
 **Idea:** match the style to the caller and the workload.
@@ -1585,7 +1717,7 @@ Pairs with: API gateway vs mesh (§36) — the gateway terminates the public sty
 
 ---
 
-## 53. Performance vs Scalability (and Latency vs Throughput)
+## 56. Performance vs Scalability (and Latency vs Throughput)
 
 **Problem:** "it's fast" and "it scales" are different properties — teams optimize the wrong one and get paged anyway.
 **Idea:** a service is **scalable** if adding resources improves performance proportionally; it is **performant** if it meets latency targets for the current load. **Latency** = time per request; **throughput** = requests per second. They trade off until you attack the bottleneck class itself.
@@ -1604,11 +1736,11 @@ Load test: 1 node serves 1K QPS @ 20ms.
 | Latency rises with fleet size | coordination overhead | shard further, remove consensus from hot path |
 | Throughput fine at 2× cost | throwing hardware at a bad algorithm | fix the O(n²) |
 
-Pairs with: back-of-the-envelope (§49) sets the targets; SLIs/SLOs (§45) measure them; load shedding (§27) protects them under overload.
+Pairs with: back-of-the-envelope (§52) sets the targets; SLIs/SLOs (§45) measure them; load shedding (§27) protects them under overload.
 
 ---
 
-## 54. Quick Map: Concept → Problem Solved
+## 57. Quick Map: Concept → Problem Solved
 Lost? Start here - find the concept that matches the problem you are solving:
 
 | Concept | Solves | See also |
@@ -1660,13 +1792,16 @@ Lost? Start here - find the concept that matches the problem you are solving:
 | Multi-region & DR | survive a region outage | — |
 | Deployment strategies | ship safely, roll back fast | — |
 | Geospatial indexing | "near me" at scale | system-design-proximity-service.md |
-| Algorithms (Luhn, Dijkstra, LRU, …) | classic LLD interview tools, JS included | Part II — §55–§71 |
+| Data models vs access patterns | schema shaped by queries, not the other way | system-design-key-value-store.md |
+| Indexing & leftmost prefix | queries hit an index instead of scanning | postgresql-features.md §3 |
+| Monolith vs microservices | when (and how) to split services safely | system-design-netflix.md |
+| Algorithms (Luhn, Dijkstra, LRU, …) | classic LLD interview tools, JS included | Part II — §58–§74 |
 
 ---
 
 ## Part II — Classic Algorithms & Data Structures (LLD)
 
-## 55. Luhn's Algorithm (Credit Card Validation)
+## 58. Luhn's Algorithm (Credit Card Validation)
 
 **Problem:** a user typos a 16-digit card number — you want to reject it before it reaches the payment provider, without a database lookup.
 **Idea:** a checksum-style format check: from the rightmost (check) digit, double every second digit; any doubled digit > 9 subtracts 9; the total must be divisible by 10. Catches every single-digit error and ~90% of adjacent-transposition errors.
@@ -1691,7 +1826,7 @@ Luhn is a *format* check, not security: still verify with the issuer, tokenize (
 
 ---
 
-## 56. Dijkstra's Shortest Path
+## 59. Dijkstra's Shortest Path
 
 **Problem:** cheapest route from A to B on a weighted graph (roads with travel times, network hops with latency) — exploring every path is exponential.
 **Idea:** expand nodes in order of current best known distance: pop the closest unsettled node, relax its neighbors, stop when the destination is popped. O((V + E) log V) with a min-heap.
@@ -1719,10 +1854,10 @@ Where: route engines (Google Maps), network routing (OSPF), P2P overlays. Positi
 
 ---
 
-## 57. A* Search
+## 60. A* Search
 
 **Problem:** Dijkstra expands in all directions; with an estimate of where the goal is, you can skip most of the map.
-**Idea:** score every node f(n) = g(n) + h(n): known cost so far + an **admissible heuristic** (straight-line / haversine §69 distance). Expand lowest f first — optimal whenever h never overestimates.
+**Idea:** score every node f(n) = g(n) + h(n): known cost so far + an **admissible heuristic** (straight-line / haversine §72 distance). Expand lowest f first — optimal whenever h never overestimates.
 
 ```js
 // grid: 2D array of walkable cells; h: heuristic (e.g. straight-line distance to goal)
@@ -1752,7 +1887,7 @@ Where: navigation, delivery routing, games — the heuristic is what turns Dijks
 
 ---
 
-## 58. BFS & DFS Graph Traversal
+## 61. BFS & DFS Graph Traversal
 
 **Problem:** explore a graph: shortest number of hops (BFS) or deep traversal / cycle detection (DFS).
 **Idea:** BFS = queue, visits by layers — the first time you see a node is the fewest-edge path (unweighted graphs). DFS = stack / recursion — finds cycles, connected components, and post-order.
@@ -1784,7 +1919,7 @@ Where: web-crawler.md (BFS frontier), social graphs (friends-of-friends), metro 
 
 ---
 
-## 59. Topological Sort (Kahn's Algorithm)
+## 62. Topological Sort (Kahn's Algorithm)
 
 **Problem:** order tasks where some depend on others — build pipelines, DB migrations, stream-processing DAGs, Spark stages — and detect circular dependencies.
 **Idea (Kahn):** repeatedly remove nodes with in-degree 0; the removal order is a valid order; if nodes remain, there's a cycle.
@@ -1808,7 +1943,7 @@ Where: delayed-job-scheduler.md (job DAGs), schema migrations, Airflow/DAG orche
 
 ---
 
-## 60. Union-Find (Disjoint Set)
+## 63. Union-Find (Disjoint Set)
 
 **Problem:** maintain connected components dynamically — friend circles, fraud-related accounts, dedupe clusters — with near-constant-time operations.
 **Idea:** parent pointers + **union by rank** + **path compression** → amortized α(n), practically O(1).
@@ -1835,7 +1970,7 @@ Where: social networks (mutual friends), fraud detection (linked accounts), craw
 
 ---
 
-## 61. Trie (Prefix Tree)
+## 64. Trie (Prefix Tree)
 
 **Problem:** prefix queries at scale — autocomplete, dictionary lookup, IP routing — where comparing full strings repeatedly is wasteful.
 **Idea:** a tree where each edge is one character and every node is a prefix. Insert / search / prefix-walk cost O(key length), independent of dictionary size.
@@ -1865,7 +2000,7 @@ Where: search-autocomplete.md (prefix → top-k suggestions; each node holds a r
 
 ---
 
-## 62. LRU Cache
+## 65. LRU Cache
 
 **Problem:** a bounded cache must evict the least-recently-used entry, and both get and put must be O(1).
 **Idea:** hash map for O(1) lookup + recency tracking; get touches the entry, put evicts the least-recent one when full. (Interview version: doubly-linked list + hash map — same complexity, no reliance on Map ordering.)
@@ -1890,7 +2025,7 @@ Where: system-design-distributed-cache.md, Redis `allkeys-lru`, CDN edge caches,
 
 ---
 
-## 63. External Sort & K-Way Merge
+## 66. External Sort & K-Way Merge
 
 **Problem:** sorting 1 TB of URLs on a machine with 8 GB RAM (crawler dedupe, index building) — the data never fits in memory.
 **Idea:** split into chunks that fit in RAM → sort each in memory → write sorted runs to disk → **k-way merge** with a heap, streaming the output.
@@ -1915,7 +2050,7 @@ Where: web-crawler.md URL dedupe, search index building, MapReduce shuffle phase
 
 ---
 
-## 64. Reservoir Sampling
+## 67. Reservoir Sampling
 
 **Problem:** pick k uniform-random items from a stream of unknown (or unbounded) size — without storing the stream.
 **Idea:** keep the first k items; for item i ≥ k, replace a random slot with probability k/i. Every item ends up selected with equal probability k/n.
@@ -1938,7 +2073,7 @@ Where: canary selection (§47), A/B test assignment, metrics/tracing sampling (�
 
 ---
 
-## 65. Count-Min Sketch
+## 68. Count-Min Sketch
 
 **Problem:** track frequencies of top items in a stream (trending topics, hot keys §43, per-key rate limiting) with bounded memory — exact counts for every key don't fit.
 **Idea:** d rows of counters, each row hashed by a different hash function; estimate = **min** across rows. Never undercounts; may overcount (hash collisions).
@@ -1966,11 +2101,11 @@ const cms = new CountMinSketch();
 cms.count("video:42");   // ≥ 2 — exact or overcount, never under
 ```
 
-Where: hot-key detection (§43), trending hashtags, heavy hitters — pairs with bloom filter (§17, membership) and HLL (§66, distinct counts).
+Where: hot-key detection (§43), trending hashtags, heavy hitters — pairs with bloom filter (§17, membership) and HLL (§69, distinct counts).
 
 ---
 
-## 66. HyperLogLog (Cardinality Estimation)
+## 69. HyperLogLog (Cardinality Estimation)
 
 **Problem:** "how many distinct visitors today?" on a stream of billions — exact counting needs memory proportional to the set size.
 **Idea:** hash each element; keep the maximum run of leading zeros per register bucket; estimate ≈ 2^maxZeros averaged across registers. Redis PFADD/PFCOUNT: ~12 KB regardless of cardinality, ~0.8% error.
@@ -1994,7 +2129,7 @@ Where: redis-features.md (HLL data type), analytics dashboards, ad-tech reach co
 
 ---
 
-## 67. Levenshtein Distance (Edit Distance)
+## 70. Levenshtein Distance (Edit Distance)
 
 **Problem:** fuzzy match — "did the user mean 'resturant'?" — or dedupe similar records (addresses, names) where exact equality fails.
 **Idea:** dynamic programming: edit distance between prefixes; cost 1 per insert / delete / substitute. O(m·n) time; O(n) space with two rows.
@@ -2017,7 +2152,7 @@ Where: search "did you mean", contact/address dedupe, OCR correction. O(n·m) is
 
 ---
 
-## 68. String Matching (KMP & Rabin-Karp)
+## 71. String Matching (KMP & Rabin-Karp)
 
 **Problem:** find a pattern in text (fraud-pattern scan, log search, content fingerprinting) without re-scanning matched characters on every mismatch.
 **Idea:** **KMP** precomputes the longest-prefix-suffix (LPS) table and never backtracks — O(n + m). **Rabin-Karp** hashes a sliding window and compares hashes — O(n) average, and one pass can check *many* patterns simultaneously (verify on hash match).
@@ -2043,7 +2178,7 @@ Where: intrusion/abuse pattern scanning, streaming content fingerprinting (rolli
 
 ---
 
-## 69. Haversine Distance
+## 72. Haversine Distance
 
 **Problem:** exact distance between two (lat, lng) points — courier ETAs, "within 5 km", driver matching.
 **Idea:** spherical-law formula (haversine) over Earth's radius R ≈ 6371 km. Below ~1 km a flat-earth approximation is fine.
@@ -2063,7 +2198,7 @@ Where: proximity-service.md, uber.md, food-delivery.md — always as the *final 
 
 ---
 
-## 70. Base62 Encoding & Snowflake IDs
+## 73. Base62 Encoding & Snowflake IDs
 
 **Problem:** URL-shortener keys must be short and URL-safe; globally unique IDs must be generated without a central sequence and ideally sort by time.
 **Idea:** **Base62** (0-9a-zA-Z) shrinks IDs: 7 characters encode ~3.5×10^12 values. **Snowflake** packs 41-bit ms timestamp + 10-bit machine + 12-bit sequence → 4096 IDs/ms/machine, ~69 years, time-ordered, zero coordination.
@@ -2085,7 +2220,7 @@ Where: url-shortener.md (Base62 keys), payment-system.md and messaging-app.md (t
 
 ---
 
-## 71. Sliding Window & Two Pointers
+## 74. Sliding Window & Two Pointers
 
 **Problem:** windowed stats over streams — per-second rate limits, moving averages, anomaly detection — needing O(1) amortized add/evict, not a full recount.
 **Idea:** keep a queue (or circular buffer) of events; on each event, append and drop everything outside the window. Sliding-window *log* (exact), fixed-window *counter* (cheap, bursty), or sliding-window *counter* (buckets, approximate).
@@ -2112,7 +2247,7 @@ Where: rate-limiter.md (token bucket vs sliding window trade-offs), metrics aggr
 
 The interview questions that sound impossible — *how does Shazam identify a song from two seconds of noisy audio?* Each answer below shows the magic is a real system built from the concepts in Parts I and II.
 
-## 72. The "Magic" Questions — With Answers
+## 75. The "Magic" Questions — With Answers
 
 **Q1. How does Shazam identify a song from just 2 seconds of noisy audio?**
 
@@ -2120,7 +2255,7 @@ It matches on frequencies, never on audio. The clip is sampled at 44.1 kHz and r
 
 **Q2. How does Google Maps know there's a traffic jam right now?**
 
-Phones (with consent) emit anonymized pings every few seconds. **Map-matching** snaps each noisy GPS fix onto road segments with a Hidden Markov Model solved by Viterbi: emission probability = distance from the point to candidate segments, transition probability = implausibility of jumping across the road graph. Per-segment speed is then a streaming, outlier-trimmed **median over a sliding window** of probe updates (§71) — 1–2% probe coverage suffices for a segment carrying dozens of vehicles. Sparse segments fall back to a historical model keyed `(segment, weekday, minute)`. Privacy is structural, not policy: pings are k-anonymized (aggregated only once ≥ k devices share a segment-window) and only segment-level aggregates are persisted — no individual traces survive. Incidents arrive from authorities and user reports; ETAs fold years of per-segment speed profiles with today's live deviations.
+Phones (with consent) emit anonymized pings every few seconds. **Map-matching** snaps each noisy GPS fix onto road segments with a Hidden Markov Model solved by Viterbi: emission probability = distance from the point to candidate segments, transition probability = implausibility of jumping across the road graph. Per-segment speed is then a streaming, outlier-trimmed **median over a sliding window** of probe updates (§74) — 1–2% probe coverage suffices for a segment carrying dozens of vehicles. Sparse segments fall back to a historical model keyed `(segment, weekday, minute)`. Privacy is structural, not policy: pings are k-anonymized (aggregated only once ≥ k devices share a segment-window) and only segment-level aggregates are persisted — no individual traces survive. Incidents arrive from authorities and user reports; ETAs fold years of per-segment speed profiles with today's live deviations.
 
 **Q3. How does YouTube's Content ID flag a re-uploaded movie clip?**
 
@@ -2132,7 +2267,7 @@ It's a 1:1 vector match that never leaves the phone. **Enrollment**: the camera 
 
 **Q5. How does your keyboard predict the next word before you type it?**
 
-A tiny language model with a hard latency budget (< 20 ms per keystroke, so it runs locally). **Next-word**: a quantized n-gram trie — backoff bigram/trigram counts over a ~50K-word vocabulary, a few MB of RAM — scores `P(w | last 2 words)` and returns top-k; a personal model (contacts, slang, recent words) is unioned and re-ranks the suggestions. Modern keyboards swap the trie for a distilled transformer of a few MB, quantized to INT8 for the phone NPU. **Swipe**: the touched-key sequence is scored as a geometric path — every dictionary word has an ideal x-y trace, and a dynamic-programming alignment (Levenshtein-like, §67) over per-key Gaussian hit costs picks the best word. Keystrokes never leave the phone for latency reasons; personalization syncs via **federated learning** — model deltas, not keystrokes, are what gets uploaded.
+A tiny language model with a hard latency budget (< 20 ms per keystroke, so it runs locally). **Next-word**: a quantized n-gram trie — backoff bigram/trigram counts over a ~50K-word vocabulary, a few MB of RAM — scores `P(w | last 2 words)` and returns top-k; a personal model (contacts, slang, recent words) is unioned and re-ranks the suggestions. Modern keyboards swap the trie for a distilled transformer of a few MB, quantized to INT8 for the phone NPU. **Swipe**: the touched-key sequence is scored as a geometric path — every dictionary word has an ideal x-y trace, and a dynamic-programming alignment (Levenshtein-like, §70) over per-key Gaussian hit costs picks the best word. Keystrokes never leave the phone for latency reasons; personalization syncs via **federated learning** — model deltas, not keystrokes, are what gets uploaded.
 
 **Q6. How do speed cameras read a plate on a car moving at 100 km/h?**
 
@@ -2146,7 +2281,7 @@ The work happened before your query. The crawler builds an **inverted index**: p
 
 Store-and-forward over ciphertext. Each recipient *device* owns a server-side queue; the Signal protocol's double ratchet means the server stores encrypted blobs it cannot read — it manages ordering and TTLs, nothing else. Every message carries a monotonic ID per conversation: one grey tick = queued at the server; on reconnect the device drains its queue and acks a **watermark** (highest contiguous ID delivered), turning ticks blue. Multi-device works because each device has its own queue and watermark. Transport is at-least-once; clients **dedup by message ID** (§10) so redelivery is invisible. Queues carry a TTL (~30 days) — after that the server drops, the sender sees explicit failure rather than silent loss, and the queue can't grow unbounded.
 
-> 💡 The recurring pattern behind every "magic" system: **convert the hard real-world signal into a small, robust fingerprint, index the fingerprints, and let lookups vote.** Shazam (audio peaks), Content ID (keyframe hashes), face unlock (embeddings), search (inverted index), ANPR (checksummed plate text) — the same shape at different scales. Cousins that fingerprint *streams* instead of songs: Bloom filters (§17), Count-Min Sketch (§65), HyperLogLog (§66).
+> 💡 The recurring pattern behind every "magic" system: **convert the hard real-world signal into a small, robust fingerprint, index the fingerprints, and let lookups vote.** Shazam (audio peaks), Content ID (keyframe hashes), face unlock (embeddings), search (inverted index), ANPR (checksummed plate text) — the same shape at different scales. Cousins that fingerprint *streams* instead of songs: Bloom filters (§17), Count-Min Sketch (§68), HyperLogLog (§69).
 
 ### Fingerprint Matching Demo (Shazam-style)
 
@@ -2238,7 +2373,7 @@ Expected: `winner: Song B starts at frame 120` by a landslide — the true (song
 | State the failure mode of 3. cap theorem explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
 | Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
-*More cross-topic rules: [Interview Q&A §81](interview-qa.md#81-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
+*More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 
 ---
 
