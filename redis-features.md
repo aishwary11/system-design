@@ -608,9 +608,15 @@ VEMB vec:products "item-1"                              # read a stored vector
 
 **Beyond the cache — Redis as AI infrastructure:** Redis 8's Vector Sets (above), the Query Engine's vector search for RAG, **LangCache** for *semantic* caching — caching LLM answers by meaning so paraphrased prompts hit the cache, not just exact matches — and short-/long-term **agent memory** (working state + semantic recall across sessions) are turning Redis into a real-time context layer between AI applications and their data, not just a cache in front of the database. Good deep-dive on this shift: [Redis Is No Longer Just a Cache: How Redis Is Becoming AI Infrastructure](https://decodingtech1.substack.com/p/redis-is-no-longer-just-a-cache-how?r=6dvsb6) (Decoding Tech, Sep 2026).
 
+![Redis as AI Infrastructure: The Real-Time Context Layer](diagrams/features/redis-ai-context-layer.svg)
+
 **Interactive diagram:** [diagrams/features/redis-ai-context-layer.architecture.html](diagrams/features/redis-ai-context-layer.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
-**LangCache flow diagram:** [diagrams/features/langcache-semantic-cache.architecture.html](diagrams/features/langcache-semantic-cache.architecture.html) — how a paraphrased prompt hits the semantic cache (or falls through to the LLM and writes back).
+![LangCache: Semantic Cache Request Flow](diagrams/features/langcache-semantic-cache.svg)
+
+**Interactive diagram:** [diagrams/features/langcache-semantic-cache.architecture.html](diagrams/features/langcache-semantic-cache.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
+*The LangCache flow: a paraphrased prompt hits the semantic cache — or falls through to the LLM and writes back.*
 
 ---
 
