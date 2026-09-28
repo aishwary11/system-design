@@ -1522,6 +1522,12 @@ the copies yourself (or via streams — see outbox §9, CDC in the Postgres guid
 
 **Why it matters:** in DynamoDB/Cassandra, a scan is the sound of a wrong data model; in SQL, every N+1 is an access pattern nobody named. Write down each query with its QPS before writing the first `CREATE TABLE` — the doc template's "Database Design" section is exactly this exercise per system.
 
+![Single-Table Design — One Table, Many Access Patterns](diagrams/concepts/concept-single-table.svg)
+
+**Interactive diagram:** [diagrams/concepts/concept-single-table.architecture.html](diagrams/concepts/concept-single-table.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
+*Every client query maps to one key shape in the same table (or a GSI for the inverse lookup); a stream projects changes into read models for the shapes a KV store can't serve (solid = query paths, dashed = change sync).*
+
 **Pairs with:** indexing (§50) is how a relational DB claims a query shape; CQRS (§6) is what happens when one model can't serve both read and write shapes; sharding (§1) picks partition keys *from* access patterns; the DynamoDB-style design lives in `system-design-key-value-store.md`.
 
 ---
@@ -1554,6 +1560,12 @@ clustered (InnoDB):     secondary (everywhere):
 | `WHERE a > ? AND b = ?` | ⚠️ | range on `a` ends usable prefix; `b` not seekable |
 
 Column order rule: **equality columns first, then the range/sort column** — `(user_id, status, created_at)` serves "user's recent orders by status" perfectly.
+
+![Leftmost Prefix — Which Queries Can Use the Index](diagrams/concepts/concept-leftmost-prefix.svg)
+
+**Interactive diagram:** [diagrams/concepts/concept-leftmost-prefix.architecture.html](diagrams/concepts/concept-leftmost-prefix.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
+*Three query shapes seek into the composite index by a leftmost prefix; two shapes that skip the first column fall through to a full scan — the index is useless to them no matter how many columns they mention.*
 
 **Which index structure for which shape:**
 

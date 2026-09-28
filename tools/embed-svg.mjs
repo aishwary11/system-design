@@ -151,7 +151,7 @@ if (EXPORT) {
   const problems = [];
   for (const f of specs) {
     const stem = f.replace(/\.architecture\.json$/, '');
-    const title = titleFor(stem, stem.startsWith('concept-') ? 'system-design-concepts.md' : stem === 'template' ? 'README.md' : stem.endsWith('-at-a-glance') ? stem.replace(/-at-a-glance$/, '') + '-features.md' : 'system-design-' + stem + '.md');
+    const title = specTitle(stem, stem.startsWith('concept-') ? 'system-design-concepts.md' : stem === 'template' ? 'README.md' : stem.endsWith('-at-a-glance') ? stem.replace(/-at-a-glance$/, '') + '-features.md' : 'system-design-' + stem + '.md');
     try {
       const svg = svgMarkupFor(join(specsDir, f), title);
       const target = svgTarget(stem);

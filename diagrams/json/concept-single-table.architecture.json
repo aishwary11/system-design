@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Single-Table Design — One Table, Many Access Patterns",
+    "output": "concept-single-table.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1110,
+      1258
+    ]
+  },
+  "components": [
+    {
+      "id": "users",
+      "type": "external",
+      "label": "Clients",
+      "sublabel": "4 named query shapes",
+      "pos": [
+        481,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "router",
+      "type": "backend",
+      "label": "Access-Pattern Router",
+      "sublabel": "each query → one key shape",
+      "pos": [
+        437,
+        322
+      ],
+      "size": [
+        236,
+        62
+      ]
+    },
+    {
+      "id": "table",
+      "type": "database",
+      "label": "Single Table",
+      "sublabel": "PK: USER#42 · SK: ORDER#ts#id",
+      "pos": [
+        425,
+        574
+      ],
+      "size": [
+        260,
+        62
+      ]
+    },
+    {
+      "id": "gsi",
+      "type": "database",
+      "label": "GSI 1",
+      "sublabel": "GSI1PK: TS#2026-09-28",
+      "pos": [
+        791,
+        574
+      ],
+      "size": [
+        240,
+        62
+      ]
+    },
+    {
+      "id": "proj",
+      "type": "database",
+      "label": "Read Model",
+      "sublabel": "search & aggregation views",
+      "pos": [
+        79,
+        574
+      ],
+      "size": [
+        220,
+        62
+      ]
+    },
+    {
+      "id": "stream",
+      "type": "messagebus",
+      "label": "Streams / CDC",
+      "sublabel": "change events",
+      "pos": [
+        445,
+        826
+      ],
+      "size": [
+        220,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "One table + its GSI",
+      "wraps": [
+        "table",
+        "gsi"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1-users-router",
+      "from": "users",
+      "to": "router",
+      "label": "queries",
+      "variant": "emphasis",
+      "labelDy": 24,
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-router-table",
+      "from": "router",
+      "to": "table",
+      "label": "seek by PK + SK",
+      "variant": "emphasis",
+      "labelDx": -90,
+      "labelDy": 24,
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-router-gsi",
+      "from": "router",
+      "to": "gsi",
+      "label": "rollup by day",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-table-stream",
+      "from": "table",
+      "to": "stream",
+      "label": "changes",
+      "variant": "dashed",
+      "labelDy": 24,
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-stream-proj",
+      "from": "stream",
+      "to": "proj",
+      "label": "project",
+      "variant": "dashed",
+      "fromSide": "left",
+      "toSide": "bottom"
+    }
+  ]
+}

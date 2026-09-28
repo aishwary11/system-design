@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Leftmost Prefix — Which Queries Can Use the Index",
+    "output": "concept-leftmost-prefix.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1110,
+      950
+    ]
+  },
+  "components": [
+    {
+      "id": "q1",
+      "type": "external",
+      "label": "a = ?",
+      "sublabel": "user_id = 42",
+      "pos": [
+        79,
+        70
+      ],
+      "size": [
+        250,
+        62
+      ]
+    },
+    {
+      "id": "q2",
+      "type": "external",
+      "label": "a = ? AND b = ?",
+      "sublabel": "… AND status = 'new'",
+      "pos": [
+        407,
+        70
+      ],
+      "size": [
+        250,
+        62
+      ]
+    },
+    {
+      "id": "q3",
+      "type": "external",
+      "label": "a = ? AND b = ? AND c > ?",
+      "sublabel": "… AND created_at > T",
+      "pos": [
+        735,
+        70
+      ],
+      "size": [
+        250,
+        62
+      ]
+    },
+    {
+      "id": "idx",
+      "type": "database",
+      "label": "Composite Index",
+      "sublabel": "(a, b, c) = (user_id, status, created_at)",
+      "pos": [
+        407,
+        322
+      ],
+      "size": [
+        296,
+        62
+      ]
+    },
+    {
+      "id": "q4",
+      "type": "external",
+      "label": "b = ?",
+      "sublabel": "status = 'new'",
+      "pos": [
+        200,
+        574
+      ],
+      "size": [
+        250,
+        62
+      ]
+    },
+    {
+      "id": "q5",
+      "type": "external",
+      "label": "c > ?",
+      "sublabel": "created_at > T",
+      "pos": [
+        660,
+        574
+      ],
+      "size": [
+        250,
+        62
+      ]
+    },
+    {
+      "id": "scan",
+      "type": "database",
+      "label": "Full Table Scan",
+      "sublabel": "no leftmost prefix — planner reads every row",
+      "pos": [
+        407,
+        826
+      ],
+      "size": [
+        296,
+        62
+      ]
+    }
+  ],
+  "boundaries": [],
+  "connections": [
+    {
+      "id": "e1-q1-idx",
+      "from": "q1",
+      "to": "idx",
+      "label": "hit — seek (a)",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-q2-idx",
+      "from": "q2",
+      "to": "idx",
+      "label": "hit — seek (a, b)",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-q3-idx",
+      "from": "q3",
+      "to": "idx",
+      "label": "hit — full key + range",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-q4-scan",
+      "from": "q4",
+      "to": "scan",
+      "label": "miss — no prefix",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-q5-scan",
+      "from": "q5",
+      "to": "scan",
+      "label": "miss — no prefix",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}
