@@ -32,7 +32,7 @@ Section numbering continues from `system-design-concepts.md` (Parts I–III end 
 
 ---
 
-# Part IV — Failure Terminology: One Glossary for Every Technology
+## Part IV — Failure Terminology: One Glossary for Every Technology
 
 > 💡 The pattern: every "named" failure is one of four physics — **synchronized load** (herd/storm/avalanche), **skew** (hot key/partition/noisy neighbor), **unbounded accumulation** (lag/tombstones/compaction debt), or **ambiguous state after failure** (split-brain/duplicates/gray failure). Learn the four shapes and you can reason about any technology's outage.
 
@@ -172,7 +172,7 @@ Kafka/Pulsar/RabbitMQ/SQS vocabulary — same physics, different brokers (messag
 
 ---
 
-# Part V — High-Level Q&A With Answers
+## Part V — High-Level Q&A With Answers
 
 ## 81. Caching & Redis
 
