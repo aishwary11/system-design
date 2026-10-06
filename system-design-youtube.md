@@ -541,4 +541,4 @@ const upload = new UploadService(); console.log("Upload service ready");
 
 ---
 
-<nav>← [web crawler](system-design-web-crawler.md) · [📖 All guides](README.md) · [STUDY ROADMAP](STUDY-ROADMAP.md) →</nav>
+<nav>← [webhook delivery](system-design-webhook-delivery.md) · [📖 All guides](README.md) · [STUDY ROADMAP](STUDY-ROADMAP.md) →</nav>

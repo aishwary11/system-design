@@ -9,7 +9,7 @@
 
 </div>
 
-**49 system designs · 15 technology & reference guides · 67 interactive diagrams · 38 JS algorithm implementations · 30-day roadmap**
+**50 system designs · 15 technology & reference guides · 68 interactive diagrams · 39 JS algorithm implementations · 30-day roadmap**
 
 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="30" alt="📚"/> [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
@@ -19,7 +19,7 @@
 High-Level Architecture → Low-Level Design → database design → scaling tiers → interview prep,
 each with an **embedded diagram image** plus a **self-contained interactive HTML** (pan/zoom, search, dark/light, export).
 
-<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=49+system+designs+with+interactive+diagrams;12+technology+%26+interview+guides+with+runnable+examples;25+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
+<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=50+system+designs+with+interactive+diagrams;15+technology+%26+interview+guides+with+runnable+examples;39+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
 
 [Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Trust & Safety](#trust-safety) · [AI Infra](#ai-infra) · [Communities](#communities) · [Primitives](#primitives) · 🧰 [Guides](#feature-guides) · ☁️ [Cloud](#cloud-guide) · 🤖 [AI](#agentic-ai-guide) · 🛠️ [DevOps](#devops-guide) · 📚 [Resources](#resources-guide) · ❓ [Q&A](#interview-qa-guide) · 🌐 [Networking](#networking-guide) · 🧠 [Operating Systems](#operating-systems-guide) · 🗓️ [Roadmap](#roadmap-guide)
 
@@ -31,11 +31,11 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 
 | | | |
 | :--- | :--- | :--- |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **49 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **50 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **15 feature & reference guides** | PostgreSQL · Redis · Kafka · MongoDB · Elasticsearch · RabbitMQ · Cloud Services · Agentic AI · Core Concepts | [Jump to guides](#feature-guides) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **67 Archify diagrams** | Inline SVG in every doc + interactive HTML per diagram | [Diagram style](#diagrams-archify) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **38 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **27 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **68 Archify diagrams** | Inline SVG in every doc + interactive HTML per diagram | [Diagram style](#diagrams-archify) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **39 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **29 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
 
 ---
 
@@ -98,7 +98,7 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 
 <a id="infra"></a>
 <details open>
-<summary><b>🏗️ Infrastructure</b> · 14 docs</summary>
+<summary><b>🏗️ Infrastructure</b> · 15 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
@@ -116,6 +116,7 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 | 12 | Recommendation System (Two-Stage Funnel) | [View](system-design-recommendation-system.md) |
 | 13 | Serverless Platform (Lambda-style) | [View](system-design-serverless.md) |
 | 14 | Online Judge (Sandboxed Execution) | [View](system-design-online-judge.md) |
+| 15 | Webhook Delivery (Outbound Fan-Out) | [View](system-design-webhook-delivery.md) |
 
 </details>
 
@@ -417,6 +418,7 @@ Executable implementations of the algorithms used across the designs:
 | Placement + Pre-Warm | serverless | Bin-packing and predictive warming |
 | Fair Queue + Early-Exit | online-judge | Per-user fairness, short-circuit grading |
 | GPS Cleaning + Viterbi | route-reconstruction | Anomaly removal, HMM consensus paths |
+| Retry Ladder + Full Jitter | webhook-delivery | Webhook retries that can't stampede a recovering endpoint |
 
 <p align="right"><a href="#top">↑ back to top</a></p>
 
@@ -426,7 +428,7 @@ Executable implementations of the algorithms used across the designs:
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="28" alt=""/> Techniques & Patterns
 
 <details>
-<summary><b>27 patterns</b> — click to expand the full table</summary>
+<summary><b>29 patterns</b> — click to expand the full table</summary>
 
 | Technique | Description | Used In |
 | :--- | :--- | :--- |
@@ -457,6 +459,8 @@ Executable implementations of the algorithms used across the designs:
 | Continuous Batching | Dynamic GPU batch admission at every decode step | llm-inference |
 | Downsampling & Retention | Tiered time-series storage (raw → 1m → 1h) | alerting |
 | Load Shedding & Degradation | Admit-by-priority under overload; reduced-quality modes | concepts §27, all API gateways |
+| HMAC Webhook Signing & Replay Window | Timestamped signature with dual-key rotation so verification never breaks | webhook-delivery, payment-system |
+| Per-Endpoint Circuit Breaking | Open → half-open → closed with exponential cooldown, one probe at a time | webhook-delivery, notification-system |
 
 </details>
 

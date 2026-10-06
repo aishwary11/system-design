@@ -1,0 +1,351 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Webhook Delivery — System Architecture",
+    "output": "webhook-delivery.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      2020
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "Internal Services",
+      "sublabel": "Event Producers",
+      "pos": [
+        338,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "Ingest API",
+      "sublabel": "Auth / Schema / Dedup",
+      "pos": [
+        332,
+        322
+      ],
+      "size": [
+        161,
+        62
+      ]
+    },
+    {
+      "id": "lb",
+      "type": "backend",
+      "label": "Delivery Router",
+      "pos": [
+        330,
+        574
+      ],
+      "size": [
+        165,
+        62
+      ]
+    },
+    {
+      "id": "svc0",
+      "type": "backend",
+      "label": "Subscription Registry",
+      "tag": "→ Secrets · → Metrics",
+      "pos": [
+        80,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "svc1",
+      "type": "backend",
+      "label": "Signing Service",
+      "tag": "→ Secrets · → Metrics",
+      "pos": [
+        338,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "svc2",
+      "type": "backend",
+      "label": "Quota & Circuit Svc",
+      "tag": "→ Metrics",
+      "pos": [
+        596,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "store0",
+      "type": "database",
+      "label": "PostgreSQL",
+      "tag": "subscriptions + delivery log",
+      "pos": [
+        70,
+        1078
+      ],
+      "size": [
+        158,
+        62
+      ]
+    },
+    {
+      "id": "store1",
+      "type": "database",
+      "label": "KMS / Secrets",
+      "tag": "per-tenant signing keys",
+      "pos": [
+        338,
+        1078
+      ],
+      "size": [
+        158,
+        62
+      ]
+    },
+    {
+      "id": "store2",
+      "type": "database",
+      "label": "Redis",
+      "tag": "quotas + breaker state",
+      "pos": [
+        606,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "stream",
+      "type": "messagebus",
+      "label": "Kafka",
+      "tag": "→ attempt · retry · DLQ",
+      "pos": [
+        338,
+        1330
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker0",
+      "type": "backend",
+      "label": "Delivery Workers",
+      "pos": [
+        80,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker1",
+      "type": "backend",
+      "label": "Retry / Backoff Workers",
+      "pos": [
+        338,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "worker2",
+      "type": "backend",
+      "label": "Replay / DLQ Workers",
+      "pos": [
+        596,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "endpoints",
+      "type": "external",
+      "label": "Customer Endpoints",
+      "sublabel": "HTTPS POST / HMAC check",
+      "pos": [
+        338,
+        1834
+      ],
+      "size": [
+        168,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Webhook Delivery Platform",
+      "wraps": [
+        "edge",
+        "lb",
+        "svc0",
+        "svc1",
+        "svc2",
+        "store0",
+        "store1",
+        "store2",
+        "stream",
+        "worker0",
+        "worker1",
+        "worker2"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1-clients-edge",
+      "from": "clients",
+      "to": "edge",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-edge-lb",
+      "from": "edge",
+      "to": "lb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-lb-svc0",
+      "from": "lb",
+      "to": "svc0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-lb-svc1",
+      "from": "lb",
+      "to": "svc1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-lb-svc2",
+      "from": "lb",
+      "to": "svc2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-svc0-store0",
+      "from": "svc0",
+      "to": "store0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e7-svc1-store1",
+      "from": "svc1",
+      "to": "store1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e8-svc2-store2",
+      "from": "svc2",
+      "to": "store2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e9-store0-stream",
+      "from": "store0",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e10-store1-stream",
+      "from": "store1",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e11-store2-stream",
+      "from": "store2",
+      "to": "stream",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e12-stream-worker0",
+      "from": "stream",
+      "to": "worker0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e13-stream-worker1",
+      "from": "stream",
+      "to": "worker1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e14-stream-worker2",
+      "from": "stream",
+      "to": "worker2",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e15-worker0-endpoints",
+      "from": "worker0",
+      "to": "endpoints",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e16-worker1-endpoints",
+      "from": "worker1",
+      "to": "endpoints",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "dashed"
+    },
+    {
+      "id": "e17-worker2-endpoints",
+      "from": "worker2",
+      "to": "endpoints",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "dashed"
+    }
+  ]
+}
