@@ -412,7 +412,7 @@ A: Redis TTL heartbeat, WebSocket as presence signal, graceful degradation
 
 ### 1. Message Ordering (Vector Clocks)
 
-```text
+```js
 class MessageService {
   constructor(redisClient, dbClient) { this.r = redisClient; this.db = dbClient; }
   async sendMessage(senderId, receiverId, content) {
@@ -428,7 +428,7 @@ class MessageService {
 
 ### 2. Message Deduplication (Idempotency)
 
-```text
+```js
 class PresenceService {
   constructor(redisClient) { this.r = redisClient; this.THRESHOLD = 90; }
   async setOnline(userId) { await this.r.setex('online:' + userId, this.THRESHOLD, Date.now().toString()); await this.r.sadd('online:users', userId); }
@@ -443,17 +443,54 @@ const chat = new ChatService(); console.log("Chat service ready");
 
 ### 3. Connection Routing (Consistent Hashing)
 
-```text
+```js
 class ConnectionRouter {
-    // Route users to WebSocket servers using consistent hashing
-    // - User always connects to same server (session affinity)
-    // - On server failure, minimal remapping
+  // Route a user to a WebSocket gateway with consistent hashing + virtual nodes.
+  // - session affinity: the same user lands on the same gateway across reconnects
+  // - failure: only that node's share remaps, and the client re-resolves on reconnect
+  // - the directory lives in Redis (`user -> gateway`) so any node can look it up
+  constructor(gateways, { virtualNodes = 150, healthy = null } = {}) {
+    this.points = gateways
+      .flatMap(gateway => Array.from({ length: virtualNodes }, (_, i) => ({
+        gateway,
+        hash: ConnectionRouter.hash32(`${gateway}#${i}`),
+      })))
+      .sort((a, b) => a.hash - b.hash);
+    this.healthy = healthy ?? new Set(gateways);
+  }
 
+  static hash32(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619) >>> 0;
+    return h;
+  }
+
+  gatewayFor(userId) {
+    const point = ConnectionRouter.hash32(userId);
+    const start = this.points.findIndex(p => p.hash >= point);
+    const offset = start === -1 ? 0 : start;
+    for (let i = 0; i < this.points.length; i++) {
+      const candidate = this.points[(offset + i) % this.points.length].gateway;
+      if (this.healthy.has(candidate)) return candidate; // walk clockwise past dead nodes
+    }
+    return null; // no capacity: the LB sheds the connection instead of queueing it
+  }
+
+  onGatewayFailure(gateway) {
+    this.healthy.delete(gateway);
+    return this.points.filter(p => p.gateway === gateway).length / this.points.length; // share remapped
+  }
+}
+
+const router = new ConnectionRouter(['ws-1', 'ws-2', 'ws-3']);
+console.log('user-42 ->', router.gatewayFor('user-42'));
+console.log('share remapped when ws-2 dies:', router.onGatewayFailure('ws-2').toFixed(2));
+console.log('user-42 now ->', router.gatewayFor('user-42'));
 ```
 
 ### 4. Offline Message Queue
 
-```text
+```js
 function deliver_message(recipient_id, message) {
     // Deliver message to recipient
     // - If online: push via WebSocket
@@ -471,7 +508,7 @@ function deliver_message(recipient_id, message) {
 
 ### 5. Typing Indicator (Debounced)
 
-```text
+```js
 function handle_typing_event(user_id, conversation_id, is_typing) {
     // Typing indicator with debounce
     // - Client sends start/stop typing

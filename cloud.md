@@ -314,6 +314,17 @@ aws sqs send-message --queue-url tasks --message-body '{"job":"render","id":"7"}
 6. **Egress is the hidden bill** — multi-cloud looks cheap until data crosses providers
 7. Related guides: `postgresql-features.md`, `redis-features.md`, `kafka-features.md`, `mongodb-features.md`, `elasticsearch-features.md`, `rabbitmq-features.md`, `agentic-ai-features.md`
 
+## Related System Design Documents
+
+- [File Storage (Google Drive)](system-design-file-storage.md) — object tiers, presigned URLs, lifecycle rules
+- [Serverless Platform (Lambda-style)](system-design-serverless.md) — the platform AWS manages for you
+- [Code Deployment System (CI/CD)](system-design-code-deployment.md) — managed pipelines, registries, rollout gates
+- [Distributed Cache (Redis)](system-design-distributed-cache.md) — ElastiCache/MemoryDB at each tier
+- [Alerting & Monitoring (Prometheus)](system-design-alerting.md) — managed metrics, logs, and paging
+- [Google Ads (Auction & Budget Pacing)](system-design-google-ads.md) — globally consistent counters and Spanner-class storage
+- [Parking System](system-design-parking-system.md) — IoT Core → stream → store for device telemetry
+- [Notification System](system-design-notification-system.md) — the SNS/SES/push side of fan-out
+
 ## 17. Hidden Tips & Tricks
 
 **1. Egress is the silent bill.** ~$90/TB out of AWS — a "cheap" $50 EC2 box streaming 5 TB/month is a $500 mistake. CDN egress is usually cheaper than raw origin egress; architect the bytes path before the compute.

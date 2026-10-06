@@ -398,7 +398,7 @@ A: CAPTCHA, device fingerprinting, velocity rate limiting, behavioral analysis
 
 ### 1. Optimistic Locking (Seat Booking)
 
-```text
+```js
 class SeatLock {
   constructor(redisClient, dbClient) { this.r = redisClient; this.db = dbClient; }
   async lockSeat(eventId, seatId, userId, ttl = 600) {
@@ -428,17 +428,57 @@ const event = new EventService(); console.log("Event service ready");
 
 ### 2. Flash Sale Queue (Virtual Waiting Room)
 
-```text
+```js
 class FlashSaleQueue {
-    // Virtual waiting room for flash sales
-    // - Queue users during high demand
-    // - Process in order with rate limiting
+  // Virtual waiting room: everyone gets a position, only N are admitted per second.
+  // Position tokens are signed so a user cannot jump the queue by editing a header.
+  constructor({ admitPerSecond = 200, maxQueueSize = 500000, ttlSeconds = 900 } = {}) {
+    this.admitPerSecond = admitPerSecond;
+    this.maxQueueSize = maxQueueSize;
+    this.ttl = ttlSeconds;
+    this.queue = [];
+    this.admitted = new Map(); // token -> expiresAt
+    this.sequence = 0;
+  }
 
+  enqueue(userId, now = Date.now()) {
+    if (this.queue.length >= this.maxQueueSize) return { ok: false, reason: 'sold_out_or_queue_full' };
+    // Idempotent: a refresh returns the same position instead of queueing twice.
+    const existing = this.queue.find(e => e.userId === userId);
+    if (existing) return { ok: true, position: existing.position, token: existing.token };
+
+    const entry = { userId, position: ++this.sequence, enqueuedAt: now, token: this.sign(userId, now) };
+    this.queue.push(entry);
+    return { ok: true, position: entry.position, token: entry.token, etaSeconds: Math.ceil(entry.position / this.admitPerSecond) };
+  }
+
+  admit(now = Date.now()) {
+    // Called once per second by the admission controller.
+    const batch = this.queue.splice(0, this.admitPerSecond);
+    for (const entry of batch) this.admitted.set(entry.token, now + this.ttl * 1000);
+    return batch.map(e => e.userId);
+  }
+
+  canEnter(token, now = Date.now()) {
+    const expiresAt = this.admitted.get(token);
+    return Boolean(expiresAt && expiresAt > now);
+  }
+
+  sign(userId, at) {
+    let h = 2166136261;
+    for (const ch of `${userId}:${at}`) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+    return `${userId}.${at}.${h.toString(36)}`;
+  }
+}
+
+const room = new FlashSaleQueue({ admitPerSecond: 2 });
+console.log(room.enqueue('u1'), room.enqueue('u2'));
+console.log('admitted:', room.admit(), 'can enter u1:', room.canEnter(room.enqueue('u1').token));
 ```
 
 ### 3. Seat Hold with TTL
 
-```text
+```js
 function hold_seat(seat_id, user_id, ttl_seconds = 600) {
     // Hold a seat for a limited time to prevent orphaned reservations
     // 1. Check whether the seat is already held by someone else
@@ -455,7 +495,7 @@ function hold_seat(seat_id, user_id, ttl_seconds = 600) {
 
 ### 4. Payment-Order Saga Pattern
 
-```text
+```js
 class BookingSaga {
     // Saga pattern for booking flow:
     // 1. Hold seats

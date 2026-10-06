@@ -240,7 +240,7 @@ CREATE INDEX idx_busy ON events (calendar_id, start_utc, end_utc)
 
 ### RRULE Expansion + Free/Busy Intersection
 
-```text
+```js
 // Weekly RRULE with exceptions, expanded lazily over a window.
 function expandWeekly(rrule, windowStartMs, windowEndMs) {
   const out = [];

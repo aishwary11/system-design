@@ -420,7 +420,7 @@ A: Hybrid fan-out, pre-computed timeline cache with TTL
 
 ### 1. Fan-Out-on-Write Algorithm
 
-```text
+```js
 class FanoutService {
   // Push tweet to all followers' timelines
   constructor(redisClient, dbClient) {
@@ -458,7 +458,7 @@ class FanoutService {
 
 ### 2. Trending Algorithm (Reservoir Sampling + Decay)
 
-```text
+```js
 class TrendingService {
   // Calculate trending topics using HyperLogLog + time decay
   // Time Complexity: O(1) per count, O(T) for top-K where T = unique topics
@@ -512,7 +512,7 @@ function get_home_timeline(user_id, cursor=undefined, limit=20) {
 
 ### Algorithm 2
 
-```text
+```js
 class TimelineService {
   // Generate user timeline from pre-computed fan-out or on-the-fly
   // Time Complexity: O(1) for cached, O(F) for fan-out-on-read
@@ -538,11 +538,8 @@ class TimelineService {
 }
 ```
 
-        // Some comment
 
-```
-
-```text
+```js
 class SpamDetector {
   // Detect spam tweets using rate limiting + content analysis
   // Time Complexity: O(1) per check
@@ -576,16 +573,8 @@ class SpamDetector {
   hashContent(text) { return text.toLowerCase().trim().slice(0, 100); }
 }
 
-const fanout = new FanoutService(); console.log("Fan-out service ready");
 ```
 
-    // // Dedup: prevent double like
-    // // Real-time count
-        // "tweet_id": tweet_id,
-        // "user_id": user_id,
-        // "action": "like"
-
-```
 
 ## Do's & Don'ts
 

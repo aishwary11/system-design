@@ -317,7 +317,7 @@ A: Popularity with time decay, user history personalization, CTR feedback
 
 ### 1. Trie Data Structure
 
-```text
+```js
 class TrieNode {
   constructor() { this.children = {}; this.isEnd = false; this.frequency = 0; }
 }
@@ -352,7 +352,7 @@ class Trie {
 
 ### 2. Top-K with Min-Heap
 
-```text
+```js
 class SearchRanker {
   constructor(redisClient) { this.r = redisClient; }
   async rank(query, results) {
@@ -372,25 +372,65 @@ const trie = new TrieService(); console.log("Trie service ready");
 
 ### 3. Prefix Ranking with Time Decay
 
-```text
-const time = require('time');
-const math = require('math');
-
+```js
 class DecayRanker {
-    // Recent queries get higher scores even with lower frequency.
+  // Recent queries outrank historically popular ones even with lower frequency.
+  // score = count * 2^(-age / halfLife)  — an exponential time decay.
+  constructor(halfLifeHours = 6) {
+    this.halfLifeMs = halfLifeHours * 3600 * 1000;
+  }
 
+  score(count, lastSeenMs, now = Date.now()) {
+    const age = Math.max(0, now - lastSeenMs);
+    return count * Math.pow(2, -age / this.halfLifeMs);
+  }
+
+  rank(entries, now = Date.now()) {
+    return entries
+      .map(e => ({ ...e, score: this.score(e.count, e.lastSeenMs, now) }))
+      .sort((a, b) => b.score - a.score);
+  }
+}
+
+const ranker = new DecayRanker(6);
+console.log(ranker.rank([
+  { query: 'kafka', count: 1000, lastSeenMs: Date.now() - 7 * 86400000 },
+  { query: 'kafka streams', count: 40, lastSeenMs: Date.now() - 60000 },
+]).map(r => `${r.query}: ${r.score.toFixed(2)}`));
 ```
 
 ### 4. Personalized Suggestions
 
-```text
+```js
 class PersonalizedRanker {
-    // Personalize suggestions based on user history.
-  // Blend user history into the final ranking.
-    // Strategy:
-    // 1. Get generic top-K suggestions for prefix
-    // 2. Boost suggestions that match user's search history
+  // Blend the user's own history into the generic ranking.
+  // final = (1 - w) * genericScore + w * userAffinity, so history breaks near-ties.
+  constructor(userHistory = [], weight = 0.3) {
+    this.history = new Map(userHistory.map(([q, hits]) => [q, hits]));
+    this.weight = weight;
+    this.maxHits = Math.max(1, ...this.history.values());
+  }
 
+  affinity(query) {
+    return (this.history.get(query) || 0) / this.maxHits; // 0..1
+  }
+
+  rank(prefix, suggestions) {
+    return suggestions
+      .filter(s => s.query.startsWith(prefix))
+      .map(s => ({
+        ...s,
+        finalScore: (1 - this.weight) * s.score + this.weight * this.affinity(s.query),
+      }))
+      .sort((a, b) => b.finalScore - a.finalScore);
+  }
+}
+
+const personal = new PersonalizedRanker([['kafka streams', 9], ['kotlin', 2]]);
+console.log(personal.rank('k', [
+  { query: 'kafka', score: 0.9 },
+  { query: 'kafka streams', score: 0.6 },
+]).map(s => `${s.query}: ${s.finalScore.toFixed(2)}`));
 ```
 
 ### Data Structures Summary
@@ -409,55 +449,119 @@ class PersonalizedRanker {
 
 ### 1. Trie Data Structure (Implementation)
 
-```text
+```js
 class TrieNode {
+  constructor() {
+    this.children = new Map(); // char -> TrieNode
+    this.isEnd = false;
+    this.frequency = 0;        // times this exact query was searched
+  }
+}
 
+const root = new TrieNode();
+root.children.set('k', new TrieNode());
+root.children.get('k').isEnd = true;
+root.children.get('k').frequency = 42;
+console.log('trie root children:', [...root.children.keys()], 'kfreq:', root.children.get('k').frequency);
 ```
 
 ### 2. Trie Caching (Redis)
 
-```text
+```js
 class CachedAutocomplete {
-    // Cache trie results in Redis
-    // - Cache popular prefixes
-    // - Invalidate on new data
+  // Trie lookup in-process, hot prefixes cached in Redis.
+  // - TTL with jitter so popular prefixes don't all expire together
+  // - a versioned key namespace invalidates every prefix when the trie is rebuilt
+  constructor(trie, cache, { ttlSeconds = 60, jitterSeconds = 10, version = 1 } = {}) {
+    this.trie = trie;
+    this.cache = cache; // { get(key), set(key, value, ttlSeconds) }
+    this.ttl = ttlSeconds;
+    this.jitter = jitterSeconds;
+    this.version = version;
+  }
 
+  keyFor(prefix) { return `ac:v${this.version}:${prefix}`; }
+
+  async suggest(prefix, limit = 10) {
+    const key = this.keyFor(prefix);
+    const cached = await this.cache.get(key);
+    if (cached) return JSON.parse(cached);
+
+    const results = this.trie.search(prefix).slice(0, limit);
+    const ttl = this.ttl + Math.floor(Math.random() * this.jitter);
+    await this.cache.set(key, JSON.stringify(results), ttl);
+    return results;
+  }
+
+  invalidate() { this.version++; } // old keys age out; no scan/delete needed
+}
+
+const memory = new Map();
+const fakeCache = {
+  async get(k) { return memory.get(k) ?? null; },
+  async set(k, v) { memory.set(k, v); },
+};
+const trie = { search: p => [{ query: `${p}afka`, freq: 10 }] };
+const cached = new CachedAutocomplete(trie, fakeCache);
+cached.suggest('k').then(r => console.log('cached suggestions:', r));
 ```
 
 ### 3. Popularity Scoring
 
-```text
-function calculate_popularity_score(query, time_window_hours=24) {
-    // Popularity score = frequency * recency_boost
-    // - More recent searches get higher boost
-    // - Prevents stale popular queries from dominating
+```js
+function calculate_popularity_score(query, windowHours = 24) {
+  // Popularity = frequency * recency boost, over a sliding window.
+  // Recency boost keeps today's breakout query ahead of last month's champion.
+  const now = Date.now();
+  const windowMs = windowHours * 3600 * 1000;
+  const events = searchAnalytics.events(query).filter(e => now - e.at <= windowMs);
+  if (events.length === 0) return 0;
 
+  const frequency = events.length;
+  const meanAge = events.reduce((sum, e) => sum + (now - e.at), 0) / frequency;
+  const recencyBoost = 1 + (1 - meanAge / windowMs); // 1..2
+  return frequency * recencyBoost;
+}
+
+searchAnalytics.record('vector db', 'u1', 3);
+console.log('popularity:', calculate_popularity_score('vector db').toFixed(2));
 ```
 
 ### 4. Trending Boost
 
-```text
+```js
 function get_trending_boost(query) {
-    // Boost trending queries in autocomplete
-    // - Check 1-min, 5-min, 15-min windows
-    // - Weight recent trends higher
+  // Boost queries that are accelerating, not just frequent.
+  // Compare three windows with decreasing weight so a spike in the last minute dominates.
+  const now = Date.now();
+  const windows = [[60e3, 1.0], [5 * 60e3, 0.6], [15 * 60e3, 0.3]];
+  let boost = 0;
+  for (const [spanMs, weight] of windows) {
+    const recent = searchAnalytics.events(query).filter(e => now - e.at <= spanMs).length;
+    const baseline = Math.max(1, searchAnalytics.events(query).length / 15); // per-minute baseline
+    boost += weight * (recent / (spanMs / 60e3) / baseline);
+  }
+  return Number(Math.min(boost, 3).toFixed(2)); // capped so trending can't drown relevance
+}
 
+searchAnalytics.record('kafka vs rabbitmq', 'u2', 1);
+console.log('trending boost:', get_trending_boost('kafka vs rabbitmq'));
 ```
 
 ### 5. Analytics Pipeline
 
-```text
-function record_search(query, user_id, result_count) {
-    // Record search for analytics
-    // - Track popular queries
-    // - Update trie frequencies
-    // - Compute trending topics
-        // "query": query,
-        // "user_id": user_id,
-        // "result_count": result_count,
-    // // Update trie frequency
-    // // Update trending
+```js
+function record_search(query, userId, resultCount) {
+  // One write path feeding three consumers: popularity, trie frequencies, trending.
+  // resultCount lets you detect "zero-result" queries — the best content signal there is.
+  searchAnalytics.record(query, userId, resultCount);
+  trie.increment(query);                 // prefix frequencies for autocomplete
+  trending.observe(query, Date.now());   // 1/5/15-minute trend windows
+  if (resultCount === 0) zeroResultQueue.push({ query, userId, at: Date.now() });
+}
 
+record_search('kafka exactly once', 'u3', 4);
+console.log('recorded:', searchAnalytics.events('kafka exactly once').length, 'event(s)');
 ```
 
 ---

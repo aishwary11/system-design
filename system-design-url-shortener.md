@@ -179,7 +179,7 @@ INCR url:{short_code}:clicks
 
 ### 1. Base62 Encoding (Short Code Generation)
 
-```text
+```js
 function generate_short_code(url) {
   // Hash the canonical URL, then encode the first 7 Base62 characters.
   hash = sha256(url)
@@ -189,7 +189,7 @@ function generate_short_code(url) {
 
 ### 2. Counter-Based Generation (Distributed)
 
-```text
+```js
 class CounterBasedGenerator {
     // Distributed counter for unique short codes
     // - Each server gets a unique ID range
@@ -203,7 +203,7 @@ class CounterBasedGenerator {
 
 ### 3. Read-Through Cache
 
-```text
+```js
 function redirect(short_code) {
     // - Cache miss: query DB, populate cache
   url = cache.get(short_code)
@@ -219,7 +219,7 @@ function redirect(short_code) {
 
 ### 4. Analytics Pipeline
 
-```text
+```js
 function track_click(short_code, request) {
     // Async click tracking pipeline
     // - Don't block redirect response
@@ -235,7 +235,7 @@ function track_click(short_code, request) {
 
 ### 5. URL Expiry (TTL)
 
-```text
+```js
 function check_url_expiry(short_code) {
     // URLs can have optional expiry
     // - Check on redirect
@@ -349,7 +349,7 @@ A: Async Kafka counting, batch Cassandra aggregation
 
 ### 1. Base62 Encoding (URL to Short Code)
 
-```text
+```js
 const BASE62 = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 function encodeBase62(num) {
@@ -395,7 +395,7 @@ class UrlShortener {
 
 ### 2. Counter-Based Distributed ID Generation
 
-```text
+```js
 class AnalyticsTracker {
   // Track URL clicks with deduplication
   // Time Complexity: O(1) per click
@@ -447,7 +447,7 @@ class BloomFilter {
 
 ```
 
-```text
+```js
 class SpamDetector {
   // Detect and block malicious URLs
   // Time Complexity: O(1) per check

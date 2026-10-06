@@ -560,7 +560,7 @@ A: Field-by-field parsing, ranges and steps, DST handling
 
 ### 1. Time-Bucketed Dispatch Algorithm
 
-```text
+```js
 class JobScheduler {
   constructor(redisClient) { this.r = redisClient; }
   async schedule(jobId, payload, delayMs) {
@@ -584,7 +584,7 @@ class JobScheduler {
 
 ### 2. Lease-Based Job Execution
 
-```text
+```js no-run
 const uuid = require('uuid');
 
 class LeaseManager {
@@ -605,42 +605,101 @@ class LeaseManager {
 
 ### 3. Jitter Calculation (Anti-Thundering Herd)
 
-```text
-const random = require('random');
-const math = require('math');
-
+```js
 class JitterCalculator {
-    // Prevent thundering herd when many jobs share the same timestamp.
-    // Problem: 10,000 jobs scheduled at midnight all fire simultaneously.
-    // Solution: Add random jitter so execution is staggered.
-    // Common strategies: fixed jitter, random jitter, or exponential backoff.
+  // Prevents the thundering herd when thousands of jobs share a timestamp.
+  // Problem: 10,000 jobs scheduled for midnight all fire in the same second.
+  // Fix: spread the fire times — uniformly, or proportionally to the backlog.
+  constructor({ mode = 'uniform', maxJitterMs = 30_000 } = {}) {
+    if (!['uniform', 'proportional', 'none'].includes(mode)) throw new Error(`bad mode ${mode}`);
+    this.mode = mode;
+    this.maxJitterMs = maxJitterMs;
+  }
 
-    calculate(baseTime, maxJitterMs) {
-        return baseTime + random.uniform(0, maxJitterMs);
+  fireAt(baseTime, { queueDepth = 1 } = {}) {
+    if (this.mode === 'none') return baseTime;
+    if (this.mode === 'proportional') {
+      // Busier queue -> wider spread, capped so SLA windows still hold.
+      const spread = Math.min(this.maxJitterMs, Math.sqrt(queueDepth) * 250);
+      return baseTime + Math.floor(Math.random() * spread);
     }
+    return baseTime + Math.floor(Math.random() * this.maxJitterMs);
+  }
+}
+
+const jitter = new JitterCalculator({ mode: 'proportional', maxJitterMs: 30000 });
+const midnight = Date.UTC(2026, 9, 7, 0, 0, 0);
+console.log('first 5 of 10k midnight jobs:');
+for (let i = 0; i < 5; i++) {
+  const t = jitter.fireAt(midnight, { queueDepth: 10000 });
+  console.log('  +' + ((t - midnight) / 1000).toFixed(1) + 's');
 }
 ```
 
 ### 4. Priority Queue (Binary Heap)
 
-```text
-const heapq = require('heapq');
-
+```js
 class PriorityQueue {
-    // Priority-based job scheduling.
-  add(job, priority) {
-    heap.push({ job, priority })
+  // Binary min-heap ordered by (runAt, priority) — earliest first, then highest priority.
+  // O(log n) push/pop with no re-sorting, which matters at millions of timers.
+  constructor() { this.items = []; }
+
+  static less(a, b) {
+    return a.runAt !== b.runAt ? a.runAt < b.runAt : a.priority > b.priority;
+  }
+
+  get size() { return this.items.length; }
+
+  add(job, { runAt = Date.now(), priority = 0 } = {}) {
+    const entry = { job, runAt, priority, seq: this.items.length };
+    this.items.push(entry);
+    this.#siftUp(this.items.length - 1);
+    return entry;
   }
 
   pop() {
-    return heap.pop()
+    if (this.items.length === 0) return null;
+    const top = this.items[0];
+    const last = this.items.pop();
+    if (this.items.length) { this.items[0] = last; this.#siftDown(0); }
+    return top;
+  }
+
+  peekRunAt() { return this.items.length ? this.items[0].runAt : null; }
+
+  #siftUp(i) {
+    while (i > 0) {
+      const parent = (i - 1) >> 1;
+      if (!PriorityQueue.less(this.items[i], this.items[parent])) break;
+      [this.items[i], this.items[parent]] = [this.items[parent], this.items[i]];
+      i = parent;
+    }
+  }
+
+  #siftDown(i) {
+    for (;;) {
+      const l = 2 * i + 1, r = l + 1;
+      let best = i;
+      if (l < this.items.length && PriorityQueue.less(this.items[l], this.items[best])) best = l;
+      if (r < this.items.length && PriorityQueue.less(this.items[r], this.items[best])) best = r;
+      if (best === i) break;
+      [this.items[i], this.items[best]] = [this.items[best], this.items[i]];
+      i = best;
+    }
   }
 }
+
+const pq = new PriorityQueue();
+pq.add('send-receipt', { runAt: 2000, priority: 0 });
+pq.add('charge-card', { runAt: 1000, priority: 0 });
+pq.add('retry-webhook', { runAt: 1000, priority: 9 });
+console.log('order:', [pq.pop().job, pq.pop().job, pq.pop().job]);
+console.log('empty queue pops null:', pq.pop());
 ```
 
 ### 5. Cron Expression Parser
 
-```text
+```js
 class CronParser {
   constructor() {
     this.monthDays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -680,7 +739,7 @@ class CronParser {
 
 ### Core Scheduling Algorithm
 
-```text
+```js
 class DelayedJobScheduler {
   constructor(redis, db, metrics) {
     this.redis = redis;

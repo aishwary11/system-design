@@ -237,7 +237,7 @@ geo:{region}:topads   -> precomputed candidates for hot queries
 
 ### GSP Auction + Token-Bucket Pacer
 
-```text
+```js
 // GSP: rank by bid*quality; winner pays (nextRank/ownQuality) + epsilon
 function gspAuction(bids) {
   // bids: [{advertiser, bid_cents, quality}] (0 < quality <= 10)

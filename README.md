@@ -9,7 +9,7 @@
 
 </div>
 
-**49 system designs · 12 technology & reference guides · 64 interactive diagrams · 25 JS algorithm implementations · 30-day roadmap**
+**49 system designs · 15 technology & reference guides · 67 interactive diagrams · 38 JS algorithm implementations · 30-day roadmap**
 
 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="30" alt="📚"/> [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
@@ -21,7 +21,7 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 
 <img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=49+system+designs+with+interactive+diagrams;12+technology+%26+interview+guides+with+runnable+examples;25+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
 
-[Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Trust & Safety](#trust-safety) · [AI Infra](#ai-infra) · [Communities](#communities) · [Primitives](#primitives) · 🧰 [Guides](#feature-guides) · ☁️ [Cloud](#cloud-guide) · 🤖 [AI](#agentic-ai-guide) · 🛠️ [DevOps](#feature-guides) · 📚 [Resources](#feature-guides) · ❓ [Q&A](#feature-guides) · 🌐 [Networking](networking.md) · 🧠 [Operating Systems](operating-systems.md) · 🗓️ [Roadmap](STUDY-ROADMAP.md)
+[Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Trust & Safety](#trust-safety) · [AI Infra](#ai-infra) · [Communities](#communities) · [Primitives](#primitives) · 🧰 [Guides](#feature-guides) · ☁️ [Cloud](#cloud-guide) · 🤖 [AI](#agentic-ai-guide) · 🛠️ [DevOps](#devops-guide) · 📚 [Resources](#resources-guide) · ❓ [Q&A](#interview-qa-guide) · 🌐 [Networking](#networking-guide) · 🧠 [Operating Systems](#operating-systems-guide) · 🗓️ [Roadmap](#roadmap-guide)
 
 </div>
 
@@ -32,9 +32,9 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 | | | |
 | :--- | :--- | :--- |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **49 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **12 feature & reference guides** | PostgreSQL · Redis · Kafka · MongoDB · Elasticsearch · RabbitMQ · Cloud Services · Agentic AI · Core Concepts | [Jump to guides](#feature-guides) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **45 Archify diagrams** | Inline SVG in every doc + interactive HTML per diagram | [Diagram style](#diagrams-archify) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **25 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **15 feature & reference guides** | PostgreSQL · Redis · Kafka · MongoDB · Elasticsearch · RabbitMQ · Cloud Services · Agentic AI · Core Concepts | [Jump to guides](#feature-guides) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **67 Archify diagrams** | Inline SVG in every doc + interactive HTML per diagram | [Diagram style](#diagrams-archify) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **38 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **27 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
 
 ---
@@ -57,7 +57,7 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 
 <a id="social"></a>
 <details open>
-<summary><b>💬 Social & Messaging</b> · 6 docs</summary>
+<summary><b>💬 Social & Messaging</b> · 4 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
@@ -245,12 +245,12 @@ The guides cover the technology stack behind the design documents, each with run
 | 7 | <a id="cloud-guide"></a> ☁️ **Cloud Services Map** | AWS/GCP/Azure side-by-side + **full service catalog (§19)**: Lambda→Bedrock→Step Functions→EventBridge→DynamoDB→Spanner→Cosmos→Synapse and 150+ more, each with when-to-use; "which tool when" decision table | [View](cloud.md) |
 | 8 | <a id="agentic-ai-guide"></a> 🤖 **Agentic AI & LLMs** | Tokens/context, ReAct agent loop, MCP tool integration, A2A agent-to-agent, context engineering, memory, RAG, orchestration patterns (supervisor/handoffs/graphs), guardrails, evals, model routing, prompt-prefix caching | [View](agentic-ai-features.md) |
 | 9 | 🧩 **Core Concepts** | Sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus, 2PC, CRDTs, event-driven architecture, DLQ, backpressure, quorum reads & writes, consistency models, PACELC, WAL, B-tree vs LSM, checksums, distributed locking, service discovery, API gateway vs service mesh, CDN, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLI/SLO, multi-region DR, deployment strategies, geospatial indexing, data models vs access patterns, indexing fundamentals & leftmost prefix, monolith vs microservices & service decomposition — plus 17 classic algorithms with runnable JS (Luhn, Dijkstra, A*, BFS/DFS, topological sort, union-find, trie, LRU cache, external sort, reservoir sampling, count-min sketch, HyperLogLog, Levenshtein, KMP/Rabin-Karp, haversine, Base62/Snowflake, sliding window), each with an example | [View](system-design-concepts.md) |
-| 10 | 🛠️ **DevOps & Kubernetes** | Docker multi-stage builds, pods/deployments/services, requests/limits & HPA, ConfigMaps/Secrets/RBAC, probes, ingress & mesh, Jenkins vs GitHub Actions vs GitLab CI, ArgoCD GitOps & canary rollouts, SonarQube/Trivy gates, Terraform, Prometheus/Grafana/Loki, SLOs & error budgets, golden pipeline + **version matrix verified Oct 2026** (K8s 1.37, Redis 8.10, MongoDB 9.0, Kafka 4.3, PG 18.6…) | [View](devops-features.md) |
-| 11 | 📚 **Curated Resources** | The canon GitHub repos, engineering deep dives (Discord, Slack, Uber, Netflix, Stripe…), Medium/newsletter picks, interview platforms, classic papers, AI-era (MCP/A2A/vLLM) — plus a topic → best modern resource map | [View](resources.md) |
-| 12 | ❓ **Interview Q&A** | Cross-tech failure glossary with solutions (cache stampede/avalanche/penetration, rebalance storms, split-brain, OOMKilled, gray failure…) + high-level answers: why Kafka is fast, the Redis-down playbook, Redis Cluster internals, GitOps, the bad-deploy first-5-minutes | [View](interview-qa.md) |
-| 13 | 🗓️ **30-Day Study Roadmap** | Day-by-day path: designs interleaved with concepts, guides, and the Q&A bank; weekly checkpoints and mock-interview structure | [View](STUDY-ROADMAP.md) |
-| 14 | 🌐 **Networking** | OSI vs TCP/IP, TCP/UDP internals (handshake, congestion, Nagle), HTTP/1.1→2→3/QUIC, TLS 1.3 + mTLS, DNS chain & TTL strategy, L4/L7 balancing + algorithms, CDN caching semantics, VPC/subnets/NAT, proxies & API gateways, REST/gRPC/WebSocket/SSE, the latency table + interview Q&A | [View](networking.md) |
-| 15 | 🧠 **Operating Systems** | Processes vs threads, CFS scheduling & throttling, virtual memory/page cache, fsync & durability, epoll→io_uring, zero-copy (Kafka's secret), CPU caches/NUMA, cgroups+namespaces (what containers really are), OOM mechanics + interview Q&A | [View](operating-systems.md) |
+| 10 | <a id="devops-guide"></a> 🛠️ **DevOps & Kubernetes** | Docker multi-stage builds, pods/deployments/services, requests/limits & HPA, ConfigMaps/Secrets/RBAC, probes, ingress & mesh, Jenkins vs GitHub Actions vs GitLab CI, ArgoCD GitOps & canary rollouts, SonarQube/Trivy gates, Terraform, Prometheus/Grafana/Loki, SLOs & error budgets, golden pipeline + **version matrix verified Oct 2026** (K8s 1.37, Redis 8.10, MongoDB 9.0, Kafka 4.3, PG 18.6…) | [View](devops-features.md) |
+| 11 | <a id="resources-guide"></a> 📚 **Curated Resources** | The canon GitHub repos, engineering deep dives (Discord, Slack, Uber, Netflix, Stripe…), Medium/newsletter picks, interview platforms, classic papers, AI-era (MCP/A2A/vLLM) — plus a topic → best modern resource map | [View](resources.md) |
+| 12 | <a id="interview-qa-guide"></a> ❓ **Interview Q&A** | Cross-tech failure glossary with solutions (cache stampede/avalanche/penetration, rebalance storms, split-brain, OOMKilled, gray failure…) + high-level answers: why Kafka is fast, the Redis-down playbook, Redis Cluster internals, GitOps, the bad-deploy first-5-minutes | [View](interview-qa.md) |
+| 13 | <a id="roadmap-guide"></a> 🗓️ **30-Day Study Roadmap** | Day-by-day path: designs interleaved with concepts, guides, and the Q&A bank; weekly checkpoints and mock-interview structure | [View](STUDY-ROADMAP.md) |
+| 14 | <a id="networking-guide"></a> 🌐 **Networking** | OSI vs TCP/IP, TCP/UDP internals (handshake, congestion, Nagle), HTTP/1.1→2→3/QUIC, TLS 1.3 + mTLS, DNS chain & TTL strategy, L4/L7 balancing + algorithms, CDN caching semantics, VPC/subnets/NAT, proxies & API gateways, REST/gRPC/WebSocket/SSE, the latency table + interview Q&A | [View](networking.md) |
+| 15 | <a id="operating-systems-guide"></a> 🧠 **Operating Systems** | Processes vs threads, CFS scheduling & throttling, virtual memory/page cache, fsync & durability, epoll→io_uring, zero-copy (Kafka's secret), CPU caches/NUMA, cgroups+namespaces (what containers really are), OOM mechanics + interview Q&A | [View](operating-systems.md) |
 
 <p align="right"><a href="#top">↑ back to top</a></p>
 
@@ -301,8 +301,8 @@ Every architecture diagram is an [Archify](https://github.com/tt-a1i/archify) di
 | Folder | Contents |
 | :--- | :--- |
 | `diagrams/system-design/` | One architecture diagram per system-design doc |
-| `diagrams/concepts/` | Sharding, replication, quorum concept diagrams |
-| `diagrams/features/` | Kafka / Redis / PostgreSQL at-a-glance + the Redis AI-infrastructure set |
+| `diagrams/concepts/` | Concept diagrams: sharding, replication, quorum, leftmost-prefix indexing, single-table design, strangler migration |
+| `diagrams/features/` | At-a-glance diagrams for PostgreSQL, Redis, Kafka, MongoDB, Elasticsearch, RabbitMQ, Cloud, Agentic AI, DevOps + the Redis AI-infrastructure set |
 | `diagrams/template.html` | Reference architecture template (below) |
 | `diagrams/json/` | Editable specs — the source of truth for regeneration |
 

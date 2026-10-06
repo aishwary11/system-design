@@ -205,3 +205,18 @@ The unwritten rubric, distilled from interviewer write-ups (DesignGurus' "9 habi
 | 10 | **Match the rubric level you're hired for** | Mid: works + reasons; Senior: failure modes + ops; Staff: org-level trade-offs, migrations, cost — same question, three depths | rubric-by-level sources below |
 
 **Sources:** DesignGurus — [9 Habits I See in Engineers Who Pass the System Design Interview](https://designgurus.substack.com/p/9-habits-i-see-in-engineers-who-pass) · Hello Interview rubric-by-level write-ups · [How to Prepare for System Design Interviews in 2026](https://blog.stackademic.com/how-to-prepare-for-system-design-interviews-in-2026-17caa3ef6daa) ("predict before you look, break what you build") · [I've Coached Hundreds of Engineers Through System Design Interviews](https://interviewnoodle.com/ive-coached-hundreds-of-engineers-through-system-design-interviews-a2e143f44475)
+
+---
+
+## 10. Do's & Don'ts — Getting Value Out of This List
+
+| ✅ Do | ❌ Don't |
+| :--- | :--- |
+| Read one primary source per topic, then close it and write the design yourself | Don't collect links as a substitute for building something |
+| Prefer engineering blogs over listicles when you want the *why* | Don't trust a benchmark post that omits its hardware and workload |
+| Work the classic papers alongside this repo's design docs for the same topic | Don't read a paper end-to-end on a first pass — abstract, then the design section |
+| Re-read your favourite resource a year later; you will see a different system | Don't assume a 2018 scaling write-up still reflects 2026 defaults |
+| Check this repo's own guides before hunting for a new source | Don't pile up 40 open tabs — schedule, don't hoard |
+| Save the *one* idea you want to steal from each link | Don't bookmark-and-forget; resources are inputs, not achievements |
+
+*More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · [Study Roadmap](STUDY-ROADMAP.md) · [Core Concepts](system-design-concepts.md)*

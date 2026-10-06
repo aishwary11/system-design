@@ -253,7 +253,7 @@ A: Redis supports data structures (lists, sets, sorted sets), persistence, repli
 
 ### 1. LRU Cache Implementation
 
-```text
+```js
 class LRUCache {
   constructor(capacity) {
     this.capacity = capacity;
@@ -281,7 +281,7 @@ class LRUCache {
 
 ### 2. Consistent Hashing
 
-```text
+```js
 class ConsistentHash {
   constructor(virtualNodes = 150) {
     this.ring = new Map();

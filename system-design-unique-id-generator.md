@@ -221,7 +221,7 @@ table: id_ranges (only for the range-based variant)
 
 ### Snowflake ID Minting with Clock-Skew Guard
 
-```text
+```js
 class Snowflake {
   constructor(machineId, epoch = 1704067200000) { // 2024-01-01
     this.machineId = BigInt(machineId) & 1023n;   // 10 bits

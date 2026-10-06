@@ -293,7 +293,7 @@ A: Offline Service downloads pre-rendered tiles + road graph for user-selected b
 
 ### 1. Dijkstras Shortest Path
 
-```text
+```js
 class RoadGraph {
   constructor() {
     this.adjacency = new Map();
@@ -341,7 +341,7 @@ class RoadGraph {
 
 ### 2. Geohash Index for Proximity Queries
 
-```text
+```js
 class GeohashIndex {
   constructor(precision = 7) {
     this.precision = precision;

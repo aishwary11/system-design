@@ -246,7 +246,7 @@ The alternatives considered, and which one won and why:
 
 ### Base62 URL Generator
 
-```text
+```js
 class URLGenerator {
   constructor() {
     this.charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

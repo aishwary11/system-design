@@ -244,7 +244,7 @@ A: Formatting operations are represented as spans with start/end positions. Conc
 
 ### 1. Operational Transformation Engine
 
-```text
+```js
 class OTEngine {
   constructor(docId) {
     this.docId = docId;
@@ -284,7 +284,7 @@ class OTEngine {
 
 ### 2. Document Sync Manager
 
-```text
+```js
 class SyncManager {
   constructor(ws, docId, userId) {
     this.ws = ws;

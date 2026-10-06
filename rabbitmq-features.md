@@ -287,6 +287,16 @@ Kafka counterparts live in each doc's architecture diagram — most designs show
 6. RabbitMQ for work items, Kafka for facts — most platforms eventually use both
 7. Related guides: `kafka-features.md` (the streaming alternative), `redis-features.md` (Streams & delayed queues), `cloud.md` (managed offerings: Amazon MQ, CloudAMQP)
 
+## Related System Design Documents
+
+- [Notification System](system-design-notification-system.md) — exchange-per-channel fan-out, DLX for failed sends
+- [Delayed Job Scheduler](system-design-delayed-job-scheduler.md) — delayed queues and TTL+DLX tricks
+- [Ticketing System (BookMyShow)](system-design-ticketing-system.md) — virtual waiting room and order queues
+- [Payment System (Stripe)](system-design-payment-system.md) — publisher confirms and exactly-once processing
+- [Google Calendar](system-design-google-calendar.md) — reminder fan-out with per-user routing keys
+- [Messaging App (WhatsApp)](system-design-messaging-app.md) — store-and-forward for offline recipients
+- [E-Commerce (Amazon)](system-design-ecommerce.md) — order, inventory, and shipping workflows
+
 ## 15. Hidden Tips & Tricks
 
 **1. Prefetch is the throughput dial.** `prefetch=1`: perfectly fair, brutally slow (a round-trip per message). `prefetch=∞`: one fast consumer hoards the queue while others starve. Start around 10–100 and tune from ack patterns.

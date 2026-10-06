@@ -245,7 +245,7 @@ A: Guest pays at booking time. Funds held in escrow. On check-in, funds released
 
 ### 1. Booking Lock with Redis
 
-```text
+```js
 class BookingLock {
   constructor(redisClient) {
     this.redis = redisClient;
@@ -268,7 +268,7 @@ class BookingLock {
 
 ### 2. Calendar Availability Checker
 
-```text
+```js
 class CalendarChecker {
   constructor(db) {
     this.db = db;

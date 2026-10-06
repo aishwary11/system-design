@@ -232,7 +232,7 @@ CREATE TABLE counter_rollups (
 
 ### Top-K Heap Merge Across Shards
 
-```text
+```js
 class TopKMerger {
   constructor(k) { this.k = k; }
 

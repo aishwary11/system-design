@@ -628,7 +628,7 @@ A crashes  → no renewals → after 10s the key expires
 Replica B  → SET leader_lock "B" NX PX 10000 → OK               → B is the new leader
 ```
 
-```text
+```js
 // Pseudocode: the standby loop
 while (true) {
   if (acquireLock('leader_lock', 'B', ttlMs)) {   // SET NX PX
@@ -2376,14 +2376,28 @@ Expected: `winner: Song B starts at frame 120` by a landslide — the true (song
 - [Proximity Service](system-design-proximity-service.md) — geohash, spatial indexes, "near me" queries
 - [PostgreSQL Features Guide](postgresql-features.md) · [Redis Features Guide](redis-features.md) · [Kafka Features Guide](kafka-features.md)
 
+## Hidden Tips & Tricks
+
+1. **Learn each concept with its failure attached.** "Consistent hashing" is worth little alone; "consistent hashing plus virtual nodes, because a naive ring leaves hot spots and reshuffles 1/N of keys" is worth the interview.
+2. **One diagram per concept beats rereading the prose.** Redraw quorum (R + W > N) and the strangler migration from memory before trusting that you know them.
+3. **Anchor every concept to a number.** Cache hit ratio, cross-AZ RTT, p99, replication lag, rebalance duration — magnitudes turn vocabulary into engineering.
+4. **State the consistency requirement per read path, not per system.** "Feed reads: eventual; wallet reads: linearizable" is a design; "strong consistency" is a slogan.
+5. **Prefer mechanisms you can operate.** A pattern you cannot monitor (e.g. a saga without a compensating-action log) is a future incident, not an architecture.
+6. **Chain concepts rather than memorising 75 of them.** Sharding → consistent hashing → hot keys → load shedding is one story; CQRS → event sourcing → outbox → sagas is another.
+7. **Re-derive §52 estimation every time.** If the numbers don't force the design, the design is over-engineered.
+8. **Use §57 (concept → problem solved) as an index.** Search by symptom ("writes are hot", "reads are stale") rather than by pattern name.
+
 ## Do's & Don'ts
 
 | ✅ Do | ❌ Don't |
 | :-- | :-- |
-| Pin down the 1. sharding (data partitioning) before drawing boxes | Don't hand-wave the hardest component — concepts lives or dies there |
-| Justify the 2. consistent hashing choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
-| State the failure mode of 3. cap theorem explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
-| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
+| Pick the access pattern first, then the data model (§49, §50) | Don't choose a database before writing down the queries |
+| State the consistency level each read path needs (§29, §30) | Don't demand strong consistency everywhere — that's PACELC blindness |
+| Plan for sharding with virtual nodes and rehearse rebalancing (§1, §2) | Don't assume adding a node is free — resharding is a migration project |
+| Give every distributed write an idempotency key and a dedupe window (§10, §34) | Don't rely on exactly-once delivery anywhere in the system |
+| Put a timeout, retry budget, and breaker on every remote hop (§11, §39, §40) | Don't retry without jitter — synchronized retries are a second outage |
+| Choose quorum sizes deliberately so R + W > N (§28) | Don't split a quorum across regions and expect single-digit-ms latency |
+| Know one latency number per layer and quote it (§52) | Don't hand-wave capacity — the estimate comes before the architecture |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 

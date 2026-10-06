@@ -308,7 +308,7 @@ The alternatives considered, and which one won and why:
 
 ### Fan-out on Read Feed Generator
 
-```text
+```js
 class FeedGenerator {
   constructor(redis, db) {
     this.redis = redis;

@@ -347,7 +347,7 @@ A: Immediate local cache, eventual sync, per-channel opt-in/out
 
 ### 1. Exponential Backoff with Jitter
 
-```text
+```js
 class NotificationRouter {
   constructor(fcmClient, apnsClient, emailClient) { this.fcm = fcmClient; this.apns = apnsClient; this.email = emailClient; }
   async send(notification) {
@@ -376,39 +376,139 @@ class NotificationRouter {
 
 ### 2. Notification Deduplication
 
-```text
-const hashlib = require('crypto');
-const time = require('time');
+```js
+const { createHmac, randomUUID } = require('crypto');
 
 class NotificationDedup {
-    // Prevents duplicate notifications using idempotency keys.
-    // Storage: Redis SET with TTL
+  // Prevents duplicate sends with an idempotency key per (user, channel, event).
+  // Redis form: SET key 1 NX EX ttl — the first writer wins, everyone else skips.
+  constructor(secret, ttlSeconds = 86400) {
+    this.secret = secret;
+    this.ttl = ttlSeconds;
+    this.seen = new Map(); // stands in for Redis
+  }
 
+  keyFor({ userId, channel, eventId }) {
+    // Hash the payload so retries of the same event map to the same key.
+    return createHmac('sha256', this.secret)
+      .update(`${userId}|${channel}|${eventId}`)
+      .digest('hex');
+  }
+
+  claim(event, now = Date.now()) {
+    const key = this.keyFor(event);
+    const expiresAt = this.seen.get(key);
+    if (expiresAt && expiresAt > now) return { duplicate: true, key };
+    this.seen.set(key, now + this.ttl * 1000);
+    return { duplicate: false, key };
+  }
+}
+
+const dedup = new NotificationDedup('shared-secret', 60);
+const evt = { userId: 'u1', channel: 'push', eventId: randomUUID() };
+console.log(dedup.claim(evt), dedup.claim(evt));
 ```
 
 ### 3. Priority Queue for Notification Batching
 
-```text
-const heapq = require('heapq');
-const { defaultdict } = require('collections');
+```js
+class MinHeap {
+  // Tiny binary heap — the JS stand-in for Python's heapq.
+  constructor() { this.items = []; }
+  get size() { return this.items.length; }
+  push(item) {
+    this.items.push(item);
+    let i = this.items.length - 1;
+    while (i > 0) {
+      const parent = (i - 1) >> 1;
+      if (this.items[parent].dueAt <= this.items[i].dueAt) break;
+      [this.items[parent], this.items[i]] = [this.items[i], this.items[parent]];
+      i = parent;
+    }
+  }
+  pop() {
+    const top = this.items[0];
+    const last = this.items.pop();
+    if (this.items.length) {
+      this.items[0] = last;
+      let i = 0;
+      for (;;) {
+        const l = 2 * i + 1, r = l + 1;
+        let smallest = i;
+        if (l < this.items.length && this.items[l].dueAt < this.items[smallest].dueAt) smallest = l;
+        if (r < this.items.length && this.items[r].dueAt < this.items[smallest].dueAt) smallest = r;
+        if (smallest === i) break;
+        [this.items[smallest], this.items[i]] = [this.items[i], this.items[smallest]];
+        i = smallest;
+      }
+    }
+    return top;
+  }
+}
 
 class NotificationBatcher {
-    // Batches notifications by user to reduce API calls.
+  // Batches per user so one slow digest replaces ten push notifications.
+  constructor({ windowSeconds = 30, maxBatch = 5, maxWaitSeconds = 120 } = {}) {
+    this.windowMs = windowSeconds * 1000;
+    this.maxWaitMs = maxWaitSeconds * 1000;
+    this.maxBatch = maxBatch;
+    this.byUser = new Map(); // userId -> { items: [], dueAt }
+    this.timer = new MinHeap();
+  }
 
+  add(userId, notification, now = Date.now()) {
+    const entry = this.byUser.get(userId) || { items: [], dueAt: now + this.windowMs };
+    entry.items.push(notification);
+    this.byUser.set(userId, entry);
+    if (entry.items.length >= this.maxBatch || now >= entry.dueAt) return this.flush(userId);
+    this.timer.push({ userId, dueAt: Math.min(entry.dueAt, now + this.maxWaitMs) });
+    return null;
+  }
+
+  flush(userId) {
+    const entry = this.byUser.get(userId);
+    if (!entry) return null;
+    this.byUser.delete(userId);
+    return { userId, count: entry.items.length, summary: entry.items.slice(0, 3).map(n => n.title) };
+  }
+}
+
+const batcher = new NotificationBatcher({ windowSeconds: 0 });
+console.log(batcher.add('u1', { title: '3 new messages' }, 1000));
 ```
 
 ### 4. Rate Limiter per User
 
-```text
+```js
 class UserRateLimiter {
-    // Per-user notification rate limiting.
-    // Prevents notification fatigue && spam.
-    // Enforce per-channel notification limits.
-    // Limits:
-    // - Push: 50/day, 10/hour
-    // - SMS: 5/day
-    // - Email: 20/day
+  // Per-user, per-channel limits so a noisy service can't spam one person.
+  // Rolling windows (hour/day) instead of fixed buckets — reminder fatigue is real.
+  static LIMITS = {
+    push:  { hour: 10, day: 50 },
+    email: { hour: 5,  day: 20 },
+    sms:   { hour: 2,  day: 5  },
+  };
 
+  constructor() {
+    this.sent = new Map(); // `${userId}|${channel}` -> timestamps
+  }
+
+  allow(userId, channel, now = Date.now()) {
+    const limit = UserRateLimiter.LIMITS[channel];
+    if (!limit) throw new Error(`unknown channel: ${channel}`);
+    const key = `${userId}|${channel}`;
+    const history = (this.sent.get(key) || []).filter(t => now - t < 86400000); // keep a day
+    const lastHour = history.filter(t => now - t < 3600000).length;
+    if (history.length >= limit.day) return { allowed: false, reason: 'daily cap' };
+    if (lastHour >= limit.hour) return { allowed: false, reason: 'hourly cap' };
+    history.push(now);
+    this.sent.set(key, history);
+    return { allowed: true, remainingToday: limit.day - history.length };
+  }
+}
+
+const limiter = new UserRateLimiter();
+console.log(limiter.allow('u1', 'push'), limiter.allow('u1', 'sms'));
 ```
 
 ---
@@ -417,7 +517,7 @@ class UserRateLimiter {
 
 ### 1. Notification Deduplication
 
-```text
+```js
 function send_notification(notification) {
     // Prevent duplicate notifications using an idempotency key
     // - If the same notification ID is seen again, skip sending
@@ -434,7 +534,7 @@ function send_notification(notification) {
 
 ### 2. Rate Limiting (Per User)
 
-```text
+```js
 function check_notification_rate(user_id, channel) {
     // Rate limit notifications per user
     // - Max 10 push notifications per hour
@@ -449,7 +549,7 @@ function check_notification_rate(user_id, channel) {
 
 ### 3. Quiet Hours
 
-```text
+```js
 function is_quiet_hours(user_id) {
     // Check if the recipient is in a quiet-hours window
     // Example: no push notifications between 11 PM and 7 AM local time
@@ -461,7 +561,7 @@ function is_quiet_hours(user_id) {
 
 ### 4. Template Rendering
 
-```text
+```js
 function render_notification(template_name, variables) {
     // Render notification from template
     // - Supports variables and conditionals

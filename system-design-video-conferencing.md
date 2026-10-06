@@ -355,7 +355,7 @@ A: Waiting room, password, host approval, link expiration
 
 ### 1. WebRTC SFU Selective Forwarding
 
-```text
+```js
 class WebRTCPeer {
   constructor(signalingServer) {
     this.signalingServer = signalingServer;
@@ -419,7 +419,7 @@ class WebRTCPeer {
 
 ### 2. Screen Sharing Capture Pipeline
 
-```text
+```js
 class ScreenCapture {
     // Screen sharing with selective region capture.
   // Keep the media path independent from signaling.
@@ -434,7 +434,7 @@ class ScreenCapture {
 
 ### WebRTC Manager
 
-```text
+```js
 class SFURouter {
   // Selective Forwarding Unit - routes media streams
   // Time Complexity: O(N) per packet where N = participants
@@ -471,7 +471,7 @@ class SFURouter {
 }
 ```
 
-```text
+```js
     // Two components:
     // 1. Delay-based: Estimates bandwidth from packet delays
     // 2. Loss-based: Reduces bitrate on packet loss
@@ -518,32 +518,123 @@ class RecordingService {
 
 ### 1. WebRTC Connection Setup (ICE)
 
-```text
+```js
 class WebRTCManager {
-    // WebRTC connection flow:
-    // 1. Offer/Answer SDP exchange via signaling server
-    // 2. ICE candidate gathering (STUN/TURN)
-    // 3. Connectivity checks
-    // 4. DTLS handshake
-    // 5. SRTP media exchange
+  // Signaling state machine per peer connection. Media never touches the app server:
+  // only SDP and ICE candidates do, and they are tiny compared to the video itself.
+  //   1. offer/answer SDP exchange via the signaling server (WebSocket)
+  //   2. ICE candidate gathering (STUN for the public IP, TURN when symmetric NAT)
+  //   3. connectivity checks pick the best candidate pair
+  //   4. DTLS handshake -> SRTP keys
+  //   5. media flows peer-to-peer (or peer-to-SFU) from then on
+  static STATES = ['new', 'gathering', 'checking', 'connected', 'disconnected', 'failed'];
 
+  constructor(peerId, signaler, { iceServers = [] } = {}) {
+    this.peerId = peerId;
+    this.signaler = signaler;
+    this.iceServers = iceServers;
+    this.state = 'new';
+    this.pendingCandidates = [];
+    this.startedAt = null;
+  }
+
+  #transition(next) {
+    const order = WebRTCManager.STATES;
+    if (!order.includes(next)) throw new Error(`unknown state ${next}`);
+    this.state = next;
+    return this.state;
+  }
+
+  async start(isInitiator) {
+    this.#transition('gathering');
+    this.startedAt = Date.now();
+    if (isInitiator) await this.signaler.send({ type: 'offer', to: this.peerId, sdp: '<local-sdp>' });
+    return this.state;
+  }
+
+  onRemoteSdp({ type, sdp }) {
+    if (type === 'offer') return this.signaler.send({ type: 'answer', to: this.peerId, sdp: '<local-sdp>' });
+    return this.#transition('checking');
+  }
+
+  onIceCandidate(candidate) {
+    // Candidates can arrive before the remote description is set — buffer, never drop.
+    if (this.state === 'new' || this.state === 'gathering') this.pendingCandidates.push(candidate);
+    else this.signaler.send({ type: 'candidate', to: this.peerId, candidate });
+    if (this.pendingCandidates.length > 0 && this.state === 'checking') {
+      this.pendingCandidates.forEach(c => this.signaler.send({ type: 'candidate', to: this.peerId, candidate: c }));
+      this.pendingCandidates = [];
+    }
+    return this.state;
+  }
+
+  onConnected() { this.#transition('connected'); return { setupMs: Date.now() - this.startedAt }; }
+  onFailed(reason) { this.#transition('failed'); return { reason, at: Date.now() }; }
+}
+
+const signaler = { send: async msg => ({ sent: msg.type }) };
+const pc = new WebRTCManager('peer-2', signaler, { iceServers: [{ urls: 'stun:stun.example.com' }] });
+pc.start(true).then(() => pc.onRemoteSdp({ type: 'answer', sdp: '<remote>' }))
+  .then(() => console.log('connected:', pc.onConnected()));
 ```
 
 ### 2. Selective Forwarding (SFU)
 
-```text
+```js
 class SFUMediaRouter {
-    // Selective Forwarding Unit:
-    // - Receives media from each participant
-    // - Forwards to other participants
-    // - No encoding/decoding (unlike MCU)
-    // - Scalable to 1000+ participants
+  // Selective Forwarding Unit: one inbound stream per publisher, forwarded as-is.
+  // - no decode/re-encode (unlike an MCU), so CPU stays flat as the room grows
+  // - picks which simulcast layer each subscriber receives from its bandwidth
+  // - a room is pinned to one SFU node; cross-node forwarding only for large rooms
+  constructor({ layers = ['low', 'mid', 'high'], layerBitrateKbps = { low: 150, mid: 800, high: 2500 } } = {}) {
+    this.layers = layers;
+    this.layerBitrate = layerBitrateKbps;
+    this.publishers = new Map(); // participantId -> { tracks, roomId }
+    this.subscriptions = new Map(); // participantId -> Set<publisherId>
+  }
 
+  publish(participantId, tracks, roomId) {
+    this.publishers.set(participantId, { tracks, roomId });
+    return { publisherId: participantId, layers: this.layers };
+  }
+
+  subscribe(subscriberId, publisherId) {
+    if (!this.publishers.has(publisherId)) throw new Error('publisher not found');
+    const set = this.subscriptions.get(subscriberId) || new Set();
+    set.add(publisherId);
+    this.subscriptions.set(subscriberId, set);
+    return { subscriberId, publisherId, layer: this.layerFor({ downlinkKbps: 2000, activeSpeaker: true }) };
+  }
+
+  layerFor({ downlinkKbps, activeSpeaker, tier }) {
+    // Prefer the active speaker at mid/high; everything else degrades to low first.
+    if (downlinkKbps < 400) return 'low';
+    if (activeSpeaker && downlinkKbps >= 2500) return 'high';
+    if (tier === 'mobile' || downlinkKbps < 1200) return 'low';
+    return 'mid';
+  }
+
+  fanoutBandwidthKbps(publisherId, subscriberLayers) {
+    // The number the capacity plan is built on: outbound = sum of chosen layers.
+    return subscriberLayers.reduce((sum, layer) => sum + this.layerBitrate[layer], 0);
+  }
+
+  unpublish(participantId) {
+    this.publishers.delete(participantId);
+    for (const set of this.subscriptions.values()) set.delete(participantId);
+  }
+}
+
+const sfu = new SFUMediaRouter();
+sfu.publish('alice', ['camera', 'mic'], 'room-1');
+sfu.publish('bob', ['camera'], 'room-1');
+console.log(sfu.subscribe('carol', 'alice'));
+console.log('outbound for 100 subscribers at mixed layers:', sfu.fanoutBandwidthKbps('alice', ['high', 'mid', 'low']), 'kbps');
 ```
 
 ### 3. Adaptive Bitrate (Simulcast)
 
-```text
+```js
 function handle_simulcast(peer_id, track) {
     // Simulcast: Send multiple quality layers
     // - Receiver selects the best quality based on network conditions
@@ -557,7 +648,7 @@ function handle_simulcast(peer_id, track) {
 
 ### 4. Screen Sharing
 
-```text
+```js
 function start_screen_share(peer_id) {
     // Screen sharing flow:
     // 1. Capture screen via getDisplayMedia()

@@ -186,8 +186,10 @@ The MongoDB design decision — everything else follows from it.
 
 ```javascript
 // Embed (bounded): order with line items — one read, one write, atomic
-{ _id: orderId, user_id: 42, total: 89.97,
-  items: [{ sku: "A1", qty: 2, price: 8.99 }, { sku: "B2", qty: 1, price: 19.99 }] }
+const orderDoc = {
+  _id: "order-1001", user_id: 42, total: 89.97,
+  items: [{ sku: "A1", qty: 2, price: 8.99 }, { sku: "B2", qty: 1, price: 19.99 }],
+};
 
 // Reference (unbounded): product reviews live in their own collection
 db.reviews.createIndex({ product_id: 1, created_at: -1 });
@@ -368,6 +370,17 @@ See also: document-vs-relational trade-off tables in those docs' **Trade-off Ana
 5. Replica sets give HA; sharding gives scale — shard keys are forever, choose carefully
 6. Time-series collections + TTL indexes handle retention natively
 7. Related guides: `postgresql-features.md` (relational alternative), `redis-features.md` (hot-path cache in front), `kafka-features.md` (event backbone)
+
+## Related System Design Documents
+
+- [Messaging App (WhatsApp)](system-design-messaging-app.md) — per-chat document storage, change streams for receipts
+- [Tinder](system-design-tinder.md) — 2dsphere geo indexes and location-based match queries
+- [E-Commerce (Amazon)](system-design-ecommerce.md) — polymorphic catalog documents and multi-document transaction boundaries
+- [Airbnb](system-design-airbnb.md) — listings + bookings, where a flexible document model earns its keep
+- [Discord](system-design-discord.md) — high-volume message buckets and sharded collections
+- [Fraud Detection](system-design-fraud-detection.md) — the streaming event store behind the ring detector
+- [Notification System](system-design-notification-system.md) — per-user inbox documents and TTL cleanup
+- [Key-Value Store (DynamoDB)](system-design-key-value-store.md) — what you give up when you drop the document model
 
 ## 17. Hidden Tips & Tricks
 

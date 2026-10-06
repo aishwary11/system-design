@@ -404,7 +404,7 @@ A: Idempotency keys, pending state with TTL, retry with backoff, reconciliation
 
 ### 1. Luhn's Algorithm (Credit Card Validation)
 
-```text
+```js
 class CartService {
   constructor(redisClient, dbClient) { this.r = redisClient; this.db = dbClient; }
   async addItem(userId, productId, qty = 1) {
@@ -456,7 +456,7 @@ function reserve_inventory(product_id, quantity, user_id) {
 
 ### 3. Cart Merging (Logged-In vs Session)
 
-```text
+```js
 function merge_cart(user_id, session_cart) {
     // Merge session cart with logged-in cart
     // 1. Fetch logged-in cart from database
@@ -470,7 +470,7 @@ function merge_cart(user_id, session_cart) {
 
 ### 4. Order State Machine
 
-```text
+```js
 class OrderStateMachine {
     // Order lifecycle state machine:
     // pending -> confirmed -> shipped -> delivered -> completed
@@ -481,7 +481,7 @@ class OrderStateMachine {
 
 ### 5. Search Ranking (TF-IDF + BM25)
 
-```text
+```js
 function search_products(query, filters = undefined, page = 1, limit = 20) {
     // Product search with relevance ranking
     // - Uses Elasticsearch BM25 scoring

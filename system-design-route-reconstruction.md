@@ -247,7 +247,7 @@ trip:{trip_id}:live        -> last N pings for online deviation scoring
 
 ### Joint Anomaly Removal + HMM/Viterbi Consensus
 
-```text
+```js
 // Part 1 — iterative greedy ping removal (speed dominates the score)
 function anomalyScore(prev, ping, next) {
   const hav = (a, b) => {

@@ -409,7 +409,7 @@ A: Dedup via user+video+timestamp, batched Cassandra writes, reconciliation
 
 ### 1. Chunked Upload Algorithm
 
-```text
+```js
 class VideoTranscoder {
   // Transcode video to multiple resolutions
   // Time Complexity: O(N * R) where N = frames, R = resolutions
@@ -452,7 +452,7 @@ class ViewCounter {
 
 ### Algorithm 2
 
-```text
+```js
 class AdaptiveBitrate {
   // Select optimal bitrate based on network conditions
   // Time Complexity: O(1) per selection

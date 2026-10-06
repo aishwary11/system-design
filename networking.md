@@ -355,6 +355,16 @@ Layer-hunt: LB health check path/code mismatch? → LB idle timeout < backend p9
 
 ---
 
+## Related System Design Documents
+
+- [Video Conferencing (Zoom)](system-design-video-conferencing.md) — WebRTC, SFU routing, UDP under loss
+- [Messaging App (WhatsApp)](system-design-messaging-app.md) — long-lived WebSocket connections at scale
+- [Google Maps (Navigation)](system-design-google-maps.md) — tile delivery over HTTP/2-3 and CDN caching
+- [Spotify](system-design-spotify.md) — adaptive audio streaming and CDN egress
+- [Hotstar](system-design-hotstar.md) — CDN strategy for millions of concurrent viewers
+- [File Storage (Google Drive)](system-design-file-storage.md) — resumable uploads and chunked transfer
+- [Distributed Tracing](system-design-concepts.md#38-distributed-tracing) — request IDs across service hops
+
 ## 13. Hidden Tips & Tricks
 
 | Tip | Why it matters |

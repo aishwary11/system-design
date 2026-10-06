@@ -237,7 +237,7 @@ A: With N replicas, set W write and R read replicas. If W + R > N, you get stron
 
 ### 1. Consistent Hash Ring
 
-```text
+```js
 class ConsistentHashRing {
   constructor() {
     this.ring = new Map();
@@ -273,7 +273,7 @@ class ConsistentHashRing {
 
 ### 2. Vector Clock
 
-```text
+```js
 class VectorClock {
   constructor() {
     this.clock = new Map();

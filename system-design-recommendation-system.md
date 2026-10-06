@@ -223,7 +223,7 @@ impressions  (user_id, item_id, ts, position, clicked, watched_pct)
 
 ### Mini Two-Tower Retrieval + Diversity Re-Rank
 
-```text
+```js
 // Two-tower: dot(userVec, itemVec) over a tiny ANN grid; then MMR-style re-rank.
 const items = {
   i1: { v: [0.9, 0.1], cat: "tech" }, i2: { v: [0.8, 0.2], cat: "tech" },

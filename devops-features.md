@@ -376,6 +376,15 @@ Pin your mental model to current releases — "which version?" is a real intervi
 
 *Rule of thumb: track N and N-1 majors for anything user-facing; upgrade managed services (EKS/GKE/AKS, Atlas, Elastic Cloud) within one minor of latest.*
 
+## Related System Design Documents
+
+- [Code Deployment System (CI/CD)](system-design-code-deployment.md) — the pipeline these tools build
+- [Serverless Platform (Lambda-style)](system-design-serverless.md) — deployment units and cold starts
+- [Distributed Lock Manager](system-design-distributed-lock-manager.md) — leases and fencing tokens for safe rollouts
+- [Alerting & Monitoring (Prometheus)](system-design-alerting.md) — SLOs, error budgets, and paging
+- [Online Judge](system-design-online-judge.md) — sandboxed execution as a deployment pattern
+- [Notification System](system-design-notification-system.md) — deploy and degrade notifications, on-call routing
+
 ## 17. Hidden Tips & Tricks
 
 **1. `revisionHistoryLimit: 0` deletes your panic button.** `kubectl rollout undo` works because old ReplicaSets exist. Zero-history "clean" clusters roll back by re-deploying old YAML from memory.

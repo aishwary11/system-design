@@ -247,6 +247,17 @@ epoll readiness multiplexing + non-blocking work: one thread serves thousands of
 
 ---
 
+## Related System Design Documents
+
+- [Distributed Cache (Redis)](system-design-distributed-cache.md) — why an in-memory store is fast (page cache, syscalls)
+- [Key-Value Store (DynamoDB)](system-design-key-value-store.md) — fsync, WAL, and durability trade-offs
+- [LLM Inference (Production Serving)](system-design-llm-inference.md) — GPU scheduling, memory bandwidth, paging
+- [Online Judge](system-design-online-judge.md) — namespaces, cgroups, and seccomp for sandboxing
+- [Stock Exchange (Matching Engine)](system-design-stock-exchange.md) — CPU pinning, cache locality, kernel bypass
+- [Netflix](system-design-netflix.md) — zero-copy in the streaming path
+- [Unique ID Generator (Snowflake)](system-design-unique-id-generator.md) — clocks, drift, and monotonicity
+- [Hotstar](system-design-hotstar.md) — page cache and sendfile under massive fan-out
+
 ## 12. Hidden Tips & Tricks
 
 | Tip | Why it matters |

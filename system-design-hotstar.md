@@ -573,7 +573,7 @@ segment_1002.ts
 
 ### 2. Adaptive Bitrate (ABR) Selection Algorithm
 
-```text
+```js
 class TokenBucket {
   // Rate limiter using token bucket algorithm
   // Time Complexity: O(1) per request
@@ -605,7 +605,7 @@ class TokenBucket {
 
 ### 3. Stream Key Generation (DRM Token)
 
-```text
+```js
 class StreamManager {
   // Manage live stream encoding and CDN distribution
   // Time Complexity: O(1) for resolution selection
@@ -651,7 +651,7 @@ function get_exact_viewer_count(content_id) {
 
 ### Next Algorithm
 
-```text
+```js
 class LiveChat {
   constructor(redisClient, pubsubClient) {
     this.r = redisClient;
@@ -694,7 +694,7 @@ Ultra HD   | 4K         | 12 Mbps  | H.265  | 60
 # Per-title adjustment: cricket (fast motion, boundaries)
 ```
 
-```text
+```js
 class ViewTracker {
   // Track concurrent viewers using Redis HyperLogLog
   // Time Complexity: O(1) per count

@@ -224,7 +224,7 @@ channel:{channel_id}:typing -> SET with 8s TTLs (lossy, no persistence)
 
 ### Hierarchical Fan-Out (room → nodes → sockets)
 
-```text
+```js
 // Gateway nodes register the guilds/channels their sockets subscribe to.
 // Delivering one message = O(subscribed nodes), never O(members).
 class FanOutRouter {

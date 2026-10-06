@@ -317,7 +317,7 @@ A: S3 11 9s, cross-region replication, checksums, annual audits
 
 ### 1. Delta Sync (Rolling Hash)
 
-```text
+```js
 class ChunkedUploader {
   constructor(s3Client, dbClient) { this.s3 = s3Client; this.db = dbClient; }
   async initUpload(fileName, fileSize, chunkSize = 5 * 1024 * 1024) {
@@ -344,7 +344,7 @@ class ChunkedUploader {
 
 ### 2. Content-Addressable Storage (Chunk Dedup)
 
-```text
+```js
 const hashlib = require('crypto');
 
 class ContentAddressableStorage {
@@ -362,28 +362,52 @@ class ContentAddressableStorage {
 
 ### 3. Presigned URL Generation
 
-```text
-const hmac = require('hmac');
-const hashlib = require('crypto');
-const time = require('time');
-const { quote } = require('urllib.parse');
-
+```js
 class PresignedURLGenerator {
-    // Flow:
-    // 1. Client requests upload URL
-    // 2. Server generates presigned URL (valid 15 min)
-    // 3. Client uploads directly to S3
-    // 4. S3 notifies on completion
-    // Security: No AWS credentials exposed to client
-    // Time Complexity: O(1) per URL generation
-    generate(file_id, content_type) {
-        return s3.create_presigned_put_url(
-            key="uploads/" + file_id,
-            content_type=content_type,
-            expires_in=900
-        )
-    }
+  // Flow:
+  // 1. Client asks the API for an upload URL
+  // 2. Server signs a PUT (15 min TTL) with the storage secret — never an AWS key
+  // 3. Client uploads straight to the bucket (bytes never touch the app tier)
+  // 4. Storage emits an object-created event that starts scanning/thumbnailing
+  // O(1) per URL; the signature is the only state.
+  constructor(secret, { ttlSeconds = 900, bucket = 'uploads.example.com' } = {}) {
+    this.secret = secret;
+    this.ttl = ttlSeconds;
+    this.bucket = bucket;
+  }
+
+  sign(method, key, expiresAt, contentType = '') {
+    const canonical = `${method}\n${this.bucket}\n${key}\n${expiresAt}\n${contentType}`;
+    return createHmac('sha256', this.secret).update(canonical).digest('base64url');
+  }
+
+  generatePutUrl(fileId, contentType, now = Date.now()) {
+    const key = `uploads/${fileId}`;
+    const expiresAt = Math.floor(now / 1000) + this.ttl;
+    const sig = this.sign('PUT', key, expiresAt, contentType);
+    return {
+      url: `https://${this.bucket}/${key}?expires=${expiresAt}&content-type=${encodeURIComponent(contentType)}&sig=${sig}`,
+      key,
+      expiresAt,
+    };
+  }
+
+  verifyPutUrl(url, contentType, now = Date.now()) {
+    const parsed = new URL(url);
+    const key = parsed.pathname.replace(/^\//, '');
+    const expiresAt = Number(parsed.searchParams.get('expires'));
+    if (expiresAt * 1000 < now) return { ok: false, reason: 'expired' };
+    const expected = this.sign('PUT', key, expiresAt, contentType);
+    return { ok: expected === parsed.searchParams.get('sig'), reason: expected === parsed.searchParams.get('sig') ? null : 'bad signature' };
+  }
 }
+
+const { createHmac } = require('crypto'); // Node builtin; AWS SigV4 is the same idea with a key chain
+const signer = new PresignedURLGenerator('storage-secret');
+const put = signer.generatePutUrl('file-42', 'image/png');
+console.log('url:', put.url.slice(0, 60) + '...');
+console.log('verify:', signer.verifyPutUrl(put.url, 'image/png'));
+console.log('tampered:', signer.verifyPutUrl(put.url, 'application/zip'));
 ```
 
 ### 4. Conflict Resolution (CRDT)
@@ -430,7 +454,7 @@ function resolve_conflict(file_id, device_updates) {
 
 ### 3. Delta Sync (Incremental)
 
-```text
+```js
 function sync_file(file_id, last_sync_version) {
     // Delta sync: Only transfer changed chunks
     // - Client sends last synced version

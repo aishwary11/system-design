@@ -741,10 +741,11 @@ Caches fail in predictable ways - here are the classic traps and how to avoid th
 
 ## Related System Design Documents
 
-- [Distributed Cache (Redis)](system-design-distributed-cache.md)
-- [Rate Limiter](system-design-rate-limiter.md)
-- [Delayed Job Scheduler](system-design-delayed-job-scheduler.md)
-- [Key-Value Store (DynamoDB)](system-design-key-value-store.md)
+- [Distributed Cache (Redis)](system-design-distributed-cache.md) — eviction, consistent hashing, hot keys
+- [Rate Limiter](system-design-rate-limiter.md) — token bucket and sliding window in Lua
+- [Delayed Job Scheduler](system-design-delayed-job-scheduler.md) — sorted-set timing wheels and leases
+- [Leaderboard (Ranked Counters)](system-design-leaderboard.md) — sorted sets and top-K merges
+- [Key-Value Store (DynamoDB)](system-design-key-value-store.md) — TTL, persistence, and cluster trade-offs
 - [PostgreSQL Features Guide](postgresql-features.md)
 - [Kafka Features Guide](kafka-features.md)
 

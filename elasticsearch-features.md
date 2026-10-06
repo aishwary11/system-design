@@ -328,6 +328,16 @@ PUT /_security/role/analyst_readonly
 6. kNN + `dense_vector` make ES a legit RAG retrieval tier (see `agentic-ai-features.md`)
 7. Related guides: `postgresql-features.md` (full-text alternative below 1B docs), `kafka-features.md` (ingest backbone), `cloud.md` (managed offerings)
 
+## Related System Design Documents
+
+- [Search Engine (Google-Style)](system-design-search-engine.md) — inverted index, sharding, ranking
+- [Search Autocomplete](system-design-search-autocomplete.md) — completion suggesters and edge n-grams
+- [E-Commerce (Amazon)](system-design-ecommerce.md) — product search and faceted navigation
+- [Twitter / X](system-design-twitter.md) — tweet search over a firehose
+- [Google Maps (Navigation)](system-design-google-maps.md) — geo queries with geo_point and routing
+- [Alerting & Monitoring (Prometheus)](system-design-alerting.md) — log and event search in the observability path
+- [YouTube](system-design-youtube.md) — video metadata plus transcript search
+
 ## 15. Hidden Tips & Tricks
 
 **1. `filter` context is the free lunch.** Filters skip scoring **and** are cached — `bool: { must: [score this], filter: [everything else] }` is routinely 10× faster than putting the same clauses in `must`.

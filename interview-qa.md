@@ -28,6 +28,9 @@ Section numbering continues from `system-design-concepts.md` (Parts I–III end 
 83. [Kubernetes & DevOps — pods/clusters, Jenkins vs Actions, GitOps, rollbacks](#83-kubernetes--devops)
 84. [Universal Do's & Don'ts — cross-technology rules](#84-universal-dos--donts-applies-to-every-technology-in-this-repo)
 
+**Wrap-up**
+85. [Hidden Tips & Tricks — getting the most out of this bank](#85-hidden-tips--tricks--getting-the-most-out-of-this-bank)
+
 </details>
 
 ---
@@ -273,3 +276,16 @@ The cross-cutting rules — when in doubt, these win.
 | Verify versions and pin them (see the Version Matrix in `devops-features.md`) | Don't quote "latest" from memory in an interview — check, then quote |
 | Run **DR drills** and restore-from-backup rehearsals | Don't let backups be write-only history that has never been restored |
 | Name the trade-off before being asked — cost, consistency, complexity (resources §9) | Don't present a design with no alternatives; that's a spec, not a design |
+
+---
+
+## 85. Hidden Tips & Tricks — Getting the Most Out of This Bank
+
+1. **Answer in the shape of a runbook, not a lecture.** "Detect → contain → recover → prevent" is how interviewers want failure questions answered; every §76–§83 answer is written that way on purpose.
+2. **Learn the term, then the mechanism.** Saying "stampede" doesn't score; explaining *why* synchronized TTL expiry plus a cold cache creates it — and that single-flight plus jitter removes it — does.
+3. **Pair every failure term with its metric.** Lag, URP, pool wait, and p99 are leading indicators; CPU is a lagging one. Naming the metric that catches the failure is the senior signal.
+4. **Have one number ready per technology.** Redis ops ~1ms, cross-AZ round trip ~1ms, cross-region ~70ms, Kafka p99 in the low ms under ack=1. Magnitudes, not decimals.
+5. **Rehearse the two go-to playbooks out loud** — "Redis goes down" (§81) and "bad deploy in the first five minutes" (§83). They cover caching, Kubernetes, and rollback in one breath each.
+6. **Use §84 as a pre-interview checklist, not reading material.** Scan the Do's column ten minutes before the loop; it is the shortest summary of this entire repo.
+7. **Ask the taxonomy question back.** "Is this a correctness bug, a capacity problem, or a deps issue?" narrows any scenario question and shows you diagnose before designing.
+8. **Re-derive, don't recall.** If you can reconstruct the answer from latency, consistency, and blast radius, you never need to memorise this bank — that's the point of the term tables.

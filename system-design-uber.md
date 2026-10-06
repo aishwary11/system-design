@@ -385,7 +385,7 @@ A: Kalman filter, sensor fusion, confidence score, fallback to last-known-good
 
 ### 1. Driver Matching Algorithm
 
-```text
+```js
 class SurgePricing {
   // Dynamic pricing based on supply/demand ratio per zone
   // Time Complexity: O(1) per calculation
@@ -418,7 +418,7 @@ class SurgePricing {
 
 ### 2. Ride Request Flow (Distributed Lock)
 
-```text
+```js
 class RideService {
   // Handle ride request: find nearest drivers, accept, track
   // Time Complexity: O(K log K) where K = nearby drivers
@@ -462,7 +462,7 @@ function calculate_surge_multiplier(zone_id) {
 
 ### Algorithm 2
 
-```text
+```js
 class SurgePricing {
   // Dynamic pricing based on demand/supply ratio
   // Updated every 2 minutes via background job
@@ -515,7 +515,7 @@ function calculateETA(pickup, dropoff, trafficMultiplier = 1.0) {
         // // Side effects
 
 ```
-```text
+```js
 class TripStateMachine {
   // Trip lifecycle: requested -> accepted -> arrived -> in_progress -> completed
   // Time Complexity: O(1) per transition

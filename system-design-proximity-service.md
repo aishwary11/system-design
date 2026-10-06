@@ -376,7 +376,7 @@ A: TTL invalidation, periodic re-indexing, crowd-sourced updates
 
 ### 1. Geohash Algorithm
 
-```text
+```js
 class GeoService {
   // Find nearby venues using Redis GEO
   // Time Complexity: O(log N + M) where M = results
@@ -414,29 +414,121 @@ const geo = new GeoService(); console.log("Geo service ready");
 
 ### 2. Haversine Distance Formula
 
-```text
-const math = require('math');
+```js
+function haversineDistance(lat1, lng1, lat2, lng2) {
+  // Great-circle distance in kilometres. Fast enough for candidate filtering,
+  // then confirm with an exact routing distance if the product needs one.
+  const R = 6371.0088; // mean Earth radius, km
+  const toRad = deg => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+}
 
-function haversine_distance(lat1, lng1, lat2, lng2) {
-    // Calculate distance between two points on Earth
-    // Returns distance in kilometers
-
+// Bangalore -> Chennai is ~290 km as the crow flies.
+console.log('km:', haversineDistance(12.9716, 77.5946, 13.0827, 80.2707).toFixed(1));
 ```
 
 ### 3. Quadtree (Spatial Index)
 
-```text
+```js
 class Quadtree {
-    // Quadtree for efficient spatial queries
-    // - Recursively subdivides space into 4 quadrants
+  // Recursively subdivide the plane into 4 quadrants; each node holds one point.
+  // Query cost is O(log n) for evenly spread data, O(n) worst case for a hot cluster.
+  constructor(bounds, capacity = 4) {
+    this.bounds = bounds; // { minLat, minLng, maxLat, maxLng }
+    this.capacity = capacity;
+    this.points = [];
+    this.children = null;
+  }
 
+  insert(point) {
+    if (!this.contains(point)) return false;
+    if (!this.children && this.points.length < this.capacity) {
+      this.points.push(point);
+      return true;
+    }
+    if (!this.children) this.subdivide();
+    return this.children.some(child => child.insert(point));
+  }
+
+  subdivide() {
+    const { minLat, minLng, maxLat, maxLng } = this.bounds;
+    const midLat = (minLat + maxLat) / 2;
+    const midLng = (minLng + maxLng) / 2;
+    this.children = [
+      new Quadtree({ minLat: midLat, minLng, maxLat, maxLng: midLng }, this.capacity),
+      new Quadtree({ minLat: midLat, minLng: midLng, maxLat, maxLng }, this.capacity),
+      new Quadtree({ minLat, minLng, maxLat: midLat, maxLng: midLng }, this.capacity),
+      new Quadtree({ minLat, minLng: midLng, maxLat: midLat, maxLng }, this.capacity),
+    ];
+    for (const p of this.points) this.children.some(child => child.insert(p));
+    this.points = [];
+  }
+
+  contains({ lat, lng }) {
+    const { minLat, minLng, maxLat, maxLng } = this.bounds;
+    return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
+  }
+
+  query(area, found = []) {
+    if (!this.intersects(area)) return found;
+    for (const p of this.points) if (this.inArea(p, area)) found.push(p);
+    if (this.children) for (const child of this.children) child.query(area, found);
+    return found;
+  }
+
+  intersects(area) {
+    const { minLat, minLng, maxLat, maxLng } = this.bounds;
+    return !(area.maxLat < minLat || area.minLat > maxLat || area.maxLng < minLng || area.minLng > maxLng);
+  }
+
+  inArea(p, area) {
+    return p.lat >= area.minLat && p.lat <= area.maxLat && p.lng >= area.minLng && p.lng <= area.maxLng;
+  }
+}
+
+const tree = new Quadtree({ minLat: 12.8, minLng: 77.4, maxLat: 13.2, maxLng: 77.8 });
+[[12.97, 77.59, 'driver-1'], [12.99, 77.61, 'driver-2'], [13.10, 77.70, 'driver-3']]
+  .forEach(([lat, lng, id]) => tree.insert({ lat, lng, id }));
+console.log('nearby:', tree.query({ minLat: 12.9, minLng: 77.5, maxLat: 13.0, maxLng: 77.65 }).map(p => p.id));
 ```
 
 ### 4. S2 Cell ID (Google's Spatial Index)
 
-```text
-function get_s2_cell(lat, lng, level=15) {
+```js
+function getS2Cell(lat, lng, level = 15) {
+  // Cell-refinement stand-in: S2 partitions the sphere into 4^level cells.
+  // This uses a geohash prefix as the cell key, which has the same property that
+  // matters here — parent cells contain their children, so prefix lookup = neighbour search.
+  const BASE32 = '0123456789bcdefghjkmnpqrstuvwxyz';
+  const bitsPerChar = 5;
+  const totalBits = Math.max(1, Math.min(level * 2, 60));
+  let evenBit = true;
+  let bit = 0;
+  let ch = 0;
+  let hash = '';
+  let [minLat, maxLat, minLng, maxLng] = [-90, 90, -180, 180];
 
+  while (hash.length * bitsPerChar < totalBits) {
+    if (evenBit) {
+      const mid = (minLng + maxLng) / 2;
+      if (lng >= mid) { ch = (ch << 1) + 1; minLng = mid; } else { ch <<= 1; maxLng = mid; }
+    } else {
+      const mid = (minLat + maxLat) / 2;
+      if (lat >= mid) { ch = (ch << 1) + 1; minLat = mid; } else { ch <<= 1; maxLat = mid; }
+    }
+    evenBit = !evenBit;
+    if (++bit === bitsPerChar) { hash += BASE32[ch]; bit = 0; ch = 0; }
+  }
+  return { cell: hash, bounds: { minLat, maxLat, minLng, maxLng } };
+}
+
+const cell = getS2Cell(12.9716, 77.5946, 15);
+console.log('cell:', cell.cell, '| parent shares the prefix:', cell.cell.slice(0, 4));
 ```
 
 ## Do's & Don'ts

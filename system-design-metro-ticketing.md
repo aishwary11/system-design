@@ -335,7 +335,7 @@ A: Local Redis cache on gate, async sync, offline mode with last-known balance
 
 ### 1. Anti-Passback State Machine
 
-```text
+```js
 class GateController {
   constructor(nfcReader, dbClient) { this.nfc = nfcReader; this.db = dbClient; }
   async tapIn(cardId, gateId) {
@@ -362,44 +362,107 @@ const event = new EventService(); console.log("Event service ready");
 
 ### 2. Zone-Based Fare Calculation
 
-```text
+```js
 class FareCalculator {
-    // Calculate metro fare based on entry/exit zones.
-    // Fare validation steps:
-    // Fare Matrix:
-    // - Zone 1 -> Zone 1: $1.00
-    // - Zone 1 -> Zone 2: $1.50
-    // - Zone 1 -> Zone 3: $2.00
-    // - Daily cap: $5.00
+  // Zone-to-zone fare, peaked in the rush windows, then capped per day.
+  // - Zone 1 -> Zone 1: $1.00   (base, all in-zone trips)
+  // - Zone 1 -> Zone 2: $1.50   (each extra zone adds $0.50)
+  // - Zone 1 -> Zone 3: $2.00
+  // - Daily cap: $5.00
+  static BASE_FARE = 1.00;
+  static PER_ZONE = 0.50;
+  static DAILY_CAP = 5.00;
+  static PEAK_MULTIPLIER = 1.25;
+  static PEAK_HOURS = [[7, 10], [17, 20]];
 
+  isPeak(hour) {
+    return FareCalculator.PEAK_HOURS.some(([from, to]) => hour >= from && hour < to);
+  }
+
+  fareFor(entryZone, exitZone, hour) {
+    const zones = Math.abs(exitZone - entryZone);
+    const base = FareCalculator.BASE_FARE + zones * FareCalculator.PER_ZONE;
+    return Number((base * (this.isPeak(hour) ? FareCalculator.PEAK_MULTIPLIER : 1)).toFixed(2));
+  }
+}
+
+const fares = new FareCalculator();
+console.log('z1->z1 off-peak:', fares.fareFor(1, 1, 12));
+console.log('z1->z2 peak:    ', fares.fareFor(1, 2, 8));
 ```
 
 ### 3. QR Code Generation (HMAC-Secured)
 
-```text
-const hmac = require('hmac');
-const hashlib = require('crypto');
-const time = require('time');
-const qrcode = require('qrcode');
+```js
+const { createHmac } = require('crypto');
 
 class QRCodeGenerator {
-    // QR Payload:
-    // - card_id
-    // - timestamp
+  // Signed, expiring QR payload — the gate must verify without a DB round trip.
+  // Payload: card_id | station_id | issued_at | nonce, plus an HMAC tag.
+  // The QR image itself is just qrcode.encode(JSON.stringify(payload)) at the edge.
+  constructor(secret, ttlSeconds = 90) {
+    this.secret = secret;
+    this.ttl = ttlSeconds;
+    this.usedNonces = new Set(); // replay guard, in Redis with the same TTL
+  }
 
+  issue(cardId, stationId, now = Date.now()) {
+    const payload = { cardId, stationId, issuedAt: now, nonce: Math.random().toString(36).slice(2) };
+    const body = `${payload.cardId}|${payload.stationId}|${payload.issuedAt}|${payload.nonce}`;
+    payload.sig = createHmac('sha256', this.secret).update(body).digest('base64url');
+    return payload;
+  }
+
+  verify(payload, now = Date.now()) {
+    const body = `${payload.cardId}|${payload.stationId}|${payload.issuedAt}|${payload.nonce}`;
+    const expected = createHmac('sha256', this.secret).update(body).digest('base64url');
+    if (expected !== payload.sig) return { ok: false, reason: 'bad signature' };
+    if (now - payload.issuedAt > this.ttl * 1000) return { ok: false, reason: 'expired' };
+    if (this.usedNonces.has(payload.nonce)) return { ok: false, reason: 'replayed' };
+    this.usedNonces.add(payload.nonce);
+    return { ok: true };
+  }
+}
+
+const gates = new QRCodeGenerator('metro-secret');
+const ticket = gates.issue('card-42', 'station-7');
+console.log(gates.verify(ticket), gates.verify(ticket));
 ```
 
 ### 4. Daily Cap Algorithm
 
-```text
+```js
 class DailyCap {
-    // Apply daily spending cap to prevent overcharging.
-    // Daily cap enforcement is applied here.
-    // Algorithm:
-    // 1. Track daily total per card
-    // 2. On each tap-out, check if cap reached
-    // 3. If cap reached, remaining rides are free
+  // Cap the day's spend per card; once reached, further rides are free.
+  // Keyed by service day (not calendar day) — the metro day ends at 03:00 local.
+  constructor(cap = FareCalculator.DAILY_CAP) {
+    this.cap = cap;
+    this.totals = new Map(); // `${cardId}|${serviceDay}` -> { spent, freeRides }
+  }
 
+  static serviceDay(now) {
+    const d = new Date(now - 3 * 3600 * 1000); // shift so 00:00-03:00 belongs to yesterday
+    return d.toISOString().slice(0, 10);
+  }
+
+  charge(cardId, fare, now = Date.now()) {
+    const key = `${cardId}|${DailyCap.serviceDay(now)}`;
+    const entry = this.totals.get(key) || { spent: 0, freeRides: 0 };
+    const remaining = Number((this.cap - entry.spent).toFixed(2));
+    if (remaining <= 0) {
+      entry.freeRides++;
+      this.totals.set(key, entry);
+      return { charged: 0, freeRide: true, spentToday: entry.spent };
+    }
+    const charged = Math.min(fare, remaining);
+    entry.spent = Number((entry.spent + charged).toFixed(2));
+    this.totals.set(key, entry);
+    return { charged, freeRide: charged < fare, spentToday: entry.spent };
+  }
+}
+
+const cap = new DailyCap(2.5);
+console.log(cap.charge('card-42', 2.0, 1000), cap.charge('card-42', 2.0, 2000));
 ```
 
 ---
@@ -408,23 +471,31 @@ class DailyCap {
 
 ### 1. Fare Calculation (Zone-Based)
 
-```text
-function calculate_fare(entry_station_id, exit_station_id, card_id, travel_time) {
-    // Metro fare calculation:
-    // 1. Determine zones (entry && exit)
-    // 2. Calculate zone-based fare
-    // 3. Apply peak/off-peak multiplier
-    // 4. Apply daily cap
-    // // Step 1: Zone distance
-    // // Step 2: Base fare from fare rules
-    // // Step 3: Peak/off-peak
-    // // Step 4: Daily cap
+```js
+// One zone per station, loaded from the fare-config service on boot.
+const STATION_ZONES = new Map([['A1', 1], ['B2', 2], ['C3', 3]]);
 
+function calculateFare(entryStationId, exitStationId, cardId, travelTimeMs) {
+  // Tap-out pipeline: station -> zone -> zone fare -> peak multiplier -> daily cap.
+  // Every step is idempotent so a retried tap-out charges exactly once.
+  const zoneOf = stationId => (STATION_ZONES.get(stationId) ?? 1);
+  const hour = new Date(travelTimeMs).getHours();
+
+  const calculator = new FareCalculator();
+  const cap = new DailyCap();
+  const zones = { entry: zoneOf(entryStationId), exit: zoneOf(exitStationId) };
+  const baseFare = calculator.fareFor(zones.entry, zones.exit, hour);
+  const settled = cap.charge(cardId, baseFare, travelTimeMs);
+
+  return { ...zones, baseFare, ...settled, at: new Date(travelTimeMs).toISOString() };
+}
+
+console.log(calculateFare('A1', 'C3', 'card-42', Date.now()));
 ```
 
 ### 2. Anti-Passback (Prevent Tailgating)
 
-```text
+```js
 function validate_entry(card_id, station_id) {
     // Anti-passback: Prevent using the same card at the same station twice
     // - Check the last transaction for that card
@@ -441,7 +512,7 @@ function validate_entry(card_id, station_id) {
 
 ### 3. QR Code Ticket Generation
 
-```text
+```js
 function generate_qr_ticket(user_id, journey_type) {
     // Generate a QR code ticket:
     // - Build payload with user_id, timestamp, journey_type
@@ -460,7 +531,7 @@ function generate_qr_ticket(user_id, journey_type) {
 
 ### 4. Real-Time Validation (Gate Controller)
 
-```text
+```js
 function validate_at_gate(card_id, gate_type) {
     // Validate the fare and opening state for the gate
     // 1. Check if the card is active and valid

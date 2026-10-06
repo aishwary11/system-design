@@ -232,7 +232,7 @@ CREATE TABLE approvals (
 
 ### Canary Rollout State Machine + Auto-Rollback
 
-```text
+```js
 class Rollout {
   constructor(service, hosts, artifact) {
     this.service = service; this.artifact = artifact;

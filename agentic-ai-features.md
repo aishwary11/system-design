@@ -392,6 +392,15 @@ const messages = [{ role: "system", content: SYSTEM },
 7. **Evals are the tests of AI engineering** — no green eval suite, no deploy
 8. Related: `system-design-llm-inference.md` (self-hosted serving), `cloud.md` (managed AI stack), `postgresql-features.md` (pgvector)
 
+## Related System Design Documents
+
+- [LLM Inference (Production Serving)](system-design-llm-inference.md) — continuous batching, KV cache, GPU economics
+- [Recommendation System](system-design-recommendation-system.md) — two-tower retrieval and re-ranking
+- [Search Engine (Google-Style)](system-design-search-engine.md) — the retrieval fundamentals behind RAG
+- [Fraud Detection](system-design-fraud-detection.md) — streaming anomaly detection with model scoring
+- [Google Ads (Auction & Budget Pacing)](system-design-google-ads.md) — ML in the serving path under a latency budget
+- [Alerting & Monitoring (Prometheus)](system-design-alerting.md) — anomaly baselines and page/no-page decisions
+
 ## 15. Hidden Tips & Tricks
 
 **1. Temperature 0 isn't determinism.** Batching, paging, and MoE routing make identical prompts diverge across runs and providers. Pin model *versions* (not aliases), set seeds where supported, and evaluate with N-run samples — "but it worked when I tried it" is not a test.

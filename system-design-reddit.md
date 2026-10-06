@@ -226,7 +226,7 @@ tree:{post_id}:{page}     -> cached comment tree page (TTL 30s)
 
 ### Reddit "Hot" Ranking (time-decayed score)
 
-```text
+```js
 function hotScore(up, down, postTimeMs) {
   const score = up - down;
   const order = Math.log10(Math.max(Math.abs(score), 1));

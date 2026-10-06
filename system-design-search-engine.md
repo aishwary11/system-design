@@ -225,7 +225,7 @@ lexicon hot terms             -> served from RAM (~100M entries)
 
 ### Inverted Index with Delta-Encoded Postings + Top-K Merge
 
-```text
+```js
 // Mini inverted index: build postings, delta+varint encode, WAND-style top-k
 class MiniIndex {
   constructor() { this.postings = new Map(); this.docLen = new Map(); }

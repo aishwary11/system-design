@@ -344,7 +344,7 @@ A: Demand/supply per geo-cell, price cap with TTL, auto-reset
 
 ### 1. ETA Calculation (Haversine + Traffic)
 
-```text
+```js
 const R = 6371; // Earth's radius in km
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
@@ -371,7 +371,7 @@ function calculateETA(pickup, dropoff, trafficMultiplier = 1.0, avgSpeedKmh = 30
 
 ### 2. Driver Assignment (Nearest + Rating)
 
-```text
+```js
 class DriverMatcher {
   // Match order to optimal driver using proximity + rating
 
@@ -411,7 +411,7 @@ class DriverMatcher {
 
 ### 3. Real-Time Location Tracking
 
-```text
+```js
 class SurgePricing {
   // Dynamic delivery fee based on demand/supply per zone
   // Time Complexity: O(1) per calculation
@@ -434,7 +434,7 @@ class SurgePricing {
 
 ### 4. Surge Pricing Algorithm
 
-```text
+```js
 class SurgePricing {
     // Dynamic pricing based on supply/demand ratio.
     getMultiplier(zoneId) {
@@ -445,7 +445,7 @@ class SurgePricing {
 }
 ```
 
-```text
+```js
 class LocationTracker {
   // Track driver location in real-time using Redis GEO + Kafka
   // Time Complexity: O(log N) per update, O(N + log M) per geo query
@@ -483,7 +483,7 @@ class LocationTracker {
 
 ### 2. Matching Algorithm
 
-```text
+```js
 class PaymentService {
   // Process payment with idempotency and retry logic
   // Time Complexity: O(1) per transaction
@@ -513,7 +513,7 @@ class PaymentService {
 
 ### 2. Matching Algorithm (Implementation)
 
-```text
+```js
 class MatchingService {
   // Match order to nearest available driver
   // Time Complexity: O(K log K) where K = nearby drivers

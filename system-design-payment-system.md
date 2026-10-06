@@ -321,7 +321,7 @@ A: Idempotency key per request, TTL dedup, cached response
 
 ### 1. Luhn's Algorithm (Credit Card Validation)
 
-```text
+```js
 function luhnCheck(cardNumber) {
   // Validate credit card number using Luhn algorithm
   // Time Complexity: O(N) where N = number of digits
@@ -351,7 +351,7 @@ function generateCheckDigit(partialCard) {
 
 ### 2. Double-Entry Ledger
 
-```text
+```js
 class DoubleEntryLedger {
   // Double-entry bookkeeping for financial transactions
   // Every debit has a corresponding credit
@@ -397,51 +397,59 @@ class DoubleEntryLedger {
 
 ### 3. Payment State Machine
 
-```text
-const { Enum } = require('enum');
-
-class PaymentState extends Enum {
-    CREATED = "created"
-    PROCESSING = "processing"
-    AUTHORIZED = "authorized"
-    CAPTURED = "captured"
-    SETTLED = "settled"
-    FAILED = "failed"
-    REFUNDED = "refunded"
-    DISPUTED = "disputed"
-}
+```js
+// Payment lifecycle as an explicit transition table — the ledger is the source of truth,
+// and every illegal transition must fail loudly rather than silently corrupt state.
+const PaymentState = Object.freeze({
+  CREATED: "created",
+  PROCESSING: "processing",
+  AUTHORIZED: "authorized",
+  CAPTURED: "captured",
+  SETTLED: "settled",
+  FAILED: "failed",
+  REFUNDED: "refunded",
+  DISPUTED: "disputed",
+});
 
 class PaymentStateMachine {
-    // Payment lifecycle state machine.
-  // Valid transitions are enforced before each state change.
-    // Valid transitions:
-    // CREATED -> PROCESSING -> AUTHORIZED -> CAPTURED -> SETTLED
-                                    // |          |
-                                    // v          v
-                                 // FAILED    REFUNDED
-                                               // |
-                                               // v
-                                           // DISPUTED
+  static TRANSITIONS = {
+    created: ["processing"],
+    processing: ["authorized", "failed"],
+    authorized: ["captured", "failed"],
+    captured: ["settled", "refunded"],
+    settled: [],
+    failed: [],
+    refunded: ["disputed"],
+    disputed: [],
+  };
 
-  canTransition(from, to) {
-    const transitions = {
-      CREATED: ['PROCESSING'],
-      PROCESSING: ['AUTHORIZED', 'FAILED'],
-      AUTHORIZED: ['CAPTURED', 'FAILED'],
-      CAPTURED: ['SETTLED', 'REFUNDED'],
-      SETTLED: [],
-      FAILED: [],
-      REFUNDED: ['DISPUTED'],
-      DISPUTED: []
+  constructor(initial = PaymentState.CREATED) {
+    this.state = initial;
+    this.history = [{ state: initial, at: Date.now() }];
+  }
+
+  canTransition(to) {
+    return (PaymentStateMachine.TRANSITIONS[this.state] || []).includes(to);
+  }
+
+  apply(to, meta = {}) {
+    if (!this.canTransition(to)) {
+      throw new Error(`illegal transition ${this.state} -> ${to}`);
     }
-
-    return transitions[from]?.includes(to) ?? false
+    this.state = to;
+    this.history.push({ state: to, at: Date.now(), ...meta });
+    return this.state;
   }
 }
 
+const payment = new PaymentStateMachine();
+payment.apply(PaymentState.PROCESSING);
+payment.apply(PaymentState.AUTHORIZED);
+console.log("state:", payment.state, "| history:", payment.history.length);
+try { payment.apply(PaymentState.REFUNDED); } catch (e) { console.log("rejected:", e.message); }
 ```
 
-```text
+```js
 class FraudDetector {
   // Detect fraudulent transactions using rules + ML
   // Time Complexity: O(1) per rule check
@@ -485,7 +493,7 @@ class FraudDetector {
 
 ### 5. PCI Compliance Tokenization
 
-```text
+```js
 class CardValidator {
   validate(num) {
     // Luhn algorithm
@@ -494,7 +502,7 @@ class CardValidator {
 }
 ```
 
-```text
+```js
 class SettlementService {
   // Batch settlement of transactions to banks
   // Runs every 15 minutes
@@ -534,18 +542,49 @@ class SettlementService {
 }
 ```
 
-```
-
 ### 2. Idempotency Key
 
-```text
-function process_payment(payment_request) {
-    // Idempotency prevents duplicate charges
-    // - Client sends unique idempotency key
+```js
+async function processPayment(paymentRequest, { now = Date.now() } = {}) {
+  // Idempotency: the client sends one key per logical charge, and a retry of the
+  // same key returns the FIRST outcome instead of charging again.
+  // - key is stored with the response before the side effect is acknowledged
+  // - concurrent duplicates lose the race and poll for the stored result
+  const { idempotencyKey, amountMinor, currency, customerId } = paymentRequest;
+  if (!idempotencyKey) throw new Error('idempotencyKey is required');
 
+  const claim = await idempotencyStore.claim(idempotencyKey, { ttlSeconds: 86400 });
+  if (claim.state === 'completed') return { ...claim.result, replayed: true };
+  if (claim.state === 'in_flight') return { status: 'pending', pollAfterMs: 250 };
+
+  try {
+    const auth = await psp.authorize({ amountMinor, currency, customerId, now });
+    const result = { status: auth.approved ? 'authorized' : 'declined', authId: auth.id, amountMinor, currency };
+    await idempotencyStore.complete(idempotencyKey, result);
+    return result;
+  } catch (err) {
+    await idempotencyStore.release(idempotencyKey); // retryable failure: free the key
+    throw err;
+  }
+}
+
+const idempotencyStore = {
+  seen: new Map(),
+  async claim(key) {
+    if (this.seen.has(key)) return { state: 'completed', result: this.seen.get(key) };
+    this.seen.set(key, { status: 'authorized', authId: 'auth_123', amountMinor: 5000, currency: 'USD' });
+    return { state: 'claimed' };
+  },
+  async complete(key, result) { this.seen.set(key, result); },
+  async release(key) { this.seen.delete(key); },
+};
+const psp = { authorize: async () => ({ approved: true, id: 'auth_123' }) };
+
+processPayment({ idempotencyKey: 'order-42', amountMinor: 5000, currency: 'USD', customerId: 'cus_9' })
+  .then(r => console.log('charge:', r));
 ```
 
-```text
+```js
 class ReconciliationService {
   // Reconcile internal ledger with bank statements
   // Runs daily
@@ -588,49 +627,77 @@ class ReconciliationService {
     return { total: internal.length, discrepancies, status: discrepancies.length === 0 ? 'balanced' : 'unbalanced' };
   }
 }
-
-const payment = new PaymentService(); console.log("Payment service ready");
-```
-
 ```
 
 ### 4. Fraud Detection (Rule-Based + ML)
 
-```text
-function detect_fraud(payment_request) {
-    // Multi-layer fraud detection:
-    // 1. Rule-based checks: amount limit, velocity, geo anomaly
-    // 2. Device fingerprinting and prior payment behavior
-    // 3. Real-time ML model score
-    // 4. Final decision: allow, challenge, or decline
+```js
+function detectFraud(paymentRequest, context = {}) {
+  // Layered decision: cheap rules first, model last, and a challenge step in between.
+  //  1. hard rules: amount ceiling, velocity, geo/device anomaly
+  //  2. risk signals: device fingerprint age, prior chargeback history
+  //  3. model score (0..1) in the serving path under a ~30ms budget
+  //  4. decision: allow | challenge (3DS/step-up) | decline — never silently "review"
+  const { amountMinor, currency, customerId, ipCountry, cardCountry } = paymentRequest;
+  const { txnLastHour = 0, deviceAgeDays = 365, priorChargebacks = 0 } = context;
 
-    if (amount_exceeds_limit(payment_request)) {
-        return "decline";
-    }
-    if (suspicious_velocity(payment_request.user_id)) {
-        return "challenge";
-    }
-    score = ml_fraud_model(payment_request);
-    if (score > 0.85) {
-        return "decline";
-    }
-    return "allow";
+  if (amountMinor > hardCapMinor(currency)) return { decision: 'decline', reason: 'amount_ceiling' };
+  if (txnLastHour > 12) return { decision: 'challenge', reason: 'velocity' };
+  if (ipCountry && cardCountry && ipCountry !== cardCountry) return { decision: 'challenge', reason: 'geo_mismatch' };
+
+  const modelScore = mlFraudScore({ amountMinor, txnLastHour, deviceAgeDays, priorChargebacks });
+  if (modelScore > 0.85) return { decision: 'decline', reason: 'model', modelScore };
+  if (modelScore > 0.55) return { decision: 'challenge', reason: 'model', modelScore };
+  return { decision: 'allow', modelScore, customerId };
 }
+
+const hardCapMinor = currency => ({ USD: 500000, EUR: 500000, INR: 5000000 }[currency] ?? 100000);
+
+function mlFraudScore({ amountMinor, txnLastHour, deviceAgeDays, priorChargebacks }) {
+  // Stand-in for the model: weighted, monotonic, and clamped to 0..1.
+  const amountRisk = Math.min(1, amountMinor / 500000) * 0.4;
+  const velocityRisk = Math.min(1, txnLastHour / 12) * 0.3;
+  const deviceRisk = (1 - Math.min(1, deviceAgeDays / 90)) * 0.15;
+  const historyRisk = Math.min(1, priorChargebacks / 3) * 0.15;
+  return Number(Math.min(1, amountRisk + velocityRisk + deviceRisk + historyRisk).toFixed(3));
+}
+
+console.log(detectFraud({ amountMinor: 90000, currency: 'USD', customerId: 'cus_9', ipCountry: 'US', cardCountry: 'RU' }, { txnLastHour: 2 }));
+console.log(detectFraud({ amountMinor: 250000, currency: 'USD', customerId: 'cus_9' }, { txnLastHour: 14, priorChargebacks: 2 }));
 ```
 
 ### 5. Currency Conversion
 
-```text
-function convert_currency(amount, from_currency, to_currency) {
-    // Real-time currency conversion using a rate provider cache
-    // - Fetch current FX rate
-    // - Apply spread and rounding policy
-    // - Return converted amount in target currency
+```js
+function convertCurrency(amountMinor, fromCurrency, toCurrency, { rateProvider, spreadBps = 50 } = {}) {
+  // FX conversion with integer minor units — never floats for money.
+  // - rate comes from a cached provider (staleness budget ~5 min, then fail closed)
+  // - spread is charged explicitly instead of hidden in the rate
+  // - both sides round half-up to their own minor unit (JPY has none)
+  if (fromCurrency === toCurrency) return { amountMinor, rate: 1, spreadBps: 0 };
 
-    rate = get_fx_rate(from_currency, to_currency);
-    converted = amount * rate * (1 - spread);
-    return round_to_minor_unit(converted);
+  const { rate, asOf } = rateProvider.getRate(fromCurrency, toCurrency);
+  if (!rate) throw new Error(`no FX rate ${fromCurrency}->${toCurrency}`);
+
+  const effectiveRate = rate * (1 - spreadBps / 10000);
+  const converted = Math.round(amountMinor * effectiveRate);
+  return {
+    amountMinor: converted,
+    rate,
+    effectiveRate: Number(effectiveRate.toFixed(8)),
+    spreadBps,
+    minorUnits: MINOR_UNITS[toCurrency] ?? 2,
+    asOf,
+  };
 }
+
+const MINOR_UNITS = { USD: 2, EUR: 2, INR: 2, JPY: 0, KWD: 3 };
+
+const rateProvider = {
+  getRate: (from, to) => ({ rate: from === 'USD' && to === 'INR' ? 83.42 : 0, asOf: Date.now() }),
+};
+console.log(convertCurrency(1099, 'USD', 'INR', { rateProvider }));
+console.log(convertCurrency(1099, 'USD', 'USD', { rateProvider }));
 ```
 
 ---

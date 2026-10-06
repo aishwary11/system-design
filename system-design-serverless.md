@@ -233,7 +233,7 @@ snapshot:{fn}:{version}       -> S3 key of memory snapshot + page cache
 
 ### Placement + Predictive Pre-Warm
 
-```text
+```js
 // Bin-packing placement: best-fit by memory over free worker slots
 class Placement {
   constructor() { this.slots = [{ host: "h1", memFree: 3000 }, { host: "h2", memFree: 7000 }]; }

@@ -227,7 +227,7 @@ storage.write(shard17, data)   -> must present fencing_token >= stored token
 
 ### Leases with Fencing Tokens
 
-```text
+```js
 class LockManager {                       // single-node model; real impl = Raft log
   constructor() { this.locks = new Map(); this.tokenCounter = 1000; }
 

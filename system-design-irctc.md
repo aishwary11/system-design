@@ -513,7 +513,7 @@ A: Redis DECR is atomic -- exactly one user gets DECR >= 0, the other gets DECR 
 
 ### 1. Tatkal Seat Allocation (Redis Atomic Counter)
 
-```text
+```js
 class TatkalSeatAllocator {
   constructor(redisClient) {
     this.r = redisClient;
@@ -556,7 +556,7 @@ class TatkalSeatAllocator {
 
 ### 2. Waitlist Management (Priority Queue)
 
-```text
+```js
 class WaitlistManager {
   constructor(redisClient) {
     this.r = redisClient;
@@ -591,7 +591,7 @@ class WaitlistManager {
 
 ### 3. PNR Status Tracker (Event Sourcing)
 
-```text
+```js
 class PNRStatusTracker {
   constructor(redisClient, kafkaProducer) {
     this.r = redisClient;
@@ -637,7 +637,7 @@ class PNRStatusTracker {
 
 ### 4. Fare Calculator (Dynamic Pricing)
 
-```text
+```js
 class FareCalculator {
   calculateFare(distanceKm, classType, quota, demandMultiplier = 1.0) {
     const baseRatePerKm = {
@@ -665,7 +665,7 @@ class FareCalculator {
 
 ### 5. Booking Saga Orchestrator
 
-```text
+```js
 class BookingSaga {
   constructor(inventory, booking, payment, notification) {
     this.inventory = inventory;

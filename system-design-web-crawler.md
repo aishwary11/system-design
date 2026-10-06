@@ -318,7 +318,7 @@ A: URL depth limit, content similarity detection, manual blacklist
 
 ### 1. BFS URL Frontier with Priority Queue
 
-```text
+```js
 class WebFetcher {
   constructor(rateLimiter, dbClient) { this.limiter = rateLimiter; this.db = dbClient; }
   async fetch(url) {
@@ -335,7 +335,7 @@ class WebFetcher {
 
 ### 2. SimHash for Near-Duplicate Detection
 
-```text
+```js
 class LinkParser {
   parse(html, baseUrl) {
     const links = [];
@@ -354,7 +354,7 @@ class LinkParser {
 
 ### 3. Robots.txt Parser
 
-```text
+```js
 class ContentDedup {
   constructor(redisClient) { this.r = redisClient; }
   async isDuplicate(content) {
@@ -378,10 +378,78 @@ const fetcher = new FetcherService(); console.log("Fetcher service ready");
 
 ### 4. Content Fingerprinting for Dedup
 
-```text
+```js
 class ContentDedup {
-    // Multi-layer deduplication:
+  // Three layers, cheapest first — the URL filter kills most duplicates before any hashing.
+  //  1. URL normalisation + exact-URL set (Bloom filter in front of it)
+  //  2. content fingerprint (SimHash) to catch mirrors and paginated reprints
+  //  3. canonical/rel-tag respect: honour the page's own <link rel=canonical>
+  constructor({ fingerprintThresholdBits = 3, bloomBits = 1 << 20 } = {}) {
+    this.seenUrls = new Set();
+    this.bloom = new Uint8Array(bloomBits / 8);
+    this.fingerprints = []; // recent SimHashes for near-duplicate comparison
+    this.threshold = fingerprintThresholdBits;
+  }
 
+  normalise(url) {
+    const u = new URL(url);
+    u.hash = '';
+    u.host = u.host.replace(/^www\./, '');
+    [...u.searchParams.keys()]
+      .filter(k => /^(utm_|fbclid|gclid|ref)/i.test(k))
+      .forEach(k => u.searchParams.delete(k));
+    return u.toString();
+  }
+
+  seenRecently(url) {
+    const h = this.hash32(this.normalise(url));
+    const byte = (h >>> 3) % this.bloom.length;
+    const bit = 1 << (h & 7);
+    const present = (this.bloom[byte] & bit) !== 0;
+    this.bloom[byte] |= bit;
+    if (present && this.seenUrls.has(this.normalise(url))) return true; // bloom hit + set = exact
+    this.seenUrls.add(this.normalise(url));
+    return false;
+  }
+
+  isNearDuplicate(text) {
+    const fp = this.simhash(text);
+    const dup = this.fingerprints.some(other => this.hamming(fp, other) <= this.threshold);
+    if (!dup) {
+      this.fingerprints.push(fp);
+      if (this.fingerprints.length > 10000) this.fingerprints.shift(); // bounded window
+    }
+    return dup;
+  }
+
+  simhash(text) {
+    const vectors = new Array(32).fill(0);
+    for (const token of text.toLowerCase().split(/\W+/).filter(Boolean)) {
+      const h = this.hash32(token);
+      for (let i = 0; i < 32; i++) vectors[i] += (h >>> i) & 1 ? 1 : -1;
+    }
+    let out = 0;
+    for (let i = 0; i < 32; i++) if (vectors[i] > 0) out |= 1 << i;
+    return out >>> 0;
+  }
+
+  hamming(a, b) {
+    let x = (a ^ b) >>> 0, count = 0;
+    while (x) { x &= x - 1; count++; }
+    return count;
+  }
+
+  hash32(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619) >>> 0;
+    return h;
+  }
+}
+
+const dedup = new ContentDedup();
+console.log('first  :', dedup.seenRecently('https://Example.com/a?utm_source=x'));
+console.log('again  :', dedup.seenRecently('https://example.com/a/'));
+console.log('near-dup article:', dedup.isNearDuplicate('kafka exactly once semantics explained in depth'));
 ```
 
 ### Data Structures Summary
@@ -435,14 +503,30 @@ function crawl(seed_urls) {
 
 ### 2. URL Priority Scoring
 
-```text
-function calculate_priority(url) {
-    // Priority scoring for URL crawl order
-    // - PageRank-like scoring
-    // - Freshness (recently updated pages first)
-    // - Domain authority
-    // // Domain authority
+```js
+function calculatePriority(url, meta = {}) {
+  // Crawl order = authority × link value × freshness ÷ cost-to-render.
+  // The scheduler pulls the highest score first; low-score URLs may never be crawled.
+  const domainAuthority = meta.domainAuthority ?? 0.5;      // 0..1, from the ranking service
+  const inboundLinks = meta.inboundLinks ?? 1;               // PageRank-like signal
+  const ageHours = meta.lastModifiedHoursAgo ?? 168;
+  const depth = meta.depth ?? 0;
+  const renderCost = meta.requiresJs ? 3 : 1;                // headless render is ~3x
 
+  const authorityScore = domainAuthority * Math.log10(1 + inboundLinks);
+  const freshness = Math.pow(2, -ageHours / 168);            // half-life of one week
+  const depthPenalty = 1 / (1 + depth * 0.1);                // deep pages matter less
+
+  return Number(((authorityScore * freshness * depthPenalty) / renderCost).toFixed(4));
+}
+
+const queue = [
+  ['https://news.example.com/lead', { domainAuthority: 0.9, inboundLinks: 50000, lastModifiedHoursAgo: 1, depth: 1 }],
+  ['https://blog.example.com/2019/post', { domainAuthority: 0.4, inboundLinks: 20, lastModifiedHoursAgo: 20000, depth: 6, requiresJs: true }],
+].map(([url, meta]) => ({ url, priority: calculatePriority(url, meta) }))
+ .sort((a, b) => b.priority - a.priority);
+
+console.log('crawl order:', queue.map(q => `${q.url} (${q.priority})`));
 ```
 
 ### 3. Content Deduplication (SimHash)
@@ -464,7 +548,7 @@ function content_fingerprint(content) {
 
 ### 4. Robots.txt Parser
 
-```text
+```js
 function check_robots_txt(url, user_agent) {
     // Check whether a URL is allowed by robots.txt
     // - Cache robots.txt per domain

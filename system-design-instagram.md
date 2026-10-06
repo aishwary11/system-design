@@ -398,7 +398,7 @@ A: Chunked upload to S3, compression, processing pipeline, CDN delivery
 
 ### 1. Fan-Out-on-Write Algorithm
 
-```text
+```js
 class FeedService {
   constructor(redisClient, dbClient) { this.r = redisClient; this.db = dbClient; }
   async fanout(post, authorId) {
@@ -420,44 +420,118 @@ const feed = new FeedService(); console.log("Feed service ready");
 
 ### 2. Home Feed Generation (Hybrid)
 
-```text
-function get_home_feed(user_id, cursor=undefined, limit=20) {
-    // Hybrid feed generation:
-    // 3. Rank by EdgeRank-like algorithm
-    // // Step 1: Get pre-computed feed
-    // // Step 3: Merge && deduplicate
-    // // Step 4: Fetch post details
-    // // Step 5: Rank by EdgeRank
-    // // Step 6: Paginate
+```js
+async function getHomeFeed(userId, cursor = null, limit = 20) {
+  // Hybrid fan-out: read the pre-computed inbox (fast path) and merge in the latest
+  // posts from accounts the user follows that are NOT pre-computed (celebrities).
+  //  1. inbox: pre-computed post ids for normal accounts (fan-out on write)
+  //  2. outbox: on-demand pull for high-follower accounts (fan-out on read)
+  //  3. merge + deduplicate by post id
+  //  4. hydrate post details in one batched read (avoid N+1)
+  //  5. rank (EdgeRank-style, see rank_posts)
+  //  6. paginate with a stable cursor (score + id, never an offset)
+  const seen = new Set();
+  const candidates = [];
 
+  for (const postId of await feedStore.inbox(userId, { before: cursor?.inboxTs, limit: limit * 2 })) {
+    if (!seen.has(postId)) { seen.add(postId); candidates.push({ id: postId, source: 'inbox' }); }
+  }
+  for (const postId of await feedStore.celebrityPull(userId, { limit: limit })) {
+    if (!seen.has(postId)) { seen.add(postId); candidates.push({ id: postId, source: 'pull' }); }
+  }
+
+  const posts = await postStore.getMany(candidates.map(c => c.id));
+  // rankPosts() is defined in the next section; the pass-through keeps this block
+  // runnable on its own (the real ranking is never a no-op in production).
+  const rankPosts = globalThis.rankPosts || (items => items);
+  const ranked = rankPosts(posts, userId);
+  const page = ranked.slice(0, limit);
+
+  return {
+    items: page,
+    nextCursor: page.length === limit
+      ? { score: page[page.length - 1].score, id: page[page.length - 1].id }
+      : null,
+  };
+}
+
+const feedStore = { inbox: async () => ['p3', 'p2'], celebrityPull: async () => ['p9'] };
+const postStore = { getMany: async ids => ids.map(id => ({ id, ageHours: 1, likes: 10, comments: 2, type: 'photo' })) };
+getHomeFeed('u1').then(feed => console.log('feed:', feed.items.map(p => p.id)));
 ```
 
 ### 3. EdgeRank-like Ranking Algorithm
 
-```text
-function rank_posts(posts, user_id) {
-    // Instagram-style ranking:
-        // // Content type: Does user prefer this type?
-        // // Final score
-            // affinity * 0.4 +
-            // timeliness * 0.3 +
-            // engagement_score * 0.2 +
-            // content_type_score * 0.1
-    // // Sort by score descending
+```js
+function rankPosts(posts, userId) {
+  // Instagram-style ranking: four signals, weighted, then sorted.
+  //   affinity        how often you interact with this author
+  //   timeliness      freshness, decayed by age
+  //   engagement      likes + comments, normalised by the author's reach
+  //   content type    does this user actually watch reels/photos/carousels?
+  const affinityOf = authorId => (affinity.get(`${userId}:${authorId}`) || 0) / 100;
+  const prefersType = type => (typePrefs.get(`${userId}:${type}`) || 0) / 100;
+  const HALF_LIFE_HOURS = 18;
 
+  return posts
+    .map(post => {
+      const affinity = affinityOf(post.authorId);
+      const timeliness = Math.pow(2, -(post.ageHours ?? 0) / HALF_LIFE_HOURS);
+      const engagement = Math.min(1, ((post.likes ?? 0) + 2 * (post.comments ?? 0)) / 500);
+      const contentType = prefersType(post.type);
+      const score =
+        affinity * 0.4 + timeliness * 0.3 + engagement * 0.2 + contentType * 0.1;
+      return { ...post, score: Number(score.toFixed(4)) };
+    })
+    .sort((a, b) => b.score - a.score || (b.id > a.id ? 1 : -1)); // stable tie-break
+}
+
+const affinity = new Map([['u1:a2', 90]]);
+const typePrefs = new Map([['u1:photo', 70]]);
+console.log(rankPosts([
+  { id: 'p1', authorId: 'a2', ageHours: 2, likes: 300, comments: 40, type: 'photo' },
+  { id: 'p2', authorId: 'a3', ageHours: 30, likes: 20, comments: 1, type: 'reel' },
+], 'u1'));
 ```
 
 ### 4. Image Processing Pipeline (Implementation)
 
-```text
-function process_image(image_url) {
-    // Image processing pipeline:
-    // 1. Download original
-    // 4. Upload to CDN
-    // // Step 1: Download
-    // // Step 2: Resize
-    // // Step 4: Upload to CDN
+```js
+async function processImage(imageUrl, { variants = [1080, 640, 320], format = 'webp' } = {}) {
+  // Ingestion pipeline: download → validate → resize/transcode → upload → emit event.
+  // Each step is retried independently; the variant list is an intentional fan-out.
+  const original = await storage.get(imageUrl);
+  const meta = await validate(original);                        // reject > 20MB, non-image MIME
+  const resized = await Promise.all(
+    variants.map(width => imageProcessor.resize(original, { width, format }))
+  );
+  const uploaded = await Promise.all(
+    resized.map((buf, i) => storage.put(`${meta.hash}/${variants[i]}.${format}`, buf, {
+      cacheControl: 'public, max-age=31536000, immutable',
+    }))
+  );
+  await events.publish('image.processed', { id: meta.hash, variants: uploaded.map(u => u.url) });
+  return { hash: meta.hash, variants: uploaded.map(u => u.url) };
+}
 
+async function validate(buf) {
+  if (buf.length > 20 * 1024 * 1024) throw new Error('image too large');
+  // Content hash = the storage key, so identical uploads deduplicate for free.
+  // (In production: crypto.createHash('sha256').update(buf).digest('hex'))
+  let hash = 2166136261;
+  for (const byte of buf) hash = Math.imul(hash ^ byte, 16777619) >>> 0;
+  return { hash: hash.toString(16), bytes: buf.length };
+}
+
+// Pluggable adapters — S3 + sharp in production.
+const storage = {
+  get: async () => Buffer.from('fake-jpeg-bytes'),
+  put: async (key, buf) => ({ url: `https://cdn.example.com/${key}`, bytes: buf.length }),
+};
+const imageProcessor = { resize: async (buf, { width }) => Buffer.alloc(width) };
+const events = { publish: async (topic, payload) => console.log('emit', topic, payload.id, payload.variants.length + ' variants') };
+
+processImage('s3://uploads/original.jpg').then(r => console.log('done:', r.hash.slice(0, 8)));
 ```
 
 ## Do's & Don'ts

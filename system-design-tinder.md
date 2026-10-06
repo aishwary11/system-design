@@ -384,7 +384,7 @@ A: Daily limit, cooldown period, behavioral analysis, premium gets more
 
 ### 1. Elo Score Algorithm (Matchmaking)
 
-```text
+```js
 class MatchingEngine {
   constructor(redisClient, dbClient) { this.r = redisClient; this.db = dbClient; }
   async getDiscoveryDeck(userId, count = 20) {
@@ -409,24 +409,61 @@ class MatchingEngine {
 
 ### 2. Discovery Deck Generation
 
-```text
-function generate_discovery_deck(user_id, deck_size=100) {
-    // - Elo-based ranking
-    // - Exclude already seen profiles
-        // "profiles:locations",
-    // // Step 2: Filter by preferences
-            // continue
-            // continue
-            // continue
-    // // Step 3: Rank by Elo score
-    // // Step 4: Take top N
-    // // Step 5: Store in Redis
+```js
+async function generateDiscoveryDeck(userId, deckSize = 100) {
+  //  1. candidate generation: geohash + age/gender/preference buckets (Redis sets)
+  //  2. hard filters: already seen, already matched, blocked, inactive > 30d
+  //  3. rank by Elo proximity + activity + distance decay
+  //  4. take the top N candidates, never the whole set (deck is pre-warmed)
+  //  5. store in Redis with a TTL so a stale deck expires instead of pinning memory
+  const me = await profileStore.get(userId);
+  const candidateIds = await candidateSource.nearby({
+    geohash: me.geohash,
+    radiusKm: me.preferences.radiusKm ?? 50,
+    limit: deckSize * 8, // over-fetch: filters below remove a lot
+  });
 
+  const seen = await interactionStore.seenSet(userId);
+  const filtered = [];
+  for (const id of candidateIds) {
+    if (seen.has(id)) continue;                       // already swiped
+    const candidate = await profileStore.get(id);
+    if (!candidate || !candidate.active) continue;     // deleted or dormant
+    if (!withinPreferences(me.preferences, candidate)) continue;
+    if (await blockStore.isBlocked(userId, id)) continue;
+    filtered.push(candidate);
+  }
+
+  const ranked = filtered
+    .map(candidate => ({
+      ...candidate,
+      score: eloProximity(me.elo, candidate.elo) * activityBoost(candidate.lastActiveAt),
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, deckSize);
+
+  await deckStore.set(userId, ranked.map(c => c.id), { ttlSeconds: 3600 });
+  return ranked;
+}
+
+const eloProximity = (mine, theirs) => 1 / (1 + Math.abs(mine - theirs) / 400);
+const activityBoost = lastActiveAt => Math.pow(2, -((Date.now() - lastActiveAt) / 86400000) / 7);
+const withinPreferences = (prefs, candidate) =>
+  (!prefs.minAge || candidate.age >= prefs.minAge) &&
+  (!prefs.maxAge || candidate.age <= prefs.maxAge);
+
+const profileStore = { get: async id => ({ id, elo: 1400, active: true, age: 28, geohash: 'tdr1y', lastActiveAt: Date.now() - 3600000, preferences: { radiusKm: 50 } }) };
+const candidateSource = { nearby: async () => ['p1', 'p2', 'p3'] };
+const interactionStore = { seenSet: async () => new Set() };
+const blockStore = { isBlocked: async () => false };
+const deckStore = { set: async () => true };
+
+generateDiscoveryDeck('u1', 3).then(deck => console.log('deck:', deck.map(p => p.id)));
 ```
 
 ### 3. Match Detection Algorithm
 
-```text
+```js
 class SwipeService {
   constructor(redisClient, dbClient) { this.r = redisClient; this.db = dbClient; }
   async swipe(swiperId, swipedId, direction) {
@@ -449,16 +486,37 @@ const match = new MatchService(); console.log("Match service ready");
 
 ### 4. Super Like Priority Algorithm
 
-```text
-function handle_super_like(super_liker_id, target_id) {
-    // Super Like algorithm:
-    // - Prioritized in target's discovery deck
-    // - Shown with special animation
-    // - Higher match probability
-    // // Store super like
-    // // Send special notification
-    // // Boost super liker's Elo slightly
+```js
+async function handleSuperLike(superLikerId, targetId, now = Date.now()) {
+  // A Super Like is a scarce signal: 5/day, and it must be worth spending.
+  //  1. store it (idempotent per pair, TTL 24h)
+  //  2. pin the liker to the top of the target's next deck (a reserved slot)
+  //  3. notify the target once — never twice for the same like
+  //  4. nudge the liker's Elo only after the interaction resolves (no self-inflation)
+  const claim = await superLikeStore.claim(superLikerId, targetId, { ttlSeconds: 86400 });
+  if (!claim.ok) return { ok: false, reason: claim.reason }; // daily cap or duplicate
 
+  await deckStore.pinToTop(targetId, superLikerId, { slot: 'super-like' });
+  await notificationQueue.publish({
+    userId: targetId,
+    type: 'super_like',
+    idempotencyKey: `super:${superLikerId}:${targetId}`,
+    payload: { from: superLikerId, animated: true },
+  });
+
+  // Elo moves on the outcome of the interaction, not on the act of liking.
+  if (claim.reciprocated) await eloService.adjust(superLikerId, +8, { reason: 'super_like_match' });
+  return { ok: true, pinned: true, notifiedAt: now };
+}
+
+const superLikeStore = {
+  claim: async (from, to) => ({ ok: true, reason: null, reciprocated: false }),
+};
+const deckStore = { pinToTop: async () => true };
+const notificationQueue = { publish: async msg => console.log('notify', msg.type, msg.idempotencyKey) };
+const eloService = { adjust: async () => true };
+
+handleSuperLike('u1', 'u2').then(r => console.log('super like:', r));
 ```
 
 ## Do's & Don'ts

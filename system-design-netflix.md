@@ -579,7 +579,7 @@ A: Collaborative filtering for existing, content-based for new, A/B testing
 
 ### 1. Per-Title Encoding Algorithm
 
-```text
+```js
 class ContentBasedFilter {
   // Recommend content based on user viewing history
   // Time Complexity: O(N * M) where N = genres, M = titles
@@ -606,21 +606,56 @@ class ContentBasedFilter {
 
 ### 2. Recommendation Algorithm (Collaborative Filtering)
 
-```text
-function get_recommendations(user_id, top_n=10) {
-    // Netflix-style collaborative filtering:
-    // 1. Find similar users (user-based CF)
-    // 2. Get what they watched that target user hasn't
-    // 3. Rank by predicted rating
-    // // Step 1: Get user's watch history
-    // // Step 4: Predict ratings using weighted average
-    // // Step 5: Return top N
+```js
+function getRecommendations(userId, topN = 10) {
+  // User-based collaborative filtering: similar users -> unseen titles -> predicted rating.
+  //  1. the target user's watch history
+  //  2. cosine similarity against other users' histories
+  //  3. candidates = titles those users watched that this user hasn't
+  //  4. predicted rating = similarity-weighted average of their ratings
+  //  5. return the top N (already-seen and below-threshold titles dropped)
+  const mine = ratings.get(userId) || new Map();
+  if (mine.size === 0) return popularTitles.slice(0, topN); // cold start: popularity fallback
 
+  const scores = new Map();
+  for (const [otherId, theirs] of ratings) {
+    if (otherId === userId) continue;
+    const similarity = cosineSimilarity(mine, theirs);
+    if (similarity <= 0.2) continue; // ignore weak neighbours — they add noise
+    for (const [titleId, rating] of theirs) {
+      if (mine.has(titleId)) continue;
+      const acc = scores.get(titleId) || { weighted: 0, simSum: 0 };
+      acc.weighted += similarity * rating;
+      acc.simSum += similarity;
+      scores.set(titleId, acc);
+    }
+  }
+
+  return [...scores.entries()]
+    .map(([titleId, { weighted, simSum }]) => ({ titleId, score: weighted / simSum }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topN);
+}
+
+function cosineSimilarity(a, b) {
+  let dot = 0, normA = 0, normB = 0;
+  for (const [k, v] of a) { normA += v * v; if (b.has(k)) dot += v * b.get(k); }
+  for (const v of b.values()) normB += v * v;
+  return normA && normB ? dot / (Math.sqrt(normA) * Math.sqrt(normB)) : 0;
+}
+
+const ratings = new Map([
+  ['u1', new Map([['t1', 5], ['t2', 4]])],
+  ['u2', new Map([['t1', 5], ['t3', 4]])],
+  ['u3', new Map([['t9', 1]])],
+]);
+const popularTitles = [{ titleId: 't1', score: 5 }];
+console.log(getRecommendations('u1', 5));
 ```
 
 ### 3. ABR Algorithm (Netflix-Specific)
 
-```text
+```js
 function netflixABR(bandwidthEstimates, bufferLevel, deviceType) {
   // Netflix ABR: Bandwidth-based + buffer-based hybrid
 
@@ -653,19 +688,66 @@ const svc = new ContentService(); console.log("Content Service initialized");
 
 ### 4. Content Popularity Scoring (Trending)
 
-```text
-function calculate_trending_score(content_id, window_hours=24) {
-        // completion_rate * 0.3 +
-        // recency * 0.1
+```js
+function calculateTrendingScore(contentId, windowHours = 24) {
+  // Trending = velocity, not raw volume: a small title accelerating beats a big one coasting.
+  //   views/hour (40%) + completion rate (30%) + shares/comments (20%) + recency (10%)
+  const now = Date.now();
+  const windowMs = windowHours * 3600 * 1000;
+  const events = viewEvents.filter(e => e.contentId === contentId && now - e.at <= windowMs);
+  if (events.length === 0) return 0;
 
+  const viewsPerHour = events.length / windowHours;
+  const completions = events.filter(e => e.completed).length / events.length;
+  const shares = events.reduce((sum, e) => sum + (e.shares || 0), 0) / events.length;
+  const newest = Math.max(...events.map(e => e.at));
+  const recency = 1 - (now - newest) / windowMs;
+
+  const score = viewsPerHour * 0.4 + completions * 0.3 + shares * 0.2 + recency * 0.1;
+  return Number(score.toFixed(4));
+}
+
+const viewEvents = [
+  { contentId: 'c1', at: Date.now() - 60000, completed: true, shares: 1 },
+  { contentId: 'c1', at: Date.now() - 120000, completed: false, shares: 0 },
+];
+console.log('trending:', calculateTrendingScore('c1'));
 ```
 
 ### 5. Session Affinity (Sticky Sessions)
 
-```text
-function get_server_for_user(user_id) {
-    // - On server failure, remap to next server
+```js
+function getServerForUser(userId, ring = hashRing) {
+  // Consistent hashing with 150 virtual nodes per server, and failover by walking
+  // clockwise to the next healthy node. Stateless remap: the client just re-resolves.
+  const point = hash32(userId);
+  const small = 0, large = 4294967296;
+  const candidates = ring.points
+    .map(({ hash, server }) => ({ server },
+      hash >= point ? hash - point : hash - point + large))
+    .sort((a, b) => a[1] - b[1]);
 
+  for (const candidate of candidates) {
+    if (!ring.healthy.has(candidate.server)) continue; // skip failed node, keep walking
+    return candidate.server;
+  }
+  return null; // whole ring unhealthy — shed load at the edge instead
+}
+
+function hash32(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619) >>> 0;
+  return h;
+}
+
+// 3 servers x 150 virtual nodes; s2 is down, so its share remaps to s3.
+const hashRing = {
+  healthy: new Set(['s1', 's3']),
+  points: ['s1', 's2', 's3'].flatMap(server =>
+    Array.from({ length: 150 }, (_, i) => ({ server, hash: hash32(`${server}#${i}`) }))
+  ),
+};
+console.log('routed to:', getServerForUser('user-42'));
 ```
 
 ### Content Delivery Flow

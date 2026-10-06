@@ -268,7 +268,7 @@ A: Collaborative filtering analyzes user-item interactions (plays, saves, skips)
 
 ### 1. Adaptive Bitrate Selector
 
-```text
+```js
 class AdaptiveBitrate {
   constructor() {
     this.qualities = [
@@ -293,7 +293,7 @@ class AdaptiveBitrate {
 
 ### 2. Playlist Manager
 
-```text
+```js
 class PlaylistManager {
   constructor(cassandraClient) {
     this.db = cassandraClient;

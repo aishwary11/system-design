@@ -327,7 +327,7 @@ A: BLE beacons for floor positioning, Redis GEO outdoor, BLE triangulation indoo
 
 ### 1. Redis GEO Slot Search Algorithm
 
-```text
+```js
 class ParkingSlotSearcher {
   constructor(redisClient) {
     this.redis = redisClient;
@@ -376,7 +376,7 @@ class ParkingSlotSearcher {
 
 ### 2. Reservation State Machine
 
-```text
+```js
 const TRANSITIONS = {
   available:  { reserve: 'reserved' },
   reserved:   { occupy: 'occupied', cancel: 'available', expire: 'available' },
@@ -399,7 +399,7 @@ state = transition(state, 'payment_complete'); // available
 
 ### 3. Dynamic Pricing Algorithm
 
-```text
+```js
 function calculatePrice(baseRate, occupancy, hour, isWeekend, events) {
   let multiplier = 1.0;
 
@@ -420,7 +420,7 @@ function calculatePrice(baseRate, occupancy, hour, isWeekend, events) {
 
 ### 4. Anti-Passback State Machine (Entry/Exit)
 
-```text
+```js
 class AntiPassback {
   constructor(redisClient) {
     this.redis = redisClient;
@@ -460,7 +460,7 @@ class AntiPassback {
 
 ### 5. IoT Sensor Ingestion Pipeline
 
-```text
+```js
 class SensorIngestionPipeline {
   constructor(mqttClient, kafkaProducer) {
     this.mqtt = mqttClient;

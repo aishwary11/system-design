@@ -238,7 +238,7 @@ sandbox:lang:{lang}     -> warm microVM pool (per-language)
 
 ### Fair Queuing + Early-Exit Grader
 
-```text
+```js
 // Fair queuing: round-robin across users so one spammer can't starve a contest
 class FairQueue {
   constructor() { this.byUser = new Map(); this.order = []; this.rr = 0; }

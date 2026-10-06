@@ -314,7 +314,7 @@ A: Token bucket for bursts, sliding window for accuracy, leaky bucket for smooth
 
 ### 1. Token Bucket Algorithm
 
-```text
+```js
 class TokenBucket {
   // Token bucket rate limiter
   // Time Complexity: O(1) per request
@@ -384,56 +384,133 @@ class SlidingWindowCounter {
 
 ### 2. Sliding Window Log Algorithm
 
-```text
-const redis = require('redis');
-const time = require('time');
-
+```js
 class SlidingWindowLog {
-    // Sliding Window Log: stores timestamp of each request in a sorted set.
-    // Most accurate but highest memory usage.
+  // Sliding Window Log: keep one timestamp per request, drop the expired ones.
+  // Most accurate, highest memory usage.
+  // Redis form is atomic in one Lua script:
+  //   ZREMRANGEBYSCORE key 0 (now - window) ; ZCARD key ; ZADD key now now ; PEXPIRE key window
+  constructor(windowSeconds, maxRequests) {
+    this.windowMs = windowSeconds * 1000;
+    this.maxRequests = maxRequests;
+    this.log = []; // timestamps, oldest first
+  }
 
+  allow(now = Date.now()) {
+    const cutoff = now - this.windowMs;
+    while (this.log.length && this.log[0] <= cutoff) this.log.shift();
+    if (this.log.length >= this.maxRequests) {
+      return { allowed: false, remaining: 0, retryAfterMs: this.log[0] + this.windowMs - now };
+    }
+    this.log.push(now);
+    return { allowed: true, remaining: this.maxRequests - this.log.length };
+  }
+}
+
+const log = new SlidingWindowLog(60, 3);
+console.log(log.allow(1000), log.allow(1001), log.allow(1002), log.allow(1003));
 ```
 
 ### 3. Sliding Window Counter Algorithm
 
-```text
-const redis = require('redis');
-const math = require('math');
-
+```js
 class SlidingWindowCounter {
-    // Sliding Window Counter: weighted count of previous + current window.
-    // Good balance of accuracy && memory.
+  // Weighted count of the previous + current fixed window.
+  // Two counters of memory; error is bounded by how skewed the previous window was.
+  constructor(windowSeconds, maxRequests) {
+    this.windowMs = windowSeconds * 1000;
+    this.maxRequests = maxRequests;
+    this.currCount = 0;
+    this.prevCount = 0;
+    this.currStart = Math.floor(Date.now() / this.windowMs) * this.windowMs;
+  }
 
+  allow(now = Date.now()) {
+    const windowStart = Math.floor(now / this.windowMs) * this.windowMs;
+    const elapsedWindows = (windowStart - this.currStart) / this.windowMs;
+    if (elapsedWindows >= 1) {
+      this.prevCount = elapsedWindows === 1 ? this.currCount : 0; // 2+ windows skipped → all stale
+      this.currCount = 0;
+      this.currStart = windowStart;
+    }
+    const fraction = (now - windowStart) / this.windowMs;
+    const estimate = this.prevCount * (1 - fraction) + this.currCount;
+    if (estimate >= this.maxRequests) return { allowed: false, remaining: 0, estimate };
+    this.currCount++;
+    return { allowed: true, remaining: Math.floor(this.maxRequests - estimate - 1) };
+  }
+}
+
+const swc = new SlidingWindowCounter(60, 100);
+console.log(swc.allow(Date.now()));
 ```
 
 ### 4. Leaky Bucket Algorithm
 
-```text
-const { deque } = require('collections');
-const time = require('time');
-const threading = require('threading');
-
+```js
 class LeakyBucket {
-    // Leaky Bucket: processes requests at a fixed rate through a FIFO queue.
-    // Requests that exceed queue capacity are dropped.
-    // Smooths bursty traffic into a steady output stream.
+  // FIFO queue drained at a fixed rate; overflow is dropped.
+  // Smooths bursts into a steady output stream (a burst is queued, never forwarded at once).
+  constructor(capacity, leakPerSecond) {
+    this.capacity = capacity;
+    this.leakPerSecond = leakPerSecond;
+    this.queue = [];
+    this.lastLeak = Date.now();
+  }
 
+  #drain(now) {
+    const leaked = Math.floor(((now - this.lastLeak) / 1000) * this.leakPerSecond);
+    if (leaked > 0) {
+      this.queue.splice(0, leaked); // drop the oldest — they are already "processed"
+      this.lastLeak = now;
+    }
+  }
+
+  allow(now = Date.now()) {
+    this.#drain(now);
+    if (this.queue.length >= this.capacity) {
+      return { allowed: false, queueDepth: this.queue.length, retryAfterMs: 1000 / this.leakPerSecond };
+    }
+    this.queue.push(now);
+    return { allowed: true, queueDepth: this.queue.length };
+  }
+}
+
+const bucket = new LeakyBucket(5, 1);
+for (let i = 0; i < 7; i++) console.log(i, bucket.allow(Date.now()));
 ```
 
 ### 5. Fixed Window Counter Algorithm
 
-```text
-const redis = require('redis');
-const math = require('math');
-
+```js
 class FixedWindowCounter {
-    // Fixed Window Counter: simplest algorithm, counts requests in fixed time buckets.
+  // Simplest algorithm: one counter per fixed time bucket.
+  // Redis form is INCR + EXPIRE — cheap, but a burst across a boundary can double the rate.
+  constructor(windowSeconds, maxRequests) {
+    this.windowMs = windowSeconds * 1000;
+    this.maxRequests = maxRequests;
+    this.buckets = new Map();
+  }
 
+  allow(key, now = Date.now()) {
+    const bucket = Math.floor(now / this.windowMs);
+    const id = `${key}:${bucket}`;
+    const count = (this.buckets.get(id) || 0) + 1;
+    this.buckets.set(id, count);
+    if (count > this.maxRequests) {
+      return { allowed: false, remaining: 0, retryAfterMs: (bucket + 1) * this.windowMs - now };
+    }
+    return { allowed: true, remaining: this.maxRequests - count };
+  }
+}
+
+const fixed = new FixedWindowCounter(60, 2);
+console.log(fixed.allow('user-7', 1000), fixed.allow('user-7', 1200), fixed.allow('user-7', 1300));
 ```
 
 ### 6. Distributed Rate Limiter with Consistent Hashing
 
-```text
+```js
 const crypto = require('crypto');
 
 class DistributedRateLimiter {
