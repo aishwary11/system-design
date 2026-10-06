@@ -400,6 +400,8 @@ const messages = [{ role: "system", content: SYSTEM },
 - [Fraud Detection](system-design-fraud-detection.md) — streaming anomaly detection with model scoring
 - [Google Ads (Auction & Budget Pacing)](system-design-google-ads.md) — ML in the serving path under a latency budget
 - [Alerting & Monitoring (Prometheus)](system-design-alerting.md) — anomaly baselines and page/no-page decisions
+- [LLM / AI Gateway](system-design-ai-gateway.md) — one front door for providers, quotas, prompt guard and cost accounting
+- [Observability Pipeline](system-design-observability-pipeline.md) — tracing and evaluation telemetry for agent runs
 
 ## 15. Hidden Tips & Tricks
 

@@ -320,4 +320,4 @@ Production notes: sandboxing is **gVisor/Firecracker + cgroups + seccomp + rootl
 
 ---
 
-<nav>← [notification system](system-design-notification-system.md) · [📖 All guides](README.md) · [parking system](system-design-parking-system.md) →</nav>
+<nav>← [observability pipeline](system-design-observability-pipeline.md) · [📖 All guides](README.md) · [parking system](system-design-parking-system.md) →</nav>

@@ -588,4 +588,4 @@ function render_notification(template_name, variables) {
 
 ---
 
-<nav>← [netflix](system-design-netflix.md) · [📖 All guides](README.md) · [online judge](system-design-online-judge.md) →</nav>
+<nav>← [netflix](system-design-netflix.md) · [📖 All guides](README.md) · [observability pipeline](system-design-observability-pipeline.md) →</nav>

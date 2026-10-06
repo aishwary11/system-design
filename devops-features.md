@@ -384,6 +384,8 @@ Pin your mental model to current releases — "which version?" is a real intervi
 - [Alerting & Monitoring (Prometheus)](system-design-alerting.md) — SLOs, error budgets, and paging
 - [Online Judge](system-design-online-judge.md) — sandboxed execution as a deployment pattern
 - [Notification System](system-design-notification-system.md) — deploy and degrade notifications, on-call routing
+- [Observability Pipeline](system-design-observability-pipeline.md) — the telemetry backbone behind every deploy gate and SLO
+- [A/B Experimentation Platform](system-design-ab-testing.md) — release experiments gated by guardrails and auto-rollback
 
 ## 17. Hidden Tips & Tricks
 

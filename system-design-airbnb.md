@@ -299,4 +299,4 @@ const search = new SearchService(); console.log("Search service ready");
 
 ---
 
-<nav>[📖 All guides](README.md) · [alerting](system-design-alerting.md) →</nav>
+<nav>← [ai gateway](system-design-ai-gateway.md) · [📖 All guides](README.md) · [alerting](system-design-alerting.md) →</nav>

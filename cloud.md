@@ -323,6 +323,9 @@ aws sqs send-message --queue-url tasks --message-body '{"job":"render","id":"7"}
 - [Alerting & Monitoring (Prometheus)](system-design-alerting.md) — managed metrics, logs, and paging
 - [Google Ads (Auction & Budget Pacing)](system-design-google-ads.md) — globally consistent counters and Spanner-class storage
 - [Parking System](system-design-parking-system.md) — IoT Core → stream → store for device telemetry
+- [LLM / AI Gateway](system-design-ai-gateway.md) — managed model endpoints, quotas, and multi-provider failover
+- [Observability Pipeline](system-design-observability-pipeline.md) — managed metrics/logs/traces services at ingest scale
+- [A/B Experimentation Platform](system-design-ab-testing.md) — warehouse-native experimentation on managed analytics
 - [Notification System](system-design-notification-system.md) — the SNS/SES/push side of fan-out
 
 ## 17. Hidden Tips & Tricks
