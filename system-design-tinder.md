@@ -360,12 +360,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Elo Rating System | Applied in this system | Architecture + LLD |
-| Swipe Recommendation Algorithm | Applied in this system | Architecture + LLD |
-| Geospatial Matching | Applied in this system | Architecture + LLD |
-| Redis for Swipe Queue | Applied in this system | Architecture + LLD |
-| Like/Pass State Machine | Applied in this system | Architecture + LLD |
-| Photo Verification | Applied in this system | Architecture + LLD |
+| Elo Rating System | Pairwise preference score updated per swipe; Tinder has since described moving to ML ranking | Ranking |
+| Swipe Recommendation Algorithm | Candidate generation by distance and preferences, then ranking with an explicit exploration budget | Matching |
+| Geospatial Matching | Cell-based candidate lookup with a distance filter, the same family as geohash and H3 | Discovery |
+| Redis for Swipe Queue | Precomputed candidate decks per active user, rebuilt on activity or expiry | Serving |
+| Like/Pass State Machine | Swipe is idempotent per (user, target); a match is a derived event, never a stored flag | Core |
+| Photo Verification | Liveness and face-match checks before a photo becomes eligible for ranking | Trust |
 
 ## Common Interview Follow-ups
 

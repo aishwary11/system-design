@@ -323,12 +323,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Multi-Channel Delivery (Push/SMS/Email) | Applied in this system | Architecture + LLD |
-| Template Engine | Applied in this system | Architecture + LLD |
-| Rate Limiting | Applied in this system | Architecture + LLD |
-| Preference Management | Applied in this system | Architecture + LLD |
-| Retry with Backoff | Applied in this system | Architecture + LLD |
-| Delivery Tracking | Applied in this system | Architecture + LLD |
+| Multi-Channel Delivery (Push/SMS/Email) | Channel adapters with per-channel limits and an explicit fallback chain (push, then SMS) | Delivery |
+| Template Engine | Versioned templates per locale with variable validation before send | Content |
+| Rate Limiting | Per-user and per-tenant token buckets, which is what prevents a notification storm | Send path |
+| Preference Management | User by channel by category matrix including quiet hours and legally required messages | Preferences |
+| Retry with Backoff | Provider-specific retryable codes with jittered exponential backoff and a hard attempt cap | Delivery |
+| Delivery Tracking | Provider callbacks drive a per-message state machine (sent, delivered, bounced, opened) | Observability |
 
 ## Common Interview Follow-ups
 

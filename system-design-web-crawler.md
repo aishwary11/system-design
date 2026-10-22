@@ -294,12 +294,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| BFS/DFS Traversal | Applied in this system | Architecture + LLD |
-| URL Frontier with Priority | Applied in this system | Architecture + LLD |
-| Politeness (robots.txt) | Applied in this system | Architecture + LLD |
-| Bloom Filter for Dedup | Applied in this system | Architecture + LLD |
-| Distributed Crawling | Applied in this system | Architecture + LLD |
-| DNS Resolution Cache | Applied in this system | Architecture + LLD |
+| BFS/DFS Traversal | A priority frontier ordered by importance and change rate beats plain BFS for freshness | Frontier |
+| URL Frontier with Priority | Per-host queues with politeness delay; the global frontier selects which host to serve next | Frontier |
+| Politeness (robots.txt) | Fetch and cache robots per host and honour crawl-delay; getting this wrong gets the crawler blocked | Etiquette |
+| Bloom Filter for Dedup | O(1) membership with false positives only, which is the right error direction: never re-crawl a seen URL | Dedup |
+| Distributed Crawling | Partition by host so two workers never hit one server at once | Scale |
+| DNS Resolution Cache | Cache DNS with its TTL; resolution is a real bottleneck at crawl scale | Network |
 
 ## Common Interview Follow-ups
 

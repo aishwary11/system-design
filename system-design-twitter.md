@@ -396,12 +396,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Fan-out on Write/Read Hybrid | Applied in this system | Architecture + LLD |
-| Graph Database (Neo4j) | Applied in this system | Architecture + LLD |
-| Redis Timeline Cache | Applied in this system | Architecture + LLD |
-| Kafka for Tweet Processing | Applied in this system | Architecture + LLD |
-| Trending Topics with Count-Min Sketch | Applied in this system | Architecture + LLD |
-| Reverse Index for Search | Applied in this system | Architecture + LLD |
+| Fan-out on Write/Read Hybrid | Push tweet ids into follower timelines for normal accounts and merge at read for high-follower accounts | Timeline |
+| Graph Database (Neo4j) | Traversal model for the social graph; production uses a sharded adjacency store rather than Neo4j | Graph |
+| Redis Timeline Cache | Per-user list of tweet ids trimmed to the first few hundred entries | Timeline |
+| Kafka for Tweet Processing | Fan-out workers consume tweet events and write timelines independently of the write path | Pipeline |
+| Trending Topics with Count-Min Sketch | Heavy hitters over a sliding window without storing every term count | Trends |
+| Reverse Index for Search | Term to tweet-id postings partitioned by time, the inverted index behind search | Search |
 
 ## Common Interview Follow-ups
 

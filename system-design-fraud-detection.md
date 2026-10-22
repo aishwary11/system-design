@@ -158,6 +158,7 @@ How the platform grows with transaction volume:
 - **Fail-open vs fail-closed tiers**: low-risk rules fail open with alerting; sanctions/AML checks fail closed
 - **Champion/challenger + shadow scoring**: new models score a mirrored slice without affecting decisions
 - **Human-in-the-loop**: REVIEW queue with evidence bundles feeds analyst verdicts back as labels
+- **Device fingerprinting + 3-D Secure step-up (Stripe Radar, Sift)**: link new accounts to known devices, then escalate only the risky transactions to authentication
 
 ## Key Design Decisions
 

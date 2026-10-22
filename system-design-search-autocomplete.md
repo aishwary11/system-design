@@ -293,12 +293,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Trie Data Structure | Applied in this system | Architecture + LLD |
-| Frequency-Based Ranking | Applied in this system | Architecture + LLD |
-| Distributed Caching | Applied in this system | Architecture + LLD |
-| Real-time Updates | Applied in this system | Architecture + LLD |
-| Personalization | Applied in this system | Architecture + LLD |
-| Multi-language Support | Applied in this system | Architecture + LLD |
+| Trie Data Structure | Prefix tree with top-K cached per node; memory is the binding constraint at web scale | Index |
+| Frequency-Based Ranking | Time-decayed counts, with a short window for trending and a long window for evergreen queries | Ranking |
+| Distributed Caching | Per-prefix cache with a short TTL; the hottest prefixes are replicated to every edge | Serving |
+| Real-time Updates | Streamed counts applied at a bounded rate, with the index rebuilt in immutable segments | Updates |
+| Personalization | Re-rank by history and locale, scoped so one user's queries can never leak into another's suggestions | Ranking |
+| Multi-language Support | Per-language tries with Unicode normalization and transliteration | i18n |
 
 ## Common Interview Follow-ups
 

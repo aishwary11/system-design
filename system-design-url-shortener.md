@@ -325,12 +325,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Base62 Encoding | Applied in this system | Architecture + LLD |
-| Unique ID Generation | Applied in this system | Architecture + LLD |
-| Cache-Aside Pattern | Applied in this system | Architecture + LLD |
-| 301 vs 302 Redirects | Applied in this system | Architecture + LLD |
-| Analytics Tracking | Applied in this system | Architecture + LLD |
-| Spam Detection | Applied in this system | Architecture + LLD |
+| Base62 Encoding | 62^7 is about 3.5 trillion keys, and base62 avoids the plus and slash characters that break URLs | Encoding |
+| Unique ID Generation | Snowflake or a key-generation service handing out ranges, so creation needs no per-URL database round trip | ID service |
+| Cache-Aside Pattern | Redis lookup, database on miss, then fill; reads dominate by orders of magnitude | Read path |
+| 301 vs 302 Redirects | 301 is cacheable and loses analytics; 302 keeps every click measurable at the cost of a request | API |
+| Analytics Tracking | Click events go to Kafka asynchronously; the redirect never waits on analytics | Analytics |
+| Spam Detection | Denylist, domain reputation and creation rate limits before a link is issued | Safety |
 
 ## Common Interview Follow-ups
 

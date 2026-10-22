@@ -157,6 +157,8 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 ---
 
+| **Learning-to-rank search** | Candidate generation then a ranking model over price, location and quality signals | Search Service |
+
 ## Key Design Decisions
 The choices that shape this architecture, and why each was made:
 

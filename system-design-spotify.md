@@ -173,6 +173,8 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 ---
 
+| **Luigi / Backstage** | Spotify open-sourced its batch pipeline (Luigi) and developer portal (Backstage) | Platform |
+
 ## Key Design Decisions
 The choices that shape this architecture, and why each was made:
 

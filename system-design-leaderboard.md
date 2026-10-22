@@ -150,6 +150,8 @@ CREATE TABLE counter_rollups (
 
 ---
 
+- **Redis sorted sets**: Skip list plus hash table gives O(log N) insert and O(log N + K) range queries, the standard leaderboard engine
+
 ## Key Design Decisions
 
 1. **Redis ZSETs, not a sorted SQL query**: O(log N) insert + O(log N) rank, exactly the primitives needed

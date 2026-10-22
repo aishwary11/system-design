@@ -374,12 +374,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Fan-out on Write/Read Hybrid | Applied in this system | Architecture + LLD |
-| CDN for Media | Applied in this system | Architecture + LLD |
-| Redis Feed Cache | Applied in this system | Architecture + LLD |
-| Graph API for Social | Applied in this system | Architecture + LLD |
-| Image Processing Pipeline | Applied in this system | Architecture + LLD |
-| Hashtag Inverted Index | Applied in this system | Architecture + LLD |
+| Fan-out on Write/Read Hybrid | Push post ids into follower inboxes for normal accounts and merge at read time for celebrity accounts | Feed |
+| CDN for Media | Content-hashed immutable URLs plus on-demand transforms (thumbnail, feed, full; WebP/AVIF) | Media |
+| Redis Feed Cache | Per-user ordered set of post ids, hydrated with metadata at read time | Feed |
+| Graph API for Social | Follower edges in a sharded adjacency store; the graph is read far more than it is written | Social graph |
+| Image Processing Pipeline | Upload fans out to variants in object storage; EXIF and location are stripped before publish | Media |
+| Hashtag Inverted Index | Term to post-id postings sharded by term, feeding Explore and hashtag pages | Explore |
 
 ## Common Interview Follow-ups
 

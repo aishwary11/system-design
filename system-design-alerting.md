@@ -167,6 +167,7 @@ How the platform grows with the fleet it watches:
 - **EMA/seasonal anomaly baselines**: cheap streaming deviation detection — alarm on residual, not raw value
 - **Meta-monitoring**: an independent, smaller stack watches the alerting stack itself; the watchdog cannot share fate with the watched
 - **Multi-tenancy quotas**: per-team cardinality + QPS limits enforced at ingest and query — one team's label explosion can't melt the cluster
+- **Incident dedupe and grouping (PagerDuty, Alertmanager)**: one page per incident with child alerts inhibited by the parent — the difference between an on-call shift and an alert storm
 
 ## Key Design Decisions
 

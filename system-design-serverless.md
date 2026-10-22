@@ -151,6 +151,8 @@ snapshot:{fn}:{version}       -> S3 key of memory snapshot + page cache
 
 ---
 
+- **Firecracker microVMs**: KVM-based microVMs with about 125 ms boot, the substrate behind AWS Lambda
+
 ## Key Design Decisions
 
 1. **Firecracker microVMs over containers**: strangers' code on shared hardware needs hardware virtualization, not namespaces

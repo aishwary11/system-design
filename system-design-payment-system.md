@@ -297,12 +297,14 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Luhn Algorithm (Card Validation) | Applied in this system | Architecture + LLD |
-| Double-Entry Bookkeeping | Applied in this system | Architecture + LLD |
-| Idempotency Keys | Applied in this system | Architecture + LLD |
-| PCI DSS Compliance | Applied in this system | Architecture + LLD |
-| Fraud Detection (ML) | Applied in this system | Architecture + LLD |
-| Reconciliation Service | Applied in this system | Architecture + LLD |
+| Luhn Algorithm (Card Validation) | Mod-10 checksum that catches typos at ingress; it is not a fraud signal | Ingress |
+| Double-Entry Bookkeeping | Every movement is a debit and a credit summing to zero; Stripe's Ledger is built on this model | Ledger |
+| Idempotency Keys | Client-supplied key stored with the response, so a retry replays the first result instead of charging twice | API |
+| PCI DSS Compliance | Tokenize at ingress and keep card data off application servers to shrink the audit scope | Security |
+| Fraud Detection (ML) | Velocity features plus a risk score, with hard rules only for sanctions and known-bad identifiers | Risk |
+| Reconciliation Service | Daily settlement files compared with the internal ledger; every break becomes a reviewable case | Finance |
+
+| **Transactional outbox** | Ledger row and event commit in one transaction; a relay publishes after commit so no charge is lost | Ledger + events |
 
 ## Common Interview Follow-ups
 

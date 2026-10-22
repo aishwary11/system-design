@@ -331,12 +331,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| WebRTC Peer-to-Peer | Applied in this system | Architecture + LLD |
-| SFU/MCU Architecture | Applied in this system | Architecture + LLD |
-| STUN/TURN Servers | Applied in this system | Architecture + LLD |
-| Adaptive Bitrate | Applied in this system | Architecture + LLD |
-| Redis for Session State | Applied in this system | Architecture + LLD |
-| WebSocket for Signaling | Applied in this system | Architecture + LLD |
+| WebRTC Peer-to-Peer | Only viable for one-to-one; ICE/STUN/TURN handle NAT traversal | Calls |
+| SFU/MCU Architecture | An SFU forwards N streams with per-receiver adaptation; an MCU mixes them and pays the CPU cost | Topology |
+| STUN/TURN Servers | TURN relays for symmetric NAT; budget bandwidth for the 10-20% of calls that cannot go direct | Connectivity |
+| Adaptive Bitrate | Simulcast or SVC layers plus congestion control (GCC), so one bad uplink does not degrade the room | Media |
+| Redis for Session State | Room membership, mute state and active speaker are ephemeral and rebuilt on failure | Signaling |
+| WebSocket for Signaling | SDP offer/answer and ICE candidates over a persistent channel, separate from media | Signaling |
 
 ## Common Interview Follow-ups
 

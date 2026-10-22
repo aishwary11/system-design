@@ -352,12 +352,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Geohash Indexing | Applied in this system | Architecture + LLD |
-| Quadtree for Spatial Queries | Applied in this system | Architecture + LLD |
-| Redis GEO Commands | Applied in this system | Architecture + LLD |
-| Geofencing | Applied in this system | Architecture + LLD |
-| Haversine Distance | Applied in this system | Architecture + LLD |
-| Geospatial Sharding | Applied in this system | Architecture + LLD |
+| Geohash Indexing | Prefix cell plus eight neighbours; precision 6 is roughly 1.2 km by 0.6 km, so radius search is a prefix scan | Search |
+| Quadtree for Spatial Queries | Recursive subdivision that adapts to density, which a fixed grid cannot | Search |
+| Redis GEO Commands | GEOADD and GEOSEARCH over a geohash-encoded sorted set, the hot-path implementation | Hot path |
+| Geofencing | Point-in-polygon (ray casting) plus an R-tree when there are many polygons per query | Zones |
+| Haversine Distance | Great-circle filter before any exact road distance, which is orders of magnitude cheaper | Ranking |
+| Geospatial Sharding | Shard by cell prefix and give dense cities their own shards instead of hashing users | Scale |
 
 ## Common Interview Follow-ups
 

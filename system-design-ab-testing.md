@@ -12,22 +12,26 @@
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
-3. [High-Level Architecture](#high-level-architecture)
-4. [Microservices](#microservices)
-5. [Database Design](#database-design)
-6. [Scaling Tiers](#scaling-tiers)
-7. [Key Techniques & Patterns](#key-techniques--patterns)
-8. [Key Design Decisions](#key-design-decisions)
-9. [Failure Modes & Recovery](#failure-modes--recovery)
-10. [Cost Estimation (300 concurrent experiments)](#cost-estimation-300-concurrent-experiments)
-11. [Trade-off Analysis](#trade-off-analysis)
-12. [Key Metrics to Monitor](#key-metrics-to-monitor)
-13. [Deep Dive Prompts](#deep-dive-prompts)
-14. [Common Interview Follow-ups (with answers)](#common-interview-follow-ups-with-answers)
-15. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
-16. [Micro-Details & Edge Cases](#micro-details--edge-cases)
-17. [Do's & Don'ts](#dos--donts)
-18. [References & Further Reading](#references--further-reading)
+3. [Capacity Model (Back-of-Envelope)](#capacity-model-back-of-envelope)
+4. [High-Level Architecture](#high-level-architecture)
+5. [Microservices](#microservices)
+6. [API & Interface Contracts](#api--interface-contracts)
+7. [Database Design](#database-design)
+8. [Security, Identity & Multi-Tenancy](#security-identity--multi-tenancy)
+9. [Scaling Tiers](#scaling-tiers)
+10. [Key Techniques & Patterns](#key-techniques--patterns)
+11. [Key Design Decisions](#key-design-decisions)
+12. [Failure Modes & Recovery](#failure-modes--recovery)
+13. [Disaster Recovery & Multi-Region](#disaster-recovery--multi-region)
+14. [Cost Estimation (300 concurrent experiments)](#cost-estimation-300-concurrent-experiments)
+15. [Trade-off Analysis](#trade-off-analysis)
+16. [Key Metrics to Monitor](#key-metrics-to-monitor)
+17. [Deep Dive Prompts](#deep-dive-prompts)
+18. [Common Interview Follow-ups (with answers)](#common-interview-follow-ups-with-answers)
+19. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
+20. [Micro-Details & Edge Cases](#micro-details--edge-cases)
+21. [Do's & Don'ts](#dos--donts)
+22. [References & Further Reading](#references--further-reading)
 
 </details>
 
@@ -51,7 +55,7 @@ The hard parts are not the hashing:
 | Assignment QPS | 200K/sec peak | Runs in the request path of every product surface |
 | Assignment latency (p99) | < 5 ms (SDK cache hit) | It sits on the critical path of page loads |
 | Cache-miss latency budget | < 20 ms | Falls back to the Assignment API |
-| Exposures logged | 50K/sec, 1–2B/day | Volume driver for the whole pipeline |
+| Exposures logged | ~23K/s average, 50K/s peak, 1–2B/day | Volume driver for the whole pipeline |
 | Metrics per experiment | 1 primary, 5 secondary, 20–50 guardrails | Multiplicity is the default, not the exception |
 | Exposure → dashboard latency | < 15 min streaming, nightly deep analysis | Ship decisions are same-day |
 | Minimum runtime | 7 days or 2 business cycles | Novelty and primacy effects decay |
@@ -79,8 +83,50 @@ The hard parts are not the hashing:
 - **Determinism**: identical assignment across languages (JS, Java, Go, Python) — one hash spec, shared test vectors in CI
 - **Availability**: reads degrade to a local default (control) rather than failing; a platform outage must not take product surfaces down
 - **Consistency**: no unit ever sees two variants of one experiment; no exposure without an assignment
-- **Scalability**: 200K assignment QPS, 50K exposures/sec sustained, 10× spikes on launches
+- **Scalability**: 200K assignment QPS peak, 50K exposures/sec peak against 1–2B/day sustained; 10× launch spikes absorbed by the ingest buffer, never by the assignment path
 - **Privacy**: targeting uses pseudonymous ids; only hashed unit keys reach the warehouse
+
+## Capacity Model (Back-of-Envelope)
+
+Every figure in Key Numbers is derived here, and the calculator is executed by `tools/audit-docs.mjs`, so prose and arithmetic cannot drift apart.
+
+| Step | Input | Derivation | Result |
+| :--- | :--- | :--- | :--- |
+| Units | 200M distinct units/day | product DAU plus signed-out devices | 200M |
+| Exposures | 2B/day | about 10 exposures per active unit | **23.1K/s average** |
+| Peak | launch factor 2.2x | concentrated in the first minutes of a launch | **50K/s** |
+| Assignments | 4 `getVariant` calls per exposure | feature flags plus experiment reads | **200K/s peak** |
+| Exposure storage | ~38 B/row, columnar | 2B x 38 B | **76 GB/day, 30 TB over 400 days** |
+| Rollups | 300 exp x 3 arms x 50 metrics x 24 h | moments only, never raw rows | **1.08M rows/day** |
+| Redis assignments | 200M distinct units x 120 B | **not** 200K/s x 24 h | **24 GB** |
+
+The classic sizing error: `200K/s x 86,400 s` is **17.3B keys (~1.7 TB)**. Assignments are cached per *unit*, not per *request*, so the correct input is distinct units per day.
+
+```js
+const DAY = 86400;
+const unitsPerDay = 200e6;
+const exposuresPerDay = 2e9;
+const peakExposure = 50_000;
+const assignPerExposure = 4;
+const bytesPerExposure = 38;
+const avgExposure = exposuresPerDay / DAY;
+const assignmentPeak = peakExposure * assignPerExposure;
+const exposureGbPerDay = (exposuresPerDay * bytesPerExposure) / 1e9;
+const archiveTb = (exposureGbPerDay * 400) / 1e3;
+const naiveCacheKeys = (200_000 * DAY) / 1e9;
+const realCacheGb = (unitsPerDay * 120) / 1e9;
+const rollupRows = 300 * 3 * 50 * 24;
+console.log('exposures/s average :', Math.round(avgExposure));
+console.log('peak factor         :', (peakExposure / avgExposure).toFixed(2) + 'x');
+console.log('assignment peak/s   :', assignmentPeak);
+console.log('exposure GB/day     :', exposureGbPerDay.toFixed(0));
+console.log('archive TB (400d)   :', archiveTb.toFixed(1));
+console.log('naive cache keys    :', naiveCacheKeys.toFixed(1) + 'B (wrong input)');
+console.log('real cache GB       :', realCacheGb.toFixed(0));
+console.log('rollup rows/day     :', rollupRows);
+```
+
+**What breaks first.** At 50K exposures/s the Kafka ingest and the warehouse join, not the assignment path: assignment is a local hash, while exposures must be deduplicated and joined against metric events. That is why the buffer and the rollup moments exist, and why exposure loss is measured as a first-class SLI.
 
 ## High-Level Architecture
 
@@ -117,6 +163,41 @@ The hard parts are not the hashing:
 | **Guardrail Monitor** | SRM detection, guardrail regression tests, halt and rollback signals | Per experiment plus platform-wide SRM sweeps |
 | **Ramp Orchestrator** | Step promotions with soak time, freeze windows, auto-rollback | Idempotent state machine, fully audit-logged |
 | **Console** | Experiment authoring, dashboards, decision log | Read-mostly over the registry and metric store |
+
+## API & Interface Contracts
+
+SDK reads are authenticated with a public, surface-scoped key (safe to ship in a bundle); the console uses OIDC. Every mutating call carries `Idempotency-Key`, and config changes carry `If-Match` on the experiment version.
+
+| Method | Path | Caller | Idempotency | Limit |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/v1/assign?unit_key&layer&experiment` | Client SDK | none (pure read) | 5K rps per key |
+| `POST` | `/v1/exposures` | Client SDK (batched) | `event_id` per exposure | 500 events per batch |
+| `POST` | `/v1/experiments` | Console | `Idempotency-Key` | 10 rps per user |
+| `POST` | `/v1/experiments/{key}/ramp` | Console | `Idempotency-Key` + `If-Match: version` | 1 rps per experiment |
+| `GET` | `/v1/experiments/{key}/readout` | Console | none | 5 rps per user |
+
+```json
+// GET /v1/assign -> 200
+{
+  "experiment": "checkout_button_color",
+  "variant": "treatment",
+  "payload": { "color": "green" },
+  "reason": "hash",
+  "config_version": 7,
+  "snapshot_age_s": 42
+}
+```
+
+| Status | Meaning | Retryable | Client action |
+| :--- | :--- | :--- | :--- |
+| `400` | Unknown layer, malformed unit key | No | Drop the exposure, log once |
+| `404` | Experiment not found or not running | No | Render control, do **not** emit an exposure |
+| `409` | Version conflict on ramp/config write | Yes, after re-read | Re-fetch, re-apply, retry once |
+| `412` | `If-Match` failed | Yes | Same as 409 |
+| `429` | Key over its rate limit | Yes | Honour `Retry-After`, back off with jitter |
+| `503` | Assignment API degraded | Yes | Serve the last signed snapshot; unknown experiments resolve to control |
+
+**Versioning.** `/v1` is additive-only: new response fields may appear, none are removed or retyped. SDKs pin a config schema version and reject a snapshot newer than they understand rather than silently mis-parsing a variant payload.
 
 ## Database Design
 
@@ -187,6 +268,32 @@ CREATE TABLE guardrail_events (
 
 **Redis** — assignment cache (`assign:{experiment}:{unit}` with a 24h TTL), layer-salt cache, per-experiment QPS counters, and the sticky-override set used by support engineering.
 
+## Security, Identity & Multi-Tenancy
+
+| Caller | Authentication | Authorization |
+| :--- | :--- | :--- |
+| Client SDK | Public surface key (safe in a bundle), scoped to one surface and layer set | Read assignments and emit exposures for its own layer only |
+| Assignment API (service-to-service) | mTLS with SPIFFE identity | Read registry, write assignments, publish audit events |
+| Console user | OIDC + SSO, short-lived session | Role below, scoped to team-owned experiments |
+| Metric pipeline | mTLS, workload identity | Append exposures, read metric definitions |
+| Support override | OIDC + break-glass approval | Create a sticky override with an expiry, never edit a running experiment |
+
+| Role | Read results | Create/edit draft | Ramp to 50% | Ramp to 100% / stop | Edit guardrails |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Viewer | Yes | No | No | No | No |
+| Experimenter | Yes | Yes | Yes | No | No |
+| Approver | Yes | Yes | Yes | Yes | Yes |
+| Admin | Yes | Yes | Yes | Yes | Yes |
+
+**Controls that matter more than the role table**
+
+- **Separation of duties**: the author of an experiment cannot be the approver of its 100% ramp. The API enforces `created_by != approver` on the final step, not the UI.
+- **Signed config snapshots**: snapshots are Ed25519-signed and versioned. An SDK rejects an unsigned snapshot, a signature from an unknown key, or one older than the maximum stale age — a compromised CDN cannot inject a variant.
+- **Pseudonymous unit keys**: the SDK sends `HMAC-SHA256(pepper, unit_id)`; the pepper rotates quarterly with a dual-read window. Raw user ids never reach the warehouse.
+- **Exposure store ACL**: exposures are queryable only through the analysis service; direct warehouse access is limited to a break-glass group with query audit.
+- **Deletion**: a DSAR erasure deletes by `unit_key` from the raw exposure table and recomputes the affected rollups; the audit log keeps the fact of deletion, not the key.
+- **Immutable audit trail**: every ramp, stop, override and config change appends `(actor, action, before, after, reason, request_id)` to an append-only store. A running experiment cannot be edited — only versioned.
+
 ## Scaling Tiers
 
 ### Tier 1: 1K - 10K Users
@@ -237,6 +344,8 @@ CREATE TABLE guardrail_events (
 | **Exposure backfill** | Late and replayed exposures land in the correct analysis window instead of being dropped | Exposure Logger |
 | **Global holdouts** | A permanent control cohort measures cumulative and long-term effects | Holdout Manager |
 
+| **Switchback tests** | Alternate treatment by time block when units interfere (marketplaces, pricing) — the Uber/Lyft-style design for network effects | Analysis Engine |
+
 ## Key Design Decisions
 
 | Decision | Choice | Why |
@@ -267,6 +376,20 @@ CREATE TABLE guardrail_events (
 | Interference (network effects, shared budget) | Treatment steals from control | Switchback tests, cluster randomization, or measure at a coarser unit |
 | Bot or internal traffic | Noisy, uninterpretable metrics | Filter at ingest with a shared classifier; internal ids are pinned to control |
 | Variant leaked to the public bundle | Competitive and legal risk | Variants stay server-side config; exposure logs and payloads are access-controlled |
+
+## Disaster Recovery & Multi-Region
+
+| Data class | Store | RPO | RTO | Strategy |
+| :--- | :--- | :--- | :--- | :--- |
+| Experiment registry | PostgreSQL, multi-AZ + PITR | 0 (sync replica) | 30 min | Cross-region read replica, promote on regional loss; signed snapshots already at the edge |
+| Assignments | Redis + deterministic hash | 0 (hash is truth) | 0 | Any region computes the same bucket locally; cache loss is a latency event, not a correctness event |
+| Exposures | Kafka RF=3 + cross-region mirror | 1 min | 1 h | Mirror to the analytics region; consumers are idempotent on `(unit, experiment, day)` |
+| Metric rollups | Warehouse, hourly snapshots | 1 h | 4 h | Rebuild from the raw exposure mirror; the analysis engine refuses to publish across a gap |
+| Guardrail actions | Append-only audit + Kafka | 0 | 15 min | Replay `guardrail.signals` to restore halt state |
+
+**Regional failure behaviour.** Assignment is active-active: the SDK's local hash and cached snapshot keep product surfaces rendering with zero RTO. The registry and analysis plane are active-passive. During a failover the readout API returns `503` with `retry_after` rather than publishing a partial window — a wrong number is worse than no number.
+
+**Drills.** Quarterly restore of the registry into a scratch region, a monthly replay of one day of exposures into a rebuilt rollup (must reproduce the published readout bit-for-bit), and an annual game day where the primary region is removed while a live experiment is ramping. The ramp orchestrator must fail safe: if it cannot read guardrails, it freezes the step rather than promoting.
 
 ## Cost Estimation (300 concurrent experiments)
 
@@ -647,6 +770,57 @@ console.log(ramp.evaluate({ nowIso: '2026-10-03T09:00:00Z', guardrails: bad }));
 console.log('halted:', ramp.state.halted === true, '| held step:', ramp.plan[ramp.state.step]);
 ```
 
+### 7. Experiment Lifecycle State Machine
+
+| From | Event | To | Guard |
+| :--- | :--- | :--- | :--- |
+| `draft` | submit | `scheduled` | Primary metric declared, owner assigned, at least one guardrail |
+| `scheduled` | start time reached | `running` | Registry lint passed, config snapshot signed |
+| `running` | ramp step | `ramping` | Soak time elapsed, SRM clean, guardrails not breached |
+| `ramping` | step complete | `ramping` | Same guards plus approval for steps above 50% |
+| `ramping` | guardrail breach | `paused` | Significant harm in the declared direction with minimum absolute effect |
+| `paused` | fix verified | `ramping` | Guardrail signal cleared for 30 min, approver signs off |
+| `ramping` | final step | `running` | 100% (or holdback) reached |
+| `running` | decision | `stopped` | Readout published; winner shipped or reverted |
+| `stopped` | retention elapsed | `archived` | 30 days after decision |
+
+Illegal transitions are rejected, not coerced: a `paused` experiment cannot jump to `stopped` without recording the decision, and a `stopped` experiment can never return to `running` (a restart is a new version).
+
+```js
+const TRANSITIONS = {
+  draft: { submit: 'scheduled' },
+  scheduled: { start: 'running', cancel: 'archived' },
+  running: { ramp: 'ramping', stop: 'stopped' },
+  ramping: { step: 'ramping', pause: 'paused', complete: 'running', stop: 'stopped' },
+  paused: { resume: 'ramping', stop: 'stopped' },
+  stopped: { archive: 'archived' },
+  archived: {},
+};
+
+class ExperimentLifecycle {
+  constructor() { this.state = 'draft'; this.history = []; }
+  apply(event, guards = {}) {
+    const next = TRANSITIONS[this.state]?.[event];
+    if (!next) return { ok: false, reason: `illegal: ${this.state} -/-> ${event}` };
+    if (event === 'step' && guards.guardrailBreached) return { ok: false, reason: 'guardrail breached' };
+    if (event === 'step' && guards.srmPValue < 0.001) return { ok: false, reason: 'sample ratio mismatch' };
+    if (event === 'step' && guards.approved !== true) return { ok: false, reason: 'approval required' };
+    this.history.push({ from: this.state, event, to: next });
+    this.state = next;
+    return { ok: true, state: next };
+  }
+}
+
+const exp = new ExperimentLifecycle();
+console.log(exp.apply('submit'));
+console.log(exp.apply('start'));
+console.log(exp.apply('ramp'));
+console.log(exp.apply('step', { srmPValue: 0.4, approved: false }));
+console.log(exp.apply('step', { srmPValue: 0.4, approved: true }));
+console.log(exp.apply('pause', { guardrailBreached: true }));
+console.log('final:', exp.state, '| transitions:', exp.history.length);
+```
+
 ## Micro-Details & Edge Cases
 
 Small decisions that quietly invalidate experiments — the class of bug that costs weeks because the platform reports a confident number:
@@ -669,6 +843,12 @@ Small decisions that quietly invalidate experiments — the class of bug that co
 | **Sticky overrides carry an expiry and an audit entry** | A forgotten debug override is a permanent silent variant for one customer |
 | **Cache the assignment, not the rendered variant** | A render cache can serve the control UI to a treatment user after the split changes |
 | **Holdouts are a reserved allocation inside their layer** | A "separate" holdout that overlaps a layer creates interaction you cannot measure |
+| **Partition exposures by experiment, and watch for one experiment owning a partition** | A 50% experiment on the largest surface can starve the consumer group's other partitions; cap per-experiment ingress |
+| **Refresh signed snapshots with jitter, not on a fixed minute** | Every SDK waking at `:00` turns a config publish into a thundering herd on the CDN and the registry |
+| **Treat exposure schema changes as breaking** | Adding a required field silently drops events from SDK versions that cannot send it; make fields optional and version the envelope |
+| **Dedupe days in UTC, and document it** | A local-time day boundary double-counts or drops the hour around midnight and quietly shifts the split |
+| **Shed debug surfaces before treatment surfaces under buffer pressure** | Dropping exposures randomly biases the readout; dropping by surface priority is at least measurable |
+| **Bound the maximum snapshot age the SDK will trust** | Serving a week-old snapshot is a silent variant change; expire to control instead |
 
 The pattern behind all of these: the platform is a *measurement instrument*. A mismatch between what the statistics assume (an exact 50/50 split, one exposure per user, units independent of outcomes) and what the pipeline actually produces is a wrong answer, not a noisy one.
 

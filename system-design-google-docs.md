@@ -220,12 +220,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Operational Transformation (OT) | Applied in this system | Architecture + LLD |
-| CRDT for Offline | Applied in this system | Architecture + LLD |
-| WebSocket for Real-time Sync | Applied in this system | Architecture + LLD |
-| Version History (Op Log) | Applied in this system | Architecture + LLD |
-| Cursor Presence | Applied in this system | Architecture + LLD |
-| Conflict Resolution | Applied in this system | Architecture + LLD |
+| Operational Transformation (OT) | Server transforms concurrent ops against each other (Jupiter-style) so replicas converge without tombstones | Sync |
+| CRDT for Offline | Sequence CRDTs (Yjs, Automerge) for offline edits; Figma uses CRDT-like last-writer-wins for some properties, not one global CRDT | Offline |
+| WebSocket for Real-time Sync | One persistent socket per document carrying ops and presence together | Transport |
+| Version History (Op Log) | Append-only op log plus periodic snapshots; restore is a new op, never a truncation of history | History |
+| Cursor Presence | Ephemeral and lossy by design; presence is dropped first when the fan-out tier saturates | Presence |
+| Conflict Resolution | OT needs a central transform authority; CRDT trades server simplicity for per-character metadata | Correctness |
 
 ## Common Interview Follow-ups
 

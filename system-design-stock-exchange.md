@@ -166,6 +166,8 @@ How the architecture grows from a pilot venue to a national exchange:
 - **Circuit breakers & price bands**: index-level halts and per-instrument bands convert crashes into auctions
 - **Idempotency keys** (ClOrdID + member) at the gateway; exactly-once fill identity = (symbol, symbol_seq)
 
+- **LMAX Disruptor**: Lock-free ring buffer with a single writer and mechanical-sympathy batching, the reference matching-engine pattern
+
 ## Key Design Decisions
 
 | Decision | Rationale | Trade-off |

@@ -141,6 +141,8 @@ channel:{channel_id}:typing -> SET with 8s TTLs (lossy, no persistence)
 
 ---
 
+- **Snowflake IDs**: 64-bit time-ordered ids (Twitter's format, used by Discord) give ordering and pagination without a database sequence
+
 ## Key Design Decisions
 
 1. **Stateful gateway over stateless LB**: sticky WS sessions with session store; resumable, cheaper than re-handshake storms

@@ -388,12 +388,14 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| WebSocket for Real-time | Applied in this system | Architecture + LLD |
-| Message Queue (Kafka) | Applied in this system | Architecture + LLD |
-| Redis for Presence | Applied in this system | Architecture + LLD |
-| End-to-End Encryption | Applied in this system | Architecture + LLD |
-| Fan-out for Group Messages | Applied in this system | Architecture + LLD |
-| Offline Message Storage | Applied in this system | Architecture + LLD |
+| WebSocket for Real-time | Persistent gateway connections with a resume cursor so reconnect replays only what was missed | Transport |
+| Message Queue (Kafka) | Partition key is the conversation id, which is what preserves per-conversation order | Fan-out |
+| Redis for Presence | TTL keys plus pub/sub; presence is intentionally lossy and never the source of truth | Presence |
+| End-to-End Encryption | Signal Double Ratchet for one-to-one and MLS (RFC 9420) for groups; the server never holds plaintext | Security |
+| Fan-out for Group Messages | Write into each member inbox below a size threshold, then fall back to read fan-out for large groups | Groups |
+| Offline Message Storage | Per-device queue with delivery receipts and a monotonic sync cursor | Delivery |
+
+| **Snowflake IDs** | Time-ordered 64-bit ids replace UUIDs, keeping per-conversation pagination cheap | Message store |
 
 ## Common Interview Follow-ups
 

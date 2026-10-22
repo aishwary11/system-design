@@ -293,12 +293,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Chunked File Upload | Applied in this system | Architecture + LLD |
-| Content-Addressable Storage | Applied in this system | Architecture + LLD |
-| Deduplication | Applied in this system | Architecture + LLD |
-| Version Control | Applied in this system | Architecture + LLD |
-| Conflict Resolution | Applied in this system | Architecture + LLD |
-| Pre-signed URLs | Applied in this system | Architecture + LLD |
+| Chunked File Upload | Five-to-eight MB parts with per-part presigned URLs and ETags; resume is a list of uploaded parts | Upload |
+| Content-Addressable Storage | Key is SHA-256 of the content, so identical bytes dedupe for free; refcount before deleting a blob | Blob store |
+| Deduplication | Chunk-level dedupe (Rabin/CDC) beats whole-file dedupe for VM images and backups | Storage layer |
+| Version Control | Immutable version objects plus one mutable manifest pointer; a version is never overwritten | Metadata |
+| Conflict Resolution | Last-writer-wins on the manifest guarded by an ETag precondition, decided per file rather than per chunk | Sync |
+| Pre-signed URLs | Time-boxed, scope-limited credentials so bytes never flow through the API tier | Access |
 
 ## Common Interview Follow-ups
 

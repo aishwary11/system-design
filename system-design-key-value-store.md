@@ -216,12 +216,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Consistent Hash Ring | Applied in this system | Architecture + LLD |
-| Vector Clocks | Applied in this system | Architecture + LLD |
-| Quorum Consensus | Applied in this system | Architecture + LLD |
-| Merkle Tree Anti-Entropy | Applied in this system | Architecture + LLD |
-| Gossip Protocol | Applied in this system | Architecture + LLD |
-| LSM Tree Storage | Applied in this system | Architecture + LLD |
+| Consistent Hash Ring | Ring plus virtual nodes; replication walks the ring N times from the key position | Partitioning |
+| Vector Clocks | Causal versioning to detect concurrent writes, as in Dynamo, with last-writer-wins applied as policy on top | Consistency |
+| Quorum Consensus | R + W > N gives read-your-writes; the quorum is tunable per operation | Reads/writes |
+| Merkle Tree Anti-Entropy | Compare hashes level by level to find divergent key ranges, then repair only those ranges | Repair |
+| Gossip Protocol | SWIM-style membership and failure detection converging in O(log N) rounds | Cluster |
+| LSM Tree Storage | Memtable plus immutable SSTables with compaction; RocksDB and LevelDB are the reference implementations | Storage |
 
 ## Common Interview Follow-ups
 

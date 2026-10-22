@@ -12,22 +12,26 @@
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
-3. [High-Level Architecture](#high-level-architecture)
-4. [Microservices](#microservices)
-5. [Database Design](#database-design)
-6. [Scaling Tiers](#scaling-tiers)
-7. [Key Techniques & Patterns](#key-techniques--patterns)
-8. [Key Design Decisions](#key-design-decisions)
-9. [Failure Modes & Recovery](#failure-modes--recovery)
-10. [Cost Estimation (400M requests/month)](#cost-estimation-400m-requestsmonth)
-11. [Trade-off Analysis](#trade-off-analysis)
-12. [Key Metrics to Monitor](#key-metrics-to-monitor)
-13. [Deep Dive Prompts](#deep-dive-prompts)
-14. [Common Interview Follow-ups (with answers)](#common-interview-follow-ups-with-answers)
-15. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
-16. [Micro-Details & Edge Cases](#micro-details--edge-cases)
-17. [Do's & Don'ts](#dos--donts)
-18. [References & Further Reading](#references--further-reading)
+3. [Capacity Model (Back-of-Envelope)](#capacity-model-back-of-envelope)
+4. [High-Level Architecture](#high-level-architecture)
+5. [Microservices](#microservices)
+6. [API & Interface Contracts](#api--interface-contracts)
+7. [Database Design](#database-design)
+8. [Security, Identity & Multi-Tenancy](#security-identity--multi-tenancy)
+9. [Scaling Tiers](#scaling-tiers)
+10. [Key Techniques & Patterns](#key-techniques--patterns)
+11. [Key Design Decisions](#key-design-decisions)
+12. [Failure Modes & Recovery](#failure-modes--recovery)
+13. [Disaster Recovery & Multi-Region](#disaster-recovery--multi-region)
+14. [Cost Estimation (400M requests/month)](#cost-estimation-400m-requestsmonth)
+15. [Trade-off Analysis](#trade-off-analysis)
+16. [Key Metrics to Monitor](#key-metrics-to-monitor)
+17. [Deep Dive Prompts](#deep-dive-prompts)
+18. [Common Interview Follow-ups (with answers)](#common-interview-follow-ups-with-answers)
+19. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
+20. [Micro-Details & Edge Cases](#micro-details--edge-cases)
+21. [Do's & Don'ts](#dos--donts)
+22. [References & Further Reading](#references--further-reading)
 
 </details>
 
@@ -47,7 +51,7 @@ Why it exists at all — the failure modes it removes:
 
 | Metric | Value | Why it matters |
 | :--- | :--- | :--- |
-| Requests | 25K/sec peak, ~400M/month | Streaming SSE, mostly chat and RAG |
+| Requests | ~25K concurrent streams, ~1.2K/sec peak, ~400M/month | Streaming SSE, mostly chat and RAG |
 | Added gateway overhead (p99) | < 20 ms (excluding model time) | The gateway must not be the latency |
 | Providers / models | 6 providers, ~30 routable models | Registry-driven, not code-driven |
 | Provider failover time | < 300 ms to secondary | A provider 5xx storm must not surface to users |
@@ -81,6 +85,53 @@ Why it exists at all — the failure modes it removes:
 - **Security**: provider keys live in KMS and never reach the client; prompts and responses are redacted and access-controlled
 - **Resilience**: one provider fully down, zero user-visible failures for non-pinned traffic; pinned traffic degrades with an explicit error
 - **Observability**: every request is traceable end-to-end (gateway span → provider span) with cost attributed
+
+## Capacity Model (Back-of-Envelope)
+
+The gateway is sized by **concurrent streams**, not request rate: a chat request lives for tens of seconds, so 1.2K rps is 25K open connections. Conflating the two is how a proxy ends up sized for 25K rps and falling over at 2K.
+
+| Step | Input | Derivation | Result |
+| :--- | :--- | :--- | :--- |
+| Requests | 400M/month | 2.59M seconds/month | **154/s average** |
+| Peak | 8x business-hours factor | 1.2K/s x ~21 s per stream | **1.2K/s, 25K concurrent** |
+| Tokens | 1.5K blended per request | 400M x 1.5K | **600B tokens/month** |
+| Inference spend | $1.17 blended per 1M tokens | 600B / 1M x $1.17 | **~$702K/month** |
+| Cache saving | 40% cacheable, 20% hit on those | 32M hits x 1.5K tokens | **~$56K/month** |
+| Ledger rows | 400M/month, ~300 B/row | 13.3M rows/day x 300 B | **4 GB/day** |
+| Fleet | 60 instances average | 25K streams / 60 | **~420 streams per instance** |
+
+```js
+const DAY = 86400;
+const SECONDS_PER_MONTH = 30 * DAY;
+const requestsPerMonth = 400e6;
+const peakRps = 1_200;
+const avgTokens = 1_500;
+const usdPerMillionTokens = 1.17;
+const cacheableShare = 0.4;
+const cacheHitOnCacheable = 0.2;
+const instances = 60;
+const avgStreamSec = 21;
+
+const avgRps = requestsPerMonth / SECONDS_PER_MONTH;
+const tokensPerMonth = requestsPerMonth * avgTokens;
+const spend = (tokensPerMonth / 1e6) * usdPerMillionTokens;
+const cacheHits = requestsPerMonth * cacheableShare * cacheHitOnCacheable;
+const cacheSaving = (cacheHits * avgTokens / 1e6) * usdPerMillionTokens;
+const concurrent = peakRps * avgStreamSec;
+const ledgerGbPerDay = (requestsPerMonth / 30 * 300) / 1e9;
+
+console.log('avg rps            :', avgRps.toFixed(0));
+console.log('peak factor        :', (peakRps / avgRps).toFixed(1) + 'x');
+console.log('tokens/month       :', (tokensPerMonth / 1e9).toFixed(0) + 'B');
+console.log('inference spend    :', '$' + Math.round(spend / 1000) + 'K');
+console.log('cache hits/month   :', (cacheHits / 1e6).toFixed(0) + 'M');
+console.log('cache saving       :', '$' + Math.round(cacheSaving / 1000) + 'K');
+console.log('concurrent streams :', concurrent);
+console.log('ledger GB/day      :', ledgerGbPerDay.toFixed(0));
+console.log('streams/instance   :', Math.round(concurrent / instances));
+```
+
+**What breaks first.** Stream *count*, not CPU: each open SSE connection holds a socket, buffers and a provider stream. The fleet autoscales on in-flight streams, and the quota layer is what stops one tenant's agent swarm from consuming the connection budget.
 
 ## High-Level Architecture
 
@@ -119,6 +170,51 @@ Why it exists at all — the failure modes it removes:
 | **Cache Warmer** | Replays top prompts per tenant to keep hot entries warm | Bounded QPS; respects quota (never starves live traffic) |
 | **Key Vault** | Provider credentials, per-tenant BYO keys, rotation | KMS-backed; short-lived material to the API tier |
 | **Console** | Tenant quotas, spend dashboards, routing policy, kill switches | Read-mostly over registry + ledger |
+
+## API & Interface Contracts
+
+One OpenAI-compatible surface across every provider. Apps send a **capability alias**, never a provider model id; the registry resolves it.
+
+| Method | Path | Purpose | Idempotency | Limit |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/v1/chat/completions` | Chat; `stream: true` returns SSE | `Idempotency-Key` | Tenant RPM/TPM/$ |
+| `POST` | `/v1/embeddings` | Embeddings, batched | `Idempotency-Key` | Tenant RPM/TPM |
+| `GET` | `/v1/models` | Aliases the tenant may call | none | 10 rps per key |
+| `GET` | `/v1/usage?from&to` | Usage and spend, cursor paginated | none | 5 rps per key |
+| `PUT` | `/admin/tenants/{id}/quotas` | Change quotas | `Idempotency-Key` + `If-Match` | 1 rps per admin |
+| `POST` | `/admin/killswitch` | Disable a route or provider now | `Idempotency-Key` | 1 rps per admin |
+
+```http
+POST /v1/chat/completions HTTP/1.1
+Authorization: Bearer sk-acme-7f3c...
+Idempotency-Key: 0f9c2a1e-4b7d-4f2a-9c1e-2b8a6d5e4c31
+Content-Type: application/json
+
+{ "model": "smart", "messages": [{"role":"user","content":"Summarise this ticket"}], "stream": true, "max_tokens": 512 }
+```
+
+On a mid-stream failure the stream ends with an explicit event rather than a truncated body, so the client can render the partial answer and offer a regenerate:
+
+```text
+event: delta
+data: {"text":"The ticket is about"}
+
+event: stream_error
+data: {"request_id":"req_9f2","code":"provider_disconnected","partial":true,"regenerate":true}
+```
+
+| Status | Meaning | Retryable | Client action |
+| :--- | :--- | :--- | :--- |
+| `400` | Context or schema overflow, rejected pre-flight | No | Shrink the prompt; never retry unchanged |
+| `401` | Bad or revoked key | No | Rotate the key |
+| `402` | Budget exhausted for the tenant/day | No | Raise the budget; do not retry in a loop |
+| `409` | `Idempotency-Key` reused with a different body | No | New key for a new intent |
+| `424` | Every candidate provider failed after failover | Yes, with backoff | Surface a retryable error; do not silently downgrade the model |
+| `429` | Quota or provider rate limit | Yes | Honour `Retry-After`; the gateway already drained the provider |
+| `499` | Client closed the stream | No | Bill what was generated; nothing to retry |
+| `503` | No healthy provider for the alias | Yes | Back off; the health view is the source of truth |
+
+**Semantics.** `Idempotency-Key` is scoped to `(tenant, key)` and retained for 24 h — longer than the client retry window. A replay returns the stored response (or the stored stream) with `Idempotent-Replay: true`. Usage is reported in the final SSE chunk when the provider supplies it, and reconciled from the ledger otherwise.
 
 ## Database Design
 
@@ -197,6 +293,31 @@ CREATE TABLE budget_alerts (
 **Redis** — quota counters (`rpm:{tenant}:{class}` sliding window, `tpm:{tenant}:{class}` token bucket, `usd:{tenant}:{day}`), circuit-breaker state per provider+model, and the exact-match cache lookup index (the vector index lives in a dedicated store).
 
 **Vector store** — prompt embeddings for the semantic cache, scoped by `(tenant, model_version, system_prompt_hash)` so a prompt-template change cannot serve stale answers.
+
+## Security, Identity & Multi-Tenancy
+
+| Principal | Authentication | Authorization |
+| :--- | :--- | :--- |
+| Application | Tenant API key | Scopes below, plus the tenant's model allowlist and region pin |
+| Tenant admin | OIDC + SSO | Quotas, keys and routing policy for that tenant only |
+| Platform operator | OIDC + hardware key | Kill switch, provider onboarding; every action audited |
+| Provider | mTLS / signed requests | Outbound only; keys injected per request from KMS |
+
+**API key design**
+
+- Format `sk-{tenant}-{key_id}-{secret}`. Only `SHA-256(secret)` is stored; the plaintext is shown once at creation. `key_id` gives O(1) lookup without a table scan, and a leaked key can be revoked by id.
+- **Scopes**: `chat`, `embed`, `usage:read`, `admin`. A key that only embeds cannot chat, even if the tenant can.
+- **Per-key allowlist**: a key can be restricted to a subset of the tenant's models — the blast radius of a leaked key is smaller than the tenant's bill.
+- **Rotation**: create a second key, deploy it, revoke the first after the client's `401`-free window. Alert on a 401 surge during rotation, and never rotate all keys in one step.
+- **Rate limits per key** as well as per tenant, so one compromised key cannot exhaust the tenant's RPM.
+
+**Secrets and prompts**
+
+- **BYO provider keys** are envelope-encrypted: a per-tenant data key wrapped by KMS, decrypted only inside the router process, never written to Redis, logs or traces.
+- **Prompt content is not logged by default.** Structured logs carry `request_id`, tenant, model, token counts and latency — never messages. Opt-in debugging goes to a short-TTL, access-controlled store.
+- **Redaction happens before egress**, per tenant policy; the redaction map is not persisted with the response.
+- **Admin actions** (quota change, kill switch, provider key rotation) require two-person approval and append to the audit log with before/after values.
+- **Residency is enforced at routing**, not requested by the client: a tenant pinned to `eu-west-1` cannot be routed to a US-only provider, even if it is the only healthy one — the request fails with `503` instead.
 
 ## Scaling Tiers
 
@@ -283,6 +404,20 @@ CREATE TABLE budget_alerts (
 | PII leaves in a prompt | Compliance breach | Redaction before egress, per-tenant policy, and prompt logging off by default |
 | Runaway agent loop | Unbounded spend | Per-key $/day quota, loop detection on repeated prompt hashes, hard kill switch |
 | Model retired by the vendor | Requests 404 | Registry marks it retired, aliases repoint automatically, and only pinned tenants see an explicit migration error |
+
+## Disaster Recovery & Multi-Region
+
+| Data class | Store | RPO | RTO | Strategy |
+| :--- | :--- | :--- | :--- | :--- |
+| Usage ledger | PostgreSQL + WAL, sync replica | 0 | 15 min | The ledger is the bill: write synchronously, replicate across zones, never buffer only in Kafka |
+| Quotas / policy | Registry, cached at edge | 0 | 5 min | Edge keeps last-known-good policy; a control-plane outage must not open the spend taps |
+| Provider keys | KMS, multi-region | 0 | 15 min | Replicated key material; rotation is dual-valid across regions |
+| Breaker / health state | In-memory + gossip | 30 s | 0 | Rebuilt from probes; stale breaker state is preferable to a cold start that hammers a dead provider |
+| Cache (exact + semantic) | Redis / vector store | Best effort | 30 min | Cold cache is a cost event, never a correctness event |
+
+**Regional failure behaviour.** Streaming is active-active per region: an in-flight stream on a failed region dies, but new requests route to the surviving region within the health-check window (< 30 s). The control plane is active-passive with a warm standby; if it is unreachable, the edge continues enforcing the last signed policy and the ledger writes queue locally — it does **not** fail open.
+
+**Provider-region loss** is a normal event, not a disaster: health marks the pool down, the router shifts within residency policy, and the breaker half-opens with a gradual weight ramp rather than a full flood. Drills quarterly: revoke a provider key in production-like staging, remove a region during a live stream, and replay a day of usage events to prove the ledger is idempotent on `request_id`.
 
 ## Cost Estimation (400M requests/month)
 
@@ -798,6 +933,58 @@ aborted.onToken('Here is a long answer that the user stops reading…', 2400);
 console.log('aborted stream  :', aborted.onClientAbort());
 ```
 
+### 7. API Key Lifecycle State Machine
+
+| From | Event | To | Guard |
+| :--- | :--- | :--- | :--- |
+| `provisioned` | first successful request | `active` | Signature valid, tenant not suspended |
+| `active` | rotation started | `rotating` | A replacement key exists and is deployed to at least one caller |
+| `rotating` | old key left unused 24 h | `grace` | No requests with the old `key_id` for the grace window |
+| `grace` | grace elapsed | `revoked` | Caller confirmed healthy on the new key |
+| `active` / `rotating` | leak or abuse | `revoked` | Incident ticket or spend anomaly |
+| `revoked` | retention elapsed | `deleted` | 30 days; ledger rows keep `key_id`, never the secret |
+
+Revocation is immediate and idempotent; a revoked key returns `401` on the next request, including mid-stream reconnect. The last admin key for a tenant cannot be revoked without naming a replacement — otherwise a rotation locks the tenant out of its own quota console.
+
+```js
+const KEY_TRANSITIONS = {
+  provisioned: { activate: 'active', revoke: 'revoked' },
+  active: { rotate: 'rotating', revoke: 'revoked' },
+  rotating: { finish: 'grace', revoke: 'revoked' },
+  grace: { complete: 'revoked' },
+  revoked: { purge: 'deleted' },
+  deleted: {},
+};
+
+class ApiKey {
+  constructor(id) { this.id = id; this.state = 'provisioned'; this.log = []; }
+  apply(event, ctx = {}) {
+    const next = KEY_TRANSITIONS[this.state]?.[event];
+    if (!next) return { ok: false, reason: `illegal: ${this.state} -/-> ${event}` };
+    if (event === 'rotate' && !ctx.replacementDeployed) return { ok: false, reason: 'replacement not deployed' };
+    if (event === 'revoke' && ctx.isLastAdminKey) return { ok: false, reason: 'last admin key' };
+    if (event === 'finish' && !(ctx.oldKeyIdleHours >= 24)) return { ok: false, reason: 'grace window not elapsed' };
+    this.state = next;
+    this.log.push(event);
+    return { ok: true, state: next };
+  }
+}
+
+const key = new ApiKey('key_7f3c');
+console.log(key.apply('activate'));
+console.log(key.apply('rotate', { replacementDeployed: false }));
+console.log(key.apply('rotate', { replacementDeployed: true }));
+console.log(key.apply('finish', { oldKeyIdleHours: 30 }));
+console.log(key.apply('complete'));
+
+const admin = new ApiKey('key_admin');
+admin.apply('activate');
+console.log(admin.apply('revoke', { isLastAdminKey: true }));
+console.log(admin.apply('revoke', { isLastAdminKey: false }));
+console.log('rotated key:', key.state, '| events:', key.log.join(' -> '));
+console.log('admin key  :', admin.state);
+```
+
 ## Micro-Details & Edge Cases
 
 Gateway work is 10% architecture and 90% these details. Each one has produced a wrong invoice, a duplicated answer, or an outage somewhere:
@@ -825,6 +1012,11 @@ Gateway work is 10% architecture and 90% these details. Each one has produced a 
 | **Cache keys include the system-prompt and tool-schema hashes** | A prompt-template change with an unchanged key serves stale answers |
 | **Normalize whitespace in cache keys, never semantics** | Aggressive normalization creates false hits that look plausible and are wrong |
 | **Log request ids, never key material or raw prompts** | Provider keys and prompts are the two things you cannot un-leak |
+| **Quota day boundaries are UTC, not tenant-local** | A tenant-local day lets a travelling org reset its budget twice; document UTC and show it in the console |
+| **Ramp provider weight back after recovery, don't restore it instantly** | A recovered provider gets the full backlog at once; the breaker should half-open at 5-10% weight |
+| **Protect a hot prompt against cache stampede** | Evicting one viral entry sends every concurrent request to the provider; coalesce recomputes per key |
+| **Idempotency TTL must exceed the client's retry window** | A 5-minute TTL against a 30-minute retry scheduler silently bills duplicates |
+| **Tokenizer version drift changes the bill** | A tokenizer upgrade can move counts 1-3%; pin the tokenizer version alongside the price version |
 
 ## Do's & Don'ts
 

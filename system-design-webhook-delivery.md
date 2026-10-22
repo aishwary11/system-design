@@ -201,6 +201,7 @@ CREATE TABLE events (
 | **SSRF egress guard** | Resolve, validate against private ranges, pin the IP for the request | Delivery Workers + LLD §4 |
 | **Payload offloading** | Body in object storage, reference in the message | ingest → S3 → attempts |
 | **Priority lanes** | Payment/security events get a separate topic + worker pool | Kafka topic design |
+| **Stripe-style HMAC signing** | Timestamp + raw body signed with the tenant secret; the receiver rejects stale timestamps, which is what makes replay attacks fail | Delivery Workers + LLD §1 |
 
 ## Key Design Decisions
 

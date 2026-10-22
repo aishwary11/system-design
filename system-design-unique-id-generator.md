@@ -140,6 +140,8 @@ table: id_ranges (only for the range-based variant)
 
 ---
 
+- **ULID / Sonyflake**: ULID is lexicographically sortable base32; Sonyflake trades bits for a longer lifetime
+
 ## Key Design Decisions
 
 1. **No coordination in minting path**: uniqueness from bit layout, not from a lock

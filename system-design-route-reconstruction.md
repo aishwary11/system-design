@@ -157,6 +157,8 @@ trip:{trip_id}:live        -> last N pings for online deviation scoring
 - **H3 spatial indexing**: Uber's hexagonal index at two resolutions (see `system-design-concepts.md` §48)
 - **Distributed rate limiting**: Spark executors share OSRM token budgets (Redis)
 - **Graceful degradation**: confidence labels gate every downstream use — a bad match never beats cleaned data
+- **HMM map matching (Valhalla Meili, OSRM)**: Viterbi over candidate road segments is the production formulation; Kalman smoothing is the preprocessing step
+- **Douglas-Peucker simplification**: collapses a polyline to an epsilon-bounded shape before storage or map calls
 
 ---
 

@@ -480,12 +480,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Atomic Seat Allocation (Redis DECR) | Applied in this system | Architecture + LLD |
-| Tatkal Quota Management | Applied in this system | Architecture + LLD |
-| Waitlist/RAC Priority Queue | Applied in this system | Architecture + LLD |
-| Saga for Distributed Transactions | Applied in this system | Architecture + LLD |
-| Event Sourced PNR Status | Applied in this system | Architecture + LLD |
-| Dynamic Fare Calculation | Applied in this system | Architecture + LLD |
+| Atomic Seat Allocation (Redis DECR) | Conditional decrement of a seat bucket in Redis with the database as final authority via a unique constraint | Booking |
+| Tatkal Quota Management | Separate quota pools opened at a fixed instant; the booking spike, not average load, drives the design | Booking |
+| Waitlist/RAC Priority Queue | Ordered waitlist per quota with promotion on cancellation; position is derived, never stored as a mutable counter | Booking |
+| Saga for Distributed Transactions | Book, pay, confirm with compensation; the PNR is the idempotency key across every step | Checkout |
+| Event Sourced PNR Status | Current status folded from an append-only log (booked, waitlisted, cancelled, charted) | Status |
+| Dynamic Fare Calculation | Versioned fare rules over distance, class and quota, auditable per ticket | Fares |
 
 ## Common Interview Follow-ups
 

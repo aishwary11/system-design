@@ -555,12 +555,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Content-Based Filtering | Applied in this system | Architecture + LLD |
-| CDN with Origin Shield | Applied in this system | Architecture + LLD |
-| Kafka for Event Processing | Applied in this system | Architecture + LLD |
-| Redis Cache for Recommendations | Applied in this system | Architecture + LLD |
-| Microservices with Service Mesh | Applied in this system | Architecture + LLD |
-| CQRS for Read/Write Separation | Applied in this system | Architecture + LLD |
+| Content-Based Filtering | Genre and tag vectors cover cold start and "because you watched" rows | Recommendations |
+| CDN with Origin Shield | Open Connect appliances inside ISPs, plus an origin shield that collapses cache-miss traffic | Delivery |
+| Kafka for Event Processing | Playback events into a streaming pipeline and then the warehouse for experimentation | Analytics |
+| Redis Cache for Recommendations | EVCache (memcached) holds precomputed rows and session state at millisecond latency | Serving |
+| Microservices with Service Mesh | Zuul-edge routing with Hystrix-style bulkheads and timeouts as the default | Platform |
+| CQRS for Read/Write Separation | Viewing-history writes are separated from the personalized-row reads they feed | Data |
 
 ## Common Interview Follow-ups
 

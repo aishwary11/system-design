@@ -303,12 +303,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Geospatial Query (PostGIS) | Applied in this system | Architecture + LLD |
-| Real-time Availability (Redis) | Applied in this system | Architecture + LLD |
-| License Plate OCR | Applied in this system | Architecture + LLD |
-| Payment Processing | Applied in this system | Architecture + LLD |
-| Slot Reservation with TTL | Applied in this system | Architecture + LLD |
-| Dynamic Pricing | Applied in this system | Architecture + LLD |
+| Geospatial Query (PostGIS) | ST_DWithin over a GiST index for "lots within 500 m", the query the app actually issues | Search |
+| Real-time Availability (Redis) | Per-lot counters updated by gate events and reconciled against the database nightly | Availability |
+| License Plate OCR | ALPR at entry and exit with a confidence threshold and a manual-review queue for low confidence | Access |
+| Payment Processing | Session-based charging with an idempotent settlement key per exit event | Payments |
+| Slot Reservation with TTL | Hold a slot for N minutes; expiry returns it to the pool without a sweeper race | Booking |
+| Dynamic Pricing | Occupancy-based multipliers per zone, capped so the price never exceeds the posted maximum | Pricing |
 
 ## Common Interview Follow-ups
 

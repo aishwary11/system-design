@@ -149,6 +149,8 @@ CREATE TABLE approvals (
 
 ---
 
+- **Progressive delivery**: Argo Rollouts and Flagger automate canary steps and metric gates instead of a hand-run deploy script
+
 ## Key Design Decisions
 
 1. **Immutable, content-addressed artifacts**: same SHA + config = same bytes; promotes (not rebuilds) across environments

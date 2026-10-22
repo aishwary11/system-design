@@ -374,12 +374,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Seat Locking with Redis | Applied in this system | Architecture + LLD |
-| Optimistic Concurrency Control | Applied in this system | Architecture + LLD |
-| Payment Saga Pattern | Applied in this system | Architecture + LLD |
-| Real-time Seat Updates (WebSocket) | Applied in this system | Architecture + LLD |
-| Idempotency Keys | Applied in this system | Architecture + LLD |
-| Rate Limiting for Flash Sales | Applied in this system | Architecture + LLD |
+| Seat Locking with Redis | SET seat:{id} {user} NX PX 300000 holds a seat, then the database confirms it | Booking |
+| Optimistic Concurrency Control | Version check or WHERE status = free; the loser retries a different seat instead of blocking | Booking |
+| Payment Saga Pattern | Lock, pay, confirm, with the lock released by compensation when payment fails | Checkout |
+| Real-time Seat Updates (WebSocket) | Seat-state deltas broadcast to viewers, who reconcile the full map on reconnect | UI |
+| Idempotency Keys | One hold and one confirm per attempt id, so a retried click cannot take two seats | API |
+| Rate Limiting for Flash Sales | A virtual waiting room (Ticketmaster and Queue-it document this) plus per-user caps | Edge |
 
 ## Common Interview Follow-ups
 

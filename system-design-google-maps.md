@@ -193,6 +193,8 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 ---
 
+| **S2 cell covering** | Google's spherical quadtree indexes POIs and road segments; a region query becomes a set of cell ranges | POI + routing |
+
 ## Key Design Decisions
 The choices that shape this architecture, and why each was made:
 

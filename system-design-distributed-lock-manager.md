@@ -145,6 +145,8 @@ storage.write(shard17, data)   -> must present fencing_token >= stored token
 
 ---
 
+- **Chubby / ZooKeeper / etcd**: Sequenced ephemeral nodes and leases are the production lock primitive; Redlock is the contested alternative
+
 ## Key Design Decisions
 
 1. **CP, not AP**: a lock service that answers during a partition can grant two holders — the one failure that must never happen

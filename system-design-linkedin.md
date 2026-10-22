@@ -217,6 +217,8 @@ How the architecture grows from MVP to global scale:
 
 ---
 
+- **Espresso / Venice / Pinot**: LinkedIn's document store, derived-data platform and OLAP store sit behind the feed
+
 ## Key Design Decisions
 
 1. **Fan-out on Read vs Write**: Read for regular users, Write for influencers

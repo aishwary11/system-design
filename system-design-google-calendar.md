@@ -155,6 +155,8 @@ CREATE INDEX idx_busy ON events (calendar_id, start_utc, end_utc)
 - **Outbox Pattern**: event changes published reliably to Kafka
 - **Delayed Job Scheduler**: reminders as future jobs (reuse of the timing-wheel doc)
 - **Idempotency**: RSVP updates keyed by (event, user, sequence) to survive retries
+- **RFC 5545 RRULE + IANA tzdb**: expand recurrences over a bounded window and resolve named zones, so DST and political boundary changes do not move meetings
+- **CalDAV (RFC 4791)**: the interop protocol third-party clients use instead of a bespoke sync API
 
 ---
 

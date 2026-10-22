@@ -142,6 +142,8 @@ lexicon hot terms             -> served from RAM (~100M entries)
 
 ---
 
+- **HNSW / ANN retrieval**: Graph-based approximate nearest neighbour search (the HNSW paper; FAISS, Lucene's vector search) sits beside BM25 for semantic recall
+
 ## Key Design Decisions
 
 1. **Custom postings over Elasticsearch at web scale**: ES is perfect to ~1B docs; beyond that bespoke delta-encoded postings win on cost

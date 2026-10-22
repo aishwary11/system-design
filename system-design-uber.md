@@ -361,12 +361,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Surge Pricing Algorithm | Applied in this system | Architecture + LLD |
-| ETA Calculation (Graph) | Applied in this system | Architecture + LLD |
-| Real-time Location Tracking | Applied in this system | Architecture + LLD |
-| Driver-Rider Matching | Applied in this system | Architecture + LLD |
-| Trip State Machine | Applied in this system | Architecture + LLD |
-| Geospatial Indexing | Applied in this system | Architecture + LLD |
+| Surge Pricing Algorithm | Per-cell multiplier from open requests versus available drivers, smoothed and capped to stop oscillation | Pricing |
+| ETA Calculation (Graph) | Road graph plus live traffic, with contraction hierarchies for fast shortest paths | ETA |
+| Real-time Location Tracking | Driver pings every few seconds into Kafka and an in-memory geo index; only the latest position is hot | Location |
+| Driver-Rider Matching | Batched assignment over nearby cells minimising pickup ETA, rather than first-come greedy matching | Matching |
+| Trip State Machine | Requested, accepted, arriving, in-trip, completed or cancelled, with idempotent transitions | Trips |
+| Geospatial Indexing | H3 hexagonal cells, created and open-sourced by Uber; uniform neighbour distance and 16 resolutions | Location + matching |
 
 ## Common Interview Follow-ups
 

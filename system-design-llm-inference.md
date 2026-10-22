@@ -161,6 +161,8 @@ How the serving platform grows from pilot to global scale:
 - **Quantization & sharding**: FP8/INT8 weights, tensor parallelism within a node, pipeline/stream parallelism across nodes
 - **Backpressure by admission control**: the scheduler admits only what fits (batch slots × KV budget); queue exposes position, nothing silently drops
 
+- **Continuous batching lineage**: Iteration-level scheduling was introduced by ORCA and popularised by vLLM's PagedAttention implementation
+
 ## Key Design Decisions
 
 | Decision | Rationale | Trade-off |

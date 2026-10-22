@@ -140,6 +140,8 @@ impressions  (user_id, item_id, ts, position, clicked, watched_pct)
 
 ---
 
+- **Two-tower retrieval (YouTube DNN)**: Separate user and item towers trained on the same objective, with item vectors precomputed for ANN
+
 ## Key Design Decisions
 
 1. **Retrieve-then-rank, always**: scoring 1B items is physically impossible in 150ms — the funnel is the only architecture

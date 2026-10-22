@@ -528,12 +528,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Adaptive Bitrate Streaming | Applied in this system | Architecture + LLD |
-| CDN Edge Caching | Applied in this system | Architecture + LLD |
-| WebSocket for Live Chat | Applied in this system | Architecture + LLD |
-| Kafka Event Streaming | Applied in this system | Architecture + LLD |
-| Token Bucket Rate Limiting | Applied in this system | Architecture + LLD |
-| Redis HyperLogLog for View Counts | Applied in this system | Architecture + LLD |
+| Adaptive Bitrate Streaming | HLS/DASH renditions switched on buffer level and throughput (BOLA-style rules), not on raw bandwidth alone | Playback |
+| CDN Edge Caching | Multi-CDN with popular content pre-positioned before a match; the 25M-concurrent story is a capacity-planning story | Delivery |
+| WebSocket for Live Chat | Room fan-out that is shed first under load; chat never competes with video for capacity | Engagement |
+| Kafka Event Streaming | Play events, ad impressions and QoE telemetry into the analytics pipeline | Analytics |
+| Token Bucket Rate Limiting | Per-token and per-IP limits at the edge to absorb client retry storms during kickoff | Edge |
+| Redis HyperLogLog for View Counts | About 12 KB per sketch estimates uniques within roughly 0.8% instead of storing exact viewer sets | Analytics |
 
 ## Common Interview Follow-ups
 

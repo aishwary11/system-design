@@ -12,22 +12,26 @@
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
-3. [High-Level Architecture](#high-level-architecture)
-4. [Microservices](#microservices)
-5. [Database Design](#database-design)
-6. [Scaling Tiers](#scaling-tiers)
-7. [Key Techniques & Patterns](#key-techniques--patterns)
-8. [Key Design Decisions](#key-design-decisions)
-9. [Failure Modes & Recovery](#failure-modes--recovery)
-10. [Cost Estimation (50 TB/day of logs)](#cost-estimation-50-tbday-of-logs)
-11. [Trade-off Analysis](#trade-off-analysis)
-12. [Key Metrics to Monitor](#key-metrics-to-monitor)
-13. [Deep Dive Prompts](#deep-dive-prompts)
-14. [Common Interview Follow-ups (with answers)](#common-interview-follow-ups-with-answers)
-15. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
-16. [Micro-Details & Edge Cases](#micro-details--edge-cases)
-17. [Do's & Don'ts](#dos--donts)
-18. [References & Further Reading](#references--further-reading)
+3. [Capacity Model (Back-of-Envelope)](#capacity-model-back-of-envelope)
+4. [High-Level Architecture](#high-level-architecture)
+5. [Microservices](#microservices)
+6. [API & Interface Contracts](#api--interface-contracts)
+7. [Database Design](#database-design)
+8. [Security, Identity & Multi-Tenancy](#security-identity--multi-tenancy)
+9. [Scaling Tiers](#scaling-tiers)
+10. [Key Techniques & Patterns](#key-techniques--patterns)
+11. [Key Design Decisions](#key-design-decisions)
+12. [Failure Modes & Recovery](#failure-modes--recovery)
+13. [Disaster Recovery & Multi-Region](#disaster-recovery--multi-region)
+14. [Cost Estimation (50 TB/day of logs)](#cost-estimation-50-tbday-of-logs)
+15. [Trade-off Analysis](#trade-off-analysis)
+16. [Key Metrics to Monitor](#key-metrics-to-monitor)
+17. [Deep Dive Prompts](#deep-dive-prompts)
+18. [Common Interview Follow-ups (with answers)](#common-interview-follow-ups-with-answers)
+19. [Low-Level Design (LLD) - Algorithms & Data Structures](#low-level-design-lld---algorithms--data-structures)
+20. [Micro-Details & Edge Cases](#micro-details--edge-cases)
+21. [Do's & Don'ts](#dos--donts)
+22. [References & Further Reading](#references--further-reading)
 
 </details>
 
@@ -50,7 +54,7 @@ The hard engineering is therefore: a **cardinality governor** (the classic way o
 | Metric | Value | Why it matters |
 | :--- | :--- | :--- |
 | Emitting instances | ~12K per region | Fluent Bit / OTel sidecars and SDKs |
-| Metric samples | 8M/sec peak, ~25B/day | Highest durability requirement |
+| Metric samples | ~1.3M/s average, 8M/s peak, ~115B/day | Highest durability requirement |
 | Active metric series | 20M (cap 4M per metric) | Cardinality is the cost of metrics |
 | Log volume | 50 TB/day raw (~6 TB compressed) | Storage and index cost dominate |
 | Spans per day | 1.5B emitted, ~5% retained (all errors kept) | Tail sampling is what makes traces affordable |
@@ -84,6 +88,51 @@ The hard engineering is therefore: a **cardinality governor** (the classic way o
 - **Cost**: bounded per GB ingested, with per-tenant attribution and a self-observability dashboard
 - **Availability**: ingestion 99.99%; query 99.9% (degraded "recent data only" > total outage)
 - **Self-observation**: the pipeline monitors itself with the same stack it serves
+
+## Capacity Model (Back-of-Envelope)
+
+The sample rate is derived from series count and scrape interval, not asserted. **20M series at a 15 s scrape is 115B samples/day**, five times the ~25B figure this doc previously quoted; the retention planner below already assumed 115B, which is how the inconsistency surfaced.
+
+| Step | Input | Derivation | Result |
+| :--- | :--- | :--- | :--- |
+| Integration points | ~30K instances | 12K per region x 3 regions | 30K |
+| Active series | ~670 series per instance | emitted metrics, labels per series | **20M** |
+| Samples | 20.1M x 86,400/15 | one sample per series per scrape | **115.8B/day, 1.34M/s** |
+| Peak | scrape alignment + bursts | all series scraped near the same second | **8M/s (6x average)** |
+| Raw metric bytes | 1.7 B/sample (Gorilla) | 115.8B x 1.7 B | **197 GB/day** |
+| Raw tier | 15-day retention | 197 GB x 15 | **3.0 TB** |
+| Logs | 50 TB/day raw | 8x compression | **579 MB/s avg, 6.3 TB/day stored** |
+| Traces | 1.5B spans/day, 5% retained | 75M x ~2 KB | **150 GB/day, 4.5 TB/30 days** |
+
+```js
+const DAY = 86400;
+const instances = 30_000;
+const seriesPerInstance = 670;
+const scrapeSec = 15;
+const series = instances * seriesPerInstance;
+const samplesPerDay = series * (DAY / scrapeSec);
+const avgPerSec = samplesPerDay / DAY;
+const peakPerSec = 8e6;
+const bytesPerSample = 1.7;
+const rawGbPerDay = (samplesPerDay * bytesPerSample) / 1e9;
+const logsTbPerDay = 50;
+const logsCompressedTb = logsTbPerDay / 8;
+const spansPerDay = 1.5e9;
+const retainedShare = 0.05;
+const spanBytes = 2_000;
+const traceTb30d = (spansPerDay * retainedShare * spanBytes * 30) / 1e12;
+
+console.log('active series     :', (series / 1e6).toFixed(0) + 'M');
+console.log('samples/day       :', (samplesPerDay / 1e9).toFixed(1) + 'B');
+console.log('average samples/s :', (avgPerSec / 1e6).toFixed(2) + 'M');
+console.log('peak/average      :', (peakPerSec / avgPerSec).toFixed(1) + 'x');
+console.log('raw GB/day        :', rawGbPerDay.toFixed(0));
+console.log('raw TB (15d)      :', ((rawGbPerDay * 15) / 1e3).toFixed(1));
+console.log('logs TB/day stored:', logsCompressedTb.toFixed(1));
+console.log('trace TB (30d)    :', traceTb30d.toFixed(1));
+```
+
+**What breaks first.** Ingest samples per second, then active series in memory. That is why the cardinality governor sits before the write path and why queries are capped by series and sample count rather than by timeout alone.
 
 ## High-Level Architecture
 
@@ -122,6 +171,41 @@ The hard engineering is therefore: a **cardinality governor** (the classic way o
 | **Query Frontend** | Query parsing, rollup selection, per-tenant fair scheduling, caching | Read path is where cost and latency are won |
 | **Alert Evaluator** | Rule evaluation every 15 s, SLO burn-rate windows, dedupe, silences | Runs against the same rollups as dashboards |
 | **Control Plane** | Tenants, quotas, cardinality overrides, retention policies, rule config | GitOps-backed; every change is auditable |
+
+## API & Interface Contracts
+
+Ingest is OTLP over gRPC/HTTP; query is a narrow, explicitly limited HTTP API. Every response is bounded by series and sample caps, because an unbounded query is an outage with a nice UI.
+
+| Method | Path | Purpose | Auth | Limit |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/v1/metrics` | OTLP metrics (protobuf, gzip) | Tenant ingest token | 10 MB/s per tenant |
+| `POST` | `/v1/logs` | OTLP logs | Tenant ingest token | 20 MB/s per tenant |
+| `POST` | `/v1/traces` | OTLP spans | Tenant ingest token | 50 MB/s per tenant |
+| `GET` | `/api/v1/query_range` | PromQL range query | OIDC + tenant scope | 11K samples, 10K series |
+| `GET` | `/api/v1/logs` | Log search | OIDC + tenant scope | 5K lines, 30-day window |
+| `GET` | `/api/v1/traces/{id}` | One trace by id | OIDC + tenant scope | 10 rps |
+| `PUT` | `/api/v1/tenants/{id}/limits` | Cardinality/retention overrides | Admin | `Idempotency-Key` + `If-Match` |
+
+OTLP's `partial_success` is the contract for "accepted some, rejected some" — a collector must not treat it as success:
+
+```json
+{
+  "partialSuccess": {
+    "rejectedDataPoints": 412,
+    "errorMessage": "cardinality cap: http_requests_total exceeded 4M series; label user_id coalesced"
+  }
+}
+```
+
+| Status | Meaning | Retryable | Client action |
+| :--- | :--- | :--- | :--- |
+| `400` | Malformed protobuf or bad label set | No | Fix the producer; do not loop |
+| `413` | Batch over the size limit | No | Split the batch |
+| `422` | Cardinality cap hit, partial accept | No | Drop or coalesce the label; the response names it |
+| `429` | Tenant ingest rate exceeded | Yes | Exponential backoff with jitter; never retry in a tight loop |
+| `503` | Pipeline backpressure | Yes | Buffer locally with a bounded queue, then shed by priority |
+
+**Query semantics.** A step smaller than the rollup resolution is rejected, not silently rounded; a query whose estimated scan exceeds the cap returns `422` with the estimate so the user can narrow the window instead of waiting for a timeout.
 
 ## Database Design
 
@@ -214,6 +298,24 @@ CREATE TABLE trace_decisions (
 
 **Kafka topics** — `signals.metrics`, `signals.logs`, `signals.traces` (raw ingest, tiered storage for replay), `rollups` (downsampled output), `alerts` (fired notifications), `config.events` (policy and rule changes).
 
+## Security, Identity & Multi-Tenancy
+
+A telemetry store is the most sensitive database in most companies: logs contain tokens, PII and customer data, often without anyone deciding to put them there.
+
+| Role | Read own tenant | Read all tenants | Change limits | Run retention/delete |
+| :--- | :--- | :--- | :--- | :--- |
+| Viewer | Yes | No | No | No |
+| Responder | Yes | No | No | No |
+| Tenant admin | Yes | No | Own tenant | Own tenant |
+| Platform admin | Yes | Yes, audited | Yes | Yes |
+
+- **Tenant identity is injected, never trusted.** The ingest gateway stamps `tenant_id` from the authenticated token; a producer cannot label data into another tenant. Queries get the same injected scope, so a missing label can never widen a result set.
+- **Query-time redaction.** A field policy (e.g. `email`, `authorization`, `card.*`) is applied at read, not only at write; historic data written before a policy existed is still protected.
+- **Query audit.** Every query logs requester, tenant, expression, time range, bytes scanned and rows returned. Reading another team's logs is a privileged action, and the audit trail is the only way to prove who did it.
+- **Encryption.** mTLS between collector tiers; KMS at rest with per-tenant keys for regulated tenants; object-store lifecycle rules never bypass encryption.
+- **Deletion.** A DSAR or offboarding request deletes by `tenant_id` plus time range and rewrites affected parquet partitions; a legal hold suppresses deletion and is itself audited.
+- **Ingest tokens are per tenant, per signal and revocable**, so a leaked collector token can be killed without rotating the fleet.
+
 ## Scaling Tiers
 
 ### Tier 1: 1K - 10K Users
@@ -299,13 +401,27 @@ CREATE TABLE trace_decisions (
 | Query stampede after an incident | Dashboards time out | Query frontend caching, per-tenant concurrency caps, and automatic downgrade to coarser rollups under load |
 | Redaction gap leaks a secret into a log | Credential exposure | Redaction at the collector (closest to the producer), plus a continuous scanner that samples stored logs for secret patterns |
 
+## Disaster Recovery & Multi-Region
+
+| Data class | Store | RPO | RTO | Strategy |
+| :--- | :--- | :--- | :--- | :--- |
+| Metrics (raw) | Kafka + TSDB, multi-AZ | 5 min | 1 h | Kafka RF=3, regional TSDB; the other region keeps ingesting its own data |
+| Logs | Kafka + object store | 5 min | 1 h | Cross-region replication of the compressed objects; query degrades to the surviving region |
+| Traces | Kafka + object store | 30 s | 1 h | Tail sampler is regional; a lost region loses its buffer, not the whole trace store |
+| Alert rules / SLOs | Git + control plane | 0 | 5 min | GitOps is the source of truth; rules can be re-applied from the repo without the control plane |
+| Retention / deletion audit | Append-only store | 0 | 15 min | Replicated synchronously; deletion evidence must survive the region |
+
+**The system must survive the outage it is observing.** Alert evaluation runs in both regions, deduplicated by alert fingerprint, and a region that cannot reach the other keeps evaluating locally. An **out-of-band path** — a small independent watchdog with static thresholds and its own pager integration — fires when the pipeline itself stops reporting; a dead-man's switch on the ingest heartbeat is the last line of defence. Without it, the failure mode is silence, which looks exactly like a healthy system.
+
+**Drills.** Quarterly: kill one region's collectors (the other must absorb within capacity), corrupt a TSDB block (queries must degrade to the previous tier), and delete the alert rule cache (GitOps must restore it without human intervention). Restore of object-store partitions is tested against a known trace id, not just a byte count.
+
 ## Cost Estimation (50 TB/day of logs)
 
 | Component | Monthly Cost |
 | :--- | :--- |
 | Collector fleet (DaemonSets + gateway, ~150 pods) | $7,400 |
 | Kafka (ingest buffers, tiered storage) | $5,200 |
-| TSDB compute + SSD (25B samples/day, 20M series) | $12,600 |
+| TSDB compute + SSD (115B samples/day, 20M series) | $12,600 |
 | Log object storage (1.5 PB raw, ~180 TB compressed + index) | $4,900 |
 | Trace storage (1.5B spans → ~5% retained) | $3,100 |
 | Query compute (dashboard + ad-hoc, autoscaled) | $6,800 |
@@ -354,7 +470,7 @@ Two numbers explain nearly the whole bill: **retained log bytes** and **active s
 2. **Design the trace assembly buffer:** keys, deadlines, memory accounting, and what you drop first.
 3. **Cardinality explosion:** a new label doubles your series count overnight — walk the detection, mitigation and permanent fix.
 4. **How do you make 50 TB/day of logs searchable for a year** without indexing all of it?
-5. **Explain TSDB compression** (delta-of-delta timestamps, XOR floats) and why it matters at 25B samples/day.
+5. **Explain TSDB compression** (delta-of-delta timestamps, XOR floats) and why it matters at 115B samples/day.
 6. **Design the shedding order** under ingest saturation and justify each step in terms of user harm.
 7. **How do multi-window burn-rate alerts work**, and why do single-window thresholds either flap or miss?
 8. **How do you attribute observability cost per team**, and what do you do with a team whose logs dominate the bill?
@@ -729,7 +845,7 @@ console.table(rows);
 const total = rows.reduce((s, r) => s + r.usdPerMonth, 0);
 console.log('storage/month across tiers: $' + total);
 
-// Keeping 20M series at 1-second resolution for two years would be absurd by comparison.
+// Keeping 20M series at 15-second resolution for two years would be absurd by comparison.
 const naive = (20_000_000 * (86400 / 15) * 730 * BYTES_PER_SAMPLE) / 1e9 * 0.24;
 console.log('naive "keep everything raw for 2y" would cost: $' + Math.round(naive) + '/month');
 console.log('downsampling saves:', (naive / total).toFixed(1) + 'x');
@@ -804,6 +920,47 @@ for (let i = 0; i < 100; i++) slo.record({ tsMs: 10_000_000 + i * 120_000, total
 console.log('six hours later:', slo.evaluate(10_000_000 + 99 * 120_000));
 ```
 
+### 7. Alert Lifecycle State Machine
+
+| From | Event | To | Guard |
+| :--- | :--- | :--- | :--- |
+| `inactive` | condition true | `pending` | Expression evaluates true for at least one evaluation |
+| `pending` | `for:` elapsed | `firing` | Continuously true for the whole `for:` duration; a single false resets to `inactive` |
+| `pending` | condition false | `inactive` | Flap suppressed without notifying |
+| `firing` | condition false | `resolved` | Send one resolution notification |
+| `firing` | repeat interval | `firing` | Re-notify only every `repeat_interval`, not every evaluation |
+| any | silence / inhibition | unchanged | Silence suppresses notification but **not** evaluation or history |
+
+```js
+const ALERT_TRANSITIONS = {
+  inactive: { raise: 'pending' },
+  pending: { confirm: 'firing', clear: 'inactive' },
+  firing: { resolve: 'resolved', repeat: 'firing' },
+  resolved: { raise: 'pending' },
+};
+
+class AlertState {
+  constructor(forMs) { this.state = 'inactive'; this.forMs = forMs; this.since = null; }
+  apply(event, nowMs = 0, ctx = {}) {
+    const next = ALERT_TRANSITIONS[this.state]?.[event];
+    if (!next) return { ok: false, reason: `illegal: ${this.state} -/-> ${event}` };
+    if (event === 'confirm' && nowMs - this.since < this.forMs) return { ok: false, reason: 'for: not elapsed' };
+    if (event === 'resolve' && ctx.absent) return { ok: false, reason: 'no data is not recovery' };
+    if (event === 'raise') this.since = nowMs;
+    this.state = next;
+    return { ok: true, state: next, notify: next === 'firing' || next === 'resolved' };
+  }
+}
+
+const alert = new AlertState(5 * 60 * 1000);
+console.log(alert.apply('raise', 0));
+console.log(alert.apply('confirm', 60_000));
+console.log(alert.apply('confirm', 300_000));
+console.log(alert.apply('resolve', 360_000, { absent: true }));
+console.log(alert.apply('resolve', 360_000, { absent: false }));
+console.log('state:', alert.state);
+```
+
 ## Micro-Details & Edge Cases
 
 Telemetry pipelines fail in the details. Every row below is a real reason a chart went blank, an alert never fired, or a bill doubled:
@@ -832,6 +989,12 @@ Telemetry pipelines fail in the details. Every row below is a real reason a char
 | **Persistent queues only on the gateway tier** | Disk queues on every node turn a telemetry spike into a fleet-wide disk event |
 | **Tenant as a label with per-tenant budgets; separate indexes only for regulated tenants** | Isolation by budget is cheap; isolation by stack multiplies cost by the tenant count |
 | **Record what was dropped, by reason, on a dashboard users can see** | Silent sampling is indistinguishable from a broken service |
+| **Decide the out-of-order window explicitly** | Accepting arbitrarily old samples rewrites closed blocks; rejecting all late samples drops the retries that matter — a 1-2 h window plus a counter is the honest compromise |
+| **Deduplicate HA scraper pairs** | Two Prometheis scraping the same targets double every sample unless the replica label is dropped or deduplicated at query |
+| **Partition ingest by tenant hash, not tenant id** | One very large tenant creates one very hot partition; hashing spreads it and keeps ordering at the series level |
+| **Cap exemplars and trace-id labels** | An exemplar per request is a second cardinality explosion hiding inside the trace link |
+| **Keep a rename alias table for metrics** | Renaming a metric creates a new series and silently breaks every dashboard and alert that used the old name |
+| **Back off with jitter on ingest 429** | Collectors retrying in lockstep turn a rate limit into a self-inflicted DDoS on the gateway |
 
 ## Do's & Don'ts
 

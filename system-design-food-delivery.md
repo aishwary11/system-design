@@ -320,12 +320,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Haversine Distance Calculation | Applied in this system | Architecture + LLD |
-| Geospatial Indexing (Geohash) | Applied in this system | Architecture + LLD |
-| Real-time GPS Tracking | Applied in this system | Architecture + LLD |
-| Dynamic Surge Pricing | Applied in this system | Architecture + LLD |
-| Order State Machine | Applied in this system | Architecture + LLD |
-| Route Optimization | Applied in this system | Architecture + LLD |
+| Haversine Distance Calculation | O(1) great-circle filter before any road-network ETA; cheap enough to rank hundreds of candidates per order | Dispatch |
+| Geospatial Indexing (Geohash) | Prefix cells (9q8yy...) with neighbour expansion; Zomato describes cell/subzone serviceability, and Uber's H3 is the hexagonal alternative | Discovery + dispatch |
+| Real-time GPS Tracking | Rider pings every 4-5 s over MQTT/WebSocket into Kafka and an in-memory geo index; only the latest position is hot | Tracking |
+| Dynamic Surge Pricing | Delivery-fee multiplier per cell from open orders versus available riders, smoothed and capped to avoid oscillation | Pricing |
+| Order State Machine | Placed, accepted, preparing, picked up, delivered; each transition emits an event and is idempotent on replay | Order Service |
+| Route Optimization | Batch several orders per rider (DoorDash publishes this as DeepRed) plus OSRM/Valhalla for road ETA | Dispatch |
 
 ## Common Interview Follow-ups
 

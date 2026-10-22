@@ -150,6 +150,8 @@ geo:{region}:topads   -> precomputed candidates for hot queries
 - **Exactly-once semantics**: ledger as the boundary; upstream at-least-once + dedup at sink
 - **Fraud Ring Detection**: streaming click-graph clustering (reuses fraud-detection doc)
 - **Count-Min Sketch**: heavy-hitter detection for click floods per advertiser
+- **GSP vs VCG (Google, Meta)**: GSP ranks by bid x quality and charges the next price; VCG is truthful in theory but harder to explain to advertisers
+- **Quality score as a learned prior**: a relevance model lets a lower bid outrank a higher one, aligning the auction with user value
 
 ---
 

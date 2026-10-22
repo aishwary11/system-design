@@ -154,6 +154,8 @@ sandbox:lang:{lang}     -> warm microVM pool (per-language)
 
 ---
 
+- **nsjail / Firecracker isolation**: seccomp plus namespaces, or a microVM per submission, so untrusted code cannot escape
+
 ## Key Design Decisions
 
 1. **microVM per run, not per user session**: maximum isolation for actively hostile payloads

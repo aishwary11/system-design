@@ -536,12 +536,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Priority Queue (Binary Heap) | Applied in this system | Architecture + LLD |
-| Lease-Based Worker Coordination | Applied in this system | Architecture + LLD |
-| Jitter for Anti-Thundering Herd | Applied in this system | Architecture + LLD |
-| Cron Expression Parsing | Applied in this system | Architecture + LLD |
-| Dead Letter Queue | Applied in this system | Architecture + LLD |
-| Idempotent Job Execution | Applied in this system | Architecture + LLD |
+| Priority Queue (Binary Heap) | Min-heap keyed by run_at per shard, O(log n) insert/pop; timing wheels beat it when most delays are short | Scheduler core |
+| Lease-Based Worker Coordination | Worker leases the job with a TTL and heartbeats; a crashed worker's lease expires and the job is re-queued | Worker fleet |
+| Jitter for Anti-Thundering Herd | Full jitter (random between 0 and cap) on retry and availability delays, per AWS's backoff guidance | Retry path |
+| Cron Expression Parsing | Five/six-field cron to next-run with DST-safe local-time rules; Quartz and Unix cron differ on day-of-week and DST | Recurring jobs |
+| Dead Letter Queue | Jobs past max attempts land in a DLQ with the failure class, replayable once the bug is fixed | Failure handling |
+| Idempotent Job Execution | Deterministic key (job type, entity, window) plus upsert, so redelivery is a no-op | Worker + DB |
 
 ## Common Interview Follow-ups
 

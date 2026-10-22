@@ -143,6 +143,8 @@ tree:{post_id}:{page}     -> cached comment tree page (TTL 30s)
 
 ---
 
+- **Wilson score ranking**: Lower-bound confidence sort for comments, so a 9/10 with 10 votes does not beat a 9.5/10 with 10,000
+
 ## Key Design Decisions
 
 1. **Cassandra for comments/votes**: write-heavy, huge volume, query-by-key access patterns

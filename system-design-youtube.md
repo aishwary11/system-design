@@ -385,12 +385,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Video Transcoding Pipeline | Applied in this system | Architecture + LLD |
-| Adaptive Bitrate (HLS/DASH) | Applied in this system | Architecture + LLD |
-| CDN for Video Delivery | Applied in this system | Architecture + LLD |
-| DAG-based Task Scheduling | Applied in this system | Architecture + LLD |
-| Redis for Hot Videos | Applied in this system | Architecture + LLD |
-| Elasticsearch for Search | Applied in this system | Architecture + LLD |
+| Video Transcoding Pipeline | A DAG per upload: demux, per-rendition transcode, package to HLS/DASH, then publish | Pipeline |
+| Adaptive Bitrate (HLS/DASH) | Segment-based switching with per-title encoding ladders instead of one fixed ladder | Playback |
+| CDN for Video Delivery | Edge caches for the head and origin for the long tail; bandwidth, not storage, dominates cost | Delivery |
+| DAG-based Task Scheduling | Per-node retries with idempotent outputs keyed by (video, rendition) | Pipeline |
+| Redis for Hot Videos | View counters and hot metadata in memory, flushed to the database in batches | Serving |
+| Elasticsearch for Search | Inverted index over titles, descriptions and captions | Search |
 
 ## Common Interview Follow-ups
 

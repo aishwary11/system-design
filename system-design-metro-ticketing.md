@@ -311,12 +311,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| QR Code Generation | Applied in this system | Architecture + LLD |
-| Tap-In/Tap-Out State Machine | Applied in this system | Architecture + LLD |
-| Fare Calculation by Distance | Applied in this system | Architecture + LLD |
-| Real-time Train Tracking | Applied in this system | Architecture + LLD |
-| Dynamic Seat Allocation | Applied in this system | Architecture + LLD |
-| Payment Gateway Integration | Applied in this system | Architecture + LLD |
+| QR Code Generation | HMAC-signed, short-TTL QR with a nonce so a screenshot cannot be replayed at the gate | Ticketing |
+| Tap-In/Tap-Out State Machine | One open journey per card or QR; duplicate taps are idempotent and resolve to the same journey | Gates |
+| Fare Calculation by Distance | Zone or station-pair table with daily caps and discounts, versioned and auditable | Fares |
+| Real-time Train Tracking | GTFS-Realtime vehicle positions and trip updates feeding platform displays | Operations |
+| Dynamic Seat Allocation | Only for reserved intercity services; metro is turn-up-and-go and has no seat inventory | Seating |
+| Payment Gateway Integration | Open-loop EMV contactless (cEMV) alongside closed-loop cards, with batched settlement | Payments |
 
 ## Common Interview Follow-ups
 

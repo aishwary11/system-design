@@ -229,12 +229,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Consistent Hashing | Applied in this system | Architecture + LLD |
-| LRU/LFU Eviction | Applied in this system | Architecture + LLD |
-| Cache Stampede Prevention | Applied in this system | Architecture + LLD |
-| Write-Through/Write-Behind | Applied in this system | Architecture + LLD |
-| Redis Cluster (Hash Slots) | Applied in this system | Architecture + LLD |
-| TTL-based Expiration | Applied in this system | Architecture + LLD |
+| Consistent Hashing | Hash ring with virtual nodes (Ketama); adding one node moves about 1/N of keys, not all of them | Cluster layout |
+| LRU/LFU Eviction | Hash map + intrusive list gives O(1) LRU; Redis approximates LFU with frequency counters and random sampling | Memory policy |
+| Cache Stampede Prevention | Single-flight request coalescing plus probabilistic early expiry (XFetch) stops N clients recomputing one hot key | Read path |
+| Write-Through/Write-Behind | Write-through keeps cache and store in step; write-behind batches and risks losing the tail on a crash | Write path |
+| Redis Cluster (Hash Slots) | 16,384 slots, CRC16(key) mod 16384; multi-key commands need hash tags to stay in one slot | Sharding |
+| TTL-based Expiration | Lazy expiry on read plus periodic sampling; a TTL alone does not bound memory if the key is never read again | Memory |
 
 ## Common Interview Follow-ups
 

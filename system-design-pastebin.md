@@ -153,6 +153,8 @@ How the architecture grows from MVP to global scale:
 - **DynamoDB Auto-scaling**: On-demand capacity for write spikes
 - **S3 Lifecycle**: Move old pastes to IA/Glacier for cost savings
 - **Read-Heavy Optimization**: CDN + Redis cache for 99% read hits
+- **Object storage + lifecycle (S3-style)**: paste bodies live in object storage under a TTL rule; the database holds only metadata and ownership
+- **Content-hash dedupe**: identical pastes share one blob while keeping distinct public ids
 
 ---
 

@@ -290,12 +290,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Token Bucket Algorithm | Applied in this system | Architecture + LLD |
-| Sliding Window Counter | Applied in this system | Architecture + LLD |
-| Fixed Window Counter | Applied in this system | Architecture + LLD |
-| Distributed Rate Limiting (Redis) | Applied in this system | Architecture + LLD |
-| Rate Limit Headers | Applied in this system | Architecture + LLD |
-| Graceful Degradation | Applied in this system | Architecture + LLD |
+| Token Bucket Algorithm | Capacity plus refill rate; permits bursts up to the bucket, the model Stripe documents for its API | Core |
+| Sliding Window Counter | Two adjacent fixed windows weighted by overlap, the approximation Cloudflare describes | Core |
+| Fixed Window Counter | Cheapest option, but allows a double burst across the window boundary | Core |
+| Distributed Rate Limiting (Redis) | Lua for atomic check-and-decrement; local buckets with periodic sync cut the per-request round trip | Cluster |
+| Rate Limit Headers | RateLimit-Limit/Remaining/Reset plus Retry-After on 429, so clients can back off correctly | API |
+| Graceful Degradation | Fail open for reads, fail closed for auth and payments; a local fallback when Redis is unreachable | Resilience |
 
 ## Common Interview Follow-ups
 

@@ -19,6 +19,8 @@
 High-Level Architecture → Low-Level Design → database design → scaling tiers → interview prep,
 each with an **embedded diagram image** plus a **self-contained interactive HTML** (pan/zoom, search, dark/light, export).
 
+🌍 **Industry concept map:** [industry-concepts.md](industry-concepts.md) — the named technique behind each design (Uber's H3, Google's S2, Stripe's GCRA and ledger, Kafka's LinkedIn origin) with primary sources.
+
 <img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=53+system+designs+with+interactive+diagrams;15+technology+%26+interview+guides+with+runnable+examples;42+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
 
 [Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Trust & Safety](#trust-safety) · [AI Infra](#ai-infra) · [Communities](#communities) · [Primitives](#primitives) · 🧰 [Guides](#feature-guides) · ☁️ [Cloud](#cloud-guide) · 🤖 [AI](#agentic-ai-guide) · 🛠️ [DevOps](#devops-guide) · 📚 [Resources](#resources-guide) · ❓ [Q&A](#interview-qa-guide) · 🌐 [Networking](#networking-guide) · 🧠 [Operating Systems](#operating-systems-guide) · 🗓️ [Roadmap](#roadmap-guide)

@@ -380,12 +380,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Inventory Management | Applied in this system | Architecture + LLD |
-| Distributed Transactions (Saga) | Applied in this system | Architecture + LLD |
-| Redis Session Cache | Applied in this system | Architecture + LLD |
-| Elasticsearch Product Search | Applied in this system | Architecture + LLD |
-| CDN for Product Images | Applied in this system | Architecture + LLD |
-| Payment Gateway Integration | Applied in this system | Architecture + LLD |
+| Inventory Management | Reserve-then-confirm with a TTL hold; oversell is prevented by a conditional decrement, not by a read-then-write | Inventory Service |
+| Distributed Transactions (Saga) | Order, payment and inventory as compensatable steps, with the compensating action designed before the forward one | Checkout |
+| Redis Session Cache | Signed session id with server-side state so carts and login survive an app restart | Web tier |
+| Elasticsearch Product Search | Inverted index plus facets; catalog changes reach it through CDC or an outbox, never a dual write | Search |
+| CDN for Product Images | Content-hashed immutable URLs with long TTLs, so a change is a new URL rather than a purge | Media |
+| Payment Gateway Integration | Tokenized card plus an idempotency key per checkout attempt, the Stripe pattern | Payments |
 
 ## Common Interview Follow-ups
 
