@@ -51,13 +51,13 @@ A container packages an app with its dependencies into an isolated, immutable un
 
 ```dockerfile
 # Multi-stage build: compiler toolchain stays OUT of the final image
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY . .
 
-FROM node:22-alpine
+FROM node:24-alpine
 WORKDIR /app
 COPY --from=build /app .
 USER node                          # never run as root
@@ -227,7 +227,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm }
+        with: { node-version: 24, cache: npm }
       - run: npm ci
       - run: npm run lint && npm test
       - run: npx sonarqube-scanner -Dsonar.qualitygate.wait=true   # gate on the result
