@@ -327,6 +327,14 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | Order State Machine | Placed, accepted, preparing, picked up, delivered; each transition emits an event and is idempotent on replay | Order Service |
 | Route Optimization | Batch several orders per rider (DoorDash publishes this as DeepRed) plus OSRM/Valhalla for road ETA | Dispatch |
 
+### Geohash vs H3 — Two Ways to Cell a City
+
+Both indexes turn a coordinate into a cell id, but their geometry decides how you expand a search. A **geohash** is a base-32 string over a quadtree: truncating `9q8yy` to `9q8y` gives the parent cell for free, so a prefix range scan on a plain B-tree index is a spatial query. The catch is the rectangle: the 8 cells that share a prefix are not all equally close, the four diagonal corners touch only at a point, and cells at high latitude are much wider than they are tall. Uber's **H3** fixes the neighbourhood rather than the parentage — every cell has six neighbours at the same centre distance, `k`-ring expansion is a cheap integer operation, and 16 resolutions span continent to square metre. H3 pays for that with approximate containment: a child cell is assigned to a parent, not geometrically nested inside it, so parent/child rollups are exact by id but not by area. Zomato's cell/subzone dispatch and Uber's H3 dispatch are the same idea at different geometry.
+
+![Geohash H3 — System Architecture](diagrams/system-design/geohash-h3.svg)
+
+*Left: prefix truncation gives parentage but rectangular neighbours. Right: six equidistant neighbours, at the cost of approximate nesting.*
+
 ## Common Interview Follow-ups
 
 **Q: How does real-time driver tracking work?**

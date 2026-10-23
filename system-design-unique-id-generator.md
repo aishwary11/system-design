@@ -87,6 +87,14 @@ A service that hands out unique 64-bit IDs to any caller (services, edge nodes) 
 5. Assemble: `(timestamp << 22) | (machine_id << 12) | sequence`
 6. Caller gets the ID inline — no DB, no lock, no network
 
+### The 64 Bits, Field by Field
+
+The layout *is* the design: every guarantee below is arithmetic on a field width. 41 bits of milliseconds at a custom epoch buys ~69 years, so the epoch is chosen deliberately rather than left as 1970; 10 bits of machine id caps you at 1,024 generators, which is why larger fleets either borrow bits from the sequence or run a lease-based mid-tier; 12 bits of sequence gives 4,096 IDs per millisecond per node, i.e. 4.096M/s. Because the timestamp is the high-order field, ids sort chronologically within a machine — across machines they only sort roughly, which is exactly why you must not use them as a transactional ordering guarantee.
+
+![Snowflake Layout — System Architecture](diagrams/system-design/snowflake-layout.svg)
+
+*ULID trades the machine/sequence split for 80 bits of randomness: lexicographically sortable by the same 48-bit millisecond prefix, but not compact enough to fit the 12-bit sequence budget and not directly routable to a node.*
+
 ## Microservices
 
 | Service | Tech Stack | Database | Pattern |

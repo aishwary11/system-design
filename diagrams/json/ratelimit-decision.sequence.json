@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Rate-Limit Decision — Atomic Token Bucket with Retry Guidance",
+    "output": "ratelimit-decision.sequence.html",
+    "viewBox": [
+      1040,
+      666
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "client",
+      "type": "external",
+      "label": "Client",
+      "sublabel": "API caller"
+    },
+    {
+      "id": "gw",
+      "type": "backend",
+      "label": "Gateway",
+      "sublabel": "limit middleware"
+    },
+    {
+      "id": "redis",
+      "type": "database",
+      "label": "Redis",
+      "sublabel": "bucket state"
+    },
+    {
+      "id": "up",
+      "type": "backend",
+      "label": "Upstream",
+      "sublabel": "origin service"
+    }
+  ],
+  "segments": [
+    {
+      "from": 124,
+      "to": 300,
+      "label": "Allowed"
+    },
+    {
+      "from": 310,
+      "to": 470,
+      "label": "Throttled"
+    },
+    {
+      "from": 480,
+      "to": 600,
+      "label": "Boundary"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "client",
+      "to": "gw",
+      "y": 160,
+      "label": "GET /v1/items",
+      "variant": "default"
+    },
+    {
+      "id": "m2",
+      "from": "gw",
+      "to": "redis",
+      "y": 196,
+      "label": "EVAL token_bucket.lua (atomic)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m3",
+      "from": "redis",
+      "to": "gw",
+      "y": 232,
+      "label": "tokens=12, allowed=1",
+      "variant": "return"
+    },
+    {
+      "id": "m4",
+      "from": "gw",
+      "to": "up",
+      "y": 268,
+      "label": "forward request",
+      "variant": "default"
+    },
+    {
+      "id": "m5",
+      "from": "up",
+      "to": "gw",
+      "y": 304,
+      "label": "200 (12 ms)",
+      "variant": "return"
+    },
+    {
+      "id": "m6",
+      "from": "gw",
+      "to": "client",
+      "y": 340,
+      "label": "200 + X-RateLimit-Remaining: 11",
+      "variant": "return"
+    },
+    {
+      "id": "m7",
+      "from": "client",
+      "to": "gw",
+      "y": 376,
+      "label": "burst × 40 in 1s",
+      "variant": "default"
+    },
+    {
+      "id": "m8",
+      "from": "gw",
+      "to": "redis",
+      "y": 412,
+      "label": "EVAL token_bucket.lua",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m9",
+      "from": "redis",
+      "to": "gw",
+      "y": 448,
+      "label": "tokens=0, allowed=0",
+      "variant": "return"
+    },
+    {
+      "id": "m10",
+      "from": "gw",
+      "to": "client",
+      "y": 484,
+      "label": "429 + Retry-After: 2",
+      "variant": "security"
+    },
+    {
+      "id": "m11",
+      "from": "gw",
+      "to": "redis",
+      "y": 520,
+      "label": "EVAL sliding_window (cheap tier)",
+      "variant": "dashed"
+    },
+    {
+      "id": "m12",
+      "from": "redis",
+      "to": "gw",
+      "y": 556,
+      "label": "counter 40/60s — 429 at boundary",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "gw",
+      "from": 156,
+      "to": 620,
+      "type": "backend"
+    },
+    {
+      "participant": "redis",
+      "from": 186,
+      "to": 620,
+      "type": "database"
+    },
+    {
+      "participant": "up",
+      "from": 258,
+      "to": 300,
+      "type": "backend"
+    }
+  ]
+}

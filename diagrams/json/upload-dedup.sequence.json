@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Chunked Upload with Content-Addressed Dedupe",
+    "output": "upload-dedup.sequence.html",
+    "viewBox": [
+      1040,
+      666
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "client",
+      "type": "external",
+      "label": "Client",
+      "sublabel": "chunker"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "Upload API",
+      "sublabel": "resumable"
+    },
+    {
+      "id": "meta",
+      "type": "database",
+      "label": "Metadata",
+      "sublabel": "manifest + ACL"
+    },
+    {
+      "id": "blob",
+      "type": "cloud",
+      "label": "Object Store",
+      "sublabel": "chunks"
+    },
+    {
+      "id": "idx",
+      "type": "database",
+      "label": "Dedupe Index",
+      "sublabel": "sha-256 → chunk"
+    }
+  ],
+  "segments": [
+    {
+      "from": 124,
+      "to": 290,
+      "label": "Session"
+    },
+    {
+      "from": 300,
+      "to": 430,
+      "label": "Chunks + dedupe"
+    },
+    {
+      "from": 440,
+      "to": 600,
+      "label": "Commit"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "client",
+      "to": "api",
+      "y": 160,
+      "label": "POST /uploads (size, sha-256)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m2",
+      "from": "api",
+      "to": "meta",
+      "y": 196,
+      "label": "create resumable session",
+      "variant": "default"
+    },
+    {
+      "id": "m3",
+      "from": "api",
+      "to": "client",
+      "y": 232,
+      "label": "upload id + part size 8 MiB",
+      "variant": "return"
+    },
+    {
+      "id": "m4",
+      "from": "client",
+      "to": "api",
+      "y": 268,
+      "label": "PUT part 1..N (content hash)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m5",
+      "from": "api",
+      "to": "idx",
+      "y": 304,
+      "label": "chunk hash exists?",
+      "variant": "default"
+    },
+    {
+      "id": "m6",
+      "from": "idx",
+      "to": "api",
+      "y": 340,
+      "label": "hit for 6 of 7 chunks",
+      "variant": "return"
+    },
+    {
+      "id": "m7",
+      "from": "api",
+      "to": "blob",
+      "y": 376,
+      "label": "write only the missing chunk",
+      "variant": "default"
+    },
+    {
+      "id": "m8",
+      "from": "blob",
+      "to": "api",
+      "y": 412,
+      "label": "chunk etag",
+      "variant": "return"
+    },
+    {
+      "id": "m9",
+      "from": "api",
+      "to": "meta",
+      "y": 448,
+      "label": "commit manifest (ordered hashes)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m10",
+      "from": "meta",
+      "to": "api",
+      "y": 484,
+      "label": "committed, refcount++",
+      "variant": "return"
+    },
+    {
+      "id": "m11",
+      "from": "api",
+      "to": "client",
+      "y": 520,
+      "label": "201 + file id",
+      "variant": "return"
+    },
+    {
+      "id": "m12",
+      "from": "api",
+      "to": "blob",
+      "y": 556,
+      "label": "GC unreferenced chunks (async)",
+      "variant": "dashed"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "api",
+      "from": 156,
+      "to": 630,
+      "type": "backend"
+    },
+    {
+      "participant": "meta",
+      "from": 190,
+      "to": 500,
+      "type": "database"
+    },
+    {
+      "participant": "idx",
+      "from": 310,
+      "to": 380,
+      "type": "database"
+    },
+    {
+      "participant": "blob",
+      "from": 400,
+      "to": 630,
+      "type": "cloud"
+    }
+  ]
+}

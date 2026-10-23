@@ -24,6 +24,9 @@ const mode = process.argv[2] ?? 'validate';
 
 // spec stem -> html path (relative to repo root)
 function htmlTarget(jsonFile) {
+  if (/\.(sequence|lifecycle)\.json$/.test(jsonFile)) {
+    return `diagrams/system-design/${jsonFile.replace(/\.json$/, '.html')}`;
+  }
   const out = JSON.parse(readFileSync(join(JSON_DIR, jsonFile), 'utf8')).meta?.output;
   if (!out) throw new Error(`${jsonFile}: missing meta.output`);
   const stem = jsonFile.replace(/\.architecture\.json$/, '');
@@ -34,15 +37,17 @@ function htmlTarget(jsonFile) {
   return `diagrams/system-design/${out}`;
 }
 
-const files = readdirSync(JSON_DIR).filter(f => f.endsWith('.json')).sort();
+const files = readdirSync(JSON_DIR).filter(f => /\.(architecture|sequence|lifecycle)\.json$/.test(f)).sort();
 let pass = 0, fail = 0;
 const failures = [];
+const typeOf = (f) => (f.endsWith('.sequence.json') ? 'sequence' : f.endsWith('.lifecycle.json') ? 'lifecycle' : 'architecture');
 
 for (const f of files) {
   const specPath = join(JSON_DIR, f);
+  const diagramType = typeOf(f);
   try {
     if (mode === 'validate') {
-      const out = execFileSync('node', [join(SKILL, 'bin', 'archify.mjs'), 'validate', 'architecture', specPath, '--quality', 'showcase', '--json'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+      const out = execFileSync('node', [join(SKILL, 'bin', 'archify.mjs'), 'validate', diagramType, specPath, '--quality', 'showcase', '--json'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
       const r = JSON.parse(out);
       if (r.ok) { pass++; console.log('OK    ' + f); }
       else {
@@ -55,7 +60,7 @@ for (const f of files) {
       const target = htmlTarget(f);
       const absTarget = join(ROOT, target);
       mkdirSync(dirname(absTarget), { recursive: true });
-      const out = execFileSync('node', [join(SKILL, 'bin', 'archify.mjs'), 'deliver', 'architecture', specPath, absTarget, '--quality', 'showcase', '--json'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+      const out = execFileSync('node', [join(SKILL, 'bin', 'archify.mjs'), 'deliver', diagramType, specPath, absTarget, '--quality', 'showcase', '--json'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
       const r = JSON.parse(out);
       if (r.ok) { pass++; console.log('DONE  ' + target); }
       else {

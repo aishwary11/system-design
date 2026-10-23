@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Lease-Based Lock with Fencing Tokens (Expiry, Stale Writer, Safe Reject)",
+    "output": "lock-lease.sequence.html",
+    "viewBox": [
+      1040,
+      666
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "writer1",
+      "type": "backend",
+      "label": "Writer 1",
+      "sublabel": "STW pause"
+    },
+    {
+      "id": "etcd",
+      "type": "backend",
+      "label": "Lock Service",
+      "sublabel": "Raft lease"
+    },
+    {
+      "id": "writer2",
+      "type": "backend",
+      "label": "Writer 2",
+      "sublabel": "retry loop"
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "Resource",
+      "sublabel": "fenced write"
+    }
+  ],
+  "segments": [
+    {
+      "from": 118,
+      "to": 270,
+      "label": "Acquire"
+    },
+    {
+      "from": 280,
+      "to": 430,
+      "label": "Lease expiry"
+    },
+    {
+      "from": 440,
+      "to": 620,
+      "label": "Fencing"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "writer1",
+      "to": "etcd",
+      "y": 160,
+      "label": "acquire lock(resource, TTL=15s)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m2",
+      "from": "etcd",
+      "to": "writer1",
+      "y": 196,
+      "label": "lease 15s + fencing token 33",
+      "variant": "return"
+    },
+    {
+      "id": "m3",
+      "from": "writer1",
+      "to": "store",
+      "y": 232,
+      "label": "write with token 33",
+      "variant": "default"
+    },
+    {
+      "id": "m4",
+      "from": "writer1",
+      "to": "etcd",
+      "y": 268,
+      "label": "heartbeat (renew lease)",
+      "variant": "dashed"
+    },
+    {
+      "id": "m5",
+      "from": "writer2",
+      "to": "etcd",
+      "y": 304,
+      "label": "acquire lock(resource)",
+      "variant": "security"
+    },
+    {
+      "id": "m6",
+      "from": "etcd",
+      "to": "writer2",
+      "y": 340,
+      "label": "409 held by writer1",
+      "variant": "return"
+    },
+    {
+      "id": "m7",
+      "from": "writer1",
+      "to": "etcd",
+      "y": 376,
+      "label": "Pause: GC stop-the-world > 15s",
+      "variant": "dashed"
+    },
+    {
+      "id": "m8",
+      "from": "etcd",
+      "to": "writer2",
+      "y": 412,
+      "label": "lease expired — grant token 34",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m9",
+      "from": "writer2",
+      "to": "store",
+      "y": 448,
+      "label": "write with token 34",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m10",
+      "from": "store",
+      "to": "writer2",
+      "y": 484,
+      "label": "accepted (34 > last 34)",
+      "variant": "return"
+    },
+    {
+      "id": "m11",
+      "from": "writer1",
+      "to": "store",
+      "y": 520,
+      "label": "resume: write with token 33",
+      "variant": "security"
+    },
+    {
+      "id": "m12",
+      "from": "store",
+      "to": "writer1",
+      "y": 556,
+      "label": "rejected: stale fence 33 < 34",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "etcd",
+      "from": 156,
+      "to": 620,
+      "type": "backend"
+    },
+    {
+      "participant": "writer1",
+      "from": 156,
+      "to": 600,
+      "type": "backend"
+    },
+    {
+      "participant": "store",
+      "from": 228,
+      "to": 620,
+      "type": "database"
+    }
+  ]
+}

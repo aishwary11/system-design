@@ -90,6 +90,14 @@ Services need to agree on "who is the leader," "who owns this shard," "is this c
 5. Watches: clients subscribe to key changes; consensus-applied changes notify subscribers
 6. Protected resources (e.g., storage shard) **validate the fencing token** on every write — stale holders get rejected
 
+### Lease, Fencing Token, and the Paused Writer
+
+A lease alone cannot give mutual exclusion: writer 1 stops the world past its TTL, the lock service legitimately grants the lock to writer 2, and writer 1 wakes up believing it still holds it. The fencing token is what saves the system — every write carries the token, and the resource rejects any token lower than the highest it has seen. This is why the design pairs a **time-bounded lease** with a **monotonically increasing token** rather than trusting wall clocks.
+
+![Lease-Based Lock with Fencing Tokens (Expiry, Stale Writer, Safe Reject)](diagrams/system-design/lock-lease.sequence.svg)
+
+**Interactive diagram:** [diagrams/system-design/lock-lease.sequence.html](diagrams/system-design/lock-lease.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 
 | Service | Tech Stack | Database | Pattern |

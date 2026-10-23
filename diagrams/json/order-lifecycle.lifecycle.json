@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Order Lifecycle — Stock Hold, Payment, Fulfilment, Compensation",
+    "output": "order-lifecycle.lifecycle.html",
+    "viewBox": [
+      1040,
+      660
+    ],
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Order rail"
+    },
+    {
+      "id": "events",
+      "label": "Failures + retry"
+    },
+    {
+      "id": "terminal",
+      "label": "Terminal exits"
+    }
+  ],
+  "states": [
+    {
+      "id": "placed",
+      "type": "start",
+      "label": "Placed",
+      "sublabel": "cart submitted",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "tag": "entry"
+    },
+    {
+      "id": "reserved",
+      "type": "active",
+      "label": "Reserved",
+      "sublabel": "stock hold 10 min",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "tag": "hold"
+    },
+    {
+      "id": "paid",
+      "type": "active",
+      "label": "Paid",
+      "sublabel": "auth captured",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "tag": "money"
+    },
+    {
+      "id": "shipped",
+      "type": "active",
+      "label": "Shipped",
+      "sublabel": "carrier scan",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "tag": "logistics"
+    },
+    {
+      "id": "delivered",
+      "type": "success",
+      "label": "Delivered",
+      "sublabel": "POD signed",
+      "lane": "main",
+      "col": 4,
+      "step": "05",
+      "tag": "done"
+    },
+    {
+      "id": "declined",
+      "type": "failure",
+      "label": "Payment Failed",
+      "sublabel": "issuer decline",
+      "lane": "events",
+      "col": 0,
+      "tag": "retryable"
+    },
+    {
+      "id": "cancelled",
+      "type": "failure",
+      "label": "Cancelled",
+      "sublabel": "user / system",
+      "lane": "terminal",
+      "col": 1,
+      "tag": "terminal"
+    },
+    {
+      "id": "refunded",
+      "type": "neutral",
+      "label": "Refunded",
+      "sublabel": "reversal entry",
+      "lane": "terminal",
+      "col": 2,
+      "tag": "terminal"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "t1",
+      "from": "placed",
+      "to": "reserved",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t2",
+      "from": "reserved",
+      "to": "paid",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t3",
+      "from": "paid",
+      "to": "shipped",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t4",
+      "from": "shipped",
+      "to": "delivered",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t5",
+      "from": "paid",
+      "to": "declined",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "t6",
+      "from": "declined",
+      "to": "paid",
+      "variant": "emphasis",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "route": "straight"
+    },
+    {
+      "id": "t7",
+      "from": "shipped",
+      "to": "cancelled",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "t8",
+      "from": "delivered",
+      "to": "refunded",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    }
+  ]
+}

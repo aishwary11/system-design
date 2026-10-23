@@ -92,6 +92,14 @@ An e-commerce platform supporting product search, shopping cart, inventory manag
 6. Kafka events: order_placed - Warehouse, Shipping, Notifications
 7. Analytics pipeline: conversion funnel, revenue dashboard
 
+### Order State Machine
+
+The order is a state machine, not a status column updated from six services. Every transition is guarded (`reserved → paid` requires a captured authorization), and every failure path has a defined compensation: an expired hold releases stock, a decline keeps the cart alive for a retry, a cancellation after payment issues a reversal entry. Terminal states are terminal — nothing reopens a cancelled order, which is what makes the transitions safe to retry.
+
+![Order Lifecycle — Stock Hold, Payment, Fulfilment, Compensation](diagrams/system-design/order-lifecycle.lifecycle.svg)
+
+**Interactive diagram:** [diagrams/system-design/order-lifecycle.lifecycle.html](diagrams/system-design/order-lifecycle.lifecycle.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 
 ### 1. Product Service

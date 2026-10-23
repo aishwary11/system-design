@@ -89,6 +89,14 @@ Users submit code; the judge compiles and runs it against test suites inside **i
 5. Stats (runtime, memory peaks) recorded; **anti-cheat**: runtime fingerprints, paste-detection, randomized hidden tests
 6. Results → PostgreSQL + Redis (leaderboard ZSET reuses leaderboard doc) → Kafka (analytics/plagiarism)
 
+### Submission State Machine
+
+A submission is a state machine with exactly one success exit. Compilation failures never reach the sandbox, runtime failures map to distinct verdicts (time, memory) instead of a generic error, and the first failing test case is recorded so the verdict is reproducible. Because judging is idempotent per `(submission, testcase)`, a crashed worker can re-queue the submission without double-counting an attempt.
+
+![Submission Lifecycle — Queue, Compile, Sandbox Run, Verdict](diagrams/system-design/submission-lifecycle.lifecycle.svg)
+
+**Interactive diagram:** [diagrams/system-design/submission-lifecycle.lifecycle.html](diagrams/system-design/submission-lifecycle.lifecycle.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 
 | Service | Tech Stack | Database | Pattern |

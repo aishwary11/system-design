@@ -88,6 +88,14 @@ Distributed key-value store providing eventually consistent reads/writes with hi
 6. Anti-entropy: Merkle trees sync replicas in background
 7. Compaction: merge SSTables to reclaim space
 
+### Quorum Read and Write, Traced
+
+With `N=3`, `W=2`, `R=2` the write and read sets must overlap in at least one replica (`W + R > N`), which is why the read that follows returns `v3` even though replica C has not caught up. The trade-off is latency: the coordinator waits for the second acknowledgement and returns, while the third write is repaired lazily. If a replica is down the coordinator writes a hinted handoff and still succeeds — availability is preserved, consistency is repaired later.
+
+![Quorum Write (W=2) then Quorum Read (R=2), with Hinted Handoff](diagrams/system-design/quorum-rw.sequence.svg)
+
+**Interactive diagram:** [diagrams/system-design/quorum-rw.sequence.html](diagrams/system-design/quorum-rw.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 How the system is decomposed into independently deployed services:
 

@@ -90,6 +90,14 @@ A cloud file storage system supporting file upload/download, sync, sharing, and 
 6. Share Service: generate signed URL with TTL + permission check
 7. Kafka events: upload, download, share - Analytics
 
+### Chunked Upload with Content-Addressed Dedupe
+
+The client hashes each chunk, so the server can answer "I already have this" before a byte is transferred; only the missing chunk crosses the network. The manifest is an ordered list of chunk hashes, committed in one metadata transaction, and blobs are reference-counted so a file delete cannot remove a chunk another file still points at. Garbage collection runs against unreferenced chunks only, which is why a failed upload leaks at most a temporary object rather than a corrupt file.
+
+![Chunked Upload with Content-Addressed Dedupe](diagrams/system-design/upload-dedup.sequence.svg)
+
+**Interactive diagram:** [diagrams/system-design/upload-dedup.sequence.html](diagrams/system-design/upload-dedup.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 
 ### 1. File Service

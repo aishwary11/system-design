@@ -149,6 +149,14 @@ console.log('rollup rows/day     :', rollupRows);
 6. **SRM & Guardrail Monitor** evaluates the observed split (chi-square) and guardrail regressions (sequential test) continuously. A breach publishes to `guardrail.signals` and can auto-halt the ramp
 7. The **Analysis Engine** serves dashboards: CUPED-adjusted lifts, confidence intervals, always-valid p-values, and the decision rule for the experiment owner
 
+### Experiment State Machine
+
+An experiment moves through a small set of guarded states, and the interesting part is the loop back: a guardrail breach pauses exposure without ending the experiment, so a fix can resume it with the same assignment salt and no re-randomisation. Shipping and rolling back are both explicit transitions with an audit trail, and a paused experiment still holds its traffic allocation — the alternative, silently dropping the bucket, corrupts the SRM check when it resumes.
+
+![Experiment Lifecycle — Guardrail Auto-Pause, Ship or Roll Back](diagrams/system-design/experiment-lifecycle.lifecycle.svg)
+
+**Interactive diagram:** [diagrams/system-design/experiment-lifecycle.lifecycle.html](diagrams/system-design/experiment-lifecycle.lifecycle.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 
 | Service | Responsibility | Notes |

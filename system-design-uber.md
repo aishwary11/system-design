@@ -92,6 +92,14 @@ A ride-hailing platform supporting real-time location tracking, driver matching,
 6. Trip completes - Payment Service charges rider, pays driver
 7. Kafka events feed Analytics + real-time surge pricing updates
 
+### Dispatch — From H3 Cell to Accepted Offer
+
+Matching starts from the pickup cell and expands through `k`-rings until enough idle supply is found, so the search cost is bounded by geography rather than by the number of drivers online. Candidates are ranked by pickup ETA, not straight-line distance, and offers are sent with a hard deadline; a silent driver is treated as a refusal and the next candidate is tried immediately. The accepted assignment is what updates the geo index, which is why a stale index shows up as a slow match rather than a wrong one.
+
+![Ride Dispatch — H3 Candidate Cells, ETA Ranking, Offer Timeout, Reassign](diagrams/system-design/dispatch-offer.sequence.svg)
+
+**Interactive diagram:** [diagrams/system-design/dispatch-offer.sequence.html](diagrams/system-design/dispatch-offer.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 
 ### 1. Location Service (Critical)

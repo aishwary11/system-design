@@ -92,6 +92,14 @@ Design the system that delivers **webhooks** (Stripe / GitHub / Shopify class): 
 5. **Quota & Circuit** tracks per-endpoint health and tenant rate: an endpoint that keeps failing opens its breaker and its attempts are parked, not hammered
 6. After the ladder is exhausted an attempt lands in the **DLQ**; the **Replay service** re-enqueues it on demand after the customer fixes their side
 
+### Delivery, Backoff, and Replay
+
+Delivery is at-least-once, so the receiver — not the sender — owns deduplication, keyed on the event id that travels with every attempt. Retries use the same signed payload and the same id, with exponential backoff and jitter so a subscriber outage does not turn into a synchronized retry storm. Exhausting the ladder parks the event in the DLQ rather than dropping it, and replay re-enqueues it with its original id so consumers can still discard duplicates.
+
+![Webhook Delivery — Signed POST, Exponential Backoff, DLQ, Replay](diagrams/system-design/webhook-retry.sequence.svg)
+
+**Interactive diagram:** [diagrams/system-design/webhook-retry.sequence.html](diagrams/system-design/webhook-retry.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 
 | Service | Responsibility | Notes |

@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Concurrent Edits — Why Two Inserts at Index 5 Need Transformation",
+    "output": "doc-merge.sequence.html",
+    "viewBox": [
+      1040,
+      594
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "a",
+      "type": "external",
+      "label": "Editor A",
+      "sublabel": "offline 20s"
+    },
+    {
+      "id": "b",
+      "type": "external",
+      "label": "Editor B",
+      "sublabel": "online"
+    },
+    {
+      "id": "srv",
+      "type": "backend",
+      "label": "Collab Server",
+      "sublabel": "OT / CRDT"
+    },
+    {
+      "id": "log",
+      "type": "database",
+      "label": "Op Log",
+      "sublabel": "append-only"
+    }
+  ],
+  "segments": [
+    {
+      "from": 124,
+      "to": 280,
+      "label": "Concurrent ops"
+    },
+    {
+      "from": 290,
+      "to": 420,
+      "label": "Transform"
+    },
+    {
+      "from": 430,
+      "to": 540,
+      "label": "Converge"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "a",
+      "to": "srv",
+      "y": 160,
+      "label": "insert(5, \"cat\") rev 41",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m2",
+      "from": "b",
+      "to": "srv",
+      "y": 196,
+      "label": "insert(5, \"dog\") rev 41",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m3",
+      "from": "srv",
+      "to": "log",
+      "y": 232,
+      "label": "append A op @41",
+      "variant": "default"
+    },
+    {
+      "id": "m4",
+      "from": "srv",
+      "to": "log",
+      "y": 268,
+      "label": "transform B: insert(8, \"dog\")",
+      "variant": "default"
+    },
+    {
+      "id": "m5",
+      "from": "srv",
+      "to": "a",
+      "y": 304,
+      "label": "ack rev 42 (no change)",
+      "variant": "return"
+    },
+    {
+      "id": "m6",
+      "from": "srv",
+      "to": "b",
+      "y": 340,
+      "label": "ack rev 43 → apply at 8",
+      "variant": "return"
+    },
+    {
+      "id": "m7",
+      "from": "b",
+      "to": "a",
+      "y": 376,
+      "label": "broadcast \"dog\" at 8",
+      "variant": "dashed"
+    },
+    {
+      "id": "m8",
+      "from": "srv",
+      "to": "a",
+      "y": 412,
+      "label": "naive apply at 5 interleaves — rejected",
+      "variant": "security"
+    },
+    {
+      "id": "m9",
+      "from": "a",
+      "to": "srv",
+      "y": 448,
+      "label": "apply transformed op → converge",
+      "variant": "return"
+    },
+    {
+      "id": "m10",
+      "from": "srv",
+      "to": "log",
+      "y": 484,
+      "label": "compaction to snapshot rev 43",
+      "variant": "dashed"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "srv",
+      "from": 156,
+      "to": 600,
+      "type": "backend"
+    },
+    {
+      "participant": "log",
+      "from": 210,
+      "to": 445,
+      "type": "database"
+    }
+  ]
+}

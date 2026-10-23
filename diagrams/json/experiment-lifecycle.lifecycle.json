@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Experiment Lifecycle — Guardrail Auto-Pause, Ship or Roll Back",
+    "output": "experiment-lifecycle.lifecycle.html",
+    "viewBox": [
+      1040,
+      660
+    ],
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Experiment rail"
+    },
+    {
+      "id": "events",
+      "label": "Guardrails"
+    },
+    {
+      "id": "terminal",
+      "label": "Outcomes"
+    }
+  ],
+  "states": [
+    {
+      "id": "draft",
+      "type": "start",
+      "label": "Draft",
+      "sublabel": "hypothesis + owners",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "tag": "entry"
+    },
+    {
+      "id": "running",
+      "type": "active",
+      "label": "Running",
+      "sublabel": "deterministic split",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "tag": "traffic"
+    },
+    {
+      "id": "analysis",
+      "type": "active",
+      "label": "Analysis",
+      "sublabel": "power reached",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "tag": "stats"
+    },
+    {
+      "id": "review",
+      "type": "decision",
+      "label": "Review",
+      "sublabel": "readout + tradeoffs",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "tag": "gate"
+    },
+    {
+      "id": "shipped",
+      "type": "success",
+      "label": "Shipped",
+      "sublabel": "ramp to 100%",
+      "lane": "main",
+      "col": 4,
+      "step": "05",
+      "tag": "done"
+    },
+    {
+      "id": "breach",
+      "type": "waiting",
+      "label": "Guardrail Breach",
+      "sublabel": "error / latency / revenue",
+      "lane": "events",
+      "col": 0,
+      "tag": "auto-pause"
+    },
+    {
+      "id": "paused",
+      "type": "waiting",
+      "label": "Paused",
+      "sublabel": "exposure halted",
+      "lane": "events",
+      "col": 1,
+      "yOffset": 44,
+      "tag": "resumable"
+    },
+    {
+      "id": "rolledback",
+      "type": "failure",
+      "label": "Rolled Back",
+      "sublabel": "kill switch",
+      "lane": "terminal",
+      "col": 2,
+      "tag": "terminal"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "t1",
+      "from": "draft",
+      "to": "running",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t2",
+      "from": "running",
+      "to": "analysis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t3",
+      "from": "analysis",
+      "to": "review",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t4",
+      "from": "review",
+      "to": "shipped",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t5",
+      "from": "analysis",
+      "to": "breach",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "t6",
+      "from": "breach",
+      "to": "paused",
+      "variant": "security",
+      "route": "auto"
+    },
+    {
+      "id": "t7",
+      "from": "paused",
+      "to": "breach",
+      "variant": "emphasis",
+      "route": "auto"
+    },
+    {
+      "id": "t8",
+      "from": "review",
+      "to": "rolledback",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "drop"
+    }
+  ]
+}

@@ -20,6 +20,7 @@ import { execFileSync } from 'node:child_process';
 import { join, resolve, dirname, basename } from 'node:path';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { sequenceSvg, lifecycleSvg } from './inline-svg.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SKILL = join(homedir(), '.agents', 'skills', 'archify');
@@ -126,10 +127,13 @@ function svgTarget(stem) {
 
 // ---- diagram stem -> doc title (spec's meta.title is the source of truth) ---
 function specTitle(stem, file) {
-  try {
-    const j = JSON.parse(readFileSync(join(ROOT, 'diagrams', 'json', `${stem}.architecture.json`), 'utf8'));
-    if (j.meta?.title) return j.meta.title;
-  } catch { /* fall through to derived title */ }
+  const base = stem.replace(/\.(sequence|lifecycle)$/, '');
+  for (const suffix of ['.architecture.json', '.sequence.json', '.lifecycle.json']) {
+    try {
+      const j = JSON.parse(readFileSync(join(ROOT, 'diagrams', 'json', `${base}${suffix}`), 'utf8'));
+      if (j.meta?.title) return j.meta.title;
+    } catch { /* try the next diagram type */ }
+  }
   return titleFor(stem, file);
 }
 
@@ -146,9 +150,26 @@ const titleFor = (stem, file) =>
 if (EXPORT) {
   const specsDir = join(ROOT, 'diagrams', 'json');
   const specs = readdirSync(specsDir).filter(f => f.endsWith('.architecture.json') && f !== 'template.architecture.json');
+  const extra = readdirSync(specsDir).filter(f => /\.(sequence|lifecycle)\.json$/.test(f));
   specs.push('template.architecture.json'); // README embeds it; still export a real file
   let exported = 0;
   const problems = [];
+
+  // mechanism diagrams: sequence/lifecycle specs render from their own geometry
+  for (const f of extra) {
+    const stem = f.replace(/\.json$/, ''); // e.g. payment-saga.sequence
+    try {
+      const spec = JSON.parse(readFileSync(join(specsDir, f), 'utf8'));
+      const svg = f.endsWith('.sequence.json') ? sequenceSvg(spec) : lifecycleSvg(spec);
+      const target = `diagrams/system-design/${stem}.svg`;
+      mkdirSync(dirname(join(ROOT, target)), { recursive: true });
+      writeFileSync(join(ROOT, target), svg + '\n');
+      exported++;
+    } catch (e) {
+      problems.push(`${stem}: ${e.message}`);
+    }
+  }
+
   for (const f of specs) {
     const stem = f.replace(/\.architecture\.json$/, '');
     const title = specTitle(stem, stem.startsWith('concept-') ? 'system-design-concepts.md' : stem === 'template' ? 'README.md' : stem.endsWith('-at-a-glance') ? stem.replace(/-at-a-glance$/, '') + '-features.md' : 'system-design-' + stem + '.md');

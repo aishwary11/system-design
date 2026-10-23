@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 310" width="900" role="img">
+<title>Snowflake id layout — sign, 41-bit timestamp, 10-bit machine, 12-bit sequence</title>
+<rect x="0.5" y="0.5" width="999" height="309" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+<text x="40" y="40" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Snowflake — 64 bits, sortable by time, generated without coordination</text>
+<rect x="40" y="66" width="62" height="58" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.6"/>
+<text x="71" y="90" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="bold" fill="#64748b">sign</text>
+<text x="71" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#64748b">1 bit</text>
+<text x="71" y="142" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#94a3b8">always 0</text>
+<rect x="102" y="66" width="358" height="58" rx="6" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+<text x="281" y="90" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="bold" fill="#312e81">timestamp (ms since custom epoch)</text>
+<text x="281" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#64748b">41 bits</text>
+<text x="281" y="142" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#94a3b8">≈ 69 years</text>
+<rect x="460" y="66" width="218" height="58" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.6"/>
+<text x="569" y="90" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="bold" fill="#4c1d95">machine id</text>
+<text x="569" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#64748b">10 bits</text>
+<text x="569" y="142" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#94a3b8">1,024 generators</text>
+<rect x="678" y="66" width="282" height="58" rx="6" fill="#ecfdf5" stroke="#10b981" stroke-width="1.6"/>
+<text x="819" y="90" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="bold" fill="#064e3b">sequence</text>
+<text x="819" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#64748b">12 bits</text>
+<text x="819" y="142" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#94a3b8">4,096 ids / ms / machine</text>
+<rect x="40" y="162" width="62" height="34" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="71" y="184" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#475569">0</text>
+<rect x="102" y="162" width="358" height="34" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="281" y="184" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#475569">0001 0111 0010 … 1010 (ms)</text>
+<rect x="460" y="162" width="218" height="34" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="569" y="184" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#475569">0000001011 (node 11)</text>
+<rect x="678" y="162" width="282" height="34" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="819" y="184" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#475569">0000 0010 1001 (seq 41)</text>
+<text x="40" y="232" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#64748b">· Sortable by time inside one machine; across machines it is only roughly ordered (clock skew).</text>
+<text x="40" y="252" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#64748b">· Throughput ceiling is 4,096 ids/ms/generator — 4.096M/s per node.</text>
+<text x="40" y="272" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#64748b">· A backwards clock step is the failure to guard: refuse to emit, or borrow the next millisecond.</text>
+</svg>

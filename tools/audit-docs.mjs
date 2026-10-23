@@ -245,6 +245,7 @@ const countSvg = dir => {
   return n;
 };
 const diagramCount = countSvg(join(ROOT, 'diagrams'));
+const specCount = readdirSync(join(ROOT, 'diagrams', 'json')).filter(f => /\.(architecture|sequence|lifecycle)\.json$/.test(f)).length;
 
 const readme = readFileSync(join(ROOT, 'README.md'), 'utf8');
 const tableRows = (text, anchorId) => {
@@ -259,19 +260,20 @@ const algoRows = tableRows(readme, 'algorithms-library');
 const patternRows = tableRows(readme, 'techniques--patterns');
 const guideRows = tableRows(readme, 'feature-guides');
 
-const headline = readme.match(/\*\*(\d+) system designs · (\d+) technology & reference guides · (\d+) interactive diagrams · (\d+) JS algorithm/);
+const headline = readme.match(/\*\*(\d+) system designs · (\d+) technology & reference guides · (\d+) diagrams \((\d+) interactive\) · (\d+) JS algorithm/);
 if (!headline) issues.push('README.md: headline count line not found');
 else {
-  const [designs, guides, diagrams, algos] = headline.slice(1).map(Number);
+  const [designs, guides, diagrams, interactive, algos] = headline.slice(1).map(Number);
   if (designs !== designDocs.length) issues.push(`README.md: headline says ${designs} system designs, found ${designDocs.length}`);
   if (guides !== guideRows) issues.push(`README.md: headline says ${guides} guides, table lists ${guideRows}`);
-  if (diagrams !== diagramCount) issues.push(`README.md: headline says ${diagrams} interactive diagrams, found ${diagramCount} SVGs`);
+  if (diagrams !== diagramCount) issues.push(`README.md: headline says ${diagrams} diagrams, found ${diagramCount} SVGs`);
+  if (interactive !== specCount) issues.push(`README.md: headline says ${interactive} interactive, found ${specCount} Archify specs`);
   if (algos !== algoRows) issues.push(`README.md: headline says ${algos} algorithms, table lists ${algoRows} rows`);
 }
 const inside = [
   [/^\| .*\*\*(\d+) system designs\*\*/m, designDocs.length, 'system designs'],
   [/^\| .*\*\*(\d+) feature & reference guides\*\*/m, guideRows, 'feature & reference guides'],
-  [/\*\*(\d+) Archify diagrams\*\*/, diagramCount, 'Archify diagrams'],
+  [/\*\*(\d+) diagrams\*\*/, diagramCount, 'diagrams'],
   [/\*\*(\d+) algorithms\*\*/, algoRows, 'algorithms'],
   [/\*\*(\d+) patterns\*\*/, patternRows, 'patterns'],
   [/<summary><b>(\d+) patterns<\/b>/, patternRows, 'patterns (summary)'],

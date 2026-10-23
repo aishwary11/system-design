@@ -85,6 +85,14 @@ Real-time collaborative document editor with OT/CRDT conflict resolution.
 6. Version history stored as operation log (append-only)
 7. Kafka events: edit, share, comment - Analytics + indexing
 
+### Two Inserts at the Same Index
+
+Both editors insert at index 5 against revision 41. Applying both literally interleaves the characters; the server therefore transforms the second operation against the first before assigning it a revision. Every client converges on `catdog` regardless of arrival order — that is the property that matters, not which character ends up first. CRDTs reach the same convergence by making the merge commutative instead of transforming operations, at the cost of larger metadata per character.
+
+![Concurrent Edits — Why Two Inserts at Index 5 Need Transformation](diagrams/system-design/doc-merge.sequence.svg)
+
+**Interactive diagram:** [diagrams/system-design/doc-merge.sequence.html](diagrams/system-design/doc-merge.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 How the system is decomposed into independently deployed services:
 

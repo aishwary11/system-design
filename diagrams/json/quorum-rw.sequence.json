@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Quorum Write (W=2) then Quorum Read (R=2), with Hinted Handoff",
+    "output": "quorum-rw.sequence.html",
+    "viewBox": [
+      1040,
+      738
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "client",
+      "type": "external",
+      "label": "Client",
+      "sublabel": "app / SDK"
+    },
+    {
+      "id": "coord",
+      "type": "backend",
+      "label": "Coordinator",
+      "sublabel": "quorum + retry"
+    },
+    {
+      "id": "repA",
+      "type": "database",
+      "label": "Replica A",
+      "sublabel": "N=3"
+    },
+    {
+      "id": "repB",
+      "type": "database",
+      "label": "Replica B",
+      "sublabel": "N=3"
+    },
+    {
+      "id": "repC",
+      "type": "database",
+      "label": "Replica C",
+      "sublabel": "N=3"
+    }
+  ],
+  "segments": [
+    {
+      "from": 120,
+      "to": 300,
+      "label": "Write path"
+    },
+    {
+      "from": 330,
+      "to": 545,
+      "label": "Read path"
+    },
+    {
+      "from": 560,
+      "to": 640,
+      "label": "Repair"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "client",
+      "to": "coord",
+      "y": 160,
+      "label": "PUT k=v3 (W=2, R=2, N=3)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m2",
+      "from": "coord",
+      "to": "repA",
+      "y": 196,
+      "label": "write v3",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m3",
+      "from": "coord",
+      "to": "repB",
+      "y": 232,
+      "label": "write v3",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m4",
+      "from": "coord",
+      "to": "repC",
+      "y": 268,
+      "label": "write v3 (async)",
+      "variant": "dashed"
+    },
+    {
+      "id": "m5",
+      "from": "repA",
+      "to": "coord",
+      "y": 304,
+      "label": "ack v3",
+      "variant": "return"
+    },
+    {
+      "id": "m6",
+      "from": "repB",
+      "to": "coord",
+      "y": 340,
+      "label": "ack v3",
+      "variant": "return"
+    },
+    {
+      "id": "m7",
+      "from": "coord",
+      "to": "client",
+      "y": 376,
+      "label": "200 (W=2 satisfied)",
+      "variant": "return"
+    },
+    {
+      "id": "m8",
+      "from": "client",
+      "to": "coord",
+      "y": 412,
+      "label": "GET k",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m9",
+      "from": "coord",
+      "to": "repA",
+      "y": 448,
+      "label": "read k",
+      "variant": "default"
+    },
+    {
+      "id": "m10",
+      "from": "coord",
+      "to": "repB",
+      "y": 484,
+      "label": "read k",
+      "variant": "default"
+    },
+    {
+      "id": "m11",
+      "from": "repA",
+      "to": "coord",
+      "y": 520,
+      "label": "v3",
+      "variant": "return"
+    },
+    {
+      "id": "m12",
+      "from": "repB",
+      "to": "coord",
+      "y": 556,
+      "label": "v3",
+      "variant": "return"
+    },
+    {
+      "id": "m13",
+      "from": "coord",
+      "to": "client",
+      "y": 592,
+      "label": "v3 (quorums intersect)",
+      "variant": "return"
+    },
+    {
+      "id": "m14",
+      "from": "repC",
+      "to": "coord",
+      "y": 628,
+      "label": "ack v3 (late)",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "coord",
+      "from": 156,
+      "to": 620,
+      "type": "backend"
+    },
+    {
+      "participant": "repA",
+      "from": 186,
+      "to": 340,
+      "type": "database"
+    },
+    {
+      "participant": "repB",
+      "from": 200,
+      "to": 358,
+      "type": "database"
+    },
+    {
+      "participant": "repC",
+      "from": 214,
+      "to": 250,
+      "type": "database"
+    }
+  ]
+}

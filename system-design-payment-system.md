@@ -90,6 +90,14 @@ A payment processing platform supporting online payments, refunds, subscriptions
 6. Kafka events: success, failure, refund - Reconciliation pipeline
 7. Reconciliation: match internal ledger with gateway settlements
 
+### Money Movement — Authorize, Post, Compensate
+
+The architecture diagram shows where money moves; this trace shows **in what order**, which is where payment systems actually fail. The authorization is idempotent on the PSP key, the ledger write is a single balanced transaction (debit merchant, credit clearing), and the outbox row is committed **inside that same transaction** — so an event is never published for a payment that rolled back. When capture fails after authorization, the compensation is a reversing entry, never a delete: the ledger is append-only.
+
+![Card Payment — Authorize, Post to Ledger, Settle, Compensate](diagrams/system-design/payment-saga.sequence.svg)
+
+**Interactive diagram:** [diagrams/system-design/payment-saga.sequence.html](diagrams/system-design/payment-saga.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 
 ### 1. Payment Service

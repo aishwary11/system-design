@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Submission Lifecycle — Queue, Compile, Sandbox Run, Verdict",
+    "output": "submission-lifecycle.lifecycle.html",
+    "viewBox": [
+      1040,
+      660
+    ],
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Submission rail"
+    },
+    {
+      "id": "events",
+      "label": "Runtime failures"
+    },
+    {
+      "id": "terminal",
+      "label": "Verdicts"
+    }
+  ],
+  "states": [
+    {
+      "id": "queued",
+      "type": "start",
+      "label": "Queued",
+      "sublabel": "fair FIFO per user",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "tag": "entry"
+    },
+    {
+      "id": "compiling",
+      "type": "active",
+      "label": "Compiling",
+      "sublabel": "cgroup cap 10s",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "tag": "build"
+    },
+    {
+      "id": "running",
+      "type": "active",
+      "label": "Running",
+      "sublabel": "testcase i / N",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "tag": "sandbox"
+    },
+    {
+      "id": "judging",
+      "type": "decision",
+      "label": "Judging",
+      "sublabel": "compare + resource",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "tag": "diff"
+    },
+    {
+      "id": "accepted",
+      "type": "success",
+      "label": "Accepted",
+      "sublabel": "all cases pass",
+      "lane": "main",
+      "col": 4,
+      "step": "05",
+      "tag": "done"
+    },
+    {
+      "id": "ce",
+      "type": "failure",
+      "label": "Compile Error",
+      "sublabel": "stderr returned",
+      "lane": "events",
+      "col": 0,
+      "tag": "terminal"
+    },
+    {
+      "id": "tle",
+      "type": "failure",
+      "label": "Time Limit",
+      "sublabel": "wall / CPU cap",
+      "lane": "events",
+      "col": 1,
+      "tag": "terminal"
+    },
+    {
+      "id": "wa",
+      "type": "failure",
+      "label": "Wrong Answer",
+      "sublabel": "first failing case",
+      "lane": "terminal",
+      "col": 2,
+      "tag": "terminal"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "t1",
+      "from": "queued",
+      "to": "compiling",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t2",
+      "from": "compiling",
+      "to": "running",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t3",
+      "from": "running",
+      "to": "judging",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t4",
+      "from": "judging",
+      "to": "accepted",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "t5",
+      "from": "judging",
+      "to": "wa",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "auto",
+      "via": [
+        [
+          556,
+          240
+        ],
+        [
+          710,
+          240
+        ]
+      ]
+    },
+    {
+      "id": "t6",
+      "from": "compiling",
+      "to": "ce",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "auto",
+      "via": [
+        [
+          248,
+          240
+        ],
+        [
+          402,
+          240
+        ]
+      ]
+    },
+    {
+      "id": "t7",
+      "from": "running",
+      "to": "tle",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "auto",
+      "via": [
+        [
+          402,
+          240
+        ],
+        [
+          556,
+          240
+        ]
+      ]
+    }
+  ]
+}

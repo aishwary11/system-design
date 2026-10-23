@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Webhook Delivery — Signed POST, Exponential Backoff, DLQ, Replay",
+    "output": "webhook-retry.sequence.html",
+    "viewBox": [
+      1040,
+      630
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "evt",
+      "type": "messagebus",
+      "label": "Event Bus",
+      "sublabel": "at-least-once"
+    },
+    {
+      "id": "disp",
+      "type": "backend",
+      "label": "Dispatcher",
+      "sublabel": "per-endpoint queue"
+    },
+    {
+      "id": "hook",
+      "type": "external",
+      "label": "Subscriber",
+      "sublabel": "HTTPS endpoint"
+    },
+    {
+      "id": "dlq",
+      "type": "messagebus",
+      "label": "DLQ",
+      "sublabel": "exhausted"
+    },
+    {
+      "id": "ops",
+      "type": "backend",
+      "label": "Replay API",
+      "sublabel": "operator"
+    }
+  ],
+  "segments": [
+    {
+      "from": 124,
+      "to": 290,
+      "label": "First attempt"
+    },
+    {
+      "from": 300,
+      "to": 420,
+      "label": "Retry ladder"
+    },
+    {
+      "from": 430,
+      "to": 570,
+      "label": "DLQ + replay"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "evt",
+      "to": "disp",
+      "y": 160,
+      "label": "payment.succeeded (event id)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m2",
+      "from": "disp",
+      "to": "hook",
+      "y": 196,
+      "label": "POST + HMAC-SHA256 + event id",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m3",
+      "from": "hook",
+      "to": "disp",
+      "y": 232,
+      "label": "500 Internal Error",
+      "variant": "security"
+    },
+    {
+      "id": "m4",
+      "from": "disp",
+      "to": "hook",
+      "y": 268,
+      "label": "retry #2 after 5s backoff",
+      "variant": "default"
+    },
+    {
+      "id": "m5",
+      "from": "hook",
+      "to": "disp",
+      "y": 304,
+      "label": "timeout 10s",
+      "variant": "security"
+    },
+    {
+      "id": "m6",
+      "from": "disp",
+      "to": "hook",
+      "y": 340,
+      "label": "attempts 3–8: 30s, 2m, 10m, 1h",
+      "variant": "dashed"
+    },
+    {
+      "id": "m7",
+      "from": "disp",
+      "to": "dlq",
+      "y": 376,
+      "label": "park after 8 attempts",
+      "variant": "security"
+    },
+    {
+      "id": "m8",
+      "from": "ops",
+      "to": "dlq",
+      "y": 412,
+      "label": "inspect + replay(event id)",
+      "variant": "default"
+    },
+    {
+      "id": "m9",
+      "from": "dlq",
+      "to": "disp",
+      "y": 448,
+      "label": "re-enqueue preserved ordering",
+      "variant": "dashed"
+    },
+    {
+      "id": "m10",
+      "from": "disp",
+      "to": "hook",
+      "y": 484,
+      "label": "deliver; subscriber dedupes by id",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m11",
+      "from": "hook",
+      "to": "disp",
+      "y": 520,
+      "label": "200 OK",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "disp",
+      "from": 156,
+      "to": 620,
+      "type": "backend"
+    },
+    {
+      "participant": "hook",
+      "from": 186,
+      "to": 600,
+      "type": "external"
+    },
+    {
+      "participant": "dlq",
+      "from": 420,
+      "to": 480,
+      "type": "messagebus"
+    }
+  ]
+}

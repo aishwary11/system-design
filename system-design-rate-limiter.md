@@ -89,6 +89,14 @@ A distributed rate limiting system that controls API request rates per user/IP/A
 6. Analytics: rate limit hits, false positives, capacity planning
 7. Alerts when approaching limits (80% threshold)
 
+### One Request, One Atomic Decision
+
+The decision has to be atomic: read-modify-write across two round trips lets a burst slip through between the read and the write, so the bucket lives in a single Lua script. Allowed requests carry `X-RateLimit-Remaining` so well-behaved clients can self-throttle, and denials carry `Retry-After` instead of an opaque 429. The last exchange is the known weakness of fixed windows — a burst that straddles the boundary passes twice at up to double the limit, which is why the cheaper tier uses a sliding-window counter.
+
+![Rate-Limit Decision — Atomic Token Bucket with Retry Guidance](diagrams/system-design/ratelimit-decision.sequence.svg)
+
+**Interactive diagram:** [diagrams/system-design/ratelimit-decision.sequence.html](diagrams/system-design/ratelimit-decision.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 How the system is decomposed into independently deployed services:
 

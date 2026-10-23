@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Ride Dispatch — H3 Candidate Cells, ETA Ranking, Offer Timeout, Reassign",
+    "output": "dispatch-offer.sequence.html",
+    "viewBox": [
+      1040,
+      630
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "rider",
+      "type": "external",
+      "label": "Rider",
+      "sublabel": "app"
+    },
+    {
+      "id": "disp",
+      "type": "backend",
+      "label": "Dispatch",
+      "sublabel": "matcher"
+    },
+    {
+      "id": "geo",
+      "type": "database",
+      "label": "Geo Index",
+      "sublabel": "H3 res 9"
+    },
+    {
+      "id": "eta",
+      "type": "backend",
+      "label": "ETA Service",
+      "sublabel": "traffic aware"
+    },
+    {
+      "id": "driver",
+      "type": "external",
+      "label": "Driver",
+      "sublabel": "offer 8s"
+    }
+  ],
+  "segments": [
+    {
+      "from": 124,
+      "to": 290,
+      "label": "Candidate search"
+    },
+    {
+      "from": 300,
+      "to": 440,
+      "label": "Offer"
+    },
+    {
+      "from": 452,
+      "to": 560,
+      "label": "State"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "rider",
+      "to": "disp",
+      "y": 160,
+      "label": "request ride (pickup cell 8928308280f)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m2",
+      "from": "disp",
+      "to": "geo",
+      "y": 196,
+      "label": "k-ring(cell, k=2) + neighbour ring",
+      "variant": "default"
+    },
+    {
+      "id": "m3",
+      "from": "geo",
+      "to": "disp",
+      "y": 232,
+      "label": "38 idle drivers in 19 cells",
+      "variant": "return"
+    },
+    {
+      "id": "m4",
+      "from": "disp",
+      "to": "eta",
+      "y": 268,
+      "label": "rank candidates by pickup ETA",
+      "variant": "default"
+    },
+    {
+      "id": "m5",
+      "from": "eta",
+      "to": "disp",
+      "y": 304,
+      "label": "top 5 sorted (2.1–4.8 min)",
+      "variant": "return"
+    },
+    {
+      "id": "m6",
+      "from": "disp",
+      "to": "driver",
+      "y": 340,
+      "label": "offer ride (8s deadline)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m7",
+      "from": "driver",
+      "to": "disp",
+      "y": 376,
+      "label": "no response — timeout",
+      "variant": "security"
+    },
+    {
+      "id": "m8",
+      "from": "disp",
+      "to": "driver",
+      "y": 412,
+      "label": "offer next candidate",
+      "variant": "dashed"
+    },
+    {
+      "id": "m9",
+      "from": "driver",
+      "to": "disp",
+      "y": 448,
+      "label": "accept",
+      "variant": "return"
+    },
+    {
+      "id": "m10",
+      "from": "disp",
+      "to": "rider",
+      "y": 484,
+      "label": "driver assigned + live ETA",
+      "variant": "return"
+    },
+    {
+      "id": "m11",
+      "from": "disp",
+      "to": "geo",
+      "y": 520,
+      "label": "update driver cell on move",
+      "variant": "dashed"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "disp",
+      "from": 156,
+      "to": 600,
+      "type": "backend"
+    },
+    {
+      "participant": "geo",
+      "from": 186,
+      "to": 610,
+      "type": "database"
+    },
+    {
+      "participant": "eta",
+      "from": 258,
+      "to": 330,
+      "type": "backend"
+    },
+    {
+      "participant": "driver",
+      "from": 370,
+      "to": 520,
+      "type": "external"
+    }
+  ]
+}

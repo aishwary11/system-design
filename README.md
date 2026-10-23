@@ -9,7 +9,7 @@
 
 </div>
 
-**53 system designs · 15 technology & reference guides · 71 interactive diagrams · 42 JS algorithm implementations · 30-day roadmap**
+**53 system designs · 15 technology & reference guides · 84 diagrams (82 interactive) · 42 JS algorithm implementations · 30-day roadmap**
 
 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="30" alt="📚"/> [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
@@ -35,7 +35,7 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 | :--- | :--- | :--- |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **53 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **15 feature & reference guides** | PostgreSQL · Redis · Kafka · MongoDB · Elasticsearch · RabbitMQ · Cloud Services · Agentic AI · Core Concepts | [Jump to guides](#feature-guides) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **71 Archify diagrams** | Inline SVG in every doc + interactive HTML per diagram | [Diagram style](#diagrams-archify) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **84 diagrams** | Architecture per design, plus sequence and state-machine figures for the flows that need them | [Diagram style](#diagrams-archify) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **42 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **32 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
 
@@ -299,14 +299,22 @@ A table of contents, a feature-by-feature catalog with runnable examples (SQL / 
 <a id="diagrams-archify"></a>
 ## 🎨 Diagram Style (Archify)
 
-Every architecture diagram is an [Archify](https://github.com/tt-a1i/archify) diagram: a typed JSON spec in `diagrams/json/`, validated against Archify's showcase quality profile (no label overlaps, no edge crossings, no ambiguous corridors), then rendered two ways:
+Every diagram is an [Archify](https://github.com/tt-a1i/archify) diagram: a typed JSON spec in `diagrams/json/`, validated against Archify's showcase quality profile (no label overlaps, no edge crossings, no ambiguous corridors), then rendered two ways:
 
 - **Inline SVG** — embedded directly in each Markdown file (GitHub-safe, light theme) so the diagram is visible without leaving the doc.
 - **Interactive HTML** — a self-contained file (pan/zoom, search, dark/light theme, PNG/SVG export) linked right below the SVG.
 
+Three diagram types are authored, chosen by what the concept needs:
+
+| Type | Spec suffix | Used for |
+| :--- | :--- | :--- |
+| `architecture` | `*.architecture.json` | Component maps, boundaries, deployment shape |
+| `sequence` | `*.sequence.json` | A traced request or protocol: quorums, leases, sagas, retries, dispatch, merge |
+| `lifecycle` | `*.lifecycle.json` | State machines: order, experiment, submission, and their failure exits |
+
 | Folder | Contents |
 | :--- | :--- |
-| `diagrams/system-design/` | One architecture diagram per system-design doc |
+| `diagrams/system-design/` | One architecture diagram per design, plus mechanism figures for the flows prose explains badly |
 | `diagrams/concepts/` | Concept diagrams: sharding, replication, quorum, leftmost-prefix indexing, single-table design, strangler migration |
 | `diagrams/features/` | At-a-glance diagrams for PostgreSQL, Redis, Kafka, MongoDB, Elasticsearch, RabbitMQ, Cloud, Agentic AI, DevOps + the Redis AI-infrastructure set |
 | `diagrams/template.html` | Reference architecture template (below) |
@@ -332,6 +340,13 @@ node tools/archify-all.mjs validate   # quality-check every spec (showcase profi
 node tools/archify-all.mjs deliver    # re-render the interactive HTML per spec
 node tools/embed-svg.mjs              # export SVGs + refresh markdown diagram embeds
 node tools/build-pages.mjs            # build a local browsable site into ./site (optional)
+```
+
+Two figures are geometric rather than architectural, so they are drawn by their own generators and embedded as plain SVGs (no interactive twin):
+
+```bash
+node tools/cell-grid-svg.mjs   # geohash vs H3 cell geometry
+node tools/bit-layout-svg.mjs  # Snowflake 64-bit field layout
 ```
 
 (`tools/convert-mermaid.mjs` is the one-time Mermaid→spec converter kept for reference.)
