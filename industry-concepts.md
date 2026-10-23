@@ -16,7 +16,7 @@ Every design doc teaches the *mechanism*. This guide records the **named concept
 | [Social & Messaging](#social--messaging) | Twitter · Instagram · Reddit · Discord · Messaging · LinkedIn |
 | [Commerce](#commerce) | E-commerce · Food delivery · Ticketing · Payments · Ads · Recommendations · Fraud · Airbnb |
 | [Transport & Geo](#transport--geo) | Uber · Google Maps · Proximity · Route reconstruction · Parking · Metro · IRCTC |
-| [Finance](#finance) | Stock exchange |
+| [Finance](#finance) | Stock exchange · Algorithmic trading |
 | [Infrastructure](#infrastructure) | Cache · Locks · KV store · File storage · Rate limiter · IDs · URL shortener · Pastebin · Search · Autocomplete · Crawler · Notifications · Alerting · Observability · Serverless · Deployment · Scheduler · Leaderboard · Webhooks |
 | [AI Infrastructure](#ai-infrastructure) | AI gateway · LLM inference · A/B testing |
 | [Productivity](#productivity) | Google Docs · Google Calendar · Online judge |
@@ -292,6 +292,17 @@ Every design doc teaches the *mechanism*. This guide records the **named concept
 | **FIX protocol** | The standard order-entry and market-data session protocol between brokers and venues | Exchanges, brokers | [FIX Trading Community](https://www.fixtrading.org/standards/) |
 | **Price bands / circuit breakers** | Per-instrument limits and index-level halts convert a crash into an auction instead of a cascade | Exchanges worldwide | [SEC circuit breakers](https://www.sec.gov/about/circuit-breakers) |
 | **Event-sourced order book** | The log is the truth; the book is a deterministic fold, so recovery and audit are replays | Exchanges | [Event sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) |
+
+### Algorithmic trading
+
+| Concept | What it actually does | Who runs it | Source |
+| :--- | :--- | :--- | :--- |
+| **Pre-trade risk controls (Rule 15c3-5)** | Credit, order-size and price-collar checks that must reject an order *before* it reaches an exchange — a legal control, not a quality one | US broker-dealers providing market access | [SEC Market Access FAQ](https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/divisionsmarketregfaq-0) |
+| **Execution algorithms (TWAP / VWAP / POV)** | Slice a parent order into children that track time, a volume curve or a participation rate, so the footprint disappears into the tape | Every institutional desk | [SEC staff report on algorithmic trading](https://www.sec.gov/file/staff-report-algorithmic-trading-us-capital-markets) |
+| **OMS vs EMS split** | The OMS is the book of record (what we intended); the EMS optimizes execution (what the market allowed) — separate systems even when one vendor ships both | Asset managers | [SS&C Advent](https://www.advent.com/news-and-insights/blog/order-management-system-vs-execution-management-system/) |
+| **Embedded feed handlers** | Decode and normalize exchange feeds in a fixed microsecond budget — usually the hottest loop on the trading floor | Exegy, OneMarketData | [Exegy](https://www.exegy.com/embedded-software-feed-handlers/) |
+| **FIX Orchestra** | A venue's rules of engagement as a machine-readable spec instead of a PDF, so session code can be generated and diffed | FIX Trading Community | [fix-orchestra](https://github.com/FIXTradingCommunity/fix-orchestra-spec) |
+| **T+1 settlement** | US equities settle one day after trade date since May 2024, collapsing the overnight reconciliation window to a single night | SEC-regulated markets | [SEC Rule 15c6-1](https://www.sec.gov/investment/settlement-cycle-small-entity-compliance-guide-15c6-1-15c6-2-204-2) |
 
 ---
 

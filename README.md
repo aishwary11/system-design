@@ -9,7 +9,7 @@
 
 </div>
 
-**54 system designs · 15 technology & reference guides · 90 diagrams (85 interactive) · 42 JS algorithm implementations · 30-day roadmap**
+**54 system designs · 15 technology & reference guides · 90 diagrams (85 interactive) · 43 JS algorithm implementations · 30-day roadmap**
 
 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="30" alt="📚"/> [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
@@ -21,7 +21,7 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 
 🌍 **Industry concept map:** [industry-concepts.md](industry-concepts.md) — the named technique behind each design (Uber's H3, Google's S2, Stripe's GCRA and ledger, Kafka's LinkedIn origin) with primary sources.
 
-<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=54+system+designs+with+interactive+diagrams;15+technology+%26+interview+guides+with+runnable+examples;42+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
+<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=54+system+designs+with+interactive+diagrams;15+technology+%26+interview+guides+with+runnable+examples;43+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
 
 [Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Trust & Safety](#trust-safety) · [AI Infra](#ai-infra) · [Communities](#communities) · [Primitives](#primitives) · 🧰 [Guides](#feature-guides) · ☁️ [Cloud](#cloud-guide) · 🤖 [AI](#agentic-ai-guide) · 🛠️ [DevOps](#devops-guide) · 📚 [Resources](#resources-guide) · ❓ [Q&A](#interview-qa-guide) · 🌐 [Networking](#networking-guide) · 🧠 [Operating Systems](#operating-systems-guide) · 🗓️ [Roadmap](#roadmap-guide)
 
@@ -36,8 +36,8 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **54 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **15 feature & reference guides** | PostgreSQL · Redis · Kafka · MongoDB · Elasticsearch · RabbitMQ · Cloud Services · Agentic AI · Core Concepts | [Jump to guides](#feature-guides) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **90 diagrams** | Architecture per design, plus sequence, state-machine and anatomy figures where prose alone was doing the work | [Diagram style](#diagrams-archify) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **42 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **32 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **43 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **33 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
 
 ---
 
@@ -446,6 +446,7 @@ Executable implementations of the algorithms used across the designs:
 | Sequential Testing + CUPED | ab-testing | Always-valid p-values and covariate variance reduction for live readouts |
 | Smooth Weighted Round-Robin Routing | ai-gateway | Provider selection that respects capacity weights without bursts |
 | Tail-Based Trace Sampling | observability-pipeline | Keep every error and latency outlier, sample the rest |
+| Idempotent Order State Machine | algo-trading | A retried submit becomes a 409, never a double position — monotonic guards reject fills for cancelled orders |
 
 <p align="right"><a href="#top">↑ back to top</a></p>
 
@@ -455,7 +456,7 @@ Executable implementations of the algorithms used across the designs:
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="28" alt=""/> Techniques & Patterns
 
 <details>
-<summary><b>32 patterns</b> — click to expand the full table</summary>
+<summary><b>33 patterns</b> — click to expand the full table</summary>
 
 | Technique | Description | Used In |
 | :--- | :--- | :--- |
@@ -491,6 +492,7 @@ Executable implementations of the algorithms used across the designs:
 | Exposure-Based Experimentation | Deterministic bucketing with layered salts, SRM guards and guardrail auto-rollback | ab-testing |
 | Token & Cost Quotas | RPM/TPM/$ metering with reserve-then-settle accounting and bounded failover | ai-gateway |
 | Cardinality Governance & Tiered Sampling | Series caps, log fingerprinting, tail-based trace sampling and downsampling tiers | observability-pipeline, alerting |
+| Pre-Trade Risk Gating | Worst-case-bounded in-memory checks that must reject before the wire — a legal control, not a quality one | algo-trading, payment-system |
 
 </details>
 
