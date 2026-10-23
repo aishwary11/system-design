@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "CDN Request Path — Anycast Edge, Shield Cache, Origin, Revalidation",
+    "output": "cdn-request.sequence.html",
+    "viewBox": [
+      1040,
+      640
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "viewer",
+      "type": "external",
+      "label": "Player",
+      "sublabel": "HLS client"
+    },
+    {
+      "id": "edge",
+      "type": "cloud",
+      "label": "Edge POP",
+      "sublabel": "anycast, 95% hit"
+    },
+    {
+      "id": "shield",
+      "type": "cloud",
+      "label": "Shield Cache",
+      "sublabel": "mid-tier"
+    },
+    {
+      "id": "origin",
+      "type": "database",
+      "label": "Origin",
+      "sublabel": "packager + S3"
+    }
+  ],
+  "segments": [
+    {
+      "from": 124,
+      "to": 300,
+      "label": "Manifest (cold)"
+    },
+    {
+      "from": 310,
+      "to": 450,
+      "label": "Segment (hit)"
+    },
+    {
+      "from": 460,
+      "to": 520,
+      "label": "Revalidate + purge"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "viewer",
+      "to": "edge",
+      "y": 160,
+      "label": "GET /t/42/master.m3u8",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m2",
+      "from": "edge",
+      "to": "shield",
+      "y": 194,
+      "label": "miss — fetch upstream",
+      "variant": "default"
+    },
+    {
+      "id": "m3",
+      "from": "shield",
+      "to": "origin",
+      "y": 228,
+      "label": "GET manifest",
+      "variant": "default"
+    },
+    {
+      "id": "m4",
+      "from": "origin",
+      "to": "shield",
+      "y": 262,
+      "label": "200 + max-age=60",
+      "variant": "return"
+    },
+    {
+      "id": "m5",
+      "from": "shield",
+      "to": "edge",
+      "y": 296,
+      "label": "cache fill (shared)",
+      "variant": "dashed"
+    },
+    {
+      "id": "m6",
+      "from": "edge",
+      "to": "viewer",
+      "y": 330,
+      "label": "200 — TTFB 38 ms",
+      "variant": "return"
+    },
+    {
+      "id": "m7",
+      "from": "viewer",
+      "to": "edge",
+      "y": 364,
+      "label": "GET segment_00042.ts",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m8",
+      "from": "edge",
+      "to": "viewer",
+      "y": 398,
+      "label": "hit — 12 ms",
+      "variant": "return"
+    },
+    {
+      "id": "m9",
+      "from": "edge",
+      "to": "shield",
+      "y": 432,
+      "label": "stale — conditional GET",
+      "variant": "dashed"
+    },
+    {
+      "id": "m10",
+      "from": "shield",
+      "to": "edge",
+      "y": 466,
+      "label": "304 not modified",
+      "variant": "return"
+    },
+    {
+      "id": "m11",
+      "from": "origin",
+      "to": "edge",
+      "y": 500,
+      "label": "purge on publish (tag-based)",
+      "variant": "security"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "edge",
+      "from": 156,
+      "to": 530,
+      "type": "cloud"
+    },
+    {
+      "participant": "shield",
+      "from": 192,
+      "to": 470,
+      "type": "cloud"
+    },
+    {
+      "participant": "origin",
+      "from": 228,
+      "to": 270,
+      "type": "database"
+    }
+  ]
+}

@@ -96,6 +96,14 @@ With `N=3`, `W=2`, `R=2` the write and read sets must overlap in at least one re
 
 **Interactive diagram:** [diagrams/system-design/quorum-rw.sequence.html](diagrams/system-design/quorum-rw.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
 
+### Raft, for Contrast
+
+Dynamo-style quorums let any coordinator serve a write; Raft centralises writes behind an elected leader and makes the *log* the source of truth. That changes what a failure costs. With quorums, a partition can accept writes on both sides and you reconcile later; with Raft, the minority simply cannot commit, so there is no reconciliation. The price is an election on leader loss — one or two seconds of unavailability, plus a log-repair round for any follower that fell behind. The rule that makes it safe is the quorum commit: a record is durable once a majority has it, not once the leader has it.
+
+![Raft — Replicate, Commit on Quorum, Re-Elect, Repair a Divergent Log](diagrams/system-design/raft-replication.sequence.svg)
+
+**Interactive diagram:** [diagrams/system-design/raft-replication.sequence.html](diagrams/system-design/raft-replication.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 How the system is decomposed into independently deployed services:
 

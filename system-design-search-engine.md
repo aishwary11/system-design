@@ -89,6 +89,14 @@ Search = three subsystems: **crawl** (already covered — `system-design-web-cra
 5. Query path: lexicon lookup → scatter to shard groups (top-r per shard, r >> k) → global top-k merge → rank re-scoring with ML layer → snippets from doc cache
 6. Doc cache / page store serves snippets and cached-page links
 
+### HNSW — What a Vector Index Actually Stores
+
+Lexical retrieval gets you candidates; the semantic layer has to find nearest neighbours in a few milliseconds, and that is where the index shape matters. HNSW is a stack of graphs, not a tree: layer 0 holds every vector with `M` links to its nearest neighbours, and each layer above is a sampled subset that acts as an express lane. A query enters at the top, greedily walks to the closest node it can see, drops a layer when no neighbour improves, and only then expands `ef` candidates at layer 0. Cost is therefore `O(log N)` hops plus `ef·M` distance computations — recall is a dial (`ef`), not a property of the index. That is also why deletions are awkward: removing a node means repairing its neighbourhood, so most systems tombstone and rebuild during compaction.
+
+![Hnsw Layers — System Architecture](diagrams/system-design/hnsw-layers.svg)
+
+*One query, three layers: hop on the sparse graph, drop, hop again, then refine locally at layer 0 before returning k results.*
+
 ## Microservices
 
 | Service | Tech Stack | Database | Pattern |

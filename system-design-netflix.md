@@ -93,6 +93,14 @@ Netflix is the world's leading subscription-based video streaming platform with 
 6. Kafka events: play, pause, seek - Analytics pipeline (Flink to S3)
 7. Encoding Workers transcode new uploads into per-title bitrate ladders
 
+### The CDN Path, Hop by Hop
+
+Playback is almost entirely a cache story. The player asks for a manifest, the nearest anycast POP answers from a shared shield cache, and only a miss reaches the packager. Segments — the bulk of the bytes — are the opposite case: they are immutable once published, so a hit ratio in the mid-90s is normal and the edge barely talks to origin. Two details make or break it. First, the **shield tier**: without it, every POP miss is an origin hit, and a popular title's cold start becomes a thundering herd. Second, **purge on publish**, which has to be tag-based (`title:42`) rather than URL-by-URL, or a re-encode leaves stale segments behind a valid manifest.
+
+![CDN Request Path — Anycast Edge, Shield Cache, Origin, Revalidation](diagrams/system-design/cdn-request.sequence.svg)
+
+**Interactive diagram:** [diagrams/system-design/cdn-request.sequence.html](diagrams/system-design/cdn-request.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+
 ## Microservices
 
 ### 1. Auth & Identity Service

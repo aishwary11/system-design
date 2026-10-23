@@ -9,7 +9,7 @@
 
 </div>
 
-**53 system designs · 15 technology & reference guides · 84 diagrams (82 interactive) · 42 JS algorithm implementations · 30-day roadmap**
+**53 system designs · 15 technology & reference guides · 89 diagrams (84 interactive) · 42 JS algorithm implementations · 30-day roadmap**
 
 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="30" alt="📚"/> [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
@@ -35,7 +35,7 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 | :--- | :--- | :--- |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **53 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **15 feature & reference guides** | PostgreSQL · Redis · Kafka · MongoDB · Elasticsearch · RabbitMQ · Cloud Services · Agentic AI · Core Concepts | [Jump to guides](#feature-guides) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **84 diagrams** | Architecture per design, plus sequence and state-machine figures for the flows that need them | [Diagram style](#diagrams-archify) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **89 diagrams** | Architecture per design, plus sequence, state-machine and anatomy figures where prose alone was doing the work | [Diagram style](#diagrams-archify) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **42 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **32 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
 
@@ -345,8 +345,11 @@ node tools/build-pages.mjs            # build a local browsable site into ./site
 Two figures are geometric rather than architectural, so they are drawn by their own generators and embedded as plain SVGs (no interactive twin):
 
 ```bash
-node tools/cell-grid-svg.mjs   # geohash vs H3 cell geometry
-node tools/bit-layout-svg.mjs  # Snowflake 64-bit field layout
+node tools/cell-grid-svg.mjs       # geohash vs H3 cell geometry
+node tools/bit-layout-svg.mjs      # Snowflake 64-bit field layout
+node tools/hnsw-layers-svg.mjs     # HNSW layer stack + query descent
+node tools/kafka-log-svg.mjs       # partition segments, HW/LEO, consumer offsets
+node tools/bitrate-ladder-svg.mjs  # encoding ladder + ABR policy
 ```
 
 (`tools/convert-mermaid.mjs` is the one-time Mermaid→spec converter kept for reference.)

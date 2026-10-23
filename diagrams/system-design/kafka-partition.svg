@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="900" role="img">
+<title>Kafka topic, partitions and the anatomy of one partition log</title>
+<rect x="0.5" y="0.5" width="999" height="499" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+<text x="40" y="38"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#7c2d12">Kafka — a topic is N independent logs; a log is a directory of segments</text>
+<text x="40" y="68"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5"  fill="#94a3b8">topic: orders   (3 partitions, replication factor 3)</text>
+<rect x="40" y="80" width="200" height="52" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="54" y="100"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="bold" fill="#475569">P0</text>
+<text x="54" y="116"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#64748b">leader B1 · ISR B2, B3</text>
+<rect x="300" y="80" width="200" height="52" rx="10" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+<text x="314" y="100"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="bold" fill="#7c2d12">P1</text>
+<text x="314" y="116"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#64748b">leader B2 · ISR B1, B3</text>
+<rect x="560" y="80" width="200" height="52" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="574" y="100"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="bold" fill="#475569">P2</text>
+<text x="574" y="116"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#64748b">leader B3 · ISR B1, B2</text>
+<text x="790" y="100"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5"  fill="#64748b">key → partition</text>
+<text x="790" y="116"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5"  fill="#94a3b8">hash(key) % 3</text>
+<text x="40" y="176"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="bold" fill="#7c2d12">partition P1 — segment files on disk</text>
+<rect x="60" y="196" width="300" height="54" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.4"/>
+<text x="70" y="214"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#475569">000000000000.log</text>
+<text x="70" y="232"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">offsets 0–4095</text>
+<rect x="372" y="196" width="280" height="54" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.4"/>
+<text x="382" y="214"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#475569">000000004096.log</text>
+<text x="382" y="232"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">offsets 4096–8191</text>
+<rect x="664" y="196" width="270" height="54" rx="6" fill="#fff7ed" stroke="#f97316" stroke-width="1.4"/>
+<text x="674" y="214"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#475569">000000008192.log</text>
+<text x="674" y="232"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">offsets 8192–…</text>
+<text x="894" y="232" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#c2410c">active</text>
+<rect x="60" y="258" width="300" height="18" rx="4" fill="#fdf2f8" stroke="#f9a8d4" stroke-width="1"/>
+<text x="68" y="271"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="7.5"  fill="#9d174d">000000000000.index (sparse, every 4 KB)</text>
+<rect x="372" y="258" width="280" height="18" rx="4" fill="#fdf2f8" stroke="#f9a8d4" stroke-width="1"/>
+<text x="380" y="271"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="7.5"  fill="#9d174d">  .index + .timeindex</text>
+<rect x="664" y="258" width="270" height="18" rx="4" fill="#fdf2f8" stroke="#f9a8d4" stroke-width="1"/>
+<text x="672" y="271"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="7.5"  fill="#9d174d">  .index + .timeindex</text>
+<line x1="884" y1="186" x2="884" y2="288" stroke="#10b981" stroke-width="1.8"/>
+<line x1="930" y1="186" x2="930" y2="288" stroke="#ef4444" stroke-width="1.8" stroke-dasharray="4 3"/>
+<text x="872" y="176" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5" font-weight="bold" fill="#047857">HW 1 042</text>
+<text x="928" y="156"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5" font-weight="bold" fill="#b91c1c">LEO 1 050</text>
+<path d="M820 196 L820 178 L836 184 Z" fill="#6366f1"/>
+<text x="800" y="166"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#4338ca">group A committed 1 042</text>
+<text x="40" y="322"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5"  fill="#94a3b8">Replication: followers fetch the same bytes and append them in order; a record is committed once it is on every in-sync replica (ISR).</text>
+<text x="40" y="366"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="bold" fill="#7c2d12">consumer group offsets — the number that decides replay and lag</text>
+<rect x="60" y="380" width="200" height="46" rx="9" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="72" y="398"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="bold" fill="#334155">C1 → P1</text>
+<text x="72" y="414"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#64748b">committed 1 042 · lag 8</text>
+<circle cx="248" cy="392" r="4" fill="#6366f1"/>
+<rect x="300" y="380" width="200" height="46" rx="9" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="312" y="398"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="bold" fill="#334155">C2 → P0</text>
+<text x="312" y="414"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#64748b">committed 2 118 · lag 0</text>
+<circle cx="488" cy="392" r="4" fill="#10b981"/>
+<rect x="540" y="380" width="200" height="46" rx="9" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="552" y="398"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="bold" fill="#334155">C3 → P2</text>
+<text x="552" y="414"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#64748b">committed 1 907 · lag 21</text>
+<circle cx="728" cy="392" r="4" fill="#8b5cf6"/>
+<text x="770" y="398"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9"  fill="#64748b">retention: delete after 7 d</text>
+<text x="770" y="414"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9"  fill="#64748b">compaction: keep last per key</text>
+<text x="40" y="456"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5"  fill="#64748b">· Offsets are per partition and monotonic — global ordering only exists inside one partition.</text>
+<text x="40" y="474"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5"  fill="#64748b">· HW is what consumers may read; LEO is where the leader is writing. The gap is replication lag.</text>
+<text x="40" y="492"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5"  fill="#64748b">· A consumer’s committed offset is its replay point: reset it backwards and you reprocess, not corrupt.</text>
+</svg>

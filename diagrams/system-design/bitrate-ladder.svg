@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 440" width="900" role="img">
+<title>Encoding ladder and ABR switching policy</title>
+<rect x="0.5" y="0.5" width="999" height="439" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+<text x="40" y="38"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">One master playlist, six renditions, one control loop</text>
+<text x="40" y="56"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5"  fill="#94a3b8">the ladder is produced once per title; the player picks a rung per segment</text>
+<rect x="40" y="76" width="520" height="288" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="58" y="104"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#312e81">240p</text>
+<text x="112" y="104"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">426×240</text>
+<rect x="200" y="93" width="117.84255753589399" height="15" rx="4" fill="#e0e7ff" stroke="#818cf8" stroke-width="1"/>
+<text x="325.842557535894" y="104"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#475569">300 kbps</text>
+<text x="484" y="104"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">H.264</text>
+<text x="58" y="148"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#312e81">360p</text>
+<text x="112" y="148"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">640×360</text>
+<rect x="200" y="137" width="135.3480895764961" height="15" rx="4" fill="#e0e7ff" stroke="#818cf8" stroke-width="1"/>
+<text x="343.34808957649614" y="148"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#475569">700 kbps</text>
+<text x="484" y="148"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">H.264</text>
+<text x="58" y="192"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#312e81">480p</text>
+<text x="112" y="192"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">854×480</text>
+<rect x="200" y="181" width="149.66880339560112" height="15" rx="4" fill="#e0e7ff" stroke="#818cf8" stroke-width="1"/>
+<text x="357.6688033956011" y="192"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#475569">1.4 Mbps</text>
+<text x="484" y="192"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">H.264</text>
+<text x="58" y="236"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#312e81">720p</text>
+<text x="112" y="236"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">1280×720</text>
+<rect x="200" y="225" width="163.98951721470613" height="15" rx="4" fill="#e0e7ff" stroke="#818cf8" stroke-width="1"/>
+<text x="371.9895172147061" y="236"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#475569">2.8 Mbps</text>
+<text x="484" y="236"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">H.264</text>
+<text x="58" y="280"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#312e81">1080p</text>
+<text x="112" y="280"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">1920×1080</text>
+<rect x="200" y="269" width="175.96881247900157" height="15" rx="4" fill="#c7d2fe" stroke="#818cf8" stroke-width="1"/>
+<text x="383.9688124790016" y="280"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#475569">5.0 Mbps</text>
+<text x="484" y="280"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">H.264</text>
+<text x="58" y="324"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#312e81">4K</text>
+<text x="112" y="324"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">3840×2160</text>
+<rect x="200" y="313" width="200" height="15" rx="4" fill="#c7d2fe" stroke="#818cf8" stroke-width="1"/>
+<text x="408" y="324"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#475569">16.0 Mbps</text>
+<text x="484" y="324"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#94a3b8">HEVC</text>
+<rect x="590" y="76" width="370" height="288" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="610" y="100"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="bold" fill="#312e81">player control loop</text>
+<line x1="612" y1="300" x2="938" y2="300" stroke="#cbd5e1"/>
+<line x1="612" y1="300" x2="612" y2="204" stroke="#cbd5e1"/>
+<text x="608" y="200"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8"  fill="#94a3b8">buffer (s)</text>
+<polyline points="612.0,274.8 639.2,266.4 666.3,258.0 693.5,249.6 720.7,241.2 747.8,251.0 775.0,260.8 802.2,270.6 829.3,280.4 856.5,272.0 883.7,263.6 910.8,255.2 938.0,246.8" fill="none" stroke="#f59e0b" stroke-width="2"/>
+<text x="938" y="314"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8"  fill="#94a3b8">time →</text>
+<line x1="612" y1="227.2" x2="938" y2="227.2" stroke="#10b981" stroke-dasharray="4 4"/>
+<text x="934" y="222.2"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8"  fill="#047857">up at 10 s</text>
+<line x1="612" y1="272" x2="938" y2="272" stroke="#ef4444" stroke-dasharray="4 4"/>
+<text x="934" y="267"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8"  fill="#b91c1c">down at 4 s</text>
+<text x="612" y="122"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#64748b">· Measure throughput over a 10 s window, not per segment.</text>
+<text x="612" y="140"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#64748b">· Step up one rung only with 10 s of buffer; step down two on a stall.</text>
+<text x="612" y="158"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="8.5"  fill="#64748b">· Cap at the display and at the plan’s max resolution.</text>
+<text x="40" y="400"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5"  fill="#64748b">More rungs → smoother adaptation, but every rung is a full encode and a separate object in the manifest.</text>
+<text x="40" y="418"  font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5"  fill="#94a3b8">4K at 16 Mbps is 32× the 240p bitrate: the ladder is a cost decision as much as a quality one.</text>
+</svg>

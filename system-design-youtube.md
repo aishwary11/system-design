@@ -92,6 +92,14 @@ A video-sharing and streaming platform supporting video upload, transcoding, str
 6. Kafka events: watch_time, likes, comments - Analytics
 7. Monetization: ad serving pipeline targets based on user profile
 
+### The Ladder, and What ABR Actually Switches
+
+Two different things get called "the ladder". The **encoding ladder** is produced once per title: each rung is a full encode, a separate object in the manifest, and a storage/CPU cost that scales with how many rungs you keep. The **ABR ladder** is the player's runtime choice, one rung per segment, driven by a buffer-level control loop rather than by bandwidth alone — hence the up-threshold (10 s of buffer) being much more conservative than the down-threshold (4 s). More rungs buy smoother adaptation and cost more to encode; fewer rungs make every switch visible. That trade-off is why per-title encoding exists at all: a static ladder encodes a talking-head video at 4K bitrates it never needs.
+
+![Bitrate Ladder — System Architecture](diagrams/system-design/bitrate-ladder.svg)
+
+*Six renditions from 240p to 4K — a 32× bitrate spread — and the three rules that decide which one plays next.*
+
 ## Microservices
 
 ### 1. Auth Service

@@ -50,23 +50,11 @@ A quick-reference catalog of Apache Kafka features used in event-driven backends
 ---
 
 ## 1. Core Concepts — Topic, Partition, Offset
-Kafka is best understood through five core terms - this diagram shows how a topic’s partitions flow from producers to consumer groups:
+Kafka is best understood through five core terms — the figure traces one topic into its partitions, then opens partition P1 to show what is actually on disk:
 
-```
-                 producer  producer  producer
-                    |         |         |
-                    v         v         v
-   topic "orders" ──┴─────────┴─────────┴──►  (a named, immutable event stream)
+![Kafka Partition at a Glance](diagrams/system-design/kafka-partition.svg)
 
-   partition 0: [o1] [o4] [o7] ...        offsets grow monotonically per partition
-   partition 1: [o2] [o5] [o8] ...
-   partition 2: [o3] [o6] [o9] ...
-
-                    |    |    |
-                    v    v    v
-              consumer group "shipping"
-              (each partition is read by ONE consumer in the group)
-```
+*Producers append to a partition; each partition is an independent, ordered log split into segment files with a sparse index. A consumer group assigns each partition to exactly one member, so ordering holds per partition and never across a topic — the committed offset is the replay point.*
 
 | Term | Meaning |
 | ---- | ------- |

@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Raft — Replicate, Commit on Quorum, Re-Elect, Repair a Divergent Log",
+    "output": "raft-replication.sequence.html",
+    "viewBox": [
+      1040,
+      700
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "client",
+      "type": "external",
+      "label": "Client",
+      "sublabel": "PUT x=1"
+    },
+    {
+      "id": "leader",
+      "type": "backend",
+      "label": "Leader",
+      "sublabel": "term 7"
+    },
+    {
+      "id": "f1",
+      "type": "database",
+      "label": "Follower 1",
+      "sublabel": "N=5"
+    },
+    {
+      "id": "f2",
+      "type": "database",
+      "label": "Follower 2",
+      "sublabel": "N=5"
+    },
+    {
+      "id": "f3",
+      "type": "database",
+      "label": "Follower 3",
+      "sublabel": "lagging"
+    }
+  ],
+  "segments": [
+    {
+      "from": 124,
+      "to": 290,
+      "label": "Replicate"
+    },
+    {
+      "from": 300,
+      "to": 420,
+      "label": "Commit"
+    },
+    {
+      "from": 430,
+      "to": 560,
+      "label": "Election + repair"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "client",
+      "to": "leader",
+      "y": 160,
+      "label": "PUT x=1",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m2",
+      "from": "leader",
+      "to": "f1",
+      "y": 193,
+      "label": "AppendEntries(term 7, idx 5)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m3",
+      "from": "leader",
+      "to": "f2",
+      "y": 226,
+      "label": "AppendEntries(term 7, idx 5)",
+      "variant": "default"
+    },
+    {
+      "id": "m4",
+      "from": "leader",
+      "to": "f3",
+      "y": 259,
+      "label": "AppendEntries(term 7, idx 5)",
+      "variant": "default"
+    },
+    {
+      "id": "m5",
+      "from": "f1",
+      "to": "leader",
+      "y": 292,
+      "label": "ack idx 5",
+      "variant": "return"
+    },
+    {
+      "id": "m6",
+      "from": "f2",
+      "to": "leader",
+      "y": 325,
+      "label": "ack idx 5",
+      "variant": "return"
+    },
+    {
+      "id": "m7",
+      "from": "leader",
+      "to": "client",
+      "y": 358,
+      "label": "200 — committed (3 of 5)",
+      "variant": "return"
+    },
+    {
+      "id": "m8",
+      "from": "leader",
+      "to": "f3",
+      "y": 391,
+      "label": "commitIndex = 5",
+      "variant": "dashed"
+    },
+    {
+      "id": "m9",
+      "from": "f1",
+      "to": "f2",
+      "y": 424,
+      "label": "RequestVote(term 8) — leader silent",
+      "variant": "security"
+    },
+    {
+      "id": "m10",
+      "from": "f2",
+      "to": "f1",
+      "y": 457,
+      "label": "vote granted",
+      "variant": "return"
+    },
+    {
+      "id": "m11",
+      "from": "f1",
+      "to": "client",
+      "y": 490,
+      "label": "new leader, term 8",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m12",
+      "from": "f1",
+      "to": "f3",
+      "y": 523,
+      "label": "AppendEntries from idx 3",
+      "variant": "default"
+    },
+    {
+      "id": "m13",
+      "from": "f3",
+      "to": "f1",
+      "y": 556,
+      "label": "conflict — truncate to idx 3",
+      "variant": "security"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "leader",
+      "from": 156,
+      "to": 420,
+      "type": "backend"
+    },
+    {
+      "participant": "f1",
+      "from": 192,
+      "to": 570,
+      "type": "database"
+    },
+    {
+      "participant": "f2",
+      "from": 224,
+      "to": 480,
+      "type": "database"
+    },
+    {
+      "participant": "f3",
+      "from": 258,
+      "to": 420,
+      "type": "database"
+    }
+  ]
+}
