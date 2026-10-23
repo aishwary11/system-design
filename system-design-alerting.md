@@ -343,4 +343,4 @@ Expected: the QPS spike at sample 7 (and its echo at 8) exceed z=6 → page once
 
 ---
 
-<nav>← [airbnb](system-design-airbnb.md) · [📖 All guides](README.md) · [code deployment](system-design-code-deployment.md) →</nav>
+<nav>← [airbnb](system-design-airbnb.md) · [📖 All guides](README.md) · [algo trading](system-design-algo-trading.md) →</nav>

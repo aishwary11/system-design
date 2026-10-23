@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Algorithmic Trading Platform — Market Data In, Orders Out",
+    "output": "algo-trading.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [960, 2240]
+  },
+  "components": [
+    { "id": "mdf", "type": "external", "label": "Market Data Feeds", "sublabel": "12 feeds · L1 + trades", "pos": [338, 70], "size": [160, 62] },
+    { "id": "feeds", "type": "backend", "label": "Feed Handlers", "sublabel": "decode · normalize", "pos": [332, 322], "size": [166, 62] },
+    { "id": "ticks", "type": "database", "label": "Tick Store", "tag": "Parquet · 30 d hot", "pos": [76, 574], "size": [158, 62] },
+    { "id": "mdbus", "type": "messagebus", "label": "Market Data Bus", "sublabel": "IPC fan-out", "pos": [334, 574], "size": [164, 62] },
+    { "id": "strategies", "type": "backend", "label": "Signal Engine", "tag": "→ 40 strategies", "pos": [334, 826], "size": [164, 62] },
+    { "id": "backtest", "type": "backend", "label": "Backtest Engine", "tag": "→ tick replay", "pos": [76, 826], "size": [158, 62] },
+    { "id": "risk", "type": "backend", "label": "Pre-Trade Risk", "sublabel": "15c3-5 · limits", "pos": [334, 1078], "size": [164, 62] },
+    { "id": "router", "type": "backend", "label": "Order Router", "tag": "TWAP · VWAP · POV", "pos": [334, 1330], "size": [164, 62] },
+    { "id": "kill", "type": "backend", "label": "Kill Switch", "tag": "flatten · halt", "pos": [76, 1330], "size": [158, 62] },
+    { "id": "sessions", "type": "external", "label": "Venue Sessions", "sublabel": "FIX · binary gates", "pos": [334, 1582], "size": [164, 62] },
+    { "id": "bus2", "type": "messagebus", "label": "Kafka", "sublabel": "exec reports · audit", "pos": [334, 1834], "size": [164, 62] },
+    { "id": "positions", "type": "database", "label": "Redis", "tag": "positions · limits", "pos": [76, 1834], "size": [158, 62] },
+    { "id": "orderdb", "type": "database", "label": "PostgreSQL", "tag": "orders · fills", "pos": [592, 1834], "size": [158, 62] },
+    { "id": "recon", "type": "backend", "label": "Reconciliation", "tag": "T+1 breaks", "pos": [76, 2086], "size": [158, 62] },
+    { "id": "tca", "type": "backend", "label": "TCA + Surveillance", "pos": [334, 2086], "size": [164, 62] },
+    { "id": "riskadmin", "type": "backend", "label": "Risk Admin", "sublabel": "limits · approvals", "pos": [592, 2086], "size": [158, 62] }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Trading Platform (colocation or hybrid)",
+      "wraps": ["feeds", "ticks", "mdbus", "strategies", "backtest", "risk", "router", "kill", "bus2", "positions", "orderdb", "recon", "tca", "riskadmin"]
+    }
+  ],
+  "connections": [
+    { "id": "e1-mdf-feeds", "from": "mdf", "to": "feeds", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e2-feeds-mdbus", "from": "feeds", "to": "mdbus", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e3-feeds-ticks", "from": "feeds", "to": "ticks", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e4-ticks-backtest", "from": "ticks", "to": "backtest", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e5-mdbus-strategies", "from": "mdbus", "to": "strategies", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e6-strategies-risk", "from": "strategies", "to": "risk", "fromSide": "bottom", "toSide": "top", "variant": "emphasis" },
+    { "id": "e7-risk-router", "from": "risk", "to": "router", "fromSide": "bottom", "toSide": "top", "variant": "emphasis" },
+    { "id": "e8-router-sessions", "from": "router", "to": "sessions", "fromSide": "bottom", "toSide": "top", "variant": "emphasis" },
+    { "id": "e9-router-kill", "from": "router", "to": "kill", "fromSide": "left", "toSide": "right", "variant": "dashed" },
+    { "id": "e10-sessions-bus2", "from": "sessions", "to": "bus2", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e11-bus2-positions", "from": "bus2", "to": "positions", "fromSide": "left", "toSide": "right" },
+    { "id": "e12-bus2-orderdb", "from": "bus2", "to": "orderdb", "fromSide": "right", "toSide": "left" },
+    { "id": "e13-bus2-tca", "from": "bus2", "to": "tca", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e14-positions-recon", "from": "positions", "to": "recon", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e15-orderdb-riskadmin", "from": "orderdb", "to": "riskadmin", "fromSide": "bottom", "toSide": "top" }
+  ]
+}

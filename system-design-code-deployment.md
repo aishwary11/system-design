@@ -316,4 +316,4 @@ The **epoch counter** is the interview-grade detail: when a rollback starts, the
 
 ---
 
-<nav>← [alerting](system-design-alerting.md) · [📖 All guides](README.md) · [concepts](system-design-concepts.md) →</nav>
+<nav>← [algo trading](system-design-algo-trading.md) · [📖 All guides](README.md) · [concepts](system-design-concepts.md) →</nav>

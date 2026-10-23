@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 2240" width="900" role="img" aria-label="Algorithmic Trading Platform — Market Data In, Orders Out">
+<title>Algorithmic Trading Platform — Market Data In, Orders Out</title>
+<rect x="0.5" y="0.5" width="959" height="2239" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="58" y="288" width="710" height="1878" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="7 5"/>
+<rect x="70" y="296" width="300.8" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="220.4" y="310" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">Trading Platform (colocation or hybrid)</text>
+<path d="M418 132 L418 156 L434 156 L434 298 L415 298 L415 322" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<path d="M425 384 L425 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<path d="M405 384 L405 479 L155 479 L155 574" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<path d="M155 636 L155 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<path d="M416 636 L416 826" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<path d="M416 888 L416 1078" fill="none" stroke="#10b981" stroke-width="2.2" marker-end="url(#arrEm-algo-trading)"/>
+<path d="M416 1140 L416 1330" fill="none" stroke="#10b981" stroke-width="2.2" marker-end="url(#arrEm-algo-trading)"/>
+<path d="M416 1392 L416 1582" fill="none" stroke="#10b981" stroke-width="2.2" marker-end="url(#arrEm-algo-trading)"/>
+<path d="M334 1361 L234 1361" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)" stroke-dasharray="5 4"/>
+<path d="M416 1644 L416 1834" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<path d="M334 1865 L234 1865" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<path d="M498 1865 L592 1865" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<path d="M416 1896 L416 2086" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<path d="M155 1896 L155 2086" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<path d="M671 1896 L671 2086" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-algo-trading)"/>
+<rect x="338" y="73" width="160" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="338" y="70" width="160" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="341" y="73" width="154" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="418" y="106" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Market Data Feeds</text>
+<rect x="332" y="325" width="166" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="332" y="322" width="166" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="335" y="325" width="160" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="415" y="358" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Feed Handlers</text>
+<rect x="76" y="577" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="76" y="574" width="158" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="79" y="577" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="155" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Tick Store</text>
+<rect x="334" y="577" width="164" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="334" y="574" width="164" height="62" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.4"/>
+<rect x="337" y="577" width="158" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="416" y="610" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#7c2d12">Market Data Bus</text>
+<rect x="334" y="829" width="164" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="334" y="826" width="164" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="337" y="829" width="158" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="416" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Signal Engine</text>
+<rect x="76" y="829" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="76" y="826" width="158" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="79" y="829" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="155" y="862" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Backtest Engine</text>
+<rect x="334" y="1081" width="164" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="334" y="1078" width="164" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="337" y="1081" width="158" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="416" y="1114" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Pre-Trade Risk</text>
+<rect x="334" y="1333" width="164" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="334" y="1330" width="164" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="337" y="1333" width="158" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="416" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Order Router</text>
+<rect x="76" y="1333" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="76" y="1330" width="158" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="79" y="1333" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="155" y="1366" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Kill Switch</text>
+<rect x="334" y="1585" width="164" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="334" y="1582" width="164" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="337" y="1585" width="158" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="416" y="1618" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Venue Sessions</text>
+<rect x="334" y="1837" width="164" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="334" y="1834" width="164" height="62" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.4"/>
+<rect x="337" y="1837" width="158" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="416" y="1870" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#7c2d12">Kafka</text>
+<rect x="76" y="1837" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="76" y="1834" width="158" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="79" y="1837" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="155" y="1870" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Redis</text>
+<rect x="592" y="1837" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="592" y="1834" width="158" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="595" y="1837" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="671" y="1870" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">PostgreSQL</text>
+<rect x="76" y="2089" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="76" y="2086" width="158" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="79" y="2089" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="155" y="2122" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Reconciliation</text>
+<rect x="334" y="2089" width="164" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="334" y="2086" width="164" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="337" y="2089" width="158" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="416" y="2122" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">TCA + Surveillance</text>
+<rect x="592" y="2089" width="158" height="62" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="592" y="2086" width="158" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="595" y="2089" width="152" height="56" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="671" y="2122" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Risk Admin</text>
+<defs><marker id="arr-algo-trading" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-algo-trading" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
+</svg>
