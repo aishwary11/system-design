@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>STUDY PLAN</sub>
+
 # 30-Day System Design Study Roadmap
 
 </div>
@@ -12,7 +14,7 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Week 1 — Foundations (the primitives everything reuses)](#week-1--foundations-the-primitives-everything-reuses)

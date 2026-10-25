@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>RABBITMQ GUIDE</sub>
+
 # RabbitMQ — Features Guide with Basic Examples
 
 </div>
@@ -23,7 +25,7 @@ A quick-reference catalog of RabbitMQ features used in task-oriented messaging: 
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Core Model — Producer, Exchange, Queue, Consumer](#1-core-model--producer-exchange-queue-consumer)

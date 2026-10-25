@@ -1,15 +1,29 @@
 <div align="center">
 
-# System Design: Multi-Tenant GPU Scheduler & Model Lifecycle
+<sub>SYSTEM DESIGN · AI INFRASTRUCTURE</sub>
+
+# GPU Scheduler & Model Lifecycle
+
+**Multi-tenant placement, quota fairness, and model residency on one GPU fleet.**
+
+![Fleet](https://img.shields.io/badge/fleet-4.1K_GPUs-6366f1?style=flat-square&labelColor=0a0a0a)
+![Tenants](https://img.shields.io/badge/tenants-200-6366f1?style=flat-square&labelColor=0a0a0a)
+![Target](https://img.shields.io/badge/target-85%25_utilization-6366f1?style=flat-square&labelColor=0a0a0a)
+
+[Overview](#overview) · [Architecture](#high-level-architecture) · [Decisions](#key-design-decisions) · [Failures](#failure-modes--recovery) · [LLD](#low-level-design-lld--placement--model-eviction)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Design the control plane that decides **which tenant gets which GPU slice, and which model lives in GPU memory**. It combines Kubernetes-style admission and placement with a model cache: gang scheduling, topology-aware bin-packing, quota borrowing, MIG/MPS isolation, single-flight model loads, and drain-before-evict. The scarce resources are GPU **memory** and **interconnect topology**, not CPU.
+> **THE PROBLEM** — Design the control plane that decides **which tenant gets which GPU slice, and which model lives in GPU memory**. It combines Kubernetes-style admission and placement with a model cache: gang scheduling, topology-aware bin-packing, quota borrowing, MIG/MPS isolation, single-flight model loads, and drain-before-evict. The scarce resources are GPU **memory** and **interconnect topology**, not CPU.
+
+| THE PROBLEM | THE HARD PART | THE BET |
+| :--- | :--- | :--- |
+| 200 tenants compete for 4,096 GPUs across training, inference and notebooks. | Placing a gang **and** keeping the right model resident — placement and eviction are one decision. | Separate admission from placement, reserve whole gangs, and drain before evicting a model. |
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

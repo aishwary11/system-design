@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: File Storage (Google Drive/Dropbox)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A cloud file storage system supporting file upload/download, sync, sharing, and versioning for millions of users.
+> **THE PROBLEM** — A cloud file storage system supporting file upload/download, sync, sharing, and versioning for millions of users.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

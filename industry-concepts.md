@@ -1,4 +1,10 @@
+<div align="center">
+
+<sub>INDUSTRY MAP</sub>
+
 # 🌍 Industry Concepts & Real Systems
+
+</div>
 
 Every design doc teaches the *mechanism*. This guide records the **named concept and the system that made it famous**, so a design review can say "use H3 cells, not a geohash prefix scan" instead of "use a geo index".
 

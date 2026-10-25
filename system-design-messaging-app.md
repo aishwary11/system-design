@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>SOCIAL & MESSAGING</sub>
+
 # System Design: Messaging Application (WhatsApp)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A real-time messaging platform supporting one-to-one and group messaging, media sharing, online/offline status, delivery receipts, and push notifications for 2B+ users globally.
+> **THE PROBLEM** — A real-time messaging platform supporting one-to-one and group messaging, media sharing, online/offline status, delivery receipts, and push notifications for 2B+ users globally.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

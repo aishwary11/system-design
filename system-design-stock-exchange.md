@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>FINANCE & ADS</sub>
+
 # System Design: Stock Exchange (Matching Engine)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Design the core trading platform of a stock exchange (NSE / NASDAQ / BSE-style): order intake from broker OMSs, a deterministic matching engine that runs a continuous two-sided auction per symbol, tick-by-tick market data dissemination, and T+1 clearing & settlement.
+> **THE PROBLEM** — Design the core trading platform of a stock exchange (NSE / NASDAQ / BSE-style): order intake from broker OMSs, a deterministic matching engine that runs a continuous two-sided auction per symbol, tick-by-tick market data dissemination, and T+1 clearing & settlement.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

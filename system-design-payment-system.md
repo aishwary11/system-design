@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>FINANCE & ADS</sub>
+
 # System Design: Payment System (Stripe)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A payment processing platform supporting online payments, refunds, subscriptions, and multi-currency transactions.
+> **THE PROBLEM** — A payment processing platform supporting online payments, refunds, subscriptions, and multi-currency transactions.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

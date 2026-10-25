@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>MONGODB GUIDE</sub>
+
 # MongoDB — Features Guide with Basic Examples
 
 </div>
@@ -21,7 +23,7 @@ A quick-reference catalog of MongoDB features used in document-oriented backends
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Documents & Collections](#1-documents--collections)

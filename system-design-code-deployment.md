@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>DEVOPS & DELIVERY</sub>
+
 # System Design: Code Deployment System (CI/CD Pipeline)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — The system that takes a git commit to thousands of production hosts safely: artifact builds, staged environments, health-checked canary rollouts, automatic rollback — blue-green and canary as first-class state machines, not vibes.
+> **THE PROBLEM** — The system that takes a git commit to thousands of production hosts safely: artifact builds, staged environments, health-checked canary rollouts, automatic rollback — blue-green and canary as first-class state machines, not vibes.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

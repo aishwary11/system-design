@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>DEVOPS GUIDE</sub>
+
 # DevOps & Kubernetes — Features Guide with Basic Examples
 
 </div>
@@ -18,7 +20,7 @@ A quick-reference catalog of the DevOps toolchain behind every design in this re
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Containers & Images (Docker)](#1-containers--images-docker)

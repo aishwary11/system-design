@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>STREAMING & MEDIA</sub>
+
 # System Design: Netflix (Video Streaming Platform)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Netflix is the world's leading subscription-based video streaming platform with 260M+ subscribers across 190+ countries.
+> **THE PROBLEM** — Netflix is the world's leading subscription-based video streaming platform with 260M+ subscribers across 190+ countries.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

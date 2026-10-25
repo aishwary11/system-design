@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>SOCIAL & MESSAGING</sub>
+
 # System Design: Twitter / X
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A social media platform supporting tweet posting, following, personalized timeline, likes/retweets, search, and trending topics for 500M+ users.
+> **THE PROBLEM** — A social media platform supporting tweet posting, following, personalized timeline, likes/retweets, search, and trending topics for 500M+ users.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

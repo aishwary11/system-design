@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>COMMUNITIES & CONTENT</sub>
+
 # System Design: Discord (Community Chat, Massive Rooms & Voice)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Group chat at Discord scale: servers with hundreds of thousands of members, millions of concurrent WebSocket sessions, voice/video over UDP — where naive fan-out breaks the moment a 100K-member room receives one message.
+> **THE PROBLEM** — Group chat at Discord scale: servers with hundreds of thousands of members, millions of concurrent WebSocket sessions, voice/video over UDP — where naive fan-out breaks the moment a 100K-member room receives one message.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

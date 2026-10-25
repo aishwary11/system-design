@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Webhook Delivery (Outbound Event Fan-Out)
 
 </div>
@@ -7,7 +9,7 @@
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

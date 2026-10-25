@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Alerting & Monitoring Platform (Prometheus-class)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Design the observability backend for a fleet of thousands of services: metrics are scraped/emitted at scale, stored in a time-series database, queried by dashboards, evaluated by rule engines, and converted into deduplicated, routed, escalating **alerts** with on-call paging.
+> **THE PROBLEM** — Design the observability backend for a fleet of thousands of services: metrics are scraped/emitted at scale, stored in a time-series database, queried by dashboards, evaluated by rule engines, and converted into deduplicated, routed, escalating **alerts** with on-call paging.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

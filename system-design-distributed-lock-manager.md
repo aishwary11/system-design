@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>CORE PRIMITIVES & PLATFORM</sub>
+
 # System Design: Distributed Lock Manager (Chubby / ZooKeeper-style)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A coordination service: locks, leases, leader election, and small-config storage built on consensus. The design behind Chubby, ZooKeeper, and etcd — and the reason "just use Redis locks" fails under partition. Consensus-as-a-service.
+> **THE PROBLEM** — A coordination service: locks, leases, leader election, and small-config storage built on consensus. The design behind Chubby, ZooKeeper, and etcd — and the reason "just use Redis locks" fails under partition. Consensus-as-a-service.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

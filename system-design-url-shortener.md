@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: URL Shortener (bit.ly)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A URL shortening service that converts long URLs to short, shareable links with analytics tracking.
+> **THE PROBLEM** — A URL shortening service that converts long URLs to short, shareable links with analytics tracking.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

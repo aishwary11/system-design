@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>CORE PRIMITIVES & PLATFORM</sub>
+
 # System Design: Leaderboard (Real-Time Ranked Counters)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A leaderboard service (game scores, like counters, trending lists) that absorbs millions of score updates per second and answers top-K and rank queries in milliseconds — the canonical "counting at scale" problem.
+> **THE PROBLEM** — A leaderboard service (game scores, like counters, trending lists) that absorbs millions of score updates per second and answers top-K and rank queries in milliseconds — the canonical "counting at scale" problem.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

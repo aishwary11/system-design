@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>KAFKA GUIDE</sub>
+
 # Apache Kafka — Features Guide with Basic Examples
 
 </div>
@@ -23,7 +25,7 @@ A quick-reference catalog of Apache Kafka features used in event-driven backends
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Core Concepts — Topic, Partition, Offset](#1-core-concepts--topic-partition-offset)

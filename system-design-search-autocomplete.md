@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Search Autocomplete (Typeahead)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A real-time search autocomplete system providing instant suggestions as users type, with < 100ms response time.
+> **THE PROBLEM** — A real-time search autocomplete system providing instant suggestions as users type, with < 100ms response time.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>AI INFRASTRUCTURE</sub>
+
 # System Design: LLM Inference Platform (Production Serving)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Design the serving platform behind a production LLM product: stream tokens to millions of users while serving GPU-expensive autoregressive models.
+> **THE PROBLEM** — Design the serving platform behind a production LLM product: stream tokens to millions of users while serving GPU-expensive autoregressive models.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

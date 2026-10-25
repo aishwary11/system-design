@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>COLLABORATIVE & PRODUCTIVITY</sub>
+
 # System Design: Google Docs
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Real-time collaborative document editor with OT/CRDT conflict resolution.
+> **THE PROBLEM** — Real-time collaborative document editor with OT/CRDT conflict resolution.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

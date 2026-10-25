@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Key-Value Store (DynamoDB)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Distributed key-value store providing eventually consistent reads/writes with high availability.
+> **THE PROBLEM** — Distributed key-value store providing eventually consistent reads/writes with high availability.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

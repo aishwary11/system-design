@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>AI INFRASTRUCTURE</sub>
+
 # System Design: LLM / AI Gateway (Multi-Provider Model Routing & Quotas)
 
 </div>
@@ -7,7 +9,7 @@
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

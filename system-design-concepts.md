@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>CORE CONCEPTS</sub>
+
 # System Design Concepts — Quick Reference with Basic Examples
 
 </div>
@@ -12,7 +14,7 @@ The foundational concepts behind every distributed system, each explained in a f
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Sharding (Data Partitioning)](#1-sharding-data-partitioning)

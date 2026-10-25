@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: A/B Experimentation Platform (Online Controlled Experiments)
 
 </div>
@@ -7,7 +9,7 @@
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

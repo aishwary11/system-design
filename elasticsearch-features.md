@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>ELASTICSEARCH GUIDE</sub>
+
 # Elasticsearch — Features Guide with Basic Examples
 
 </div>
@@ -23,7 +25,7 @@ A quick-reference catalog of Elasticsearch features used in search-heavy backend
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Core Concepts — Index, Shard, Document](#1-core-concepts--index-shard-document)

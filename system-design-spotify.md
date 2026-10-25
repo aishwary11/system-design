@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>STREAMING & MEDIA</sub>
+
 # System Design: Spotify (Music Streaming Platform)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Music streaming service with personalized playlists, podcast hosting, social features, and offline listening for 600M+ users.
+> **THE PROBLEM** — Music streaming service with personalized playlists, podcast hosting, social features, and offline listening for 600M+ users.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>SCHEDULING</sub>
+
 # System Design: Delayed Job Scheduler
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A distributed delayed job scheduling system (similar to Sidekiq, Celery, Bull, or Hangfire) that allows applications to enqueue jobs to be executed after a specified delay or at a specific time.
+> **THE PROBLEM** — A distributed delayed job scheduling system (similar to Sidekiq, Celery, Bull, or Hangfire) that allows applications to enqueue jobs to be executed after a specified delay or at a specific time.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

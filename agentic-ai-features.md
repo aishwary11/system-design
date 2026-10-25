@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>AGENTIC AI GUIDE</sub>
+
 # Agentic AI — LLM Fundamentals Guide with Basic Examples
 
 </div>
@@ -21,7 +23,7 @@ A quick-reference catalog of the LLM and agentic-AI building blocks used in prod
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [LLM Primitives — Tokens, Context Windows, Sampling](#1-llm-primitives--tokens-context-windows-sampling)

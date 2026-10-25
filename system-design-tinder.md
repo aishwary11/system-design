@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>DATING</sub>
+
 # System Design: Tinder (Dating App)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A location-based dating platform supporting profile discovery, swiping, matching, messaging, and preferences for 50M+ daily active users.
+> **THE PROBLEM** — A location-based dating platform supporting profile discovery, swiping, matching, messaging, and preferences for 50M+ daily active users.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

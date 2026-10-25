@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>E-COMMERCE & BOOKING</sub>
+
 # System Design: E-Commerce Platform (Amazon)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — An e-commerce platform supporting product search, shopping cart, inventory management, order processing, payment, shipping, and reviews for millions of products and users.
+> **THE PROBLEM** — An e-commerce platform supporting product search, shopping cart, inventory management, order processing, payment, shipping, and reviews for millions of products and users.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

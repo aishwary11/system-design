@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>FINANCE & ADS</sub>
+
 # System Design: Google Ads (Auction, Bidding & Budget Pacing)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — An ad platform: advertisers bid on keywords, an auction runs per search/session in <100ms with quality scoring and budget pacing, click/billing events flow through exactly-once accounting. The hardest "money" system: zero tolerance for overcharging, plus fraud everywhere.
+> **THE PROBLEM** — An ad platform: advertisers bid on keywords, an auction runs per search/session in <100ms with quality scoring and budget pacing, click/billing events flow through exactly-once accounting. The hardest "money" system: zero tolerance for overcharging, plus fraud everywhere.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

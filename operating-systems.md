@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>OPERATING SYSTEMS GUIDE</sub>
+
 # Operating Systems for System Design — Why Your Servers Behave That Way
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Every database, broker, and container is a guest of the kernel. Latency spikes, OOM kills, "mysterious" 100ms stalls, and container throttling all trace back to OS primitives: scheduling, virtual memory, the page cache, and I/O. This guide covers the kernel concepts that make the rest of this repo make sense — including *what a container actually is*.
+> **THE GUIDE** — Every database, broker, and container is a guest of the kernel. Latency spikes, OOM kills, "mysterious" 100ms stalls, and container throttling all trace back to OS primitives: scheduling, virtual memory, the page cache, and I/O. This guide covers the kernel concepts that make the rest of this repo make sense — including *what a container actually is*.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Why OS Knowledge Matters in System Design](#1-why-os-knowledge-matters-in-system-design)

@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>STREAMING & MEDIA</sub>
+
 # System Design: YouTube (Video Streaming Platform)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A video-sharing and streaming platform supporting video upload, transcoding, streaming, search, recommendations, likes/comments, and view counts for 2B+ users.
+> **THE PROBLEM** — A video-sharing and streaming platform supporting video upload, transcoding, streaming, search, recommendations, likes/comments, and view counts for 2B+ users.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

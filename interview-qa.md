@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>INTERVIEW Q&A</sub>
+
 # Interview Q&A — Failure Terminology & High-Level "Why/What-If" Questions
 
 </div>
@@ -12,7 +14,7 @@ Section numbering continues from `system-design-concepts.md` (Parts I–III end 
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 **Part IV — Failure Terminology (every technology, one glossary)**

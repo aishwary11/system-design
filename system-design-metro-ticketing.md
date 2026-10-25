@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>TRANSPORTATION</sub>
+
 # System Design: Metro Ticketing System
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A metro transit ticketing system supporting smart cards, QR code tickets, fare calculation, and real-time passenger tracking.
+> **THE PROBLEM** — A metro transit ticketing system supporting smart cards, QR code tickets, fare calculation, and real-time passenger tracking.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

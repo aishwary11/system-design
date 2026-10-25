@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>CURATED RESOURCES</sub>
+
 # System Design Resources — Curated Articles, Repos & Papers
 
 </div>
@@ -12,7 +14,7 @@ A curated map of the best **GitHub repositories, engineering-blog deep dives, Me
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [GitHub Repositories — The Canon](#1-github-repositories--the-canon)

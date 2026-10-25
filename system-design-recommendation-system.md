@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Recommendation System (Two-Stage Ranking Funnel)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A production recommender for feeds/e-commerce/video: candidate generation from multiple retrievers → feature enrichment → ML ranking → re-ranking with business logic. The classic "How does YouTube/Netflix/Amazon decide what to show" system, from embeddings to serving.
+> **THE PROBLEM** — A production recommender for feeds/e-commerce/video: candidate generation from multiple retrievers → feature enrichment → ML ranking → re-ranking with business logic. The classic "How does YouTube/Netflix/Amazon decide what to show" system, from embeddings to serving.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

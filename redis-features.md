@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>REDIS GUIDE</sub>
+
 # Redis — Features Guide with Basic Examples
 
 </div>
@@ -23,7 +25,7 @@ A quick-reference catalog of Redis features used in real backends: the data stru
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Data Structures (Core Types & Modules)](#1-data-structures-core-types--modules)

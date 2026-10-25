@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>TRANSPORTATION</sub>
+
 # System Design: Uber (Ride-Hailing System)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A ride-hailing platform supporting real-time location tracking, driver matching, trip management, fare calculation, and payment for millions of riders and drivers.
+> **THE PROBLEM** — A ride-hailing platform supporting real-time location tracking, driver matching, trip management, fare calculation, and payment for millions of riders and drivers.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

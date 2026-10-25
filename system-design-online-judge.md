@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Online Judge (LeetCode-style Code Execution)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A code-execution platform: run untrusted user code in sandboxed microVMs against hidden test cases, with queues, per-language runtimes, anti-cheat, and result streaming — a scheduling + security problem where the workload is actively adversarial.
+> **THE PROBLEM** — A code-execution platform: run untrusted user code in sandboxed microVMs against hidden test cases, with queues, per-language runtimes, anti-cheat, and result streaming — a scheduling + security problem where the workload is actively adversarial.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

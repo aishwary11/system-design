@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>TRANSPORTATION</sub>
+
 # System Design: Google Maps (Navigation & Mapping Service)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Google Maps is a comprehensive mapping and navigation service providing map rendering, location search, turn-by-turn directions, real-time traffic updates, ETA estimation, Street View, and Points of Interest (POI) discovery.
+> **THE PROBLEM** — Google Maps is a comprehensive mapping and navigation service providing map rendering, location search, turn-by-turn directions, real-time traffic updates, ETA estimation, Street View, and Points of Interest (POI) discovery.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

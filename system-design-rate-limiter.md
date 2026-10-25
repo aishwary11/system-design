@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Rate Limiter
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A distributed rate limiting system that controls API request rates per user/IP/API key to prevent abuse and ensure fair usage.
+> **THE PROBLEM** — A distributed rate limiting system that controls API request rates per user/IP/API key to prevent abuse and ensure fair usage.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

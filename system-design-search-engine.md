@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Search Engine (Google-Style Web Search)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Full-stack web search: a crawling frontend feeding an inverted index the size of the web, a serving stack that returns ranked results in <200ms, and the indexing pipeline that makes documents searchable within minutes. The crawler exists in this repo already — this doc is the index and ranking behind it.
+> **THE PROBLEM** — Full-stack web search: a crawling frontend feeding an inverted index the size of the web, a serving stack that returns ranked results in <200ms, and the indexing pipeline that makes documents searchable within minutes. The crawler exists in this repo already — this doc is the index and ranking behind it.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

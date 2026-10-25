@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Pastebin (Text Sharing Service)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Text sharing service allowing users to paste code/text snippets and share via unique URLs.
+> **THE PROBLEM** — Text sharing service allowing users to paste code/text snippets and share via unique URLs.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

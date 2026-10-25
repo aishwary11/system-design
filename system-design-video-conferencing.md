@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>STREAMING & MEDIA</sub>
+
 # System Design: Video Conferencing (Zoom)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A real-time video conferencing platform supporting video/audio calls, screen sharing, chat, and recording for millions of concurrent users.
+> **THE PROBLEM** — A real-time video conferencing platform supporting video/audio calls, screen sharing, chat, and recording for millions of concurrent users.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

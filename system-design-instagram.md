@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>SOCIAL & MESSAGING</sub>
+
 # System Design: Instagram
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A photo/video sharing social platform supporting content upload, following, personalized feed, stories, likes/comments, and search for 2B+ users.
+> **THE PROBLEM** — A photo/video sharing social platform supporting content upload, following, personalized feed, stories, likes/comments, and search for 2B+ users.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

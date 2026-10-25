@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>NETWORKING GUIDE</sub>
+
 # Networking for System Design — From Packets to Planet Scale
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Every distributed system is a networking system wearing a costume. Latency budgets, consistency decisions, and failure modes all trace back to how packets move. This guide covers the interview-grade essentials: TCP/UDP, HTTP/1.1→2→3, TLS, DNS, load balancing, CDN, VPC topology, and the latencies that anchor every back-of-envelope estimate.
+> **THE GUIDE** — Every distributed system is a networking system wearing a costume. Latency budgets, consistency decisions, and failure modes all trace back to how packets move. This guide covers the interview-grade essentials: TCP/UDP, HTTP/1.1→2→3, TLS, DNS, load balancing, CDN, VPC topology, and the latencies that anchor every back-of-envelope estimate.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [The Layered Model — Why It Matters](#1-the-layered-model--why-it-matters)

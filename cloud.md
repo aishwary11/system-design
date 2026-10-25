@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>CLOUD SERVICES MAP</sub>
+
 # Cloud Services Guide — Which Tool, Where, and Why
 
 </div>
@@ -18,7 +20,7 @@ A vendor-neutral map of cloud services across **AWS, GCP, and Azure**, organized
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Object Storage & Archive Tiers (S3 / GCS / Blob)](#1-object-storage--archive-tiers-s3--gcs--blob)

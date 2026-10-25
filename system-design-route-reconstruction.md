@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>GEOSPATIAL OPERATIONS</sub>
+
 # System Design: Route Reconstruction from Noisy GPS (Route IQ)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — An end-to-end spatial pipeline that turns millions of chaotic last-mile GPS traces into high-fidelity ground truth: joint anomaly scoring → Kalman smoothing → OSRM map-matching with confidence labels → H3 + Hidden-Markov-Model consensus paths → real-time deviation scoring. Based on Zepto's Route IQ architecture.
+> **THE PROBLEM** — An end-to-end spatial pipeline that turns millions of chaotic last-mile GPS traces into high-fidelity ground truth: joint anomaly scoring → Kalman smoothing → OSRM map-matching with confidence labels → H3 + Hidden-Markov-Model consensus paths → real-time deviation scoring. Based on Zepto's Route IQ architecture.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

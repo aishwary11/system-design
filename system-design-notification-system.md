@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Notification System
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A multi-channel notification system supporting push, email, SMS, and in-app notifications for millions of users.
+> **THE PROBLEM** — A multi-channel notification system supporting push, email, SMS, and in-app notifications for millions of users.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

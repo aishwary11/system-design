@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>CORE PRIMITIVES & PLATFORM</sub>
+
 # System Design: Unique ID Generator (Snowflake-style)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Generate ~64-bit, roughly sorted, globally unique IDs at scale without a coordinating database sequence — the primitive behind order IDs, tweet IDs, and every primary key that must be minted thousands of times per second.
+> **THE PROBLEM** — Generate ~64-bit, roughly sorted, globally unique IDs at scale without a coordinating database sequence — the primitive behind order IDs, tweet IDs, and every primary key that must be minted thousands of times per second.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

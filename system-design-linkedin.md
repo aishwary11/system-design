@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>SOCIAL & MESSAGING</sub>
+
 # System Design: LinkedIn (Professional Networking Platform)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Professional networking platform with job matching, feed, messaging, learning, and recruiter tools for 900M+ members.
+> **THE PROBLEM** — Professional networking platform with job matching, feed, messaging, learning, and recruiter tools for 900M+ members.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

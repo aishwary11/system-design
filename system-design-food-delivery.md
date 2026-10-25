@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>E-COMMERCE & BOOKING</sub>
+
 # System Design: Food Delivery (Zomato/Uber Eats)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A food delivery platform supporting restaurant discovery, order placement, real-time tracking, and delivery partner management.
+> **THE PROBLEM** — A food delivery platform supporting restaurant discovery, order placement, real-time tracking, and delivery partner management.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

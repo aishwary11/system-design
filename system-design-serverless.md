@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Serverless Platform (AWS Lambda-style)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A Function-as-a-Service platform: users upload code, the platform runs it on demand in milliseconds using microVM snapshots (Firecracker-style), scales from zero to thousands of workers, and bills per 1ms — a scheduling and isolation problem disguised as "just run my function."
+> **THE PROBLEM** — A Function-as-a-Service platform: users upload code, the platform runs it on demand in milliseconds using microVM snapshots (Firecracker-style), scales from zero to thousands of workers, and bills per 1ms — a scheduling and isolation problem disguised as "just run my function."
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

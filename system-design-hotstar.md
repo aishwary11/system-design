@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>STREAMING & MEDIA</sub>
+
 # System Design: Hotstar (Live Streaming Platform)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporting live sports (cricket, football), entertainment shows, and Video-on-Demand (VOD).
+> **THE PROBLEM** — Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporting live sports (cricket, football), entertainment shows, and Video-on-Demand (VOD).
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

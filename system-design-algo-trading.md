@@ -1,17 +1,19 @@
 <div align="center">
 
+<sub>FINANCE & ADS</sub>
+
 # System Design: Algorithmic Trading Platform (OMS/EMS + Market Data)
 
 </div>
 
 
 > [!TIP]
-> **TL;DR** — Design the **buy-side** trading platform that turns a signal into an order and a fill into a position: normalized **market data** in, strategy decisions, a **pre-trade risk gate** that is legally responsible for what leaves the building, an **order/execution management system** (OMS/EMS) that owns the order lifecycle across venues, and a **reconciliation** path that treats every fill as a claim until the broker and the tape agree. The hot path is measured in **microseconds**, the audit trail in **years**, and the one bug that matters is *double-sending an order*.
+> **THE PROBLEM** — Design the **buy-side** trading platform that turns a signal into an order and a fill into a position: normalized **market data** in, strategy decisions, a **pre-trade risk gate** that is legally responsible for what leaves the building, an **order/execution management system** (OMS/EMS) that owns the order lifecycle across venues, and a **reconciliation** path that treats every fill as a claim until the broker and the tape agree. The hot path is measured in **microseconds**, the audit trail in **years**, and the one bug that matters is *double-sending an order*.
 
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

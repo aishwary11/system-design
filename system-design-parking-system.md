@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>E-COMMERCE & BOOKING</sub>
+
 # System Design: Smart Parking System
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A smart parking management system that enables real-time parking spot discovery, reservation, guided navigation, automated entry/exit, and payment processing.
+> **THE PROBLEM** — A smart parking management system that enables real-time parking spot discovery, reservation, guided navigation, automated entry/exit, and payment processing.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

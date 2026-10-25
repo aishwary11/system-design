@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>COLLABORATIVE & PRODUCTIVITY</sub>
+
 # System Design: Google Calendar (Scheduling & Free-Busy)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A calendar platform: events with recurrence and time zones, cross-user free/busy queries, invites with RSVP state machines, and conflict resolution — deceptively hard because the data model (recurrence × timezones × invites) explodes quietly.
+> **THE PROBLEM** — A calendar platform: events with recurrence and time zones, cross-user free/busy queries, invites with RSVP state machines, and conflict resolution — deceptively hard because the data model (recurrence × timezones × invites) explodes quietly.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>E-COMMERCE & BOOKING</sub>
+
 # System Design: Airbnb (Property Rental Marketplace)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Two-sided marketplace connecting hosts and guests with search, booking, payments, reviews, and trust/safety systems.
+> **THE PROBLEM** — Two-sided marketplace connecting hosts and guests with search, booking, payments, reviews, and trust/safety systems.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

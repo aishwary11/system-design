@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Web Crawler
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A distributed web crawler that systematically browses and downloads web pages for indexing, archiving, or data analysis.
+> **THE PROBLEM** — A distributed web crawler that systematically browses and downloads web pages for indexing, archiving, or data analysis.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

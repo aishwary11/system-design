@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub>POSTGRESQL GUIDE</sub>
+
 # PostgreSQL — Features Guide with Basic Examples
 
 </div>
@@ -23,7 +25,7 @@ A quick-reference catalog of PostgreSQL features used in everyday backends: data
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Data Types](#1-data-types)

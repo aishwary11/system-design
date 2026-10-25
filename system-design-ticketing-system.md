@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>E-COMMERCE & BOOKING</sub>
+
 # System Design: Ticketing / Hotel Reservation System (BookMyShow)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A ticket booking and hotel reservation platform supporting search, availability checking, seat/room selection, reservation with concurrency control, payment processing, and booking confirmation.
+> **THE PROBLEM** — A ticket booking and hotel reservation platform supporting search, availability checking, seat/room selection, reservation with concurrency control, payment processing, and booking confirmation.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

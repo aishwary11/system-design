@@ -1,15 +1,29 @@
 <div align="center">
 
-# System Design: Checkpoint & Recovery for Distributed Training
+<sub>SYSTEM DESIGN · AI INFRASTRUCTURE</sub>
+
+# Checkpoint & Recovery for Distributed Training
+
+**Atomic, reshardable snapshots of a 1,024-GPU job — without stopping the fleet.**
+
+![Fleet](https://img.shields.io/badge/fleet-1K_GPUs-6366f1?style=flat-square&labelColor=0a0a0a)
+![State](https://img.shields.io/badge/state-1.12_TB-6366f1?style=flat-square&labelColor=0a0a0a)
+![Cadence](https://img.shields.io/badge/checkpoint-30_min-6366f1?style=flat-square&labelColor=0a0a0a)
+
+[Overview](#overview) · [Architecture](#high-level-architecture) · [Decisions](#key-design-decisions) · [Failures](#failure-modes--recovery) · [LLD](#low-level-design-lld--atomic-manifest--resharding)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — Design durable state for a 1,024-GPU training job: snapshot weights, optimizer, RNG and data position without stopping training for a minute, commit the checkpoint atomically, and restore onto a **different** world size after a node fails. The hard parts are distributed snapshot consistency, sharded I/O throughput, and the commit protocol — not the file format.
+> **THE PROBLEM** — Design durable state for a 1,024-GPU training job: snapshot weights, optimizer, RNG and data position without stopping training for a minute, commit the checkpoint atomically, and restore onto a **different** world size after a node fails. The hard parts are distributed snapshot consistency, sharded I/O throughput, and the commit protocol — not the file format.
+
+| THE PROBLEM | THE HARD PART | THE BET |
+| :--- | :--- | :--- |
+| 1,024 ranks must survive node loss, preemption and elastic resizes. | A consistent snapshot of more than weights, written without a 60-second stall. | Stage at a step boundary, write shards in parallel, and commit a manifest last. |
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

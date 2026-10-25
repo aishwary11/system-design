@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>TRANSPORTATION</sub>
+
 # System Design: Proximity / Nearby Service
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A geospatial service that finds nearby users, drivers, restaurants, or stores based on geographic location with sub-second response times.
+> **THE PROBLEM** — A geospatial service that finds nearby users, drivers, restaurants, or stores based on geographic location with sub-second response times.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

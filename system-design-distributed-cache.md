@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>INFRASTRUCTURE</sub>
+
 # System Design: Distributed Cache (Redis/Memcached)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — High-performance in-memory caching layer providing sub-millisecond reads for frequently accessed data, reducing database load.
+> **THE PROBLEM** — High-performance in-memory caching layer providing sub-millisecond reads for frequently accessed data, reducing database load.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

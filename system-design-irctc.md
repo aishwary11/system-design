@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>E-COMMERCE & BOOKING</sub>
+
 # System Design: IRCTC (Indian Railway Catering and Tourism Corporation)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — IRCTC powers one of the world's largest online train ticket booking platforms, serving 8.5 billion passengers annually across 13,500 trains and 7,300 stations.
+> **THE PROBLEM** — IRCTC powers one of the world's largest online train ticket booking platforms, serving 8.5 billion passengers annually across 13,500 trains and 7,300 stations.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)

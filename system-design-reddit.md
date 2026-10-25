@@ -1,15 +1,17 @@
 <div align="center">
 
+<sub>COMMUNITIES & CONTENT</sub>
+
 # System Design: Reddit (Threaded Discussions & Ranking)
 
 </div>
 
 > [!TIP]
-> **TL;DR** — A community/link-aggregation platform: threaded comment trees, vote-based ranking with time decay, per-subreddit feeds, and moderation. Distinct from Twitter/Instagram because the core object is a **mutable tree**, not a flat feed.
+> **THE PROBLEM** — A community/link-aggregation platform: threaded comment trees, vote-based ranking with time decay, per-subreddit feeds, and moderation. Distinct from Twitter/Instagram because the core object is a **mutable tree**, not a flat feed.
 
 ## Table of Contents
 
-<details>
+<details open>
 <summary><b>📑 Jump to a section</b></summary>
 
 1. [Overview](#overview)
