@@ -291,6 +291,7 @@ The metrics that signal system health, with alert thresholds:
 
 - How does CRDT handle concurrent file edits?
 - How do you implement chunked upload for large files?
+- How do you resume a half-downloaded 50 GB file without corrupting it?
 - How does content deduplication work with rolling hash?
 - How do you handle real-time sync across multiple devices?
 
@@ -302,16 +303,33 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
 | Chunked File Upload | Five-to-eight MB parts with per-part presigned URLs and ETags; resume is a list of uploaded parts | Upload |
+| Resumable Download | `Range` + `If-Range` with a strong ETag, durable chunk bitmap, verify then atomic rename | Download |
 | Content-Addressable Storage | Key is SHA-256 of the content, so identical bytes dedupe for free; refcount before deleting a blob | Blob store |
 | Deduplication | Chunk-level dedupe (Rabin/CDC) beats whole-file dedupe for VM images and backups | Storage layer |
 | Version Control | Immutable version objects plus one mutable manifest pointer; a version is never overwritten | Metadata |
 | Conflict Resolution | Last-writer-wins on the manifest guarded by an ETag precondition, decided per file rather than per chunk | Sync |
 | Pre-signed URLs | Time-boxed, scope-limited credentials so bytes never flow through the API tier | Access |
 
+### Resumable Downloads (Range Requests)
+
+Upload resume is a list of completed parts; download resume needs a **validator** and a crash-safe bitmap:
+
+- Probe once: `HEAD` or the first `GET`; require `Accept-Ranges: bytes`, capture `Content-Length` and a **strong ETag** (or strong `Last-Modified`).
+- Persist a manifest before the first byte: URL, length, validator, chunk bitmap, temp path. Never merge chunks from different representations.
+- Fetch each missing chunk with `Range: bytes=a-b` and `If-Range: <validator>`. Require `206 Partial Content` plus a matching `Content-Range`; a `200` means the range was ignored or the object changed — restart, never append.
+- Commit order: write the data durably (`fsync`), then mark the bitmap entry. On resume, re-hash the boundary chunk before trusting it.
+- Verify the total length and a trusted digest, then rename atomically within the same filesystem. Treat `416`, redirects, unknown length and disk-full as recoverable states, not crashes.
+- Bound parallelism and retry each range with jitter; beyond the server's per-client cap, more connections only add tail latency.
+
+Normative rules: [RFC 9110 §13.1.5 (`If-Range`)](https://www.rfc-editor.org/rfc/rfc9110.html#section-13.1.5), [§14.2 (`Range`)](https://www.rfc-editor.org/rfc/rfc9110.html#section-14.2) and [§15.3.7 (`206`)](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3.7).
+
 ## Common Interview Follow-ups
 
 **Q: How does chunked upload work?**
 A: Client splits to 5MB chunks, parallel upload, server verifies, resumable
+
+**Q: How does resumable download work?**
+A: Persist a manifest (length, strong ETag, chunk bitmap), fetch missing ranges with `Range` + `If-Range`, require `206` and a matching `Content-Range`, and checkpoint data before metadata. A `200` response means the range was ignored or the file changed, so restart rather than append.
 
 **Q: How does CRDT conflict resolution work?**
 A: Last-writer-wins for simple, operation-based for lists, vector clocks

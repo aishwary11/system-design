@@ -304,6 +304,7 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | Distributed Rate Limiting (Redis) | Lua for atomic check-and-decrement; local buckets with periodic sync cut the per-request round trip | Cluster |
 | Rate Limit Headers | RateLimit-Limit/Remaining/Reset plus Retry-After on 429, so clients can back off correctly | API |
 | Graceful Degradation | Fail open for reads, fail closed for auth and payments; a local fallback when Redis is unreachable | Resilience |
+| Composite Policy Chain | One request checked against several limits (global, tenant, route, user); any deny rejects, with the strictest Retry-After | All tiers |
 
 ## Common Interview Follow-ups
 
@@ -315,6 +316,9 @@ A: Redis atomic INCR, Lua script, consistent hashing
 
 **Q: Which algorithm is best?**
 A: Token bucket for bursts, sliding window for accuracy, leaky bucket for smooth output
+
+**Q: How do you enforce several limits on one request?**
+A: Model each as a strategy with its own key, state and failure mode; evaluate the cheapest local check first, then shared state, and reject if any required policy denies. Return the strictest Retry-After and say which policy fired.
 
 ---
 
@@ -574,6 +578,50 @@ const limiter = new RateLimiter(); console.log("Rate limiter ready");
 | Sliding Window Counter | General purpose | High | Low |
 | Fixed Window Counter | Simple limits | Medium | Lowest |
 | Leaky Bucket | Traffic shaping | High | Low |
+
+### Composing Policies: One Request, Several Limits
+
+A real gateway rarely enforces one limit. A request may need to satisfy a global fleet cap, a tenant quota, a per-route limit and a per-user burst allowance. Model each as a small strategy and compose them:
+
+- **Rule** = `(key extractor, algorithm, limit, window, cost, failure mode)`. Keep policy config versioned and hot-reloadable.
+- Run the cheapest check first (in-process token bucket) and only then the shared Redis check; reject if **any** required policy denies.
+- Return the strictest `Retry-After` plus a `Which-Policy` header, so a client can back off intelligently instead of guessing.
+- Keep state per `(policy, key)` with a TTL, and cap key cardinality with an LRU; otherwise Redis becomes the unbounded thing you were protecting.
+- Choose fail-open or fail-closed **per policy**: availability limits can fail open, fraud and payment limits must fail closed.
+
+```js
+class CompositeLimiter {
+  constructor() { this.policies = []; }
+  add(name, limit, windowMs) {
+    this.policies.push({ name, limit, windowMs, hits: new Map() });
+    return this;                         // fluent: .add(...).add(...)
+  }
+  allow(key, now = 0) {
+    const decisions = this.policies.map(p => {
+      const hits = (p.hits.get(key) ?? []).filter(t => now - t < p.windowMs);
+      const ok = hits.length < p.limit;
+      const retryAfterMs = ok ? 0 : p.windowMs - (now - hits[0]);
+      if (ok) hits.push(now);
+      p.hits.set(key, hits);             // per (policy, key) state
+      return { policy: p.name, ok, retryAfterMs };
+    });
+    const denied = decisions.filter(d => !d.ok);
+    return {
+      allowed: denied.length === 0,
+      retryAfterMs: Math.max(0, ...denied.map(d => d.retryAfterMs)),
+      decisions,
+    };
+  }
+}
+
+const limiter = new CompositeLimiter().add('tenant', 5, 1000).add('route', 2, 1000);
+console.log('r1:', limiter.allow('u1', 1000).allowed);
+console.log('r2:', limiter.allow('u1', 1100).allowed);
+console.log('r3:', JSON.stringify(limiter.allow('u1', 1200)));
+console.log('u2 unaffected:', limiter.allow('u2', 1250).allowed);
+```
+
+The demo's third request passes the tenant limit (3 of 5) but fails the route limit (2 per second), showing why a single global counter cannot express a per-route policy.
 
 ---
 

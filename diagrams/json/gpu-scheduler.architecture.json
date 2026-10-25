@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "GPU Scheduler & Model Lifecycle — System Architecture",
+    "output": "gpu-scheduler.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      1762
+    ]
+  },
+  "components": [
+    {
+      "id": "tenants",
+      "type": "external",
+      "label": "Tenants",
+      "sublabel": "Training · Inference · Notebooks",
+      "pos": [
+        337,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "admission",
+      "type": "backend",
+      "label": "Admission & Queue",
+      "sublabel": "Quota · priority · gang",
+      "pos": [
+        330,
+        322
+      ],
+      "size": [
+        161,
+        62
+      ]
+    },
+    {
+      "id": "scheduler",
+      "type": "backend",
+      "label": "GPU Scheduler",
+      "sublabel": "Filter · score · reserve",
+      "pos": [
+        337,
+        574
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "devices",
+      "type": "backend",
+      "label": "Device Manager",
+      "sublabel": "MIG · MPS · DRA claims",
+      "pos": [
+        337,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "registry",
+      "type": "database",
+      "label": "Model Registry",
+      "sublabel": "Weights · versions",
+      "pos": [
+        74,
+        1078
+      ],
+      "size": [
+        158,
+        62
+      ]
+    },
+    {
+      "id": "telemetry",
+      "type": "cloud",
+      "label": "Telemetry",
+      "sublabel": "Util · Xid · cost",
+      "pos": [
+        600,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "nodes",
+      "type": "backend",
+      "label": "GPU Nodes",
+      "sublabel": "NVLink · TP/PP groups",
+      "pos": [
+        300,
+        1330
+      ],
+      "size": [
+        220,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "GPU Platform",
+      "wraps": [
+        "admission",
+        "scheduler",
+        "devices",
+        "registry",
+        "telemetry",
+        "nodes"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1-tenants-admission",
+      "from": "tenants",
+      "to": "admission",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-admission-scheduler",
+      "from": "admission",
+      "to": "scheduler",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-scheduler-devices",
+      "from": "scheduler",
+      "to": "devices",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-devices-nodes",
+      "from": "devices",
+      "to": "nodes",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-registry-nodes",
+      "from": "registry",
+      "to": "nodes",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "load weights"
+    },
+    {
+      "id": "e6-nodes-telemetry",
+      "from": "nodes",
+      "to": "telemetry",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "variant": "dashed",
+      "label": "utilization"
+    }
+  ]
+}

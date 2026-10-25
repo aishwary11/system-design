@@ -163,6 +163,23 @@ How the serving platform grows from pilot to global scale:
 
 - **Continuous batching lineage**: Iteration-level scheduling was introduced by ORCA and popularised by vLLM's PagedAttention implementation
 
+### Dynamic batching vs continuous batching
+
+These are different schedulers, and an interview answer that uses the names interchangeably is a red flag:
+
+- **Dynamic batching** (Triton-style) is request-level. The server holds requests for up to `max_queue_delay_microseconds`, forms the largest batch up to the model's `max_batch_size`, and dispatches it to a model instance. One forward pass produces one response per request, so it fits stateless models: classifiers, embeddings, vision.
+- **Continuous batching** is iteration-level. For autoregressive decode, the scheduler re-forms the batch at every token step, admitting new sequences and retiring finished ones; no request waits for the longest sequence in a batch.
+- **The knob is the same, the unit differs:** dynamic batching trades queue delay for throughput; continuous batching trades scheduler complexity and KV-cache memory for occupancy. Spend delay only from SLO headroom (p99 TTFT budget minus prefill and transport).
+- **Queue policy is part of the design:** priority levels, max queue size, timeout action (reject vs drop-oldest) and order preservation. Stateless models can reorder responses; stateful sessions cannot.
+- **Don't mix them naively:** dynamic batching a generative model reintroduces head-of-line blocking; continuous batching a stateless classifier adds scheduler state for no gain.
+
+| | Dynamic batching | Continuous batching |
+| :--- | :--- | :--- |
+| Scheduling unit | Request | Decode iteration |
+| Fits | Stateless models (CNN, embedding, classifier) | Autoregressive LLM decode |
+| Knob | Max batch size + queue delay | Token/KV budget per step |
+| Characteristic failure | Queue delay blows the TTFT SLO | KV exhaustion or scheduler churn |
+
 ## Key Design Decisions
 
 | Decision | Rationale | Trade-off |

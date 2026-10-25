@@ -19,7 +19,7 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 2. [Week 2 — Data & Messaging (state, streams, and consistency)](#week-2--data--messaging-state-streams-and-consistency)
 3. [Week 3 — Delivery & Infrastructure (geo, video, money, deploys)](#week-3--delivery--infrastructure-geo-video-money-deploys)
 4. [Week 4 — Interview simulation (hard docs, tips, mock loops)](#week-4--interview-simulation-hard-docs-tips-mock-loops)
-5. [Complete Coverage Map — all 54 designs](#complete-coverage-map--all-54-designs)
+5. [Complete Coverage Map — all 56 designs](#complete-coverage-map--all-56-designs)
 6. [Rules that make it stick](#rules-that-make-it-stick)
 7. [Hidden Tips & Tricks](#hidden-tips--tricks)
 8. [Do's & Don'ts](#dos--donts)
@@ -39,6 +39,7 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 | 4 | 📐 [Rate limiter](system-design-rate-limiter.md) · 📐 [Distributed cache](system-design-distributed-cache.md) · 📐 [Key-value store](system-design-key-value-store.md) | Trace which pattern each doc uses and why; compare LRU vs LFU eviction |
 | 5 | 🧰 [Redis guide](redis-features.md) (+ §20 tips, §21 do's) · ❓ [Q&A §81](interview-qa.md#81-caching--redis) | Run every redis-cli example locally |
 | 6 | 🧩 [§58–§74](system-design-concepts.md#58-luhns-algorithm-credit-card-validation) algorithms (Luhn → sliding window) | Execute the drift-guard minter; break it on purpose (clock skew) |
+| 6½ | 🧵 [Low-Level Design](low-level-design.md) — the twelve concurrency primitives | For five of them, write the invariant, the shutdown contract and the overload policy from memory |
 | 7 | **Checkpoint** | Whiteboard: design a pastebin end-to-end in 45 min. Compare against the doc's trade-off table |
 
 ## Week 2 — Data & Messaging (state, streams, and consistency)
@@ -74,14 +75,14 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 | 24 | 📐 [Google Ads](system-design-google-ads.md) · 📐 [Fraud detection](system-design-fraud-detection.md) · 📐 [Distributed lock manager](system-design-distributed-lock-manager.md) · 📐 [Leaderboard](system-design-leaderboard.md) | Argue Kleppmann's fencing critique both sides |
 | 25 | 📐 [Serverless](system-design-serverless.md) · 📐 [Online judge](system-design-online-judge.md) · 📐 [File storage](system-design-file-storage.md) · ❓ [Q&A §83](interview-qa.md#83-kubernetes--devops) | Estimate cold-start economics at 10K RPS; walk the bad-deploy 5-minute playbook |
 | 26 | 📐 [Google Calendar](system-design-google-calendar.md) · 📐 [Reddit](system-design-reddit.md) · 📐 [Google Docs](system-design-google-docs.md) | Recurrence + threaded-comments data modeling; OT vs CRDT decision |
-| 27 | 🧰 [Elasticsearch guide](elasticsearch-features.md) · 🤖 [Agentic AI guide](agentic-ai-features.md) · 📐 [LLM inference](system-design-llm-inference.md) · 📐 [AI gateway](system-design-ai-gateway.md) · ☁️ [Cloud §19 catalog](cloud.md) | Modern-stack follow-ups (RAG, vector search, continuous batching, multi-provider routing and quotas) |
+| 27 | 🧰 [Elasticsearch guide](elasticsearch-features.md) · 🤖 [Agentic AI guide](agentic-ai-features.md) · 📐 [LLM inference](system-design-llm-inference.md) · 📐 [AI gateway](system-design-ai-gateway.md) · 📐 [GPU scheduler](system-design-gpu-scheduler.md) · 📐 [Distributed training](system-design-distributed-training.md) · ☁️ [Cloud §19 catalog](cloud.md) | Modern-stack follow-ups (RAG, vector search, continuous batching, multi-provider routing and quotas); then explain MIG vs MPS and derive a checkpoint interval from MTBF |
 | 28 | 🧰 [Operating Systems guide](operating-systems.md) · 📐 [IRCTC](system-design-irctc.md) · 📐 [Ticketing system](system-design-ticketing-system.md) · 📐 [E-commerce](system-design-ecommerce.md) | Explain epoll → io_uring and zero-copy to a rubber duck; then the flash-sale fairness problem |
 | 29 | ❓ [Full interview Q&A §76–§84](interview-qa.md) · 📚 [Resources §9 hidden tips](resources.md) | Self-quiz every term table, closed book; record a 45-min mock + 15-min follow-ups |
 | 30 | Light review: Key Numbers tables + §52 estimation · 🧩 [Concepts end-to-end](system-design-concepts.md) | Rest. You've earned it. |
 
 ---
 
-## Complete Coverage Map — all 54 designs
+## Complete Coverage Map — all 56 designs
 
 Every design document and its scheduled day, so nothing gets skipped:
 
@@ -101,10 +102,10 @@ Every design document and its scheduled day, so nothing gets skipped:
 | 24 | [Google Ads](system-design-google-ads.md) · [Fraud detection](system-design-fraud-detection.md) · [Distributed lock manager](system-design-distributed-lock-manager.md) · [Leaderboard](system-design-leaderboard.md) |
 | 25 | [Serverless](system-design-serverless.md) · [Online judge](system-design-online-judge.md) · [File storage](system-design-file-storage.md) |
 | 26 | [Google Calendar](system-design-google-calendar.md) · [Reddit](system-design-reddit.md) · [Google Docs](system-design-google-docs.md) |
-| 27 | [LLM inference](system-design-llm-inference.md) · [AI gateway](system-design-ai-gateway.md) |
+| 27 | [LLM inference](system-design-llm-inference.md) · [AI gateway](system-design-ai-gateway.md) · [GPU scheduler](system-design-gpu-scheduler.md) · [Distributed training](system-design-distributed-training.md) |
 | 28 | [IRCTC](system-design-irctc.md) · [Ticketing system](system-design-ticketing-system.md) · [E-commerce](system-design-ecommerce.md) |
 
-Guides are interleaved the same way: [Concepts](system-design-concepts.md) (days 1–15, 30), [Redis](redis-features.md) (5), [Kafka](kafka-features.md) (9), [RabbitMQ](rabbitmq-features.md) (11), [PostgreSQL](postgresql-features.md) + [MongoDB](mongodb-features.md) (12), [Networking](networking.md) (19), [Cloud](cloud.md) (19, 27), [DevOps](devops-features.md) (22), [Elasticsearch](elasticsearch-features.md) + [Agentic AI](agentic-ai-features.md) (27), [Operating Systems](operating-systems.md) (28), [Resources](resources.md) (29), [Interview Q&A](interview-qa.md) (days 5, 9, 11, 25, 29).
+Guides are interleaved the same way: [Concepts](system-design-concepts.md) (days 1–15, 30), [Redis](redis-features.md) (5), [Kafka](kafka-features.md) (9), [RabbitMQ](rabbitmq-features.md) (11), [PostgreSQL](postgresql-features.md) + [MongoDB](mongodb-features.md) (12), [Networking](networking.md) (19), [Cloud](cloud.md) (19, 27), [DevOps](devops-features.md) (22), [Elasticsearch](elasticsearch-features.md) + [Agentic AI](agentic-ai-features.md) (27), [Operating Systems](operating-systems.md) (28), [Low-Level Design](low-level-design.md) (6½), [Resources](resources.md) (29), [Interview Q&A](interview-qa.md) (days 5, 9, 11, 25, 29).
 
 ---
 

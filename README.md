@@ -9,7 +9,7 @@
 
 </div>
 
-**54 system designs · 15 technology & reference guides · 90 diagrams (85 interactive) · 43 JS algorithm implementations · 30-day roadmap**
+**56 system designs · 16 technology & reference guides · 92 diagrams (87 interactive) · 43 JS algorithm implementations · 30-day roadmap**
 
 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="30" alt="📚"/> [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=10B981)](https://github.com/aishwary11/system-design/commits)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/aishwary11/system-design?style=flat-square&color=3B82F6)](https://github.com/aishwary11/system-design/graphs/commit-activity)
@@ -21,9 +21,9 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 
 🌍 **Industry concept map:** [industry-concepts.md](industry-concepts.md) — the named technique behind each design (Uber's H3, Google's S2, Stripe's GCRA and ledger, Kafka's LinkedIn origin) with primary sources.
 
-<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=54+system+designs+with+interactive+diagrams;15+technology+%26+interview+guides+with+runnable+examples;43+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
+<img src="https://readme-typing-svg.demolab.com?font=ui-monospace&size=18&duration=3000&pause=1200&color=3B82F6&center=true&vCenter=true&width=700&lines=56+system+designs+with+interactive+diagrams;16+technology+%26+interview+guides+with+runnable+examples;43+algorithms+you+can+execute;Interview-ready+patterns+%26+trade-offs" alt="typing tagline"/>
 
-[Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Trust & Safety](#trust-safety) · [AI Infra](#ai-infra) · [Communities](#communities) · [Primitives](#primitives) · 🧰 [Guides](#feature-guides) · ☁️ [Cloud](#cloud-guide) · 🤖 [AI](#agentic-ai-guide) · 🛠️ [DevOps](#devops-guide) · 📚 [Resources](#resources-guide) · ❓ [Q&A](#interview-qa-guide) · 🌐 [Networking](#networking-guide) · 🧠 [Operating Systems](#operating-systems-guide) · 🗓️ [Roadmap](#roadmap-guide)
+[Streaming](#system-designs) · [Social](#social) · [E-Commerce](#commerce) · [Transport](#transport) · [Infra](#infra) · [Productivity](#productivity) · [Dating](#dating) · [Finance](#finance) · [Scheduling](#scheduling) · [Trust & Safety](#trust-safety) · [AI Infra](#ai-infra) · [Communities](#communities) · [Primitives](#primitives) · 🧰 [Guides](#feature-guides) · ☁️ [Cloud](#cloud-guide) · 🤖 [AI](#agentic-ai-guide) · 🛠️ [DevOps](#devops-guide) · 📚 [Resources](#resources-guide) · ❓ [Q&A](#interview-qa-guide) · 🌐 [Networking](#networking-guide) · 🧠 [Operating Systems](#operating-systems-guide) · 🧵 [Low-Level Design](#lld-guide) · 🗓️ [Roadmap](#roadmap-guide)
 
 </div>
 
@@ -33,9 +33,9 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 
 | | | |
 | :--- | :--- | :--- |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **54 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **15 feature & reference guides** | PostgreSQL · Redis · Kafka · MongoDB · Elasticsearch · RabbitMQ · Cloud Services · Agentic AI · Core Concepts | [Jump to guides](#feature-guides) |
-| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **90 diagrams** | Architecture per design, plus sequence, state-machine and anatomy figures where prose alone was doing the work | [Diagram style](#diagrams-archify) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Card%20Index%20Dividers.png" width="26" alt=""/> **56 system designs** | Streaming, Social, E-Commerce, Trust & Safety, AI Infra & more | [Browse topics](#system-designs) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Toolbox.png" width="26" alt=""/> **16 feature & reference guides** | PostgreSQL · Redis · Kafka · MongoDB · Elasticsearch · RabbitMQ · Cloud Services · Agentic AI · Core Concepts · Low-Level Design | [Jump to guides](#feature-guides) |
+| <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="26" alt=""/> **92 diagrams** | Architecture per design, plus sequence, state-machine and anatomy figures where prose alone was doing the work | [Diagram style](#diagrams-archify) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png" width="26" alt=""/> **43 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga & more | [Algorithm library](#algorithms-library) |
 | <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="26" alt=""/> **33 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker… | [Techniques](#techniques--patterns) |
 
@@ -170,12 +170,14 @@ each with an **embedded diagram image** plus a **self-contained interactive HTML
 
 <a id="ai-infra"></a>
 <details open>
-<summary><b>🤖 AI Infrastructure</b> · 2 docs</summary>
+<summary><b>🤖 AI Infrastructure</b> · 4 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
 | 1 | LLM Inference (Production Serving) | [View](system-design-llm-inference.md) |
 | 2 | LLM / AI Gateway (Multi-Provider Routing & Quotas) | [View](system-design-ai-gateway.md) |
+| 3 | GPU Scheduler & Model Lifecycle (Multi-Tenant) | [View](system-design-gpu-scheduler.md) |
+| 4 | Distributed Training (Checkpoint & Recovery) | [View](system-design-distributed-training.md) |
 
 </details>
 
@@ -258,6 +260,7 @@ The guides cover the technology stack behind the design documents, each with run
 | 13 | <a id="roadmap-guide"></a> 🗓️ **30-Day Study Roadmap** | Day-by-day path: designs interleaved with concepts, guides, and the Q&A bank; weekly checkpoints and mock-interview structure | [View](STUDY-ROADMAP.md) |
 | 14 | <a id="networking-guide"></a> 🌐 **Networking** | OSI vs TCP/IP, TCP/UDP internals (handshake, congestion, Nagle), HTTP/1.1→2→3/QUIC, TLS 1.3 + mTLS, DNS chain & TTL strategy, L4/L7 balancing + algorithms, CDN caching semantics, VPC/subnets/NAT, proxies & API gateways, REST/gRPC/WebSocket/SSE, the latency table + interview Q&A | [View](networking.md) |
 | 15 | <a id="operating-systems-guide"></a> 🧠 **Operating Systems** | Processes vs threads, CFS scheduling & throttling, virtual memory/page cache, fsync & durability, epoll→io_uring, zero-copy (Kafka's secret), CPU caches/NUMA, cgroups+namespaces (what containers really are), OOM mechanics + interview Q&A | [View](operating-systems.md) |
+| 16 | <a id="lld-guide"></a> 🧵 **Low-Level Design** | Thread-safe LRU, hash map without STL, bounded blocking queue, thread pool, priority scheduler, malloc/free allocator, fixed-size object pool, reader–writer lock, ring buffer, async logger, timing wheel, connection pool — each with the invariant, the production reference (CacheLib, Folly, oneTBB, TCMalloc, glibc, Netty, HikariCP) and the failure modes interviewers probe, plus a 25-question coverage map | [View](low-level-design.md) |
 
 <p align="right"><a href="#top">↑ back to top</a></p>
 

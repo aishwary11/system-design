@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Distributed Training Checkpoints — System Architecture",
+    "output": "distributed-training.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      960,
+      1762
+    ]
+  },
+  "components": [
+    {
+      "id": "data",
+      "type": "external",
+      "label": "Data Pipeline",
+      "sublabel": "Sampler · shard state",
+      "pos": [
+        337,
+        70
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "rendezvous",
+      "type": "backend",
+      "label": "Rendezvous",
+      "sublabel": "torchrun · elastic ranks",
+      "pos": [
+        330,
+        322
+      ],
+      "size": [
+        161,
+        62
+      ]
+    },
+    {
+      "id": "trainers",
+      "type": "backend",
+      "label": "Trainer Fleet",
+      "sublabel": "DP · TP · PP · NVLink",
+      "pos": [
+        337,
+        574
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "writer",
+      "type": "backend",
+      "label": "Checkpoint Writer",
+      "sublabel": "Stage · shard · checksum",
+      "pos": [
+        337,
+        826
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "Checkpoint Store",
+      "sublabel": "Manifest · shard index",
+      "pos": [
+        337,
+        1078
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "objects",
+      "type": "database",
+      "label": "Object Storage",
+      "sublabel": "S3 · versioned",
+      "pos": [
+        337,
+        1330
+      ],
+      "size": [
+        148,
+        62
+      ]
+    },
+    {
+      "id": "recovery",
+      "type": "backend",
+      "label": "Recovery Controller",
+      "sublabel": "Reshard · resume",
+      "pos": [
+        337,
+        1582
+      ],
+      "size": [
+        148,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Training Platform",
+      "wraps": [
+        "rendezvous",
+        "trainers",
+        "writer",
+        "store",
+        "objects",
+        "recovery"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1-data-rendezvous",
+      "from": "data",
+      "to": "rendezvous",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e2-rendezvous-trainers",
+      "from": "rendezvous",
+      "to": "trainers",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e3-trainers-writer",
+      "from": "trainers",
+      "to": "writer",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4-writer-store",
+      "from": "writer",
+      "to": "store",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5-store-objects",
+      "from": "store",
+      "to": "objects",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e6-objects-recovery",
+      "from": "objects",
+      "to": "recovery",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "dashed",
+      "label": "restore",
+      "labelAt": [411, 1406]
+    }
+  ]
+}
