@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>STREAMING & MEDIA</sub>
 
 # System Design: Netflix (Video Streaming Platform)
 
+<sub>16 SECTIONS · 11 MIN READ · 2 DIAGRAMS · 5 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Netflix is the world's leading subscription-based video streaming platform with 260M+ subscribers across 190+ countries.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -80,7 +86,7 @@ Netflix is the world's leading subscription-based video streaming platform with 
 
 ![Netflix — System Architecture](diagrams/system-design/netflix.svg)
 
-**Interactive diagram:** [diagrams/system-design/netflix.architecture.html](diagrams/system-design/netflix.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/netflix.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -101,7 +107,7 @@ Playback is almost entirely a cache story. The player asks for a manifest, the n
 
 ![CDN Request Path — Anycast Edge, Shield Cache, Origin, Revalidation](diagrams/system-design/cdn-request.sequence.svg)
 
-**Interactive diagram:** [diagrams/system-design/cdn-request.sequence.html](diagrams/system-design/cdn-request.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/cdn-request.sequence.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 
@@ -881,4 +887,8 @@ Play video to user
 
 ---
 
-<nav>← [metro ticketing](system-design-metro-ticketing.md) · [📖 All guides](README.md) · [notification system](system-design-notification-system.md) →</nav>
+<nav>← [metro ticketing](system-design-metro-ticketing.md) · [All guides](README.md) · [notification system](system-design-notification-system.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

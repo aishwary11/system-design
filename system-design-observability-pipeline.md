@@ -1,16 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Observability Pipeline (Metrics, Logs & Traces at Scale)
 
+<sub>22 SECTIONS · 25 MIN READ · 1 DIAGRAM · 8 EXAMPLES</sub>
+
 </div>
 
+> [!TIP]
+> **THE PROBLEM** — Metrics, logs and traces at scale — cardinality control, tail sampling and cost-aware retention without losing the signals that matter.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>22 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -142,7 +150,7 @@ console.log('trace TB (30d)    :', traceTb30d.toFixed(1));
 
 ![Observability Pipeline — System Architecture](diagrams/system-design/observability-pipeline.svg)
 
-**Interactive diagram:** [diagrams/system-design/observability-pipeline.architecture.html](diagrams/system-design/observability-pipeline.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/observability-pipeline.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = the ingest path from services to the query layer, dashed = rollup, compaction and alerting feedback. Services and the dashboards sit outside the boundary.*
@@ -1032,4 +1040,8 @@ Telemetry pipelines fail in the details. Every row below is a real reason a char
 
 ---
 
-<nav>← [notification system](system-design-notification-system.md) · [📖 All guides](README.md) · [online judge](system-design-online-judge.md) →</nav>
+<nav>← [notification system](system-design-notification-system.md) · [All guides](README.md) · [online judge](system-design-online-judge.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

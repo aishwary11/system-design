@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Recommendation System (Two-Stage Ranking Funnel)
 
+<sub>16 SECTIONS · 5 MIN READ · 1 DIAGRAM · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A production recommender for feeds/e-commerce/video: candidate generation from multiple retrievers → feature enrichment → ML ranking → re-ranking with business logic. The classic "How does YouTube/Netflix/Amazon decide what to show" system, from embeddings to serving.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -78,7 +84,7 @@ A recommender can't score a 1B-item catalog per request. The answer is a **funne
 
 ![Recommendation System — System Architecture](diagrams/system-design/recommendation-system.svg)
 
-**Interactive diagram:** [diagrams/system-design/recommendation-system.architecture.html](diagrams/system-design/recommendation-system.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/recommendation-system.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -315,4 +321,8 @@ Pipeline economics: retrieval narrows 500M items → 200 in ~5 ms (ScaNN/HNSW, s
 
 ---
 
-<nav>← [rate limiter](system-design-rate-limiter.md) · [📖 All guides](README.md) · [reddit](system-design-reddit.md) →</nav>
+<nav>← [rate limiter](system-design-rate-limiter.md) · [All guides](README.md) · [reddit](system-design-reddit.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

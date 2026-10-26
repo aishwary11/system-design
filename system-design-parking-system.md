@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>E-COMMERCE & BOOKING</sub>
 
 # System Design: Smart Parking System
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 5 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A smart parking management system that enables real-time parking spot discovery, reservation, guided navigation, automated entry/exit, and payment processing.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A smart parking management system that enables real-time parking spot discovery,
 
 ![Parking System — System Architecture](diagrams/system-design/parking-system.svg)
 
-**Interactive diagram:** [diagrams/system-design/parking-system.architecture.html](diagrams/system-design/parking-system.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/parking-system.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -509,4 +515,8 @@ const spot = new SpotService(); console.log("Spot service ready");
 
 ---
 
-<nav>← [online judge](system-design-online-judge.md) · [📖 All guides](README.md) · [pastebin](system-design-pastebin.md) →</nav>
+<nav>← [online judge](system-design-online-judge.md) · [All guides](README.md) · [pastebin](system-design-pastebin.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

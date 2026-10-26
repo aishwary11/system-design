@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>ELASTICSEARCH GUIDE</sub>
 
 # Elasticsearch — Features Guide with Basic Examples
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — A quick-reference catalog of Elasticsearch features used in search and log backends — mappings, analyzers, queries, aggregations, ranking and shard operations, each with a small example.
 
 A quick-reference catalog of Elasticsearch features used in search-heavy backends: inverted indexes & analyzers, mappings, CRUD & bulk indexing, queries (full-text vs term), aggregations, scoring (BM25), completion & fuzzy search, sharding & replication, near-real-time refresh, ILM (index lifecycle), and security — each with a small, concrete example.
 
@@ -16,17 +23,17 @@ A quick-reference catalog of Elasticsearch features used in search-heavy backend
 
 ![Elasticsearch at a Glance](diagrams/features/elasticsearch-at-a-glance.svg)
 
-**Interactive diagram:** [diagrams/features/elasticsearch-at-a-glance.architecture.html](diagrams/features/elasticsearch-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/elasticsearch-at-a-glance.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data/query flow. Shards & replicas §9, analyzers §2, queries §5, aggregations §6, ILM §10.
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Core Concepts — Index, Shard, Document](#1-core-concepts--index-shard-document)
 2. [Analysis — Text to Terms](#2-analysis--text-to-terms)
@@ -363,3 +370,7 @@ PUT /_security/role/analyst_readonly
 | Query `field.keyword` (or map `keyword`) for exact matches | Don't `term`-query analyzed `text` fields and expect hits |
 | Size shards ~10–50 GB with ILM rolling time-series indices | Don't create 50 shards for a 1 GB index (or 1 shard for 1 TB) |
 | Model aliases + zero-downtime reindex flows | Don't reindex in place and hold your breath — mappings are near-immutable |
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

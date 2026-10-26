@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>E-COMMERCE & BOOKING</sub>
 
 # System Design: E-Commerce Platform (Amazon)
 
+<sub>16 SECTIONS · 7 MIN READ · 2 DIAGRAMS · 4 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — An e-commerce platform supporting product search, shopping cart, inventory management, order processing, payment, shipping, and reviews for millions of products and users.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ An e-commerce platform supporting product search, shopping cart, inventory manag
 
 ![Ecommerce — System Architecture](diagrams/system-design/ecommerce.svg)
 
-**Interactive diagram:** [diagrams/system-design/ecommerce.architecture.html](diagrams/system-design/ecommerce.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/ecommerce.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -100,7 +106,7 @@ The order is a state machine, not a status column updated from six services. Eve
 
 ![Order Lifecycle — Stock Hold, Payment, Fulfilment, Compensation](diagrams/system-design/order-lifecycle.lifecycle.svg)
 
-**Interactive diagram:** [diagrams/system-design/order-lifecycle.lifecycle.html](diagrams/system-design/order-lifecycle.lifecycle.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/order-lifecycle.lifecycle.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 
@@ -541,4 +547,8 @@ function search_products(query, filters = undefined, page = 1, limit = 20) {
 
 ---
 
-<nav>← [distributed lock manager](system-design-distributed-lock-manager.md) · [📖 All guides](README.md) · [file storage](system-design-file-storage.md) →</nav>
+<nav>← [distributed lock manager](system-design-distributed-lock-manager.md) · [All guides](README.md) · [file storage](system-design-file-storage.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>CORE CONCEPTS</sub>
 
 # System Design Concepts — Quick Reference with Basic Examples
 
+<sub>75 SECTIONS · 56 MIN READ · 6 DIAGRAMS · 35 EXAMPLES</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — The foundational concepts behind every distributed system — each with a definition, a tiny example, and the failure it prevents.
 
 The foundational concepts behind every distributed system, each explained in a few lines with a tiny, concrete example: **sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus (Raft/Paxos), two-phase commit, CRDTs, event-driven architecture, DLQs, backpressure, quorum reads & writes, consistency models, PACELC, write-ahead logs, B-tree vs LSM storage engines, checksums, distributed locking, service discovery, API gateways vs service meshes, CDNs, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLIs/SLOs, multi-region disaster recovery, deployment strategies, load shedding & graceful degradation, geospatial indexing, data models vs access patterns, indexing fundamentals (leftmost prefix, clustered vs secondary), monolith vs microservices & service decomposition, back-of-the-envelope estimation, DNS, security & auth (OAuth2/JWT/mTLS), API styles (REST/gRPC/GraphQL) and performance vs scalability.**
 
@@ -12,10 +19,10 @@ The foundational concepts behind every distributed system, each explained in a f
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>75 sections</b></summary>
 
 1. [Sharding (Data Partitioning)](#1-sharding-data-partitioning)
 2. [Consistent Hashing](#2-consistent-hashing)
@@ -108,7 +115,7 @@ The foundational concepts behind every distributed system, each explained in a f
 
 ![Sharding — Data Partitioning](diagrams/concepts/concept-sharding.svg)
 
-**Interactive diagram:** [diagrams/concepts/concept-sharding.architecture.html](diagrams/concepts/concept-sharding.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/concepts/concept-sharding.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Every query must carry the shard key so the router stays stateless; config service supports directory-based sharding and re-sharding (see below).*
@@ -652,7 +659,7 @@ while (true) {
 
 ![Replication Topologies](diagrams/concepts/concept-replication.svg)
 
-**Interactive diagram:** [diagrams/concepts/concept-replication.architecture.html](diagrams/concepts/concept-replication.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/concepts/concept-replication.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data path, dashed = control. Async replicas serve reads and are promoted on failure; fencing tokens stop the old leader from writing after promotion (§14).*
@@ -983,7 +990,7 @@ Pairs with: backpressure (§21) to slow producers before shedding, rate limiting
 
 ![Quorum Reads & Writes](diagrams/concepts/concept-quorum.svg)
 
-**Interactive diagram:** [diagrams/concepts/concept-quorum.architecture.html](diagrams/concepts/concept-quorum.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/concepts/concept-quorum.architecture.html) · pan/zoom · search · dark/light · export
 
 
 | N | W | R | W + R > N? | Behavior |
@@ -1526,7 +1533,7 @@ the copies yourself (or via streams — see outbox §9, CDC in the Postgres guid
 
 ![Single-Table Design — One Table, Many Access Patterns](diagrams/concepts/concept-single-table.svg)
 
-**Interactive diagram:** [diagrams/concepts/concept-single-table.architecture.html](diagrams/concepts/concept-single-table.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/concepts/concept-single-table.architecture.html) · pan/zoom · search · dark/light · export
 
 *Every client query maps to one key shape in the same table (or a GSI for the inverse lookup); a stream projects changes into read models for the shapes a KV store can't serve (solid = query paths, dashed = change sync).*
 
@@ -1565,7 +1572,7 @@ Column order rule: **equality columns first, then the range/sort column** — `(
 
 ![Leftmost Prefix — Which Queries Can Use the Index](diagrams/concepts/concept-leftmost-prefix.svg)
 
-**Interactive diagram:** [diagrams/concepts/concept-leftmost-prefix.architecture.html](diagrams/concepts/concept-leftmost-prefix.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/concepts/concept-leftmost-prefix.architecture.html) · pan/zoom · search · dark/light · export
 
 *Three query shapes seek into the composite index by a leftmost prefix; two shapes that skip the first column fall through to a full scan — the index is useless to them no matter how many columns they mention.*
 
@@ -1622,7 +1629,7 @@ Phase N:  monolith shrinks until only trivial routes remain (or dies)
 
 ![Strangler Pattern — Incremental Monolith → Microservices Migration](diagrams/concepts/concept-strangler.svg)
 
-**Interactive diagram:** [diagrams/concepts/concept-strangler.architecture.html](diagrams/concepts/concept-strangler.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/concepts/concept-strangler.architecture.html) · pan/zoom · search · dark/light · export
 
 *The facade routes `/orders` to the new service while everything else still lands on the monolith; a CDC/event path keeps data in sync while both write paths coexist (solid = traffic, dashed = event sync).*
 
@@ -2405,4 +2412,8 @@ Expected: `winner: Song B starts at frame 120` by a landslide — the true (song
 
 ---
 
-<nav>← [code deployment](system-design-code-deployment.md) · [📖 All guides](README.md) · [delayed job scheduler](system-design-delayed-job-scheduler.md) →</nav>
+<nav>← [code deployment](system-design-code-deployment.md) · [All guides](README.md) · [delayed job scheduler](system-design-delayed-job-scheduler.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

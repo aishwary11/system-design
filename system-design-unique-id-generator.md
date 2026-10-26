@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>CORE PRIMITIVES & PLATFORM</sub>
 
 # System Design: Unique ID Generator (Snowflake-style)
 
+<sub>16 SECTIONS · 6 MIN READ · 2 DIAGRAMS · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Generate ~64-bit, roughly sorted, globally unique IDs at scale without a coordinating database sequence — the primitive behind order IDs, tweet IDs, and every primary key that must be minted thousands of times per second.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -77,7 +83,7 @@ A service that hands out unique 64-bit IDs to any caller (services, edge nodes) 
 
 ![Unique ID Generator — System Architecture](diagrams/system-design/unique-id-generator.svg)
 
-**Interactive diagram:** [diagrams/system-design/unique-id-generator.architecture.html](diagrams/system-design/unique-id-generator.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/unique-id-generator.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -316,4 +322,8 @@ The guard converts "clock went backwards" from silent duplicate/unordered IDs in
 
 ---
 
-<nav>← [uber](system-design-uber.md) · [📖 All guides](README.md) · [url shortener](system-design-url-shortener.md) →</nav>
+<nav>← [uber](system-design-uber.md) · [All guides](README.md) · [url shortener](system-design-url-shortener.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

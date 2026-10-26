@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>COLLABORATIVE & PRODUCTIVITY</sub>
 
 # System Design: Google Docs
 
+<sub>16 SECTIONS · 5 MIN READ · 2 DIAGRAMS · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Real-time collaborative document editor with OT/CRDT conflict resolution.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -72,7 +78,7 @@ Real-time collaborative document editor with OT/CRDT conflict resolution.
 
 ![Google Docs — System Architecture](diagrams/system-design/google-docs.svg)
 
-**Interactive diagram:** [diagrams/system-design/google-docs.architecture.html](diagrams/system-design/google-docs.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/google-docs.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -93,7 +99,7 @@ Both editors insert at index 5 against revision 41. Applying both literally inte
 
 ![Concurrent Edits — Why Two Inserts at Index 5 Need Transformation](diagrams/system-design/doc-merge.sequence.svg)
 
-**Interactive diagram:** [diagrams/system-design/doc-merge.sequence.html](diagrams/system-design/doc-merge.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/doc-merge.sequence.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 How the system is decomposed into independently deployed services:
@@ -375,4 +381,8 @@ console.log("Document sync ready");
 
 ---
 
-<nav>← [google calendar](system-design-google-calendar.md) · [📖 All guides](README.md) · [google maps](system-design-google-maps.md) →</nav>
+<nav>← [google calendar](system-design-google-calendar.md) · [All guides](README.md) · [google maps](system-design-google-maps.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

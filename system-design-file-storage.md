@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: File Storage (Google Drive/Dropbox)
 
+<sub>16 SECTIONS · 7 MIN READ · 2 DIAGRAMS · 4 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A cloud file storage system supporting file upload/download, sync, sharing, and versioning for millions of users.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -77,7 +83,7 @@ A cloud file storage system supporting file upload/download, sync, sharing, and 
 
 ![File Storage — System Architecture](diagrams/system-design/file-storage.svg)
 
-**Interactive diagram:** [diagrams/system-design/file-storage.architecture.html](diagrams/system-design/file-storage.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/file-storage.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -98,7 +104,7 @@ The client hashes each chunk, so the server can answer "I already have this" bef
 
 ![Chunked Upload with Content-Addressed Dedupe](diagrams/system-design/upload-dedup.sequence.svg)
 
-**Interactive diagram:** [diagrams/system-design/upload-dedup.sequence.html](diagrams/system-design/upload-dedup.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/upload-dedup.sequence.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 
@@ -515,4 +521,8 @@ const upload = new UploadService(); console.log("Upload service ready");
 
 ---
 
-<nav>← [ecommerce](system-design-ecommerce.md) · [📖 All guides](README.md) · [food delivery](system-design-food-delivery.md) →</nav>
+<nav>← [ecommerce](system-design-ecommerce.md) · [All guides](README.md) · [food delivery](system-design-food-delivery.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

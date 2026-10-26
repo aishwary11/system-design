@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>STREAMING & MEDIA</sub>
 
 # System Design: YouTube (Video Streaming Platform)
 
+<sub>16 SECTIONS · 7 MIN READ · 2 DIAGRAMS · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A video-sharing and streaming platform supporting video upload, transcoding, streaming, search, recommendations, likes/comments, and view counts for 2B+ users.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A video-sharing and streaming platform supporting video upload, transcoding, str
 
 ![Youtube — System Architecture](diagrams/system-design/youtube.svg)
 
-**Interactive diagram:** [diagrams/system-design/youtube.architecture.html](diagrams/system-design/youtube.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/youtube.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -551,4 +557,8 @@ const upload = new UploadService(); console.log("Upload service ready");
 
 ---
 
-<nav>← [webhook delivery](system-design-webhook-delivery.md) · [📖 All guides](README.md) · [STUDY ROADMAP](STUDY-ROADMAP.md) →</nav>
+<nav>← [webhook delivery](system-design-webhook-delivery.md) · [All guides](README.md) · [STUDY ROADMAP](STUDY-ROADMAP.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

@@ -1,16 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Webhook Delivery (Outbound Event Fan-Out)
 
+<sub>16 SECTIONS · 12 MIN READ · 2 DIAGRAMS · 6 EXAMPLES</sub>
+
 </div>
 
+> [!TIP]
+> **THE PROBLEM** — At-least-once outbound fan-out with signed payloads, retries that cannot stampede a recovering endpoint, and a replayable dead-letter queue.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -80,7 +88,7 @@ Design the system that delivers **webhooks** (Stripe / GitHub / Shopify class): 
 
 ![Webhook Delivery — System Architecture](diagrams/system-design/webhook-delivery.svg)
 
-**Interactive diagram:** [diagrams/system-design/webhook-delivery.architecture.html](diagrams/system-design/webhook-delivery.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/webhook-delivery.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = delivery path, dashed = retry and replay path. Everything inside the boundary is the platform; producers and customer endpoints are outside it.*
@@ -100,7 +108,7 @@ Delivery is at-least-once, so the receiver — not the sender — owns deduplica
 
 ![Webhook Delivery — Signed POST, Exponential Backoff, DLQ, Replay](diagrams/system-design/webhook-retry.sequence.svg)
 
-**Interactive diagram:** [diagrams/system-design/webhook-retry.sequence.html](diagrams/system-design/webhook-retry.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/webhook-retry.sequence.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 
@@ -693,4 +701,8 @@ workers.handle({
 
 ---
 
-<nav>← [web crawler](system-design-web-crawler.md) · [📖 All guides](README.md) · [youtube](system-design-youtube.md) →</nav>
+<nav>← [web crawler](system-design-web-crawler.md) · [All guides](README.md) · [youtube](system-design-youtube.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

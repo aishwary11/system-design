@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>COLLABORATIVE & PRODUCTIVITY</sub>
 
 # System Design: Google Calendar (Scheduling & Free-Busy)
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A calendar platform: events with recurrence and time zones, cross-user free/busy queries, invites with RSVP state machines, and conflict resolution — deceptively hard because the data model (recurrence × timezones × invites) explodes quietly.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ Calendar looks like CRUD and isn't. The hard parts: recurring events (RRULE expa
 
 ![Google Calendar — System Architecture](diagrams/system-design/google-calendar.svg)
 
-**Interactive diagram:** [diagrams/system-design/google-calendar.architecture.html](diagrams/system-design/google-calendar.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/google-calendar.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -313,4 +319,8 @@ Production notes: real systems expand with a **materialized-occurrences cache** 
 
 ---
 
-<nav>← [google ads](system-design-google-ads.md) · [📖 All guides](README.md) · [google docs](system-design-google-docs.md) →</nav>
+<nav>← [google ads](system-design-google-ads.md) · [All guides](README.md) · [google docs](system-design-google-docs.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

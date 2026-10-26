@@ -1,16 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: A/B Experimentation Platform (Online Controlled Experiments)
 
+<sub>22 SECTIONS · 24 MIN READ · 2 DIAGRAMS · 8 EXAMPLES</sub>
+
 </div>
 
+> [!TIP]
+> **THE PROBLEM** — Deterministic bucketing, always-valid statistics and guardrail rollback for experiments that run while the product is live.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>22 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -136,7 +144,7 @@ console.log('rollup rows/day     :', rollupRows);
 
 ![A/B Experimentation Platform — System Architecture](diagrams/system-design/ab-testing.svg)
 
-**Interactive diagram:** [diagrams/system-design/ab-testing.architecture.html](diagrams/system-design/ab-testing.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/ab-testing.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = the assignment and exposure path, dashed = control and monitoring path. Everything inside the boundary is the platform; client SDKs and the analyst dashboard sit outside it.*
@@ -157,7 +165,7 @@ An experiment moves through a small set of guarded states, and the interesting p
 
 ![Experiment Lifecycle — Guardrail Auto-Pause, Ship or Roll Back](diagrams/system-design/experiment-lifecycle.lifecycle.svg)
 
-**Interactive diagram:** [diagrams/system-design/experiment-lifecycle.lifecycle.html](diagrams/system-design/experiment-lifecycle.lifecycle.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/experiment-lifecycle.lifecycle.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 
@@ -897,4 +905,8 @@ The pattern behind all of these: the platform is a *measurement instrument*. A m
 
 ---
 
-<nav>[📖 All guides](README.md) · [ai gateway](system-design-ai-gateway.md) →</nav>
+<nav>[All guides](README.md) · [ai gateway](system-design-ai-gateway.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

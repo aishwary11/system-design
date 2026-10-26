@@ -1,21 +1,28 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>STUDY PLAN</sub>
 
 # 30-Day System Design Study Roadmap
 
+<sub>30 DAYS · 4 WEEKS · 56 DESIGNS · 16 GUIDES</sub>
+
 </div>
+
+> [!TIP]
+> **THE PLAN** — A day-by-day path through the library: designs interleaved with the concepts behind them, the guides where each technology shows up, and the Q&A bank for the why/what-if layer.
 
 A day-by-day path through this repo: designs interleaved with the concepts that power them, guides where the tech shows up, and the Q&A bank for the "why/what-if" layer. Budget **~2 hours/day**; every 7th day is a consolidation checkpoint.
 
-**Legend:** 📐 design doc · 🧩 concepts section · 🧰 guide · ❓ interview Q&A · 📚 resource
+**Legend:** design doc · concepts section · guide · interview Q&A · resource
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>8 sections</b></summary>
 
 1. [Week 1 — Foundations (the primitives everything reuses)](#week-1--foundations-the-primitives-everything-reuses)
 2. [Week 2 — Data & Messaging (state, streams, and consistency)](#week-2--data--messaging-state-streams-and-consistency)
@@ -145,3 +152,7 @@ Guides are interleaved the same way: [Concepts](system-design-concepts.md) (days
 | Sleep on the hard docs and revisit them | Don't cram all four weeks into the last three days |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · [Core Concepts](system-design-concepts.md) · [Curated Resources](resources.md)*
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

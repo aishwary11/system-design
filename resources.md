@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>CURATED RESOURCES</sub>
 
 # System Design Resources — Curated Articles, Repos & Papers
 
+<sub>9 SECTIONS · 9 MIN READ</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — Where to go deeper on every topic in this library — the canonical repos, engineering deep dives, articles, papers and interview platforms, each paired with the doc it extends.
 
 A curated map of the best **GitHub repositories, engineering-blog deep dives, Medium articles, interview platforms, and classic papers** — each entry says *what it teaches* and *which doc in this repo it pairs with*. Modern-first: AI-era design resources sit alongside the classics.
 
@@ -12,10 +19,10 @@ A curated map of the best **GitHub repositories, engineering-blog deep dives, Me
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>9 sections</b></summary>
 
 1. [GitHub Repositories — The Canon](#1-github-repositories--the-canon)
 2. [Engineering Blog Deep Dives (by topic)](#2-engineering-blog-deep-dives-by-topic)
@@ -225,3 +232,7 @@ The unwritten rubric, distilled from interviewer write-ups (DesignGurus' "9 habi
 | Save the *one* idea you want to steal from each link | Don't bookmark-and-forget; resources are inputs, not achievements |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · [Study Roadmap](STUDY-ROADMAP.md) · [Core Concepts](system-design-concepts.md)*
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

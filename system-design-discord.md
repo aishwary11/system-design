@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>COMMUNITIES & CONTENT</sub>
 
 # System Design: Discord (Community Chat, Massive Rooms & Voice)
 
+<sub>16 SECTIONS · 5 MIN READ · 1 DIAGRAM · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Group chat at Discord scale: servers with hundreds of thousands of members, millions of concurrent WebSocket sessions, voice/video over UDP — where naive fan-out breaks the moment a 100K-member room receives one message.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -78,7 +84,7 @@ Unlike WhatsApp (1:1 and small groups), Discord rooms (channels in servers) rout
 
 ![Discord — System Architecture](diagrams/system-design/discord.svg)
 
-**Interactive diagram:** [diagrams/system-design/discord.architecture.html](diagrams/system-design/discord.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/discord.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -312,4 +318,8 @@ This is the same primitive as the sharding section (§2 concepts) applied to *co
 
 ---
 
-<nav>← [delayed job scheduler](system-design-delayed-job-scheduler.md) · [📖 All guides](README.md) · [distributed cache](system-design-distributed-cache.md) →</nav>
+<nav>← [delayed job scheduler](system-design-delayed-job-scheduler.md) · [All guides](README.md) · [distributed cache](system-design-distributed-cache.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

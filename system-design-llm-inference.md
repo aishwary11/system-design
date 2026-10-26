@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>AI INFRASTRUCTURE</sub>
 
 # System Design: LLM Inference Platform (Production Serving)
 
+<sub>17 SECTIONS · 11 MIN READ · 1 DIAGRAM · 1 EXAMPLE</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Design the serving platform behind a production LLM product: stream tokens to millions of users while serving GPU-expensive autoregressive models.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>17 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -80,7 +86,7 @@ Design the serving platform behind a production LLM product: stream tokens to mi
 
 ![LLM Inference — System Architecture](diagrams/system-design/llm-inference.svg)
 
-**Interactive diagram:** [diagrams/system-design/llm-inference.architecture.html](diagrams/system-design/llm-inference.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/llm-inference.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = prompt/token flow, dashed = control plane / monitoring.*
@@ -358,4 +364,8 @@ Expected: user A's second request is rejected by the token limiter while user B 
 
 ---
 
-<nav>← [linkedin](system-design-linkedin.md) · [📖 All guides](README.md) · [messaging app](system-design-messaging-app.md) →</nav>
+<nav>← [linkedin](system-design-linkedin.md) · [All guides](README.md) · [messaging app](system-design-messaging-app.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Notification System
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 8 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A multi-channel notification system supporting push, email, SMS, and in-app notifications for millions of users.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -76,7 +82,7 @@ A multi-channel notification system supporting push, email, SMS, and in-app noti
 
 ![Notification System — System Architecture](diagrams/system-design/notification-system.svg)
 
-**Interactive diagram:** [diagrams/system-design/notification-system.architecture.html](diagrams/system-design/notification-system.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/notification-system.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -590,4 +596,8 @@ function render_notification(template_name, variables) {
 
 ---
 
-<nav>← [netflix](system-design-netflix.md) · [📖 All guides](README.md) · [observability pipeline](system-design-observability-pipeline.md) →</nav>
+<nav>← [netflix](system-design-netflix.md) · [All guides](README.md) · [observability pipeline](system-design-observability-pipeline.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

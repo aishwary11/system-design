@@ -1,3 +1,5 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>SYSTEM DESIGN · CONCURRENCY</sub>
@@ -6,21 +8,19 @@
 
 **The twelve primitives behind every system — and the invariants interviewers actually grade.**
 
-![12 primitives](https://img.shields.io/badge/primitives-12-6366f1?style=flat-square&labelColor=0a0a0a)
-![25 interview prompts](https://img.shields.io/badge/interview_prompts-25-6366f1?style=flat-square&labelColor=0a0a0a)
-![39 primary sources](https://img.shields.io/badge/primary_sources-39-6366f1?style=flat-square&labelColor=0a0a0a)
-
-[How to use](#how-to-use) · [The map](#the-map) · [Coverage](#15-coverage-map-the-25-question-nvidia-set) · [Cheat sheet](#16-one-screen-cheat-sheet)
+<sub>12 PRIMITIVES · 25 INTERVIEW PROMPTS · 39 PRIMARY SOURCES</sub>
 
 </div>
 
 > [!TIP]
 > **The thesis** — HLD rounds ask *which boxes*; LLD rounds ask *what invariant your lock protects*. Every section follows the same shape: **scope → invariant → baseline → what production does → what breaks**, then the follow-up that separates recall from engineering judgement.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>18 sections</b></summary>
 
 1. [How to Answer an LLD Question](#1-how-to-answer-an-lld-question)
 2. [Thread-Safe LRU Cache](#2-thread-safe-lru-cache)
@@ -987,3 +987,7 @@ The whole guide on one screen. If you remember nothing else before the interview
 ---
 
 *Pairs with:* [Operating Systems](operating-systems.md) (scheduler, page cache, futex/epoll) · [Core Concepts](system-design-concepts.md) (LRU, consistent hashing, backpressure) · [Distributed Cache](system-design-distributed-cache.md) · [Rate Limiter](system-design-rate-limiter.md) · [Delayed Job Scheduler](system-design-delayed-job-scheduler.md) · [File Storage](system-design-file-storage.md) · [Observability Pipeline](system-design-observability-pipeline.md) · [GPU Scheduler](system-design-gpu-scheduler.md) · [LLM Inference](system-design-llm-inference.md) · [Distributed Training](system-design-distributed-training.md)
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

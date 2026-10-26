@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Pastebin (Text Sharing Service)
 
+<sub>16 SECTIONS · 5 MIN READ · 1 DIAGRAM · 1 EXAMPLE</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Text sharing service allowing users to paste code/text snippets and share via unique URLs.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -80,7 +86,7 @@ Handles 500M+ monthly views, 10M+ pastes/day, write-heavy workload.
 
 ![Pastebin — System Architecture](diagrams/system-design/pastebin.svg)
 
-**Interactive diagram:** [diagrams/system-design/pastebin.architecture.html](diagrams/system-design/pastebin.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/pastebin.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -297,4 +303,8 @@ const url = new URLGenerator(); console.log("URL generator:", url.generate());
 
 ---
 
-<nav>← [parking system](system-design-parking-system.md) · [📖 All guides](README.md) · [payment system](system-design-payment-system.md) →</nav>
+<nav>← [parking system](system-design-parking-system.md) · [All guides](README.md) · [payment system](system-design-payment-system.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>OPERATING SYSTEMS GUIDE</sub>
 
 # Operating Systems for System Design — Why Your Servers Behave That Way
 
+<sub>13 SECTIONS · 11 MIN READ</sub>
+
 </div>
 
 > [!TIP]
 > **THE GUIDE** — Every database, broker, and container is a guest of the kernel. Latency spikes, OOM kills, "mysterious" 100ms stalls, and container throttling all trace back to OS primitives: scheduling, virtual memory, the page cache, and I/O. This guide covers the kernel concepts that make the rest of this repo make sense — including *what a container actually is*.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>13 sections</b></summary>
 
 1. [Why OS Knowledge Matters in System Design](#1-why-os-knowledge-matters-in-system-design)
 2. [Processes & Threads](#2-processes--threads)
@@ -295,3 +301,7 @@ epoll readiness multiplexing + non-blocking work: one thread serves thousands of
 ---
 
 *Pairs with:* `networking.md` (sockets, epoll's cousin problems, zero-copy NIC paths) · `kafka-features.md` (sequential I/O + sendfile in practice) · `redis-features.md` (single-thread + epoll + THP) · `postgresql-features.md` (page cache + WAL fsync) · `devops-features.md` §3 (requests/limits → cgroups) · `interview-qa.md` §77–80 (failure vocabulary).
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

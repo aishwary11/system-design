@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: URL Shortener (bit.ly)
 
+<sub>16 SECTIONS · 5 MIN READ · 1 DIAGRAM · 8 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A URL shortening service that converts long URLs to short, shareable links with analytics tracking.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -78,7 +84,7 @@ A URL shortening service that converts long URLs to short, shareable links with 
 
 ![URL Shortener — System Architecture](diagrams/system-design/url-shortener.svg)
 
-**Interactive diagram:** [diagrams/system-design/url-shortener.architecture.html](diagrams/system-design/url-shortener.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/url-shortener.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -523,4 +529,8 @@ const gen = new URLGenerator(); console.log("Short URL:", gen.generate());
 
 ---
 
-<nav>← [unique id generator](system-design-unique-id-generator.md) · [📖 All guides](README.md) · [video conferencing](system-design-video-conferencing.md) →</nav>
+<nav>← [unique id generator](system-design-unique-id-generator.md) · [All guides](README.md) · [video conferencing](system-design-video-conferencing.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

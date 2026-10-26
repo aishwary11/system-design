@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>GEOSPATIAL OPERATIONS</sub>
 
 # System Design: Route Reconstruction from Noisy GPS (Route IQ)
 
+<sub>16 SECTIONS · 7 MIN READ · 1 DIAGRAM · 1 EXAMPLE</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — An end-to-end spatial pipeline that turns millions of chaotic last-mile GPS traces into high-fidelity ground truth: joint anomaly scoring → Kalman smoothing → OSRM map-matching with confidence labels → H3 + Hidden-Markov-Model consensus paths → real-time deviation scoring. Based on Zepto's Route IQ architecture.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A rider's phone emits a GPS ping every few seconds, but in narrow alleys, flyove
 
 ![Route Reconstruction — System Architecture](diagrams/system-design/route-reconstruction.svg)
 
-**Interactive diagram:** [diagrams/system-design/route-reconstruction.architecture.html](diagrams/system-design/route-reconstruction.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/route-reconstruction.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -340,4 +346,8 @@ console.log(cleanTrace([{ lat: 0, lng: 0, ts: 0 }, { lat: 0.5, lng: 0, ts: 3000 
 
 ---
 
-<nav>← [reddit](system-design-reddit.md) · [📖 All guides](README.md) · [search autocomplete](system-design-search-autocomplete.md) →</nav>
+<nav>← [reddit](system-design-reddit.md) · [All guides](README.md) · [search autocomplete](system-design-search-autocomplete.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

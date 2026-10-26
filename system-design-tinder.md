@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>DATING</sub>
 
 # System Design: Tinder (Dating App)
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 4 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A location-based dating platform supporting profile discovery, swiping, matching, messaging, and preferences for 50M+ daily active users.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A location-based dating platform supporting profile discovery, swiping, matching
 
 ![Tinder — System Architecture](diagrams/system-design/tinder.svg)
 
-**Interactive diagram:** [diagrams/system-design/tinder.architecture.html](diagrams/system-design/tinder.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/tinder.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -534,4 +540,8 @@ handleSuperLike('u1', 'u2').then(r => console.log('super like:', r));
 
 ---
 
-<nav>← [ticketing system](system-design-ticketing-system.md) · [📖 All guides](README.md) · [twitter](system-design-twitter.md) →</nav>
+<nav>← [ticketing system](system-design-ticketing-system.md) · [All guides](README.md) · [twitter](system-design-twitter.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

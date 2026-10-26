@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INDUSTRY MAP</sub>
 
-# 🌍 Industry Concepts & Real Systems
+# Industry Concepts & Real Systems
+
+<sub>10 SECTIONS · 26 MIN READ</sub>
 
 </div>
+
+> [!TIP]
+> **THE GUIDE** — The named concept and the real system that made it famous — so a design review can say “use H3 cells” instead of “use a geo index”.
 
 Every design doc teaches the *mechanism*. This guide records the **named concept and the system that made it famous**, so a design review can say "use H3 cells, not a geohash prefix scan" instead of "use a geo index".
 
@@ -14,7 +21,10 @@ Every design doc teaches the *mechanism*. This guide records the **named concept
 
 ---
 
-## Contents
+## On this page
+
+<details open>
+<summary><b>9 domains</b></summary>
 
 | Domain | Topics |
 | :--- | :--- |
@@ -27,6 +37,8 @@ Every design doc teaches the *mechanism*. This guide records the **named concept
 | [AI Infrastructure](#ai-infrastructure) | AI gateway · LLM inference · A/B testing |
 | [Productivity](#productivity) | Google Docs · Google Calendar · Online judge |
 | [Dating & Communities](#dating--communities) | Tinder |
+
+</details>
 
 ---
 
@@ -585,3 +597,7 @@ Every design doc teaches the *mechanism*. This guide records the **named concept
 4. **Pick the boring option when the constraint is absent.** H3 is not better than PostGIS for 10,000 parking spaces; the concept is a tool, not a badge.
 
 **Caveats.** Company architecture changes; a 2019 blog post describes a 2019 system. Several rows describe a technique a company documents without naming the exact algorithm (marked *documented use*). Papers and official docs are preferred over secondary summaries, and vendor marketing was not used as evidence.
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

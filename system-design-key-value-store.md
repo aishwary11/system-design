@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Key-Value Store (DynamoDB)
 
+<sub>16 SECTIONS · 5 MIN READ · 3 DIAGRAMS · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Distributed key-value store providing eventually consistent reads/writes with high availability.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -75,7 +81,7 @@ Distributed key-value store providing eventually consistent reads/writes with hi
 
 ![Key Value Store — System Architecture](diagrams/system-design/key-value-store.svg)
 
-**Interactive diagram:** [diagrams/system-design/key-value-store.architecture.html](diagrams/system-design/key-value-store.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/key-value-store.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -96,7 +102,7 @@ With `N=3`, `W=2`, `R=2` the write and read sets must overlap in at least one re
 
 ![Quorum Write (W=2) then Quorum Read (R=2), with Hinted Handoff](diagrams/system-design/quorum-rw.sequence.svg)
 
-**Interactive diagram:** [diagrams/system-design/quorum-rw.sequence.html](diagrams/system-design/quorum-rw.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/quorum-rw.sequence.html) · pan/zoom · search · dark/light · export
 
 ### Raft, for Contrast
 
@@ -104,7 +110,7 @@ Dynamo-style quorums let any coordinator serve a write; Raft centralises writes 
 
 ![Raft — Replicate, Commit on Quorum, Re-Elect, Repair a Divergent Log](diagrams/system-design/raft-replication.sequence.svg)
 
-**Interactive diagram:** [diagrams/system-design/raft-replication.sequence.html](diagrams/system-design/raft-replication.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/raft-replication.sequence.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 How the system is decomposed into independently deployed services:
@@ -337,4 +343,8 @@ const kv = new KeyValueStore(); console.log("KV store ready");
 
 ---
 
-<nav>← [irctc](system-design-irctc.md) · [📖 All guides](README.md) · [leaderboard](system-design-leaderboard.md) →</nav>
+<nav>← [irctc](system-design-irctc.md) · [All guides](README.md) · [leaderboard](system-design-leaderboard.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

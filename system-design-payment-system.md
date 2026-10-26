@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>FINANCE & ADS</sub>
 
 # System Design: Payment System (Stripe)
 
+<sub>16 SECTIONS · 6 MIN READ · 2 DIAGRAMS · 10 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A payment processing platform supporting online payments, refunds, subscriptions, and multi-currency transactions.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -77,7 +83,7 @@ A payment processing platform supporting online payments, refunds, subscriptions
 
 ![Payment System — System Architecture](diagrams/system-design/payment-system.svg)
 
-**Interactive diagram:** [diagrams/system-design/payment-system.architecture.html](diagrams/system-design/payment-system.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/payment-system.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -98,7 +104,7 @@ The architecture diagram shows where money moves; this trace shows **in what ord
 
 ![Card Payment — Authorize, Post to Ledger, Settle, Compensate](diagrams/system-design/payment-saga.sequence.svg)
 
-**Interactive diagram:** [diagrams/system-design/payment-saga.sequence.html](diagrams/system-design/payment-saga.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/payment-saga.sequence.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 
@@ -727,4 +733,8 @@ console.log(convertCurrency(1099, 'USD', 'USD', { rateProvider }));
 
 ---
 
-<nav>← [pastebin](system-design-pastebin.md) · [📖 All guides](README.md) · [proximity service](system-design-proximity-service.md) →</nav>
+<nav>← [pastebin](system-design-pastebin.md) · [All guides](README.md) · [proximity service](system-design-proximity-service.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

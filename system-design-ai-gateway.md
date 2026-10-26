@@ -1,16 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>AI INFRASTRUCTURE</sub>
 
 # System Design: LLM / AI Gateway (Multi-Provider Model Routing & Quotas)
 
+<sub>22 SECTIONS · 25 MIN READ · 1 DIAGRAM · 8 EXAMPLES</sub>
+
 </div>
 
+> [!TIP]
+> **THE PROBLEM** — One API in front of many model providers — routing, quotas, fallback and cost control that survive a provider having a bad hour.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>22 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -141,7 +149,7 @@ console.log('streams/instance   :', Math.round(concurrent / instances));
 
 ![LLM / AI Gateway — System Architecture](diagrams/system-design/ai-gateway.svg)
 
-**Interactive diagram:** [diagrams/system-design/ai-gateway.architecture.html](diagrams/system-design/ai-gateway.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/ai-gateway.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = the request path to providers, dashed = telemetry and health feedback. Everything inside the boundary is the gateway; apps and provider endpoints sit outside it.*
@@ -1059,4 +1067,8 @@ Gateway work is 10% architecture and 90% these details. Each one has produced a 
 
 ---
 
-<nav>← [ab testing](system-design-ab-testing.md) · [📖 All guides](README.md) · [airbnb](system-design-airbnb.md) →</nav>
+<nav>← [ab testing](system-design-ab-testing.md) · [All guides](README.md) · [airbnb](system-design-airbnb.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

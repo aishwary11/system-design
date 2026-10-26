@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>CORE PRIMITIVES & PLATFORM</sub>
 
 # System Design: Distributed Lock Manager (Chubby / ZooKeeper-style)
 
+<sub>16 SECTIONS · 6 MIN READ · 2 DIAGRAMS · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A coordination service: locks, leases, leader election, and small-config storage built on consensus. The design behind Chubby, ZooKeeper, and etcd — and the reason "just use Redis locks" fails under partition. Consensus-as-a-service.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -80,7 +86,7 @@ Services need to agree on "who is the leader," "who owns this shard," "is this c
 
 ![Distributed Lock Manager — System Architecture](diagrams/system-design/distributed-lock-manager.svg)
 
-**Interactive diagram:** [diagrams/system-design/distributed-lock-manager.architecture.html](diagrams/system-design/distributed-lock-manager.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/distributed-lock-manager.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -98,7 +104,7 @@ A lease alone cannot give mutual exclusion: writer 1 stops the world past its TT
 
 ![Lease-Based Lock with Fencing Tokens (Expiry, Stale Writer, Safe Reject)](diagrams/system-design/lock-lease.sequence.svg)
 
-**Interactive diagram:** [diagrams/system-design/lock-lease.sequence.html](diagrams/system-design/lock-lease.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/lock-lease.sequence.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 
@@ -323,4 +329,8 @@ Interview one-liner: **locks need leases, leases need fencing, fencing needs a s
 
 ---
 
-<nav>← [distributed cache](system-design-distributed-cache.md) · [📖 All guides](README.md) · [ecommerce](system-design-ecommerce.md) →</nav>
+<nav>← [distributed cache](system-design-distributed-cache.md) · [All guides](README.md) · [ecommerce](system-design-ecommerce.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

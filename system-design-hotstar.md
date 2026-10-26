@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>STREAMING & MEDIA</sub>
 
 # System Design: Hotstar (Live Streaming Platform)
 
+<sub>16 SECTIONS · 12 MIN READ · 1 DIAGRAM · 4 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporting live sports (cricket, football), entertainment shows, and Video-on-Demand (VOD).
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporti
 
 ![Hotstar — System Architecture](diagrams/system-design/hotstar.svg)
 
-**Interactive diagram:** [diagrams/system-design/hotstar.architecture.html](diagrams/system-design/hotstar.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/hotstar.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -1094,4 +1100,8 @@ CREATE TABLE match_summary (
 
 ---
 
-<nav>← [google maps](system-design-google-maps.md) · [📖 All guides](README.md) · [instagram](system-design-instagram.md) →</nav>
+<nav>← [google maps](system-design-google-maps.md) · [All guides](README.md) · [instagram](system-design-instagram.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

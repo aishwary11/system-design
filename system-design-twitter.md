@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>SOCIAL & MESSAGING</sub>
 
 # System Design: Twitter / X
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 4 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A social media platform supporting tweet posting, following, personalized timeline, likes/retweets, search, and trending topics for 500M+ users.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A social media platform supporting tweet posting, following, personalized timeli
 
 ![Twitter — System Architecture](diagrams/system-design/twitter.svg)
 
-**Interactive diagram:** [diagrams/system-design/twitter.architecture.html](diagrams/system-design/twitter.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/twitter.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -591,4 +597,8 @@ class SpamDetector {
 
 ---
 
-<nav>← [tinder](system-design-tinder.md) · [📖 All guides](README.md) · [uber](system-design-uber.md) →</nav>
+<nav>← [tinder](system-design-tinder.md) · [All guides](README.md) · [uber](system-design-uber.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

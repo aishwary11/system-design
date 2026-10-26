@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>REDIS GUIDE</sub>
 
 # Redis — Features Guide with Basic Examples
 
+<sub>21 SECTIONS · 11 MIN READ · 3 DIAGRAMS</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — A quick-reference catalog of Redis features used in production backends — data structures, caching patterns, locks, rate limits, streams, persistence and cluster operations, each with a small example.
 
 A quick-reference catalog of Redis features used in real backends: the data structures (String, Hash, List, Set, Sorted Set, Bitmap, Bitfield, HyperLogLog, Geo, Stream — plus module types JSON, Time Series, Vector set, Array, and probabilistic filters), caching patterns, distributed locking, rate limiting, Pub/Sub, reliable queues via Streams, transactions, Lua scripting, persistence, and high availability — each with a small, copy-paste-able `redis-cli` example.
 
@@ -16,17 +23,17 @@ A quick-reference catalog of Redis features used in real backends: the data stru
 
 ![Redis at a Glance](diagrams/features/redis-at-a-glance.svg)
 
-**Interactive diagram:** [diagrams/features/redis-at-a-glance.architecture.html](diagrams/features/redis-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/redis-at-a-glance.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data path, dashed = control/infrastructure. One Redis cluster serves all roles — caching §2, locks §3, rate limits §4, streams/delayed jobs §8–§9; Sentinel/Cluster HA §17, ACL/TLS security §17.
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>21 sections</b></summary>
 
 1. [Data Structures (Core Types & Modules)](#1-data-structures-core-types--modules)
 2. [Caching (TTL, Eviction, Patterns)](#2-caching-ttl-eviction-patterns)
@@ -612,11 +619,11 @@ VEMB vec:products "item-1"                              # read a stored vector
 
 ![Redis as AI Infrastructure: The Real-Time Context Layer](diagrams/features/redis-ai-context-layer.svg)
 
-**Interactive diagram:** [diagrams/features/redis-ai-context-layer.architecture.html](diagrams/features/redis-ai-context-layer.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/redis-ai-context-layer.architecture.html) · pan/zoom · search · dark/light · export
 
 ![LangCache: Semantic Cache Request Flow](diagrams/features/langcache-semantic-cache.svg)
 
-**Interactive diagram:** [diagrams/features/langcache-semantic-cache.architecture.html](diagrams/features/langcache-semantic-cache.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/langcache-semantic-cache.architecture.html) · pan/zoom · search · dark/light · export
 
 *The LangCache flow: a paraphrased prompt hits the semantic cache — or falls through to the LLM and writes back.*
 
@@ -776,3 +783,7 @@ Caches fail in predictable ways - here are the classic traps and how to avoid th
 | Add TTL jitter to bulk-loaded keys (§ avalanche) | Don't bulk-load with identical TTLs — synchronized expiry stampedes the DB |
 | Treat Redis as an accelerator with a circuit breaker and DB fallback | Don't make Redis the system of record without persistence + a durability plan |
 | Use `INCR`/Lua for atomic counters, pipelines for batching | Don't GET-then-SET across workers, or issue one command per item in loops |
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

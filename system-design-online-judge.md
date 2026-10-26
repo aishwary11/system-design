@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Online Judge (LeetCode-style Code Execution)
 
+<sub>16 SECTIONS · 6 MIN READ · 2 DIAGRAMS · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A code-execution platform: run untrusted user code in sandboxed microVMs against hidden test cases, with queues, per-language runtimes, anti-cheat, and result streaming — a scheduling + security problem where the workload is actively adversarial.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ Users submit code; the judge compiles and runs it against test suites inside **i
 
 ![Online Judge — System Architecture](diagrams/system-design/online-judge.svg)
 
-**Interactive diagram:** [diagrams/system-design/online-judge.architecture.html](diagrams/system-design/online-judge.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/online-judge.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -97,7 +103,7 @@ A submission is a state machine with exactly one success exit. Compilation failu
 
 ![Submission Lifecycle — Queue, Compile, Sandbox Run, Verdict](diagrams/system-design/submission-lifecycle.lifecycle.svg)
 
-**Interactive diagram:** [diagrams/system-design/submission-lifecycle.lifecycle.html](diagrams/system-design/submission-lifecycle.lifecycle.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/submission-lifecycle.lifecycle.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 
@@ -332,4 +338,8 @@ Production notes: sandboxing is **gVisor/Firecracker + cgroups + seccomp + rootl
 
 ---
 
-<nav>← [observability pipeline](system-design-observability-pipeline.md) · [📖 All guides](README.md) · [parking system](system-design-parking-system.md) →</nav>
+<nav>← [observability pipeline](system-design-observability-pipeline.md) · [All guides](README.md) · [parking system](system-design-parking-system.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

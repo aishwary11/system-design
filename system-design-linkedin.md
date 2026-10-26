@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>SOCIAL & MESSAGING</sub>
 
 # System Design: LinkedIn (Professional Networking Platform)
 
+<sub>16 SECTIONS · 5 MIN READ · 1 DIAGRAM · 1 EXAMPLE</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Professional networking platform with job matching, feed, messaging, learning, and recruiter tools for 900M+ members.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -77,7 +83,7 @@ Professional networking platform with job matching, feed, messaging, learning, a
 
 ![Linkedin — System Architecture](diagrams/system-design/linkedin.svg)
 
-**Interactive diagram:** [diagrams/system-design/linkedin.architecture.html](diagrams/system-design/linkedin.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/linkedin.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -371,4 +377,8 @@ const feed = new FeedGenerator(); console.log("Feed generator ready");
 
 ---
 
-<nav>← [leaderboard](system-design-leaderboard.md) · [📖 All guides](README.md) · [llm inference](system-design-llm-inference.md) →</nav>
+<nav>← [leaderboard](system-design-leaderboard.md) · [All guides](README.md) · [llm inference](system-design-llm-inference.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

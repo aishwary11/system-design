@@ -1,16 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>TRUST & SAFETY</sub>
 
 # System Design: Fraud Detection (Real-Time Risk Platform)
 
+<sub>17 SECTIONS · 9 MIN READ · 1 DIAGRAM · 1 EXAMPLE</sub>
+
 </div>
 
+> [!TIP]
+> **THE PROBLEM** — Sub-100ms risk scoring with streaming features, rules plus models, and a review queue that closes the feedback loop.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>17 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +87,7 @@ Design a real-time fraud-detection platform for a payments / fintech company (St
 
 ![Fraud Detection — System Architecture](diagrams/system-design/fraud-detection.svg)
 
-**Interactive diagram:** [diagrams/system-design/fraud-detection.architecture.html](diagrams/system-design/fraud-detection.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/fraud-detection.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = transaction/event flow, dashed = control plane / monitoring.*
@@ -309,4 +317,8 @@ Expected: the first link is a pair; linking `acc_3` forms a ring of 3 (flagged);
 
 ---
 
-<nav>← [food delivery](system-design-food-delivery.md) · [📖 All guides](README.md) · [google ads](system-design-google-ads.md) →</nav>
+<nav>← [food delivery](system-design-food-delivery.md) · [All guides](README.md) · [google ads](system-design-google-ads.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

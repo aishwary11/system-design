@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>E-COMMERCE & BOOKING</sub>
 
 # System Design: Airbnb (Property Rental Marketplace)
 
+<sub>16 SECTIONS · 4 MIN READ · 1 DIAGRAM · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Two-sided marketplace connecting hosts and guests with search, booking, payments, reviews, and trust/safety systems.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -77,7 +83,7 @@ Two-sided marketplace connecting hosts and guests with search, booking, payments
 
 ![Airbnb — System Architecture](diagrams/system-design/airbnb.svg)
 
-**Interactive diagram:** [diagrams/system-design/airbnb.architecture.html](diagrams/system-design/airbnb.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/airbnb.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -303,4 +309,8 @@ const search = new SearchService(); console.log("Search service ready");
 
 ---
 
-<nav>← [ai gateway](system-design-ai-gateway.md) · [📖 All guides](README.md) · [alerting](system-design-alerting.md) →</nav>
+<nav>← [ai gateway](system-design-ai-gateway.md) · [All guides](README.md) · [alerting](system-design-alerting.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

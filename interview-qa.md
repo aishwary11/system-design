@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INTERVIEW Q&A</sub>
 
 # Interview Q&A — Failure Terminology & High-Level "Why/What-If" Questions
 
+<sub>10 SECTIONS · 21 MIN READ</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — The cross-technology failure glossary, plus the high-level why/what-if answers that separate seniors from juniors.
 
 Every technology has its own failure vocabulary — Redis talks about *stampedes* and *avalanches*, Kafka about *lag* and *rebalance storms*, Kubernetes about *OOMKills* and *CrashLoopBackOff* — but they are the same handful of physics wearing different costumes. **Part IV** gives the cross-technology failure glossary with production-grade solutions. **Part V** answers the high-level questions that separate seniors from juniors: *why is Kafka fast? what do you do when Redis dies? how does Redis Cluster actually work?*
 
@@ -12,10 +19,10 @@ Section numbering continues from `system-design-concepts.md` (Parts I–III end 
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>10 sections</b></summary>
 
 **Part IV — Failure Terminology (every technology, one glossary)**
 76. [Cache Terminology — Placement Patterns & Failure Modes (cache-aside, write-through, stampede, avalanche…)](#76-cache-terminology--placement-patterns--failure-modes)
@@ -291,3 +298,7 @@ The cross-cutting rules — when in doubt, these win.
 6. **Use §84 as a pre-interview checklist, not reading material.** Scan the Do's column ten minutes before the loop; it is the shortest summary of this entire repo.
 7. **Ask the taxonomy question back.** "Is this a correctness bug, a capacity problem, or a deps issue?" narrows any scenario question and shows you diagnose before designing.
 8. **Re-derive, don't recall.** If you can reconstruct the answer from latency, consistency, and blast radius, you never need to memorise this bank — that's the point of the term tables.
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

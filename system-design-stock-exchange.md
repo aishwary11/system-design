@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>FINANCE & ADS</sub>
 
 # System Design: Stock Exchange (Matching Engine)
 
+<sub>17 SECTIONS · 9 MIN READ · 1 DIAGRAM · 1 EXAMPLE</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Design the core trading platform of a stock exchange (NSE / NASDAQ / BSE-style): order intake from broker OMSs, a deterministic matching engine that runs a continuous two-sided auction per symbol, tick-by-tick market data dissemination, and T+1 clearing & settlement.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>17 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -82,7 +88,7 @@ Design the core trading platform of a stock exchange (NSE / NASDAQ / BSE-style):
 
 ![Stock Exchange — System Architecture](diagrams/system-design/stock-exchange.svg)
 
-**Interactive diagram:** [diagrams/system-design/stock-exchange.architecture.html](diagrams/system-design/stock-exchange.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/stock-exchange.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = order/market-data flow, dashed = control plane / monitoring.*
@@ -354,4 +360,8 @@ Expected: order 3 fills 50 @ 100.0 against order 1 (time priority) then 10 @ 100
 
 ---
 
-<nav>← [spotify](system-design-spotify.md) · [📖 All guides](README.md) · [ticketing system](system-design-ticketing-system.md) →</nav>
+<nav>← [spotify](system-design-spotify.md) · [All guides](README.md) · [ticketing system](system-design-ticketing-system.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

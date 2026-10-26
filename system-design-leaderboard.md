@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>CORE PRIMITIVES & PLATFORM</sub>
 
 # System Design: Leaderboard (Real-Time Ranked Counters)
 
+<sub>16 SECTIONS · 5 MIN READ · 1 DIAGRAM · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A leaderboard service (game scores, like counters, trending lists) that absorbs millions of score updates per second and answers top-K and rank queries in milliseconds — the canonical "counting at scale" problem.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -77,7 +83,7 @@ Players post score updates ("user X gained 12 points"); viewers fetch top-K boar
 
 ![Leaderboard — System Architecture](diagrams/system-design/leaderboard.svg)
 
-**Interactive diagram:** [diagrams/system-design/leaderboard.architecture.html](diagrams/system-design/leaderboard.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/leaderboard.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -315,4 +321,8 @@ Follow-up arithmetic: 1M likes/minute ≈ 16.7K/s; 16 shards ≈ 1K/s per shard 
 
 ---
 
-<nav>← [key value store](system-design-key-value-store.md) · [📖 All guides](README.md) · [linkedin](system-design-linkedin.md) →</nav>
+<nav>← [key value store](system-design-key-value-store.md) · [All guides](README.md) · [linkedin](system-design-linkedin.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

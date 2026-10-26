@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>TRANSPORTATION</sub>
 
 # System Design: Uber (Ride-Hailing System)
 
+<sub>16 SECTIONS · 7 MIN READ · 2 DIAGRAMS · 4 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A ride-hailing platform supporting real-time location tracking, driver matching, trip management, fare calculation, and payment for millions of riders and drivers.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A ride-hailing platform supporting real-time location tracking, driver matching,
 
 ![Uber — System Architecture](diagrams/system-design/uber.svg)
 
-**Interactive diagram:** [diagrams/system-design/uber.architecture.html](diagrams/system-design/uber.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/uber.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -100,7 +106,7 @@ Matching starts from the pickup cell and expands through `k`-rings until enough 
 
 ![Ride Dispatch — H3 Candidate Cells, ETA Ranking, Offer Timeout, Reassign](diagrams/system-design/dispatch-offer.sequence.svg)
 
-**Interactive diagram:** [diagrams/system-design/dispatch-offer.sequence.html](diagrams/system-design/dispatch-offer.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/dispatch-offer.sequence.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 
@@ -570,4 +576,8 @@ const pricing = new SurgePricing(); console.log("Surge pricing ready");
 
 ---
 
-<nav>← [twitter](system-design-twitter.md) · [📖 All guides](README.md) · [unique id generator](system-design-unique-id-generator.md) →</nav>
+<nav>← [twitter](system-design-twitter.md) · [All guides](README.md) · [unique id generator](system-design-unique-id-generator.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

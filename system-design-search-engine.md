@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Search Engine (Google-Style Web Search)
 
+<sub>16 SECTIONS · 6 MIN READ · 2 DIAGRAMS · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Full-stack web search: a crawling frontend feeding an inverted index the size of the web, a serving stack that returns ranked results in <200ms, and the indexing pipeline that makes documents searchable within minutes. The crawler exists in this repo already — this doc is the index and ranking behind it.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ Search = three subsystems: **crawl** (already covered — `system-design-web-cra
 
 ![Search Engine — System Architecture](diagrams/system-design/search-engine.svg)
 
-**Interactive diagram:** [diagrams/system-design/search-engine.architecture.html](diagrams/system-design/search-engine.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/search-engine.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -337,4 +343,8 @@ Real engines add **skip pointers** (jump posting lists in O(log n) to the pivot 
 
 ---
 
-<nav>← [search autocomplete](system-design-search-autocomplete.md) · [📖 All guides](README.md) · [serverless](system-design-serverless.md) →</nav>
+<nav>← [search autocomplete](system-design-search-autocomplete.md) · [All guides](README.md) · [serverless](system-design-serverless.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

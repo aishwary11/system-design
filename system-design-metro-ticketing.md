@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>TRANSPORTATION</sub>
 
 # System Design: Metro Ticketing System
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 8 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A metro transit ticketing system supporting smart cards, QR code tickets, fare calculation, and real-time passenger tracking.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -77,7 +83,7 @@ A metro transit ticketing system supporting smart cards, QR code tickets, fare c
 
 ![Metro Ticketing — System Architecture](diagrams/system-design/metro-ticketing.svg)
 
-**Interactive diagram:** [diagrams/system-design/metro-ticketing.architecture.html](diagrams/system-design/metro-ticketing.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/metro-ticketing.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -563,4 +569,8 @@ function validate_at_gate(card_id, gate_type) {
 
 ---
 
-<nav>← [messaging app](system-design-messaging-app.md) · [📖 All guides](README.md) · [netflix](system-design-netflix.md) →</nav>
+<nav>← [messaging app](system-design-messaging-app.md) · [All guides](README.md) · [netflix](system-design-netflix.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

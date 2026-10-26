@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>CLOUD SERVICES MAP</sub>
 
 # Cloud Services Guide — Which Tool, Where, and Why
 
+<sub>19 SECTIONS · 17 MIN READ · 1 DIAGRAM · 1 EXAMPLE</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — A vendor-neutral translation layer for AWS, GCP and Azure: the same thirty primitives under three sets of names, organised by what you are actually building.
 
 A vendor-neutral map of cloud services across **AWS, GCP, and Azure**, organized by what you're actually building: object storage and archive tiers, block/file storage, compute and Kubernetes, databases, messaging, networking, AI/ML platforms, and observability. Each section ends with **"use it when"** guidance tied to the system designs in this repo.
 
@@ -14,14 +21,14 @@ A vendor-neutral map of cloud services across **AWS, GCP, and Azure**, organized
 
 ![Cloud Services Map](diagrams/features/cloud-at-a-glance.svg)
 
-**Interactive diagram:** [diagrams/features/cloud-at-a-glance.architecture.html](diagrams/features/cloud-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/cloud-at-a-glance.architecture.html) · pan/zoom · search · dark/light · export
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>19 sections</b></summary>
 
 1. [Object Storage & Archive Tiers (S3 / GCS / Blob)](#1-object-storage--archive-tiers-s3--gcs--blob)
 2. [Block & File Storage](#2-block--file-storage)
@@ -437,7 +444,7 @@ The sections above are the daily-driver core. This is the **long tail**, organiz
 | **PrivateLink / VPC endpoints** | **Private Service Connect** | **Private Endpoints** | Private service access without internet detours |
 | **Direct Connect** | **Cloud Interconnect** | **ExpressRoute** | Dedicated private circuits (1/10/100 Gbps) |
 | **CloudFront** (+ Functions @ edge) | **Cloud CDN + Media CDN** | **Front Door** (+ CDN) | Global edge; Front Door = Azure's smart L7 global LB |
-| **Route 53** (latency/geo/failover policies) | **Cloud DNS** | **Traffic Manager 
+| **Route 53** (latency/geo/failover policies) | **Cloud DNS** | **Traffic Manager
 | **API Gateway** (REST/HTTP/WS) | **API Gateway / Apigee** | **API Management** | Managed API front door; Apigee for enterprise monetization |
 | **AppSync** (GraphQL) | — (GraphQL hosting via Cloud Run) | — | Managed GraphQL with subscriptions + JS resolvers |
 
@@ -473,3 +480,7 @@ The sections above are the daily-driver core. This is the **long tail**, organiz
 | **Compute Optimizer / Trusted Advisor** | **Recommender** | **Advisor** | Rightsizing recommendations from actual utilization |
 
 **How to use this catalog:** (1) find the **capability**, not the brand — "I need pub/sub" before "I want SNS"; (2) check the §14 decision table for the top-80% choices; (3) the deciding factors are almost always the same four: **ops burden vs control, egress/data gravity, consistency needs, and exit cost**; (4) map what you pick back to this repo's designs — §15 lists which doc drills each capability's internals (Kafka → `kafka-features.md`, Spanner-style → `system-design-key-value-store.md`, Bedrock → `agentic-ai-features.md`, Lambda → `system-design-serverless.md`, CloudFront → `system-design-url-shortener.md`).
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

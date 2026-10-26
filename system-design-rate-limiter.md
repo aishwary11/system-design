@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Rate Limiter
 
+<sub>16 SECTIONS · 7 MIN READ · 2 DIAGRAMS · 7 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A distributed rate limiting system that controls API request rates per user/IP/API key to prevent abuse and ensure fair usage.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -76,7 +82,7 @@ A distributed rate limiting system that controls API request rates per user/IP/A
 
 ![Rate Limiter — System Architecture](diagrams/system-design/rate-limiter.svg)
 
-**Interactive diagram:** [diagrams/system-design/rate-limiter.architecture.html](diagrams/system-design/rate-limiter.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/rate-limiter.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -97,7 +103,7 @@ The decision has to be atomic: read-modify-write across two round trips lets a b
 
 ![Rate-Limit Decision — Atomic Token Bucket with Retry Guidance](diagrams/system-design/ratelimit-decision.sequence.svg)
 
-**Interactive diagram:** [diagrams/system-design/ratelimit-decision.sequence.html](diagrams/system-design/ratelimit-decision.sequence.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/ratelimit-decision.sequence.html) · pan/zoom · search · dark/light · export
 
 ## Microservices
 How the system is decomposed into independently deployed services:
@@ -640,4 +646,8 @@ The demo's third request passes the tenant limit (3 of 5) but fails the route li
 
 ---
 
-<nav>← [proximity service](system-design-proximity-service.md) · [📖 All guides](README.md) · [recommendation system](system-design-recommendation-system.md) →</nav>
+<nav>← [proximity service](system-design-proximity-service.md) · [All guides](README.md) · [recommendation system](system-design-recommendation-system.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

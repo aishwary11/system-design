@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Web Crawler
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 6 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A distributed web crawler that systematically browses and downloads web pages for indexing, archiving, or data analysis.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -76,7 +82,7 @@ A distributed web crawler that systematically browses and downloads web pages fo
 
 ![Web Crawler — System Architecture](diagrams/system-design/web-crawler.svg)
 
-**Interactive diagram:** [diagrams/system-design/web-crawler.architecture.html](diagrams/system-design/web-crawler.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/web-crawler.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -577,4 +583,8 @@ function check_robots_txt(url, user_agent) {
 
 ---
 
-<nav>← [video conferencing](system-design-video-conferencing.md) · [📖 All guides](README.md) · [youtube](system-design-webhook-delivery.md) →</nav>
+<nav>← [video conferencing](system-design-video-conferencing.md) · [All guides](README.md) · [youtube](system-design-webhook-delivery.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>POSTGRESQL GUIDE</sub>
 
 # PostgreSQL — Features Guide with Basic Examples
 
+<sub>26 SECTIONS · 11 MIN READ · 1 DIAGRAM</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — A quick-reference catalog of PostgreSQL features used in everyday backends — types, indexes, triggers, pub/sub, MVCC, partitioning, replication and extensions, each with a copy-paste-able example.
 
 A quick-reference catalog of PostgreSQL features used in everyday backends: data types, constraints, indexes, triggers, `LISTEN`/`NOTIFY`, stored functions, CTEs, window functions, full-text search, JSONB, MVCC & transactions, locking, partitioning, replication, CDC, caching, and the extension ecosystem — each with a small, copy-paste-able example.
 
@@ -16,17 +23,17 @@ A quick-reference catalog of PostgreSQL features used in everyday backends: data
 
 ![Postgresql at a Glance](diagrams/features/postgresql-at-a-glance.svg)
 
-**Interactive diagram:** [diagrams/features/postgresql-at-a-glance.architecture.html](diagrams/features/postgresql-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/postgresql-at-a-glance.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data path, dashed = infrastructure/control. Which section explains each hop:* cache path §14 & §18 · pooling/failover §16 · WAL archive/PITR §16 · NOTIFY invalidation §5 · CDC pipeline §17 · ops/security §21.
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>26 sections</b></summary>
 
 1. [Data Types](#1-data-types)
 2. [Constraints & Integrity](#2-constraints--integrity)
@@ -992,3 +999,7 @@ Also useful: **UNLOGGED** tables (fast, crash-unsafe — great for staging), **T
 | Tune autovacuum per hot table; monitor `n_dead_tup` | Don't run VACUUM FULL on a busy production table (ACCESS EXCLUSIVE lock) |
 | Wrap multi-statement money mutations in transactions with explicit retries | Don't hold transactions open across HTTP calls or user think-time |
 | Use `RETURNING` and `ON CONFLICT` for upsert-round-trips | Don't SELECT-then-INSERT and hope no one races you |
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

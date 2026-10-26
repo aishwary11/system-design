@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>STREAMING & MEDIA</sub>
 
 # System Design: Video Conferencing (Zoom)
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 8 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A real-time video conferencing platform supporting video/audio calls, screen sharing, chat, and recording for millions of concurrent users.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A real-time video conferencing platform supporting video/audio calls, screen sha
 
 ![Video Conferencing — System Architecture](diagrams/system-design/video-conferencing.svg)
 
-**Interactive diagram:** [diagrams/system-design/video-conferencing.architecture.html](diagrams/system-design/video-conferencing.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/video-conferencing.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -682,4 +688,8 @@ function start_screen_share(peer_id) {
 
 ---
 
-<nav>← [url shortener](system-design-url-shortener.md) · [📖 All guides](README.md) · [web crawler](system-design-web-crawler.md) →</nav>
+<nav>← [url shortener](system-design-url-shortener.md) · [All guides](README.md) · [web crawler](system-design-web-crawler.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

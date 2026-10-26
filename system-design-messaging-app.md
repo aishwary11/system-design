@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>SOCIAL & MESSAGING</sub>
 
 # System Design: Messaging Application (WhatsApp)
 
+<sub>16 SECTIONS · 7 MIN READ · 1 DIAGRAM · 5 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A real-time messaging platform supporting one-to-one and group messaging, media sharing, online/offline status, delivery receipts, and push notifications for 2B+ users globally.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A real-time messaging platform supporting one-to-one and group messaging, media 
 
 ![Messaging App — System Architecture](diagrams/system-design/messaging-app.svg)
 
-**Interactive diagram:** [diagrams/system-design/messaging-app.architecture.html](diagrams/system-design/messaging-app.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/messaging-app.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -569,4 +575,8 @@ function handle_typing_event(user_id, conversation_id, is_typing) {
 
 ---
 
-<nav>← [llm inference](system-design-llm-inference.md) · [📖 All guides](README.md) · [metro ticketing](system-design-metro-ticketing.md) →</nav>
+<nav>← [llm inference](system-design-llm-inference.md) · [All guides](README.md) · [metro ticketing](system-design-metro-ticketing.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

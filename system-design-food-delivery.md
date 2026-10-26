@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>E-COMMERCE & BOOKING</sub>
 
 # System Design: Food Delivery (Zomato/Uber Eats)
 
+<sub>16 SECTIONS · 7 MIN READ · 2 DIAGRAMS · 7 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A food delivery platform supporting restaurant discovery, order placement, real-time tracking, and delivery partner management.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A food delivery platform supporting restaurant discovery, order placement, real-
 
 ![Food Delivery — System Architecture](diagrams/system-design/food-delivery.svg)
 
-**Interactive diagram:** [diagrams/system-design/food-delivery.architecture.html](diagrams/system-design/food-delivery.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/food-delivery.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -571,4 +577,8 @@ const delivery = new DeliveryService(); console.log("Delivery service ready");
 
 ---
 
-<nav>← [file storage](system-design-file-storage.md) · [📖 All guides](README.md) · [fraud detection](system-design-fraud-detection.md) →</nav>
+<nav>← [file storage](system-design-file-storage.md) · [All guides](README.md) · [fraud detection](system-design-fraud-detection.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

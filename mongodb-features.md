@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>MONGODB GUIDE</sub>
 
 # MongoDB — Features Guide with Basic Examples
 
+<sub>18 SECTIONS · 7 MIN READ · 1 DIAGRAM · 15 EXAMPLES</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — A quick-reference catalog of MongoDB features used in everyday backends — documents, indexes, aggregation, transactions, change streams, replication and sharding, each with a small example.
 
 A quick-reference catalog of MongoDB features used in document-oriented backends: documents & collections, CRUD, indexes, the aggregation pipeline, schema design (embedding vs referencing), multi-document transactions, change streams, replication, sharding, time-series collections, and performance fundamentals — each with a small, concrete example.
 
@@ -16,15 +23,15 @@ A quick-reference catalog of MongoDB features used in document-oriented backends
 
 ![MongoDB at a Glance](diagrams/features/mongodb-at-a-glance.svg)
 
-**Interactive diagram:** [diagrams/features/mongodb-at-a-glance.architecture.html](diagrams/features/mongodb-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/mongodb-at-a-glance.architecture.html) · pan/zoom · search · dark/light · export
 *Solid = query/mutation flow. Router §10, replica sets §9, shards §10, change streams §8, transactions §7.
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>18 sections</b></summary>
 
 1. [Documents & Collections](#1-documents--collections)
 2. [CRUD — Insert, Find, Update, Delete](#2-crud--insert-find-update-delete)
@@ -407,3 +414,7 @@ See also: document-vs-relational trade-off tables in those docs' **Trade-off Ana
 | Embed bounded, read-together data; reference anything unbounded | Don't let arrays grow toward 16 MB on popular documents |
 | Iterate cursors with batch sizing you chose | Don't `toArray()` a million-document result into RAM |
 | Choose the shard key with query patterns in front of you | Don't pick a shard key by gut feel — it's effectively forever |
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

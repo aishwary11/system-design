@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>AGENTIC AI GUIDE</sub>
 
 # Agentic AI — LLM Fundamentals Guide with Basic Examples
 
+<sub>16 SECTIONS · 9 MIN READ · 1 DIAGRAM · 10 EXAMPLES</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — The LLM and agentic-AI building blocks used in production agents — tokens, tool use, MCP, A2A, context, memory, RAG, orchestration, guardrails and evals.
 
 A quick-reference catalog of the LLM and agentic-AI building blocks used in production agents: tokens & context windows, the agent loop, tool use, **MCP** (Model Context Protocol) for tool integration, **A2A** (Agent2Agent) for agent-to-agent work, context engineering, memory, RAG, orchestration patterns, guardrails, and evals — each with a small, concrete example.
 
@@ -14,17 +21,17 @@ A quick-reference catalog of the LLM and agentic-AI building blocks used in prod
 
 ![Agentic AI at a Glance](diagrams/features/agentic-ai-at-a-glance.svg)
 
-**Interactive diagram:** [diagrams/features/agentic-ai-at-a-glance.architecture.html](diagrams/features/agentic-ai-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/agentic-ai-at-a-glance.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = inference/data flow. Agent loop §2, MCP §3, A2A §4, memory §6, RAG §7, orchestration §8, guardrails §9.
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [LLM Primitives — Tokens, Context Windows, Sampling](#1-llm-primitives--tokens-context-windows-sampling)
 2. [The Agent Loop — ReAct](#2-the-agent-loop--react)
@@ -428,3 +435,7 @@ const messages = [{ role: "system", content: SYSTEM },
 | Cap agent iterations and token budget; provide a `give_up` exit | Don't let the ReAct loop run unbounded overnight |
 | Keep secrets in tool servers (MCP), scoped per agent | Don't paste API keys into system prompts |
 | Log traces (inputs, tool calls, token counts) for every run | Don't debug agents from user screenshots — observability first |
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

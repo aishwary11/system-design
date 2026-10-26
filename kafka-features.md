@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>KAFKA GUIDE</sub>
 
 # Apache Kafka — Features Guide with Basic Examples
 
+<sub>18 SECTIONS · 12 MIN READ · 2 DIAGRAMS · 1 EXAMPLE</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — A quick-reference catalog of Apache Kafka features used in event-driven backends — topics, partitions, producers, consumer groups, replication and exactly-once, each with a concrete example.
 
 A quick-reference catalog of Apache Kafka features used in event-driven backends: topics, partitions, offsets, ordering, producers, consumer groups, replication, retention & compaction, delivery semantics, exactly-once, Kafka Connect, Kafka Streams, Schema Registry, and the classic use cases (event sourcing, CDC, log aggregation, outbox) — each with a small, concrete example.
 
@@ -16,17 +23,17 @@ A quick-reference catalog of Apache Kafka features used in event-driven backends
 
 ![Kafka at a Glance](diagrams/features/kafka-at-a-glance.svg)
 
-**Interactive diagram:** [diagrams/features/kafka-at-a-glance.architecture.html](diagrams/features/kafka-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/kafka-at-a-glance.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = event flow, dashed = control/infrastructure. Partitioning & ordering §2–§4, consumer groups & lag §5, replication/ISR & KRaft §8/§15, Schema Registry §12, DLQ §13, MirrorMaker 2 §15.
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>18 sections</b></summary>
 
 1. [Core Concepts — Topic, Partition, Offset](#1-core-concepts--topic-partition-offset)
 2. [Topics & Partitions (CLI)](#2-topics--partitions-cli)
@@ -498,3 +505,7 @@ Parallelism ceiling = partition count. Want to speed up reading by adding consum
 | Size partitions for peak × headroom at topic creation (they never shrink) | Don't add 500 partitions "just in case" — per-partition cost is real (fds, rebalance time, controller load) |
 | Use cooperative-sticky + static membership for long-running services | Don't deploy consumer fleets with eager rebalancing and tight probes (rebalance storms) |
 | Monitor consumer lag slope and URP count; alert on both | Don't restart brokers during a rebalance to "fix" lag — you'll make it worse |
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

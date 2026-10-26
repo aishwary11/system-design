@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>TRANSPORTATION</sub>
 
 # System Design: Google Maps (Navigation & Mapping Service)
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Google Maps is a comprehensive mapping and navigation service providing map rendering, location search, turn-by-turn directions, real-time traffic updates, ETA estimation, Street View, and Points of Interest (POI) discovery.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -84,7 +90,7 @@ Google Maps is a comprehensive mapping and navigation service providing map rend
 
 ![Google Maps — System Architecture](diagrams/system-design/google-maps.svg)
 
-**Interactive diagram:** [diagrams/system-design/google-maps.architecture.html](diagrams/system-design/google-maps.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/google-maps.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -405,4 +411,8 @@ const routing = new RoutingService(); console.log("Routing service ready");
 
 ---
 
-<nav>← [google docs](system-design-google-docs.md) · [📖 All guides](README.md) · [hotstar](system-design-hotstar.md) →</nav>
+<nav>← [google docs](system-design-google-docs.md) · [All guides](README.md) · [hotstar](system-design-hotstar.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

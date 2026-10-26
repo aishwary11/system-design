@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>FINANCE & ADS</sub>
 
 # System Design: Google Ads (Auction, Bidding & Budget Pacing)
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — An ad platform: advertisers bid on keywords, an auction runs per search/session in <100ms with quality scoring and budget pacing, click/billing events flow through exactly-once accounting. The hardest "money" system: zero tolerance for overcharging, plus fraud everywhere.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ Search ads work like this: query arrives → keyword match → retrieve eligible
 
 ![Google Ads — System Architecture](diagrams/system-design/google-ads.svg)
 
-**Interactive diagram:** [diagrams/system-design/google-ads.architecture.html](diagrams/system-design/google-ads.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/google-ads.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -334,4 +340,8 @@ Production details: pacing state lives in the **bidding service** keyed by campa
 
 ---
 
-<nav>← [fraud detection](system-design-fraud-detection.md) · [📖 All guides](README.md) · [google calendar](system-design-google-calendar.md) →</nav>
+<nav>← [fraud detection](system-design-fraud-detection.md) · [All guides](README.md) · [google calendar](system-design-google-calendar.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

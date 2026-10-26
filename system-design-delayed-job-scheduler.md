@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>SCHEDULING</sub>
 
 # System Design: Delayed Job Scheduler
 
+<sub>16 SECTIONS · 11 MIN READ · 1 DIAGRAM · 6 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A distributed delayed job scheduling system (similar to Sidekiq, Celery, Bull, or Hangfire) that allows applications to enqueue jobs to be executed after a specified delay or at a specific time.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -78,7 +84,7 @@ A distributed delayed job scheduling system (similar to Sidekiq, Celery, Bull, o
 
 ![Delayed Job Scheduler — System Architecture](diagrams/system-design/delayed-job-scheduler.svg)
 
-**Interactive diagram:** [diagrams/system-design/delayed-job-scheduler.architecture.html](diagrams/system-design/delayed-job-scheduler.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/delayed-job-scheduler.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -1006,4 +1012,8 @@ Clients -> Job Acceptor -> HBase (durable store)
 
 ---
 
-<nav>← [concepts](system-design-concepts.md) · [📖 All guides](README.md) · [discord](system-design-discord.md) →</nav>
+<nav>← [concepts](system-design-concepts.md) · [All guides](README.md) · [discord](system-design-discord.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

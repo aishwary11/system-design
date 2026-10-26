@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>DEVOPS & DELIVERY</sub>
 
 # System Design: Code Deployment System (CI/CD Pipeline)
 
+<sub>16 SECTIONS · 5 MIN READ · 1 DIAGRAM · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — The system that takes a git commit to thousands of production hosts safely: artifact builds, staged environments, health-checked canary rollouts, automatic rollback — blue-green and canary as first-class state machines, not vibes.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ Every commit flows: build → test → artifact → register → deploy through 
 
 ![Code Deployment — System Architecture](diagrams/system-design/code-deployment.svg)
 
-**Interactive diagram:** [diagrams/system-design/code-deployment.architecture.html](diagrams/system-design/code-deployment.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/code-deployment.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -318,4 +324,8 @@ The **epoch counter** is the interview-grade detail: when a rollback starts, the
 
 ---
 
-<nav>← [algo trading](system-design-algo-trading.md) · [📖 All guides](README.md) · [concepts](system-design-concepts.md) →</nav>
+<nav>← [algo trading](system-design-algo-trading.md) · [All guides](README.md) · [concepts](system-design-concepts.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

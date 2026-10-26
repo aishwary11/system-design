@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Serverless Platform (AWS Lambda-style)
 
+<sub>16 SECTIONS · 5 MIN READ · 1 DIAGRAM · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A Function-as-a-Service platform: users upload code, the platform runs it on demand in milliseconds using microVM snapshots (Firecracker-style), scales from zero to thousands of workers, and bills per 1ms — a scheduling and isolation problem disguised as "just run my function."
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ Serverless = a container/microVM orchestrator with brutal constraints: cold-star
 
 ![Serverless Platform — System Architecture](diagrams/system-design/serverless.svg)
 
-**Interactive diagram:** [diagrams/system-design/serverless.architecture.html](diagrams/system-design/serverless.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/serverless.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -323,4 +329,8 @@ Real systems add snapshot-restore (Firecracker VM snapshots restore in ~10 ms vs
 
 ---
 
-<nav>← [search engine](system-design-search-engine.md) · [📖 All guides](README.md) · [spotify](system-design-spotify.md) →</nav>
+<nav>← [search engine](system-design-search-engine.md) · [All guides](README.md) · [spotify](system-design-spotify.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

@@ -1,3 +1,5 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>SYSTEM DESIGN · AI INFRASTRUCTURE</sub>
@@ -6,11 +8,7 @@
 
 **Multi-tenant placement, quota fairness, and model residency on one GPU fleet.**
 
-![Fleet](https://img.shields.io/badge/fleet-4.1K_GPUs-6366f1?style=flat-square&labelColor=0a0a0a)
-![Tenants](https://img.shields.io/badge/tenants-200-6366f1?style=flat-square&labelColor=0a0a0a)
-![Target](https://img.shields.io/badge/target-85%25_utilization-6366f1?style=flat-square&labelColor=0a0a0a)
-
-[Overview](#overview) · [Architecture](#high-level-architecture) · [Decisions](#key-design-decisions) · [Failures](#failure-modes--recovery) · [LLD](#low-level-design-lld--placement--model-eviction)
+<sub>4.1K GPUS · 200 TENANTS · 85% TARGET UTILIZATION</sub>
 
 </div>
 
@@ -21,10 +19,12 @@
 | :--- | :--- | :--- |
 | 200 tenants compete for 4,096 GPUs across training, inference and notebooks. | Placing a gang **and** keeping the right model resident — placement and eviction are one decision. | Separate admission from placement, reserve whole gangs, and drain before evicting a model. |
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>17 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -103,7 +103,7 @@ The second half is **model lifecycle**: a 70B model in FP8 is ~70 GB, so an 80 G
 
 ![GPU Scheduler & Model Lifecycle — System Architecture](diagrams/system-design/gpu-scheduler.svg)
 
-**Interactive diagram:** [diagrams/system-design/gpu-scheduler.architecture.html](diagrams/system-design/gpu-scheduler.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/gpu-scheduler.architecture.html) · pan/zoom · search · dark/light · export
 
 *Solid = job/model flow, dashed = control plane / telemetry.*
 
@@ -450,3 +450,7 @@ Expected: no node has 70 GB free, so node-a evicts `llama-70b` (oldest) and keep
 | Pre-warm for known peaks and deploys | Don't discover a cold-start storm in production |
 
 *More cross-topic rules: [Interview Q&A](interview-qa.md) · [Operating Systems](operating-systems.md) · [LLM Inference](system-design-llm-inference.md) · [Low-Level Design](low-level-design.md)*
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

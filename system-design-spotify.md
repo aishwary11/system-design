@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>STREAMING & MEDIA</sub>
 
 # System Design: Spotify (Music Streaming Platform)
 
+<sub>16 SECTIONS · 5 MIN READ · 1 DIAGRAM · 2 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Music streaming service with personalized playlists, podcast hosting, social features, and offline listening for 600M+ users.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -81,7 +87,7 @@ Music streaming service with personalized playlists, podcast hosting, social fea
 
 ![Spotify — System Architecture](diagrams/system-design/spotify.svg)
 
-**Interactive diagram:** [diagrams/system-design/spotify.architecture.html](diagrams/system-design/spotify.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/spotify.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -339,4 +345,8 @@ const audio = new AudioService(); console.log("Audio service ready");
 
 ---
 
-<nav>← [serverless](system-design-serverless.md) · [📖 All guides](README.md) · [stock exchange](system-design-stock-exchange.md) →</nav>
+<nav>← [serverless](system-design-serverless.md) · [All guides](README.md) · [stock exchange](system-design-stock-exchange.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

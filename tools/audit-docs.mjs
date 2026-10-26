@@ -260,7 +260,7 @@ const algoRows = tableRows(readme, 'algorithms-library');
 const patternRows = tableRows(readme, 'techniques--patterns');
 const guideRows = tableRows(readme, 'feature-guides');
 
-const headline = readme.match(/\*\*(\d+) system designs · (\d+) technology & reference guides · (\d+) diagrams \((\d+) interactive\) · (\d+) JS algorithm/);
+const headline = readme.match(/<sub>(\d+) SYSTEM DESIGNS · (\d+) GUIDES · (\d+) DIAGRAMS \((\d+) INTERACTIVE\) · (\d+) ALGORITHMS/i);
 if (!headline) issues.push('README.md: headline count line not found');
 else {
   const [designs, guides, diagrams, interactive, algos] = headline.slice(1).map(Number);
@@ -272,7 +272,7 @@ else {
 }
 const inside = [
   [/^\| .*\*\*(\d+) system designs\*\*/m, designDocs.length, 'system designs'],
-  [/^\| .*\*\*(\d+) feature & reference guides\*\*/m, guideRows, 'feature & reference guides'],
+  [/^\| .*\*\*(\d+) (?:feature & reference )?guides\*\*/m, guideRows, 'feature & reference guides'],
   [/\*\*(\d+) diagrams\*\*/, diagramCount, 'diagrams'],
   [/\*\*(\d+) algorithms\*\*/, algoRows, 'algorithms'],
   [/\*\*(\d+) patterns\*\*/, patternRows, 'patterns'],
@@ -325,6 +325,16 @@ for (const [f, doc] of docs) {
         issues.push(`${f}: dangling section reference §${n} (line ${doc.nums[i]})`);
     }
   }
+}
+
+// Design system: every root doc shares the same masthead and footer.
+for (const f of files) {
+  const raw = readFileSync(join(ROOT, f), 'utf8').replace(/\r\n/g, '\n');
+  const head = raw.split('\n').slice(0, 18).join('\n');
+  if (!raw.startsWith('<a id="top"></a>')) issues.push(`${f}: missing top anchor`);
+  if (!/<sub>[^<]+<\/sub>/.test(head) || !/^# /m.test(head)) issues.push(`${f}: incomplete masthead`);
+  if (f !== 'README.md' && !/^## On this page\s*$/m.test(raw)) issues.push(`${f}: missing "## On this page"`);
+  if (!/<p align="right"><a href="#top">↑ Back to top<\/a><\/p>\s*$/.test(raw)) issues.push(`${f}: missing standard footer`);
 }
 
 console.log(`audited ${files.length} markdown files, ${jsBlocks} js blocks (${jsFailed} failed, ${jsWarned} need injected globals)`);

@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Alerting & Monitoring Platform (Prometheus-class)
 
+<sub>17 SECTIONS · 11 MIN READ · 1 DIAGRAM · 1 EXAMPLE</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — Design the observability backend for a fleet of thousands of services: metrics are scraped/emitted at scale, stored in a time-series database, queried by dashboards, evaluated by rule engines, and converted into deduplicated, routed, escalating **alerts** with on-call paging.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>17 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -81,7 +87,7 @@ Design the observability backend for a fleet of thousands of services: metrics a
 
 ![Alerting & Monitoring — System Architecture](diagrams/system-design/alerting.svg)
 
-**Interactive diagram:** [diagrams/system-design/alerting.architecture.html](diagrams/system-design/alerting.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/alerting.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = metrics/alert flow, dashed = control plane / monitoring.*
@@ -345,4 +351,8 @@ Expected: the QPS spike at sample 7 (and its echo at 8) exceed z=6 → page once
 
 ---
 
-<nav>← [airbnb](system-design-airbnb.md) · [📖 All guides](README.md) · [algo trading](system-design-algo-trading.md) →</nav>
+<nav>← [airbnb](system-design-airbnb.md) · [All guides](README.md) · [algo trading](system-design-algo-trading.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

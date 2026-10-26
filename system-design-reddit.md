@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>COMMUNITIES & CONTENT</sub>
 
 # System Design: Reddit (Threaded Discussions & Ranking)
 
+<sub>16 SECTIONS · 5 MIN READ · 1 DIAGRAM · 1 EXAMPLE</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A community/link-aggregation platform: threaded comment trees, vote-based ranking with time decay, per-subreddit feeds, and moderation. Distinct from Twitter/Instagram because the core object is a **mutable tree**, not a flat feed.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -78,7 +84,7 @@ Users post links/text to subreddits; others vote and reply **in nested threads**
 
 ![Reddit — System Architecture](diagrams/system-design/reddit.svg)
 
-**Interactive diagram:** [diagrams/system-design/reddit.architecture.html](diagrams/system-design/reddit.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/reddit.architecture.html) · pan/zoom · search · dark/light · export
 
 
 ### Data Flow
@@ -296,4 +302,8 @@ Why Reddit-style ranking pairs well with this: `score` is denormalized and updat
 
 ---
 
-<nav>← [recommendation system](system-design-recommendation-system.md) · [📖 All guides](README.md) · [route reconstruction](system-design-route-reconstruction.md) →</nav>
+<nav>← [recommendation system](system-design-recommendation-system.md) · [All guides](README.md) · [route reconstruction](system-design-route-reconstruction.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>NETWORKING GUIDE</sub>
 
 # Networking for System Design — From Packets to Planet Scale
 
+<sub>14 SECTIONS · 13 MIN READ</sub>
+
 </div>
 
 > [!TIP]
 > **THE GUIDE** — Every distributed system is a networking system wearing a costume. Latency budgets, consistency decisions, and failure modes all trace back to how packets move. This guide covers the interview-grade essentials: TCP/UDP, HTTP/1.1→2→3, TLS, DNS, load balancing, CDN, VPC topology, and the latencies that anchor every back-of-envelope estimate.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>14 sections</b></summary>
 
 1. [The Layered Model — Why It Matters](#1-the-layered-model--why-it-matters)
 2. [IP, TCP & UDP](#2-ip-tcp--udp)
@@ -402,3 +408,7 @@ Layer-hunt: LB health check path/code mismatch? → LB idle timeout < backend p9
 ---
 
 *Pairs with:* `cloud.md` (§10 networking services, §17 cloud costs) · `system-design-url-shortener.md` (CDN + aliasing) · `system-design-messaging-app.md` (WebSocket fan-out) · `system-design-rate-limiter.md` (edge limits) · `interview-qa.md` §84 (universal do's & don'ts) · `operating-systems.md` (sockets, epoll, zero-copy — the host side of this story).
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

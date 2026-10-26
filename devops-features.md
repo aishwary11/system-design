@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>DEVOPS GUIDE</sub>
 
 # DevOps & Kubernetes — Features Guide with Basic Examples
 
+<sub>18 SECTIONS · 9 MIN READ · 1 DIAGRAM</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — The delivery stack behind a production service — containers, Kubernetes, CI/CD, GitOps, infrastructure as code, observability and the gates that stop a bad deploy.
 
 A quick-reference catalog of the DevOps toolchain behind every design in this repo: containers, Kubernetes objects (pods, deployments, services, probes, HPA, RBAC), CI systems (Jenkins vs GitHub Actions vs GitLab CI), GitOps CD (ArgoCD/Flux), quality gates (SonarQube, Trivy), infrastructure-as-code (Terraform), and observability — each with a small, concrete example.
 
@@ -14,14 +21,14 @@ A quick-reference catalog of the DevOps toolchain behind every design in this re
 
 ![DevOps at a Glance](diagrams/features/devops-at-a-glance.svg)
 
-**Interactive diagram:** [diagrams/features/devops-at-a-glance.architecture.html](diagrams/features/devops-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/devops-at-a-glance.architecture.html) · pan/zoom · search · dark/light · export
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>18 sections</b></summary>
 
 1. [Containers & Images (Docker)](#1-containers--images-docker)
 2. [Kubernetes Core — Pods, Deployments, Services](#2-kubernetes-core--pods-deployments-services)
@@ -413,3 +420,7 @@ Pin your mental model to current releases — "which version?" is a real intervi
 | Probe readiness honestly (dependencies), liveness narrowly (wedged process) | Don't probe the database in liveness — a DB blip restarts the whole fleet |
 | Gate deploys with canary analysis + quality gates (Sonar/Trivy) | Don't push straight to prod because "it worked on my machine" |
 | Manage infra with Terraform plan reviews + remote state locking | Don't `terraform apply` from a laptop with local state at 2 a.m. |
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

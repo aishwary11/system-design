@@ -1,10 +1,17 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>RABBITMQ GUIDE</sub>
 
 # RabbitMQ — Features Guide with Basic Examples
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM</sub>
+
 </div>
+
+> [!TIP]
+> **THE GUIDE** — A quick-reference catalog of RabbitMQ features used in event-driven backends — exchanges, routing, acknowledgements, quorum queues, delayed messages and federation, each with a small example.
 
 A quick-reference catalog of RabbitMQ features used in task-oriented messaging: queues & exchanges, the four exchange types, routing keys & bindings, acknowledgment & reliability modes, dead-letter exchanges, TTL & expiry, quorum queues, delayed messages, RPC over AMQP, and the RabbitMQ-vs-Kafka decision — each with a small, concrete example.
 
@@ -16,17 +23,17 @@ A quick-reference catalog of RabbitMQ features used in task-oriented messaging: 
 
 ![RabbitMQ at a Glance](diagrams/features/rabbitmq-at-a-glance.svg)
 
-**Interactive diagram:** [diagrams/features/rabbitmq-at-a-glance.architecture.html](diagrams/features/rabbitmq-at-a-glance.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/features/rabbitmq-at-a-glance.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = message flow. Exchanges §2, reliability §4, DLX §6, quorum queues §7, delays §8.
 
 ---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Core Model — Producer, Exchange, Queue, Consumer](#1-core-model--producer-exchange-queue-consumer)
 2. [Exchange Types — Direct, Fanout, Topic, Headers](#2-exchange-types--direct-fanout-topic-headers)
@@ -322,3 +329,7 @@ Kafka counterparts live in each doc's architecture diagram — most designs show
 | Cap redeliveries and route failures to a DLX | Don't `requeue: true` poison messages into an infinite crash loop |
 | Dedupe downstream (idempotent consumers) | Don't assume ack-later semantics give you exactly-once |
 | Use `mandatory` + returned-message handlers for critical publishes | Don't publish to a wrong-vhost exchange and watch messages vanish silently |
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

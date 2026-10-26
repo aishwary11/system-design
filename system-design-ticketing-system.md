@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>E-COMMERCE & BOOKING</sub>
 
 # System Design: Ticketing / Hotel Reservation System (BookMyShow)
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 4 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A ticket booking and hotel reservation platform supporting search, availability checking, seat/room selection, reservation with concurrency control, payment processing, and booking confirmation.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A ticket booking and hotel reservation platform supporting search, availability 
 
 ![Ticketing System — System Architecture](diagrams/system-design/ticketing-system.svg)
 
-**Interactive diagram:** [diagrams/system-design/ticketing-system.architecture.html](diagrams/system-design/ticketing-system.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/ticketing-system.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -521,4 +527,8 @@ class BookingSaga {
 
 ---
 
-<nav>← [stock exchange](system-design-stock-exchange.md) · [📖 All guides](README.md) · [tinder](system-design-tinder.md) →</nav>
+<nav>← [stock exchange](system-design-stock-exchange.md) · [All guides](README.md) · [tinder](system-design-tinder.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

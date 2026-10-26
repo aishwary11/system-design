@@ -1,20 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>FINANCE & ADS</sub>
 
 # System Design: Algorithmic Trading Platform (OMS/EMS + Market Data)
 
-</div>
+<sub>22 SECTIONS · 23 MIN READ · 1 DIAGRAM · 7 EXAMPLES</sub>
 
+</div>
 
 > [!TIP]
 > **THE PROBLEM** — Design the **buy-side** trading platform that turns a signal into an order and a fill into a position: normalized **market data** in, strategy decisions, a **pre-trade risk gate** that is legally responsible for what leaves the building, an **order/execution management system** (OMS/EMS) that owns the order lifecycle across venues, and a **reconciliation** path that treats every fill as a claim until the broker and the tape agree. The hot path is measured in **microseconds**, the audit trail in **years**, and the one bug that matters is *double-sending an order*.
 
+---
 
-## Table of Contents
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>22 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -153,7 +157,7 @@ console.log('wire budget used   :', used + '/' + budget + ' us =', Math.round((u
 
 ![Algorithmic Trading Platform — Market Data In, Orders Out](diagrams/system-design/algo-trading.svg)
 
-**Interactive diagram:** [diagrams/system-design/algo-trading.architecture.html](diagrams/system-design/algo-trading.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/algo-trading.architecture.html) · pan/zoom · search · dark/light · export
 
 *Solid = market-data and order path, dashed = the emergency path that bypasses strategies but never the risk ledger.*
 
@@ -765,4 +769,8 @@ The pattern behind all of these: the trading platform is a **system of record th
 
 ---
 
-<nav>← [alerting](system-design-alerting.md) · [📖 All guides](README.md) · [code deployment](system-design-code-deployment.md) →</nav>
+<nav>← [alerting](system-design-alerting.md) · [All guides](README.md) · [code deployment](system-design-code-deployment.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

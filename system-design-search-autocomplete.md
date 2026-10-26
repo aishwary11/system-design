@@ -1,18 +1,24 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>INFRASTRUCTURE</sub>
 
 # System Design: Search Autocomplete (Typeahead)
 
+<sub>16 SECTIONS · 6 MIN READ · 1 DIAGRAM · 9 EXAMPLES</sub>
+
 </div>
 
 > [!TIP]
 > **THE PROBLEM** — A real-time search autocomplete system providing instant suggestions as users type, with < 100ms response time.
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>16 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -79,7 +85,7 @@ A real-time search autocomplete system providing instant suggestions as users ty
 
 ![Search Autocomplete — System Architecture](diagrams/system-design/search-autocomplete.svg)
 
-**Interactive diagram:** [diagrams/system-design/search-autocomplete.architecture.html](diagrams/system-design/search-autocomplete.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/search-autocomplete.architecture.html) · pan/zoom · search · dark/light · export
 
 
 *Solid = data flow, dashed = control plane / monitoring.*
@@ -581,4 +587,8 @@ console.log('recorded:', searchAnalytics.events('kafka exactly once').length, 'e
 
 ---
 
-<nav>← [route reconstruction](system-design-route-reconstruction.md) · [📖 All guides](README.md) · [search engine](system-design-search-engine.md) →</nav>
+<nav>← [route reconstruction](system-design-route-reconstruction.md) · [All guides](README.md) · [search engine](system-design-search-engine.md) →</nav>
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>

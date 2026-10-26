@@ -1,3 +1,5 @@
+<a id="top"></a>
+
 <div align="center">
 
 <sub>SYSTEM DESIGN · AI INFRASTRUCTURE</sub>
@@ -6,11 +8,7 @@
 
 **Atomic, reshardable snapshots of a 1,024-GPU job — without stopping the fleet.**
 
-![Fleet](https://img.shields.io/badge/fleet-1K_GPUs-6366f1?style=flat-square&labelColor=0a0a0a)
-![State](https://img.shields.io/badge/state-1.12_TB-6366f1?style=flat-square&labelColor=0a0a0a)
-![Cadence](https://img.shields.io/badge/checkpoint-30_min-6366f1?style=flat-square&labelColor=0a0a0a)
-
-[Overview](#overview) · [Architecture](#high-level-architecture) · [Decisions](#key-design-decisions) · [Failures](#failure-modes--recovery) · [LLD](#low-level-design-lld--atomic-manifest--resharding)
+<sub>1K GPUS · 1.12 TB STATE · 30 MIN CADENCE</sub>
 
 </div>
 
@@ -21,10 +19,12 @@
 | :--- | :--- | :--- |
 | 1,024 ranks must survive node loss, preemption and elastic resizes. | A consistent snapshot of more than weights, written without a 60-second stall. | Stage at a step boundary, write shards in parallel, and commit a manifest last. |
 
-## Table of Contents
+---
+
+## On this page
 
 <details open>
-<summary><b>📑 Jump to a section</b></summary>
+<summary><b>17 sections</b></summary>
 
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -110,7 +110,7 @@ The arithmetic that drives the design: at one failure every 49 hours, a 30-minut
 
 ![Distributed Training Checkpoints — System Architecture](diagrams/system-design/distributed-training.svg)
 
-**Interactive diagram:** [diagrams/system-design/distributed-training.architecture.html](diagrams/system-design/distributed-training.architecture.html) — pan/zoom, search, dark/light theme, PNG/SVG export.
+**Interactive:** [Open diagram](diagrams/system-design/distributed-training.architecture.html) · pan/zoom · search · dark/light · export
 
 *Solid = checkpoint/restore flow, dashed = control plane / monitoring.*
 
@@ -417,3 +417,7 @@ Expected: the crashed attempt produces no committed manifest; the successful att
 | Keep a restore drill in CI | Don't trust a checkpoint you have never loaded |
 
 *More cross-topic rules: [Interview Q&A](interview-qa.md) · [GPU Scheduler](system-design-gpu-scheduler.md) · [LLM Inference](system-design-llm-inference.md) · [Low-Level Design](low-level-design.md)*
+
+---
+
+<p align="right"><a href="#top">↑ Back to top</a></p>
