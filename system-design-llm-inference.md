@@ -244,7 +244,7 @@ At ~40B output tokens/day ≈ 1.2T/mo, that lands near **$0.85 per 1M output tok
 
 - [ ] **HA** — multi-region GPU pools behind a global LB; scheduler per GPU-group with leader election; regional drain on degradation, never silent
 - [ ] **DR** — conversation store PITR; KV checkpoints persisted to NVMe so group loss never loses committed tokens; region failover RTO < 5 min
-- [ ] **Security** — API-key auth at the edge, mTLS internally; prompt/response payloads never logged at full fidelity (PII scrubbing in telemetry)
+- [ ] **Security** — API-key auth at the edge, mTLS internally; prompt/response payloads never logged at full fidelity (PII scrubbing in telemetry). Do not treat a serving framework's built-in key as the boundary: vLLM's key option covers only selected route prefixes and its distributed transports are unauthenticated and unencrypted by default, so bind inference to a private network and enable mTLS
 - [ ] **Safety** — output content-filtering tier; per-key abuse auto-quarantine; jailbreak detection hooks before admission
 - [ ] **Capacity** — admission control load-tested at 2× peak; token-budget limits enforced pre-admission; alarm at 80% KV utilization
 - [ ] **Cost guardrails** — per-key $ budgets, auto-throttle on runaway generations, per-model unit-economics dashboards

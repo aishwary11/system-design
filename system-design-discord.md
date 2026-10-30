@@ -118,6 +118,8 @@ user_channels: PK (user_id, channel_id)  -> last_read_message_id, settings
 guild_members: PK (guild_id, user_id)    -> roles, joined_at
 ```
 
+**Dated design note.** Discord's 2023 engineering post describes hot partitions in this Cassandra-era schema, a Rust data-service layer that coalesces concurrent reads, and a migration toward ScyllaDB; its 2025 post describes a later cell-based Elasticsearch search index. Label the model above as the Cassandra-era design, not today's full production topology.
+
 ### Redis
 
 ```bash

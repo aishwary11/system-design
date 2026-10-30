@@ -304,7 +304,7 @@ The metrics that signal system health, with alert thresholds:
 
 | Metric | Description | Target |
 | -------- | ------------- | -------- |
-| **Delivery Rate** | % of notifications successfully delivered | > 99% |
+| **Delivery Rate** | Accepted by the provider and later confirmed at the device where the channel reports it — push acceptance is not display | > 99% of accepted |
 | **Delivery Latency** | Time from trigger to delivery | < 1s (push), < 30s (email) |
 | **Dedup Rate** | % of duplicate notifications blocked | > 95% |
 | **Rate Limit Hits** | Users hitting rate limits | < 1% |
@@ -337,6 +337,8 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | Preference Management | User by channel by category matrix including quiet hours and legally required messages | Preferences |
 | Retry with Backoff | Provider-specific retryable codes with jittered exponential backoff and a hard attempt cap | Delivery |
 | Delivery Tracking | Provider callbacks drive a per-message state machine (sent, delivered, bounced, opened) | Observability |
+
+**Push is a hint, not a ledger.** HTTP Web Push returns `201 Created` when the push service *accepts* the message, not when a device receives or displays it (RFC 8030); FCM, APNs and Android Doze each add their own expiry, collapse and batching behaviour. Keep notification state in your own store, treat provider callbacks as enrichment, and let the client fetch the authoritative payload for anything that must not be missed.
 
 ## Common Interview Follow-ups
 

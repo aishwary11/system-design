@@ -135,7 +135,7 @@ A location-based dating platform supporting profile discovery, swiping, matching
 
 ### 6. ML Ranking Service
 
-- **Responsibility**: Profile ranking (Elo score), recommendation optimization, behavioral analysis
+- **Responsibility**: Profile candidate ranking and recommendation optimization (illustrative ML design; do not treat Elo as Tinder's current proprietary ranking algorithm)
 - **Tech**: Python (ML), TensorFlow
 - **DB**: Redis (scores), PostgreSQL (features)
 
@@ -158,7 +158,7 @@ CREATE TABLE profiles (
     latitude        DECIMAL(10,8),
     longitude       DECIMAL(11,8),
     location        GEOMETRY(POINT, 4326),
-    elo_score       DECIMAL(5,2) DEFAULT 1000,
+    illustrative_rank_score DECIMAL(8,4), -- example feature/score only; not a claim about Tinder's production algorithm
     is_active       BOOLEAN DEFAULT TRUE,
     created_at      TIMESTAMP DEFAULT NOW()
 );
@@ -211,8 +211,8 @@ HSET swipes:{user_id} {target_id} "right" | "left"
 # Location index
 GEOADD profiles:locations {lon} {lat} {profile_id}
 
-# Elo score cache
-SETEX elo:{profile_id} 3600 {score}
+# Example ranking-feature cache (not a claim about Tinder's current implementation)
+SETEX rank_feature:{profile_id} 3600 {score}
 ```
 
 ---
@@ -228,7 +228,7 @@ SETEX elo:{profile_id} 3600 {score}
 | **Cache** | Redis (single) |
 | **Media** | S3 + CloudFront |
 | **Queue** | Redis Streams |
-| **ML** | Simple Elo scoring |
+| **ML** | Candidate ranking baseline (production ranking is product/model-specific) |
 
 ### Tier 2: 10K - 1M Users
 
@@ -270,12 +270,11 @@ SETEX elo:{profile_id} 3600 {score}
 - If yes: MATCH! Notify both users
 - If no: Store A's swipe, continue
 
-### 3. Elo Score for Profile Ranking
+### 3. Ranking Baseline (Illustrative, Not Tinder's Disclosed Production Algorithm)
 
-- Higher Elo = shown more frequently
-- Elo increases when right-swiped
-- Elo decreases when left-swiped
-- Creates natural quality ranking
+- A pairwise rating such as Elo can be used as a simple educational feature, but a swipe is exposure- and preference-biased feedback—not a clean head-to-head match outcome
+- Do not directly increase a profile's rank for every right swipe or decrease it for every left swipe; account for impressions, eligibility, user preferences, safety filters, position bias, and exploration
+- Production ranking should be evaluated with online experiments and guardrails; Tinder's public material describes recommendation/search systems and ML ranking, not a current Elo formula
 
 ### 4. Why Cassandra for Matches?
 
@@ -296,7 +295,7 @@ What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
-| Elo score drift | Matches become irrelevant | Weekly recalibration, A/B test weights |
+| Ranking feedback loop / exposure bias | Popular profiles gain more impressions and swipes | Log impressions as well as actions; monitor exposure distribution, diversity and outcomes; use controlled experiments |
 | Deck generation slow | Spinning wheel | Pre-computed decks, background refresh |
 | Match notification delayed | Miss time-sensitive match | Priority push, SMS fallback |
 | Location inaccurate | Matched 100km away | GPS + WiFi triangulation, distance threshold |
@@ -368,7 +367,7 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Elo Rating System | Pairwise preference score updated per swipe; Tinder has since described moving to ML ranking | Ranking |
+| Pairwise-rating baseline (illustrative) | A simple ranking feature for teaching only; do not attribute it to Tinder's current system | Ranking |
 | Swipe Recommendation Algorithm | Candidate generation by distance and preferences, then ranking with an explicit exploration budget | Matching |
 | Geospatial Matching | Cell-based candidate lookup with a distance filter, the same family as geohash and H3 | Discovery |
 | Redis for Swipe Queue | Precomputed candidate decks per active user, rebuilt on activity or expiry | Serving |
@@ -377,8 +376,8 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 ## Common Interview Follow-ups
 
-**Q: How does Elo scoring work for matchmaking?**
-A: Rating from swipe outcomes, adjusted by opponent rating, personalized discovery deck
+**Q: How could a simple pairwise rating baseline work?**
+A: Update a toy score from observed pairwise outcomes, but do not treat raw swipe labels as unbiased outcomes or claim this is Tinder's current ranking method; a real recommender accounts for exposure, preferences, safety, exploration and feedback loops.
 
 **Q: How do you handle cold start?**
 A: Popular profiles in area, bio/interest matching, accelerate from early swipes
@@ -390,7 +389,7 @@ A: Daily limit, cooldown period, behavioral analysis, premium gets more
 
 ## Low-Level Design (LLD) - Algorithms & Data Structures
 
-### 1. Elo Score Algorithm (Matchmaking)
+### 1. Illustrative Candidate-Ranking Baseline (Not Tinder's Algorithm)
 
 ```js
 class MatchingEngine {
@@ -403,10 +402,10 @@ class MatchingEngine {
       distanceKm: prefs.distance || 50, excludeIds: user.swipedIds || []
     });
     return candidates.map(c => ({
-      ...c, score: this.calcElo(user.eloScore, c.eloScore) * this.calcCompat(user, c)
+      ...c, score: this.calcPairwiseBaseline(user.rankFeature ?? 0, c.rankFeature ?? 0) * this.calcCompat(user, c)
     })).sort((a, b) => b.score - a.score).slice(0, count);
   }
-  calcElo(my, their) { return 1 / (1 + Math.pow(10, (their - my) / 400)); }
+  calcPairwiseBaseline(my, their) { return 1 / (1 + Math.exp(-((their - my) / 4))); }
   calcCompat(u1, u2) {
     let s = 1.0;
     if (u1.interests && u2.interests) s += u1.interests.filter(i => u2.interests.includes(i)).length * 0.1;
@@ -421,7 +420,7 @@ class MatchingEngine {
 async function generateDiscoveryDeck(userId, deckSize = 100) {
   //  1. candidate generation: geohash + age/gender/preference buckets (Redis sets)
   //  2. hard filters: already seen, already matched, blocked, inactive > 30d
-  //  3. rank by Elo proximity + activity + distance decay
+  //  3. rank by illustrative pairwise baseline + activity + distance decay; log impressions to measure exposure bias
   //  4. take the top N candidates, never the whole set (deck is pre-warmed)
   //  5. store in Redis with a TTL so a stale deck expires instead of pinning memory
   const me = await profileStore.get(userId);
@@ -445,7 +444,7 @@ async function generateDiscoveryDeck(userId, deckSize = 100) {
   const ranked = filtered
     .map(candidate => ({
       ...candidate,
-      score: eloProximity(me.elo, candidate.elo) * activityBoost(candidate.lastActiveAt),
+      score: pairwiseProximity(me.rankFeature ?? 0, candidate.rankFeature ?? 0) * activityBoost(candidate.lastActiveAt),
     }))
     .sort((a, b) => b.score - a.score)
     .slice(0, deckSize);
@@ -454,7 +453,7 @@ async function generateDiscoveryDeck(userId, deckSize = 100) {
   return ranked;
 }
 
-const eloProximity = (mine, theirs) => 1 / (1 + Math.abs(mine - theirs) / 400);
+const pairwiseProximity = (mine, theirs) => 1 / (1 + Math.abs(mine - theirs) / 4);
 const activityBoost = lastActiveAt => Math.pow(2, -((Date.now() - lastActiveAt) / 86400000) / 7);
 const withinPreferences = (prefs, candidate) =>
   (!prefs.minAge || candidate.age >= prefs.minAge) &&

@@ -375,7 +375,7 @@ The metrics that signal system health, with alert thresholds:
 | Media upload success rate | > 99.9% |
 | Online presence accuracy | > 99% |
 | API response time (p99) | < 200ms |
-| Message ordering accuracy | 100% |
+| Per-conversation ordering accuracy | 100% within a conversation (never promised globally) |
 | Push notification delivery | > 95% |
 | System availability | 99.99% |
 | WebSocket connections per server | 2M+ |
@@ -408,7 +408,7 @@ The recurring techniques and patterns this design applies, mapped to where they 
 ## Common Interview Follow-ups
 
 **Q: How does E2E encryption work across devices?**
-A: Signal Protocol X3DH, per-device keys, multi-device sync via cloud backup
+A: Signal Protocol X3DH with per-device keys, so the sender encrypts a separate copy for each recipient device (client-side fan-out); a new device needs an explicit history/key-transfer path and the server never holds plaintext. WhatsApp's 2021 multi-device write-up is one published example, not a universal messaging contract — delivery remains at-least-once with client-side dedupe, never exactly-once.
 
 **Q: How do you handle message ordering in groups?**
 A: Vector clocks for causal order, server sequence numbers, client conflict resolution

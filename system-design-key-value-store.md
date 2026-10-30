@@ -71,7 +71,9 @@ Distributed key-value store providing eventually consistent reads/writes with hi
 | **Latency** | < 10ms P99 |
 | **Throughput** | 10M+ ops/sec |
 | **Availability** | 99.99% (AP system) |
-| **Consistency** | Eventually consistent |
+| **Consistency** | Tunable quorum visibility; conflicts may require reconciliation |
+
+**Consistency is per operation, not per product.** In DynamoDB, for example, table and LSI reads accept an optional strongly-consistent read, while GSI and stream reads are eventually consistent; TTL is a background deletion that can lag expiry by hours or days, so treat an expired item as logically expired at read time rather than assuming the row is already gone. Judge each service, index and region on its documented contract instead of labelling "the key-value store" eventually consistent.
 
 ---
 
@@ -91,14 +93,14 @@ Distributed key-value store providing eventually consistent reads/writes with hi
 1. Client puts/gets key - Partition Service hashes to node
 2. Consistent hashing determines shard placement
 3. Write: replicate to N nodes, wait for W acknowledgments
-4. Read: query R nodes, return latest by vector clock
+4. Read: query R nodes, merge causal versions; apply an explicit conflict policy (quorum overlap alone does not guarantee linearizability)
 5. Conflict resolution: vector clocks detect concurrent writes
 6. Anti-entropy: Merkle trees sync replicas in background
 7. Compaction: merge SSTables to reclaim space
 
 ### Quorum Read and Write, Traced
 
-With `N=3`, `W=2`, `R=2` the write and read sets must overlap in at least one replica (`W + R > N`), which is why the read that follows returns `v3` even though replica C has not caught up. The trade-off is latency: the coordinator waits for the second acknowledgement and returns, while the third write is repaired lazily. If a replica is down the coordinator writes a hinted handoff and still succeeds — availability is preserved, consistency is repaired later.
+With `N=3`, `W=2`, `R=2`, the acknowledged write set and read set intersect (`W + R > N`) if both use the same replica set. In this trace, the read sees `v3` because the read protocol collects versions and selects the latest version under the stated single-write assumption—not because overlap alone implies strong consistency. Concurrent writes still need causal versioning and an explicit resolver. Hinted handoff can improve availability when a replica is unavailable, but does not make the system linearizable; sloppy-quorum behavior may further weaken ownership assumptions.
 
 ![Quorum Write (W=2) then Quorum Read (R=2), with Hinted Handoff](diagrams/system-design/quorum-rw.sequence.svg)
 
@@ -242,7 +244,7 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | ----------- | ------------- | ---------- |
 | Consistent Hash Ring | Ring plus virtual nodes; replication walks the ring N times from the key position | Partitioning |
 | Vector Clocks | Causal versioning to detect concurrent writes, as in Dynamo, with last-writer-wins applied as policy on top | Consistency |
-| Quorum Consensus | R + W > N gives read-your-writes; the quorum is tunable per operation | Reads/writes |
+| Quorum overlap | R + W > N ensures set intersection for a fixed replica set; visibility and conflict behavior depend on the read/write protocol | Reads/writes |
 | Merkle Tree Anti-Entropy | Compare hashes level by level to find divergent key ranges, then repair only those ranges | Repair |
 | Gossip Protocol | SWIM-style membership and failure detection converging in O(log N) rounds | Cluster |
 | LSM Tree Storage | Memtable plus immutable SSTables with compaction; RocksDB and LevelDB are the reference implementations | Storage |
@@ -253,7 +255,7 @@ The recurring techniques and patterns this design applies, mapped to where they 
 A: Use vector clocks to track causal ordering. When two versions are concurrent, return both to the client for resolution. For simpler cases, use last-writer-wins.
 
 **Q: How does quorum consensus work?**
-A: With N replicas, set W write and R read replicas. If W + R > N, you get strong consistency. Common: W=N (durable writes), R=1 (fast reads).
+A: With N replicas, choose W and R with the required failure and latency budget. If W + R > N for a fixed replica set, every read quorum intersects every write quorum, but that fact alone does not guarantee linearizability or strong consistency; version selection, concurrent writes, membership, and durability rules matter. Use a consensus/transaction protocol when the contract needs a single linearizable history.
 
 ---
 

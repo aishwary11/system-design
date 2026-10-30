@@ -52,6 +52,7 @@ A cloud file storage system supporting file upload/download, sync, sharing, and 
 - 500M+ daily active users
 - 10PB+ total storage
 - Real-time sync across devices
+- Multipart ceiling (S3 as the reference): 10,000 parts, 5 MiB–5 GiB per part, 48.8 TiB largest object — part size is derived from the target object size, not chosen first
 
 ---
 

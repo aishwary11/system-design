@@ -16,7 +16,7 @@
 A quick-reference catalog of RabbitMQ features used in task-oriented messaging: queues & exchanges, the four exchange types, routing keys & bindings, acknowledgment & reliability modes, dead-letter exchanges, TTL & expiry, quorum queues, delayed messages, RPC over AMQP, and the RabbitMQ-vs-Kafka decision — each with a small, concrete example.
 
 **RabbitMQ in one line:** a **smart broker / dumb consumer** message broker implementing AMQP 0-9-1 — producers publish to *exchanges*, exchanges route to *queues* by bindings, consumers pull and acknowledge. Where Kafka is a replayable log, RabbitMQ is a work-distribution router with rich per-message semantics.
-> **Latest stable (Oct 2026): RabbitMQ 4.3** (4.3.6 maintenance) — quorum-queue enhancements, Khepri (Raft-based metadata store) matured, AMQP 1.0 native since 4.2. Note: 4.2 reached EOL Jul 2026 — upgrade path is 4.2 → 4.3 only.
+> **Latest stable (verified 28 Oct 2026): RabbitMQ 4.4.0** (20 Oct). Quorum queues add delayed and deferred messages plus availability-zone-aware member placement; RabbitMQ 4.4 also adds native STOMP. Distinguish open-source broker features from Tanzu enterprise features, and check the [4.4 highlights](https://www.rabbitmq.com/blog/2026/10/20/rabbitmq-4.4-release) and [support timeline](https://www.rabbitmq.com/docs/versions) before upgrading.
 
 
 ### Task messaging at a glance

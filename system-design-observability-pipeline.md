@@ -166,6 +166,8 @@ console.log('trace TB (30d)    :', traceTb30d.toFixed(1));
 7. **Rollup & Downsample** consumes the raw streams and writes 1m/5m/1h aggregates; the **Trace Compactor** merges small trace files; the **Log Fingerprint** job maintains the template catalogue
 8. **Query Frontend** serves PromQL-style queries from rollups first and raw blocks only when necessary; the **Alert Evaluator** runs rules and SLO burn-rate windows and routes to on-call (Grafana + Alertmanager)
 
+**Durability is configuration, not a property of "the Collector".** An out-of-the-box OpenTelemetry Collector buffers in memory with bounded retry, so a crash or OOM loses whatever was queued; surviving a collector restart needs a persistent queue or an upstream broker. The WAL-first path below is this design's decision — do not inherit it by accident and then promise lossless metrics.
+
 ## Microservices
 
 | Service | Responsibility | Notes |

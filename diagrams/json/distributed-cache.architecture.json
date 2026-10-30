@@ -137,7 +137,7 @@
       "id": "store0",
       "type": "database",
       "label": "Redis Cluster",
-      "tag": "→ Multi-AZ Replica",
+      "tag": "async replicas · lagging",
       "pos": [
         74,
         1078
@@ -150,8 +150,8 @@
     {
       "id": "store1",
       "type": "database",
-      "label": "Consistent Hashing",
-      "tag": "→ Multi-AZ Replica",
+      "label": "Hash Slots / Shards",
+      "tag": "→ async replica",
       "pos": [
         332,
         1078
@@ -164,8 +164,8 @@
     {
       "id": "store2",
       "type": "database",
-      "label": "Raft Consensus",
-      "tag": "→ Multi-AZ Replica",
+      "label": "Failover Control",
+      "tag": "Sentinel / Cluster",
       "pos": [
         600,
         1078

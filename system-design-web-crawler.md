@@ -304,7 +304,7 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | ----------- | ------------- | ---------- |
 | BFS/DFS Traversal | A priority frontier ordered by importance and change rate beats plain BFS for freshness | Frontier |
 | URL Frontier with Priority | Per-host queues with politeness delay; the global frontier selects which host to serve next | Frontier |
-| Politeness (robots.txt) | Fetch and cache robots per host and honour crawl-delay; getting this wrong gets the crawler blocked | Etiquette |
+| Politeness (robots.txt) | RFC 9309 rules are per-crawler directives, not access control: cache them per host, honour crawl-delay, and never treat a disallowed URL as private or as guaranteed absent from an index | Etiquette |
 | Bloom Filter for Dedup | O(1) membership with false positives only, which is the right error direction: never re-crawl a seen URL | Dedup |
 | Distributed Crawling | Partition by host so two workers never hit one server at once | Scale |
 | DNS Resolution Cache | Cache DNS with its TTL; resolution is a real bottleneck at crawl scale | Network |

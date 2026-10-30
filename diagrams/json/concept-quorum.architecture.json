@@ -28,7 +28,7 @@
       "id": "reader",
       "type": "external",
       "label": "Reader",
-      "tag": "← W + R > N ⇒ read &…",
+      "tag": "← quorum intersection*",
       "pos": [
         457,
         70

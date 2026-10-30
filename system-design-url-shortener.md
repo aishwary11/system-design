@@ -96,7 +96,7 @@ A URL shortening service that converts long URLs to short, shareable links with 
 3. Long URL + metadata stored in PostgreSQL + Redis cache
 4. Short URL redirect - Redirect Service looks up Redis (sub-ms)
 5. Cache miss - PostgreSQL fallback + cache for next time
-6. 301 redirect for SEO, 302 for analytics tracking
+6. Redirect status is a product decision: 301/308 are permanent and cacheable (308 also preserves the method), 302/307 are temporary; with 301/302 a client may switch a POST to GET, so use 307/308 when the method must survive
 7. Kafka events: click, referrer, geo - Analytics
 
 ## Microservices
@@ -336,7 +336,7 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | Base62 Encoding | 62^7 is about 3.5 trillion keys, and base62 avoids the plus and slash characters that break URLs | Encoding |
 | Unique ID Generation | Snowflake or a key-generation service handing out ranges, so creation needs no per-URL database round trip | ID service |
 | Cache-Aside Pattern | Redis lookup, database on miss, then fill; reads dominate by orders of magnitude | Read path |
-| 301 vs 302 Redirects | 301 is cacheable and loses analytics; 302 keeps every click measurable at the cost of a request | API |
+| Redirect Status Codes | 301/308 cache aggressively (losing per-click analytics); 302/307 keep clicks measurable at the cost of a request; 307/308 preserve the request method where 301/302 may not | API |
 | Analytics Tracking | Click events go to Kafka asynchronously; the redirect never waits on analytics | Analytics |
 | Spam Detection | Denylist, domain reputation and creation rate limits before a link is issued | Safety |
 

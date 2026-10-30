@@ -46,6 +46,8 @@
 
 A service that hands out unique 64-bit IDs to any caller (services, edge nodes) at very high rates. Twitter's Snowflake is the canonical design: timestamp + machine ID + per-machine sequence, so thousands of nodes mint IDs independently with no coordination.
 
+The 128-bit alternative is standardised in **RFC 9562** (which obsoletes RFC 4122): UUIDv7 places a Unix-millisecond timestamp first, so values sort by creation time, but the format alone does not promise a single strictly increasing sequence across generators — that extra monotonicity needs a counter or a leased node id.
+
 ### Key Numbers
 
 | Metric | Value |

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "diagram_type": "sequence",
   "meta": {
-    "title": "Quorum Write (W=2) then Quorum Read (R=2), with Hinted Handoff",
+    "title": "Quorum Set Intersection (W=2, R=2), Single-Write Example",
     "output": "quorum-rw.sequence.html",
     "viewBox": [
       1040,
@@ -162,7 +162,7 @@
       "from": "coord",
       "to": "client",
       "y": 592,
-      "label": "v3 (quorums intersect)",
+      "label": "v3 (single-write example)",
       "variant": "return"
     },
     {

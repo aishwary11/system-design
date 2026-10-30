@@ -91,7 +91,7 @@ Why it exists at all — the failure modes it removes:
 
 - **Latency**: < 20 ms p99 added overhead; no buffering — tokens stream through as they arrive
 - **Isolation**: one tenant cannot consume another's quota, and a noisy tenant cannot exhaust a provider's global rate limit
-- **Correctness of accounting**: usage is billed exactly once per request, even across retries, failovers and disconnects
+- **Correctness of accounting**: one ledger entry per logical provider attempt/usage record; deduplicate by stable request-and-attempt IDs, capture partial-stream usage, and reconcile ambiguous provider outcomes before rebilling. Retries/failovers may incur multiple provider charges.
 - **Security**: provider keys live in KMS and never reach the client; prompts and responses are redacted and access-controlled
 - **Resilience**: one provider fully down, zero user-visible failures for non-pinned traffic; pinned traffic degrades with an explicit error
 - **Observability**: every request is traceable end-to-end (gateway span → provider span) with cost attributed
@@ -162,7 +162,7 @@ console.log('streams/instance   :', Math.round(concurrent / instances));
 4. The **Semantic Cache** is consulted (exact hash first, then embedding similarity within a model-version scope); on a hit the response is replayed and the ledger records `cache_hit` at zero model cost
 5. On a miss the request is streamed to the chosen provider; tokens flow back to the client as they arrive while the gateway counts input/output tokens
 6. Failures (5xx, timeout, 429, malformed tool call) trigger **Fallback & Health**: the request is retried on the next provider in the policy order, once per provider, inside the per-request latency and cost budget
-7. Usage events (`usage.events`) go to Kafka; the **Usage Ledger Writer** writes one immutable row per request (idempotent on `request_id`), updating tenant spend and firing budget alerts
+7. Usage events (`usage.events`) go to Kafka; the **Usage Ledger Writer** writes immutable rows keyed by `(request_id, attempt_id, usage_kind)` with a unique constraint, records partial/failed attempts where billable, and reconciles uncertain provider outcomes before correcting tenant spend
 8. **Cache Warmer** pre-warms high-traffic prompts; **Fallback & Health** maintains per provider+model circuit state and feeds the router's health view
 
 ## Microservices
@@ -1025,7 +1025,7 @@ Gateway work is 10% architecture and 90% these details. Each one has produced a 
 | **Quota day boundaries are UTC, not tenant-local** | A tenant-local day lets a travelling org reset its budget twice; document UTC and show it in the console |
 | **Ramp provider weight back after recovery, don't restore it instantly** | A recovered provider gets the full backlog at once; the breaker should half-open at 5-10% weight |
 | **Protect a hot prompt against cache stampede** | Evicting one viral entry sends every concurrent request to the provider; coalesce recomputes per key |
-| **Idempotency TTL must exceed the client's retry window** | A 5-minute TTL against a 30-minute retry scheduler silently bills duplicates |
+| **Dedup retention must exceed retry and replay horizons** | A short TTL can turn a delayed retry/replay into a second ledger effect; provider-side billing may still require reconciliation |
 | **Tokenizer version drift changes the bill** | A tokenizer upgrade can move counts 1-3%; pin the tokenizer version alongside the price version |
 
 ## Do's & Don'ts

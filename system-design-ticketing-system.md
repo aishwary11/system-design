@@ -92,12 +92,12 @@ A ticket booking and hotel reservation platform supporting search, availability 
 
 ### Data Flow
 
-1. User selects event - Seat Service returns available seats from Redis
-2. User selects seat - Redis atomic lock (SETEX, 10 min TTL)
-3. User confirms - Booking Service creates reservation (ACID)
-4. Payment Service processes with idempotency key
-5. On payment success - Kafka event - Ticket generation (QR code)
-6. Reservation expired - TTL auto-releases seat back to pool
+1. User selects event - Seat Service returns advisory availability from Redis; the database is authoritative
+2. User selects seat - Inventory Service atomically creates a hold in the authoritative store with an owner and expiry; a Redis lock may reduce contention but is not the correctness boundary
+3. User confirms - Booking Service conditionally transitions the unexpired hold to a reservation in one transaction
+4. Payment Service processes with a stable idempotency key; ambiguous outcomes are queried/reconciled before retrying
+5. On confirmed payment - transactional outbox publishes the event; consumers deduplicate before ticket generation (QR code)
+6. Hold expiry - a worker conditionally expires the DB hold and releases inventory; TTL/cleanup is recovery, not the only source of truth
 7. Notifications: booking confirmation, reminder, cancellation
 
 ## Microservices
@@ -119,8 +119,8 @@ A ticket booking and hotel reservation platform supporting search, availability 
 
 - **Responsibility**: Seat/room availability, real-time inventory, pricing, hold management
 - **Tech**: Java / Go
-- **DB**: PostgreSQL (ACID), Redis (distributed locks)
-- **Pattern**: Optimistic locking with version numbers
+- **DB**: PostgreSQL (ACID transactions, authoritative inventory)
+- **Pattern**: Atomic conditional update on availability (`WHERE seats_available >= n AND version = ?`); Redis locks are advisory hints for contention only, never the authority
 
 ### 4. Booking Service (Critical)
 
@@ -310,11 +310,11 @@ What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
-| Seat double-sell flash sale | Two users get same seat | Optimistic locking, seat hold TTL |
+| Seat double-sell flash sale | Two users get same seat | Atomic conditional hold + authoritative uniqueness/transaction; Redis locks are advisory only |
 | Payment timeout after hold | Seat locked but payment fails | Hold timer 10 min, auto release |
 | Bot scalper bypasses rate limit | Bots buy all tickets | CAPTCHA, device fingerprinting |
 | QR code duplication | Two people use same ticket | Cryptographic QR, scan-at-venue verify |
-| Seat hold race condition | Two users hold same seat | Distributed lock, atomic check-and-hold |
+| Seat hold race condition | Two users hold same seat | Atomic conditional update/unique constraint in authoritative DB; use Redis only as an optimization |
 | Refund delay | Refunded but seat not released | Saga pattern, auto seat release |
 
 ---
@@ -410,24 +410,20 @@ A: CAPTCHA, device fingerprinting, velocity rate limiting, behavioral analysis
 class SeatLock {
   constructor(redisClient, dbClient) { this.r = redisClient; this.db = dbClient; }
   async lockSeat(eventId, seatId, userId, ttl = 600) {
-    const lockKey = 'lock:' + eventId + ':' + seatId;
-    const locked = await this.r.set(lockKey, userId, 'EX', ttl, 'NX');
-    if (!locked) return { locked: false, reason: 'seat_locked' };
-    await this.db.updateSeatStatus(eventId, seatId, 'locked');
-    return { locked: true, expiresAt: Date.now() + ttl * 1000 };
+    // DB is authoritative: claim only an available seat in one conditional write.
+    // The production transaction should also create a durable hold_id/expiry.
+    const hold = await this.db.createSeatHold({ eventId, seatId, userId, ttlSeconds: ttl });
+    if (!hold) return { locked: false, reason: 'seat_unavailable' };
+    // Optional cache/lock hint; failure here must not undo a committed DB hold.
+    return { locked: true, holdId: hold.id, expiresAt: hold.expiresAt };
   }
-  async unlockSeat(eventId, seatId, userId) {
-    const lockKey = 'lock:' + eventId + ':' + seatId;
-    const owner = await this.r.get(lockKey);
-    if (owner !== userId) return { unlocked: false, reason: 'not_owner' };
-    await this.r.del(lockKey);
-    await this.db.updateSeatStatus(eventId, seatId, 'available');
-    return { unlocked: true };
+  async unlockSeat(eventId, seatId, userId, holdId) {
+    // Compare owner + hold generation and release only if the hold is still active.
+    return this.db.releaseSeatHold({ eventId, seatId, userId, holdId });
   }
-  async confirmBooking(eventId, seatId, userId) {
-    await this.unlockSeat(eventId, seatId, userId);
-    await this.db.updateSeatStatus(eventId, seatId, 'booked');
-    return { confirmed: true };
+  async confirmBooking(eventId, seatId, userId, holdId) {
+    // Atomic DB transition: active, unexpired hold owned by user -> booked.
+    return this.db.confirmSeatHold({ eventId, seatId, userId, holdId });
   }
 }
 

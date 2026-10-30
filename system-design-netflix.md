@@ -500,7 +500,7 @@ What can go wrong in production, and how the system detects and recovers:
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
 | Open Connect CDN fails | Regional streaming degradation | Multi-CDN fallback, manifest redirect |
-| EVCache split | Watch history out of sync | CRDT conflict resolution |
+| EVCache split | Watch history out of sync | Versioned last-writer-wins per title plus read repair; a CRDT only fits if the data type is commutative by construction |
 | Zuul overload | All API requests fail | Circuit breaker, bulkhead isolation |
 | Transcoding stuck | New content delayed | Dead letter queue, retry with backoff |
 | Recommendation drift | Irrelevant suggestions | A/B testing, auto rollback |
@@ -533,9 +533,9 @@ The alternatives considered, and which one won and why:
 | ----------- | ----------- | -------- | -------- |
 | Cassandra | MongoDB | Cassandra | Multi-master, 99.99% availability, linear scalability |
 | EVCache | Redis | EVCache | Custom Memcached fork, 99.99% hit rate at Netflix scale |
-| Open Connect | CloudFront | Open Connect | Embedded in ISPs, 10x better than third-party CDN |
+| Open Connect | CloudFront | Open Connect | Appliances inside ISP networks plus settlement-free peering; the win is transit cost and locality, not a fixed multiplier over third-party CDNs |
 | SageMaker | Custom ML | SageMaker | Managed service, faster experimentation |
-| Kafka | Kinesis | Kafka | Better ecosystem, exactly-once semantics |
+| Kafka | Kinesis | Kafka | Better ecosystem; Kafka transactions give exactly-once *within* a consume-process-produce loop, not once across external sinks |
 
 ---
 

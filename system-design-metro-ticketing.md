@@ -437,6 +437,8 @@ const ticket = gates.issue('card-42', 'station-7');
 console.log(gates.verify(ticket), gates.verify(ticket));
 ```
 
+**Incomplete journeys are priced, not discarded.** A missed tap-out has no exit station, so the operator charges a maximum fare; on TfL that charge does not count toward the daily or weekly cap. Keep journey construction separate from fare calculation: an `INCOMPLETE` journey resolves to a max-fare product with its own refund/appeal path, and cap accounting must exclude it rather than silently absorbing it.
+
 ### 4. Daily Cap Algorithm
 
 ```js

@@ -218,8 +218,9 @@ CREATE TABLE refunds (
 ### 1. Why Idempotency Keys?
 
 - Network retries can cause duplicate charges
-- Idempotency ensures exactly-once processing
-- Client generates unique key per request
+- Idempotency makes retries safe only within the payment provider's documented key scope and retention window
+- Reuse a stable key for retries of the same logical operation; reject reuse with a different payload
+- An ambiguous timeout still needs status lookup/webhook reconciliation; a key alone does not guarantee end-to-end exactly-once effects
 
 ### 2. Why Double-Entry Bookkeeping?
 
@@ -315,12 +316,12 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | ----------- | ------------- | ---------- |
 | Luhn Algorithm (Card Validation) | Mod-10 checksum that catches typos at ingress; it is not a fraud signal | Ingress |
 | Double-Entry Bookkeeping | Every movement is a debit and a credit summing to zero; Stripe's Ledger is built on this model | Ledger |
-| Idempotency Keys | Client-supplied key stored with the response, so a retry replays the first result instead of charging twice | API |
+| Idempotency Keys | Stable operation key deduplicates retries within the provider's contract/window; ambiguous outcomes still require status lookup and reconciliation | API |
 | PCI DSS Compliance | Tokenize at ingress and keep card data off application servers to shrink the audit scope | Security |
 | Fraud Detection (ML) | Velocity features plus a risk score, with hard rules only for sanctions and known-bad identifiers | Risk |
 | Reconciliation Service | Daily settlement files compared with the internal ledger; every break becomes a reviewable case | Finance |
 
-| **Transactional outbox** | Ledger row and event commit in one transaction; a relay publishes after commit so no charge is lost | Ledger + events |
+| **Transactional outbox** | Ledger row and event intent commit in one transaction; a relay may publish more than once, so consumers deduplicate and ambiguous PSP outcomes are reconciled | Ledger + events |
 
 ## Common Interview Follow-ups
 

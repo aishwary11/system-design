@@ -11,7 +11,7 @@
 </div>
 
 > [!TIP]
-> **THE PROBLEM** — An ad platform: advertisers bid on keywords, an auction runs per search/session in <100ms with quality scoring and budget pacing, click/billing events flow through exactly-once accounting. The hardest "money" system: zero tolerance for overcharging, plus fraud everywhere.
+> **THE PROBLEM** — An ad platform: advertisers bid on keywords, an auction runs per search/session in <100ms with quality scoring and budget pacing, and click/billing events flow through an auditable, deduplicated ledger with reconciliation. The hardest "money" system: zero tolerance for overcharging, plus fraud everywhere.
 
 ---
 
@@ -44,7 +44,7 @@
 
 ## Overview
 
-Search ads work like this: query arrives → keyword match → retrieve eligible ads → score `bid × quality` → run **generalized second-price (GSP) auction** → serve winner(s) → log clicks → nightly billing. The design core: an auction correct to the cent, a **budget pacer** that spends budgets smoothly across the day, and click-stream accounting that never double-charges.
+Search ads work like this: query arrives → retrieve eligible ads → evaluate auction-time Ad Rank using bid plus quality, context, competition and thresholds → price eligible winners → serve → record billable events → reconcile the auditable ledger. This is a simplified HLD, not a claim that Google Ads is a fixed bid-times-quality GSP auction or that CPC always follows a single second-price formula. The design core is bounded auction latency, budget pacing, and idempotent accounting with correction/reconciliation paths.
 
 ### Key Numbers
 
@@ -64,7 +64,7 @@ Search ads work like this: query arrives → keyword match → retrieve eligible
 - Advertiser sets keywords, bids, creatives, budgets, targeting
 - Auction per query: match → rank → price → serve
 - Budget pacing (daily budget spread across the day, run out ~never early)
-- Click/billing ledger: exactly-once charges per (click_id)
+- Click/billing ledger: deduplicate by stable billable-event identity; reconcile delayed invalid-traffic adjustments and ambiguous events
 - Impression/click analytics for advertisers (delayed, aggregated)
 - Invalid-traffic (fraud) filtering before billing
 
@@ -91,8 +91,8 @@ Search ads work like this: query arrives → keyword match → retrieve eligible
 ### Data Flow
 
 1. Query → Ad Retrieval: keyword match (inverted index over ads, not docs — reuse of search-engine principles), geo/language filters
-2. Scoring: `rank = bid × quality_score` (CTR prediction via ML, landing quality, relevance)
-3. **Auction Svc** runs GSP: sort by rank; winner pays `(next_rank/below-threshold) / quality + ε`
+2. Scoring: illustrative Ad Rank combines bid with quality, auction-time context, expected impact of assets, and applicable thresholds
+3. **Auction Svc** retrieves and orders eligible ads and computes a price under the selected auction policy; do not present a fixed runner-up-price equation as Google's full production formula
 4. Pacer: per-campaign token bucket (spend rate) — campaigns near budget bid less aggressively late in day
 5. Serve → log impression/click events to Kafka (keyed by click_id)
 6. Billing consumers: dedup by click_id (idempotent), fraud filter, ledger append (double-entry), nightly rollups
@@ -104,7 +104,7 @@ Search ads work like this: query arrives → keyword match → retrieve eligible
 | --------- | ------------ | ---------- | ---------- |
 | Ad Retrieval | C++/Rust | Inverted ad index | Scatter-gather |
 | Auction Service | C++ | In-memory campaign cache | GSP + pacer |
-| Click Logger | Go | Kafka → ledger | Exactly-once |
+| Click Logger | Go | Kafka → ledger | At-least-once ingest + event-ID dedupe |
 | Billing Ledger | Java | PostgreSQL (double-entry) | Idempotent append |
 | Fraud Service | Python | Redis + Kafka | Streaming detection |
 | Analytics | Java | ClickHouse | OLAP rollups |
@@ -152,20 +152,20 @@ geo:{region}:topads   -> precomputed candidates for hot queries
 
 ## Key Techniques & Patterns
 
-- **GSP auction**: rank by bid×quality, charge next-highest's price — truthful enough, dominant industry design
+- **Auction ranking/pricing**: bid and quality/context affect eligibility and order; actual CPC depends on auction thresholds, competition and settings—not a universal next-bid formula
 - **Token-bucket pacing**: budget = bucket of tokens per day, spend events consume tokens (reuses rate-limiter math)
 - **Idempotency**: click_id UNIQUE on ledger — duplicate Kafka events never double-charge
-- **Exactly-once semantics**: ledger as the boundary; upstream at-least-once + dedup at sink
+- **Effectively-once ledger posting**: upstream at-least-once + stable event identity, unique dedup at the ledger, immutable adjustments and reconciliation; never promise exactly-once transport
 - **Fraud Ring Detection**: streaming click-graph clustering (reuses fraud-detection doc)
 - **Count-Min Sketch**: heavy-hitter detection for click floods per advertiser
-- **GSP vs VCG (Google, Meta)**: GSP ranks by bid x quality and charges the next price; VCG is truthful in theory but harder to explain to advertisers
+- **Auction families**: GSP and VCG are useful theoretical models, but a real ad auction's quality, context, thresholds, assets and pricing rules must be modeled explicitly; do not infer a proprietary platform's exact algorithm from a simplified example
 - **Quality score as a learned prior**: a relevance model lets a lower bid outrank a higher one, aligning the auction with user value
 
 ---
 
 ## Key Design Decisions
 
-1. **Second-price intuition, GSP mechanics**: charge just enough to beat the runner-up × quality — simple, stable, incentive-compatible enough
+1. **Make pricing policy explicit**: distinguish an educational GSP example from production auction rules, reserve/threshold pricing, context adjustments and billable-event accounting
 2. **Pacer as rate limiter over money**: budgets are enforced probabilistically per auction, not by stopping mid-day
 3. **Ledger is append-only + idempotent**: reconciliation = replay + sum; correctness over convenience
 4. **CTR prediction at auction time**: quality score refreshed in batch (minutes), not per auction — auction stays deterministic and fast
@@ -248,9 +248,10 @@ geo:{region}:topads   -> precomputed candidates for hot queries
 ### GSP Auction + Token-Bucket Pacer
 
 ```js
-// GSP: rank by bid*quality; winner pays (nextRank/ownQuality) + epsilon
+// Educational GSP-style example only; not Google's production auction formula.
 function gspAuction(bids) {
-  // bids: [{advertiser, bid_cents, quality}] (0 < quality <= 10)
+  // bids: [{advertiser, bid_cents, quality}] (0 < quality <= 10).
+  // Production pricing has additional eligibility, context, threshold and policy rules.
   const ranked = [...bids].sort((a, b) => b.bid_cents * b.quality - a.bid_cents * a.quality);
   return ranked.map((b, i) => {
     const next = ranked[i + 1];

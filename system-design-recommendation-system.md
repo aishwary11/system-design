@@ -143,6 +143,7 @@ impressions  (user_id, item_id, ts, position, clicked, watched_pct)
 - **Two-tower embeddings**: user tower & item tower precomputed offline; serving = ANN lookup
 - **Approximate Nearest Neighbor (HNSW)**: sub-5ms retrieval over 100M vectors
 - **Feature store**: online (Redis, <10ms) / offline (lake) parity is the #1 production pitfall
+- **Time-aware evaluation**: split by a global timepoint, not at random, and join features point-in-time; a random or per-user leave-last-out split leaks future interactions and future items into training and inflates offline metrics
 - **Reservoir Sampling**: exploration candidates; **Count-Min Sketch**: frequency capping
 - **Event-Driven Architecture**: impression/click streams power the training loop
 

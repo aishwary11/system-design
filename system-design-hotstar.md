@@ -759,6 +759,8 @@ class ViewTracker {
 
 **Key Takeaway**: Simple tech stack with proven technologies is enough for high scalability. Hotstar uses Go, Kafka, Spark, EMQX - all battle-tested.
 
+**Source scope.** These details come from Hotstar's own engineering posts (roughly 2018–2019, before the JioHotstar merger) and describe that period's stack. Treat the 25M+ concurrency and the EMQX cluster counts as historical capacity evidence, not a present-day topology or a guarantee for a new design.
+
 ### Streaming Architecture Best Practices
 
 1. **Ingest Layer**: RTMP/SRT ingest with automatic fallback
@@ -774,11 +776,11 @@ class ViewTracker {
 
 | Metric | Hotstar Peak | Netflix Peak |
 |--------|-------------|--------------|
-| Concurrent Users | 25M+ (IPL 2023) | 260M subscribers |
+| Concurrent Users | 25.3M concurrent (2019 ICC Cricket World Cup) | 260M+ subscribers (not a concurrency number) |
 | Emojis/sec | 100K+ | N/A |
 | CDN Appliances | N/A | 1000+ in ISPs |
 | Content Library | 100K+ hours | 100K+ titles |
-| Bandwidth | 5+ Tbps peak | 15% of global internet |
+| Bandwidth | 5+ Tbps peak, reported for the 2019 World Cup (not independently published) | ~15% of global downstream traffic (Sandvine, 2018) — an old figure, not current |
 
 ---
 

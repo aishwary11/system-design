@@ -186,7 +186,7 @@ sandbox:lang:{lang}     -> warm microVM pool (per-language)
 
 | Failure | Impact | Mitigation |
 | --------- | -------- | ----------- |
-| Sandbox escape attempt | Security incident | Defense in depth: microVM + seccomp + no-net + egress audit |
+| Sandbox escape attempt | Security incident | Defense in depth: microVM + seccomp + no-net + egress audit. A microVM does not filter its own guest traffic — enforce egress with host firewall or network-policy rules and test that the metadata endpoint is unreachable |
 | Fork bomb / resource abuse | Worker DoS | Process limits + cgroup caps; kill sandbox on breach |
 | Worker dies mid-run | Stuck submission | Lease on submission; requeue after expiry; partial results discarded |
 | Contest traffic spike | Long queues | Surge workers (pre-provisioned, warm); fair scheduling |

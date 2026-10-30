@@ -167,6 +167,8 @@ CREATE TABLE approvals (
 4. **Deployment ≠ release**: deploy to fleet, release via LB/feature-flag % — independent risk levers
 5. **One-click rollback = redeploy previous artifact**: no special code path; rollback is just another rollout
 
+**"Rolling" is not "zero downtime" on its own.** A Kubernetes Deployment replaces Pods at a controlled rate and its default strategy permits up to 25% of Pods to be unavailable during the update (`maxUnavailable: 25%`, `maxSurge: 25%`); what actually keeps traffic served is readiness gating, a PodDisruptionBudget, connection draining and backward-compatible schema changes. AWS CodeDeploy likewise shifts traffic differently per platform (EC2/on-premises, ECS, Lambda), so quote the configuration you tested, not the mechanism's name.
+
 ---
 
 ## Failure Modes & Recovery

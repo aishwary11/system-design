@@ -301,6 +301,8 @@ SADD following:{user_id} {followee_id}
   - Con: Slow timeline reads
 - **Hybrid**: Fan-out-on-write for normal users, on-read for celebrities
 
+**Attribute the design, not the internals.** Twitter's own 2017 infrastructure post documents a timeline cache, Manhattan, Flock and Redis/Memcache as they stood then; it does not publish today's home-timeline policy or a universal celebrity threshold. Treat the follower cut-offs above as illustrative parameters chosen for this design, not as X's current constants.
+
 ### 2. Why Cassandra for Tweets?
 
 - Write-heavy (500M+ tweets/day)

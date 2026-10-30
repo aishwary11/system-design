@@ -314,6 +314,8 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | Graceful Degradation | Fail open for reads, fail closed for auth and payments; a local fallback when Redis is unreachable | Resilience |
 | Composite Policy Chain | One request checked against several limits (global, tenant, route, user); any deny rejects, with the strictest Retry-After | All tiers |
 
+**Name the header standard you mean.** `X-RateLimit-*` is a widely-deployed de facto convention; the IETF `RateLimit-Limit` / `RateLimit-Remaining` / `RateLimit-Reset` fields are an Internet-Draft and are not an adopted RFC. `Retry-After` is defined by HTTP and a 429 is permitted to include it, but neither dictates which algorithm or identity the server uses — that is your policy, so document the window, the key, and whether the limit is shared across regions.
+
 ## Common Interview Follow-ups
 
 **Q: What happens when Redis goes down?**

@@ -103,9 +103,9 @@ How the system is decomposed into independently deployed services:
 | Service | Responsibility | Tech Stack | Pattern |
 | --------- | --------------- | ------------ | --------- |
 | Cache Proxy | Client routing, command parsing | Go/C++ | Connection Pool |
-| Replication Mgr | Primary-replica sync, failover | Go | Raft Consensus |
+| Replication Mgr | Primary-replica sync, failover | Go | Redis replication + Sentinel/Cluster failover (async; not Raft) |
 | Eviction Manager | LRU/LFU/TTL eviction | C++ | Background Worker |
-| Cluster Manager | Hash slot distribution | Go | Gossip Protocol |
+| Cluster Manager | Hash slot distribution and membership | Go | Redis Cluster gossip + configuration epochs |
 | Persistence Svc | RDB snapshots, AOF logs | C++ | WAL |
 | Monitoring Svc | Hit rate, memory, connections | Go, Prometheus | Metrics Export |
 
@@ -163,8 +163,8 @@ The choices that shape this architecture, and why each was made:
 | Decision | Choice | Why |
 | ---------- | -------- | ----- |
 | Eviction Policy | LRU + TTL hybrid | LRU for hot data, TTL for temporary entries |
-| Sharding | Consistent Hashing | Minimizes key movement on node add/remove |
-| Replication | Primary-Replica with Raft | Strong consistency for writes, read scaling |
+| Sharding | Consistent hashing or Redis Cluster hash slots | Redis Cluster routes by 16,384 slots; a generic ring is an alternative design, not its internal partitioning model |
+| Replication | Primary-replica (Redis-style asynchronous replication) | Read scaling and availability; failover may lose acknowledged writes |
 | Persistence | RDB + AOF | RDB for backups, AOF for durability |
 | Protocol | RESP (Redis Serialization) | Simple, fast, widely supported |
 
@@ -175,11 +175,11 @@ What can go wrong in production, and how the system detects and recovers:
 
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
-| Primary node crash | Write unavailability | Promote replica to primary via Raft |
+| Primary node crash | Brief write interruption; recent acknowledged writes may be absent on promoted replica | Sentinel/Cluster promotes a replica; reconcile or refill from the source of truth when lost writes matter |
 | Replica lag | Stale reads | Increase replication priority, rebuild from primary |
 | Memory exhaustion | Eviction storms | Scale horizontally, adjust eviction policy |
-| Network partition | Split-brain | Raft consensus prevents dual writes |
-| Cache stampede | DB overload | Use distributed locks, probabilistic early expiration |
+| Network partition | Some clients may be unable to write; stale reads or lost acknowledged writes are possible across failover | Follow Redis Cluster/Sentinel quorum and reachability rules; treat cache as disposable and never use it as the sole authoritative ledger |
+| Cache stampede | DB overload | Request coalescing, jittered/probabilistic early refresh, and bounded origin concurrency; locks are an optimization, not a correctness boundary |
 
 ---
 
@@ -253,7 +253,7 @@ A: Use write-through (update cache + DB simultaneously), write-behind (update ca
 A: Use distributed locks (only one thread rebuilds cache), probabilistic early expiration (randomly refresh before TTL), or background refresh threads that keep hot keys alive.
 
 **Q: Redis vs Memcached?**
-A: Redis supports data structures (lists, sets, sorted sets), persistence, replication, and pub/sub. Memcached is simpler, faster for pure key-value, and better for horizontal scaling. Use Redis for complex workloads, Memcached for simple caching.
+A: Redis supports data structures (lists, sets, sorted sets), persistence, replication, and pub/sub. Memcached is a pure in-memory cache: servers do not replicate or sync with each other and may evict live items under memory pressure, so losing a node loses that shard's data. Use Redis when you need structures, persistence or replication; use Memcached when a horizontally sharded, disposable cache is exactly what you want.
 
 ---
 

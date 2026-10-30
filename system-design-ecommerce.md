@@ -317,6 +317,8 @@ pending -> confirmed -> shipped -> delivered -> completed
 cancelled  refunded   returned
 ```
 
+**One status column cannot carry five lifecycles.** Order, payment, inventory allocation, fulfillment and refund each advance independently, and partial quantities break the order-level flag outright: an order can be partly shipped, partly refunded and partly still pending at the same instant. Keep a per-line-item fulfillment and refund ledger, and derive the customer-facing status from it instead of overwriting a single enum.
+
 ---
 
 ## Failure Modes & Recovery

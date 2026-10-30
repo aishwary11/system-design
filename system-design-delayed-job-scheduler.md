@@ -414,14 +414,14 @@ while true:
 | **Chaos Engineering** | Litmus Chaos | Resilience testing |
 | **Multi-Tenancy** | Namespace isolation + resource quotas | Tenant isolation |
 
-**Architecture**: Globally distributed. Multi-region scheduling with conflict resolution. Per-tenant queue isolation. Exactly-once semantics with idempotency keys.
+**Architecture**: Globally distributed. Multi-region scheduling with conflict resolution and per-tenant queue isolation. Dispatch is at-least-once; idempotent effects, a durable dedupe record and reconciliation make retries safe within a defined retention window. A key alone cannot make arbitrary external side effects exactly once.
 **Cost**: ~$50K-200K/month
 
 **Key Patterns**:
 
 - **Multi-region scheduling**: Jobs sharded by tenant_id across regions
 - **Conflict resolution**: Two-phase commit for cross-region job state
-- **Exactly-once delivery**: Idempotency keys + dedup in Redis
+- **At-least-once delivery**: Stable job/effect id + durable deduplication; external side effects use provider idempotency where available and reconciliation for ambiguous outcomes
 - **Adaptive backoff**: ML-based retry timing based on failure patterns
 - **Priority queues**: 10 priority levels with weighted fair queuing
 
@@ -432,7 +432,7 @@ while true:
 ### 1. Why Redis ZSET for Delayed Queue?
 
 - O(log N) insertion and range query
-- Atomic ZRANGEBYSCORE + ZREM for precise scheduling
+- Due-job lookup followed by an atomic claim (for example, a Lua script or transactional conditional update); separate `ZRANGEBYSCORE` and `ZREM` calls can race and are not an atomic claim
 - Sub-millisecond latency for polling
 - Natural fit: score = timestamp, member = job_id
 
@@ -455,16 +455,16 @@ while true:
 
 ### 4. Why Lease-Based Execution?
 
-- Prevents duplicate execution on worker crash
+- A lease lets another worker reclaim work after a worker disappears; it does not prevent a duplicate effect if the first worker completed an external action but crashed before acknowledging it
 - Automatic timeout if worker dies (lease expires)
 - Heartbeat extension for long-running jobs
-- Clean handoff between workers
+- Clean handoff between workers; each effect still needs an idempotency key or reconciliation
 
 ### 5. Why Idempotency Keys?
 
 - Network retries can create duplicate job submissions
-- Idempotency ensures exactly-once processing
-- TTL-based dedup window (24 hours)
+- Idempotency makes a repeated effect safe only when the handler and downstream provider honor the same stable key
+- Keep the durable dedupe window longer than the maximum retry/replay horizon; after expiry, reconcile before repeating non-idempotent external effects
 - Optional per-tenant dedup policies
 
 ---
@@ -475,7 +475,7 @@ What can go wrong in production, and how the system detects and recovers:
 | Failure | Impact | Recovery |
 | --------- | -------- | ---------- |
 | Scheduler node crash | Jobs missed | Leader election, job lease TTL, failover |
-| Job execution timeout | Worker hangs | Worker heartbeat, lease expiration, re-queue |
+| Job execution timeout | Worker hangs; the original may still finish after lease expiry | Lease/fencing token on state transitions, idempotent handlers, and reconcile external effects before retry |
 | Queue backlog spike | Jobs delayed hours | Auto-scale workers, priority queuing |
 | Cron parsing bug | Recurring jobs never execute | Input validation, dry-run mode |
 | Duplicate execution | Same job runs twice | Idempotency keys, distributed lock |

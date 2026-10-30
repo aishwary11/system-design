@@ -316,6 +316,8 @@ console.log(g.acquire(Date.now() + 400).cold);    // false — after spawn time,
 
 Real systems add snapshot-restore (Firecracker VM snapshots restore in ~10 ms vs 400 ms boot), tiered pre-warming by function popularity (top-100 functions always warm, tail on demand), and **keep-alive pingers** on cloud FaaS where the provider reaps idle instances at 10–15 min.
 
+**Know which execution model you are quoting.** The 15-minute ceiling applies to ordinary AWS Lambda invocations; Lambda's durable functions run a workflow execution for up to a year by checkpointing and replaying steps, which changes the design from "short request handler" to "orchestrated workflow with determinism rules". Treat process-local memory as a cache that can be frozen, reused or discarded — never as the system of record.
+
 ## Do's & Don'ts
 
 | ✅ Do | ❌ Don't |

@@ -92,8 +92,8 @@ Two-sided marketplace connecting hosts and guests with search, booking, payments
 
 1. Guest searches - Search Service filters by location, dates, price
 2. Pricing ML: dynamic pricing based on demand, season, events
-3. Guest requests booking - Booking Service holds (48h TTL)
-4. Host confirms - Payment Service charges (split payment)
+3. Guest requests booking - Booking Service records a pending request/temporary hold with an explicit, product-defined expiry; a 48-hour host response window is not a universal inventory-hold TTL
+4. Host confirms - Booking transitions to confirmed and the payment flow follows the provider's authorization/capture semantics; reconcile ambiguous outcomes
 5. Review system: bilateral reviews after checkout
 6. Kafka events: booking, cancellation, review - Analytics
 7. Notifications: booking request, confirmation, check-in reminder
@@ -156,7 +156,7 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | ----------- | ------------- | ---------- |
 | Geospatial Indexing | PostGIS + Elasticsearch geo queries | Search Service |
 | Saga Pattern | Distributed booking transactions | Booking Service |
-| Redis Locking | Prevent double-bookings with atomic locks | Booking Service |
+| Authoritative booking transaction | Enforce non-overlapping listing/date reservations in the database; Redis lock is only a contention optimization | Booking Service |
 | Escrow Payment | Hold funds until check-in confirmed | Payment Service |
 | ML Dynamic Pricing | Adjust prices based on demand/season | Pricing Service |
 | Elasticsearch | Full-text search with geo + filters | Search Service |
@@ -172,7 +172,7 @@ The choices that shape this architecture, and why each was made:
 
 | Decision | Choice | Why |
 | ---------- | -------- | ----- |
-| Booking Lock | Redis atomic SET NX | Prevent double-bookings |
+| Booking correctness | Database transaction/constraint on listing and date range; Redis lock is advisory only | Prevent double-bookings |
 | Payment Flow | Escrow with hold | Protect both guest and host |
 | Search Engine | Elasticsearch with geo | Full-text + location queries |
 | Pricing | ML dynamic pricing | Maximize host revenue |
@@ -244,7 +244,7 @@ The metrics that signal system health, with alert thresholds:
 ## Common Interview Follow-ups
 
 **Q: How do you prevent double-bookings?**
-A: Use Redis atomic SET NX to acquire a lock on listing+dates before booking. If lock fails, dates are already booked. Database UNIQUE constraint as final guard.
+A: Claim the listing/date range in the authoritative database with a transaction and a constraint that prevents overlapping active reservations (for PostgreSQL, a range exclusion constraint is one option). A Redis lock can reduce contention but cannot be the correctness boundary: asynchronous failover may lose a lock. If a temporary hold exists, persist its owner, state and expiry and conditionally confirm/release it.
 
 **Q: How does escrow payment work?**
 A: Guest pays at booking time. Funds held in escrow. On check-in, funds released to host minus commission. On cancellation, refund policy determines payout.
@@ -269,9 +269,10 @@ class BookingLock {
     return acquired === "OK";
   }
 
-  async releaseLock(listingId, checkIn, checkOut) {
+  async releaseLock(listingId, checkIn, checkOut, ownerToken) {
     const lockKey = `lock:${listingId}:${checkIn}:${checkOut}`;
-    await this.redis.del(lockKey);
+    // Compare-and-delete the owner token atomically; never delete another holder's lock.
+    await this.redis.eval(RELEASE_IF_OWNER_SCRIPT, { keys: [lockKey], arguments: [ownerToken] });
   }
 }
 ```

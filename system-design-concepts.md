@@ -985,8 +985,8 @@ Pairs with: backpressure (§21) to slow producers before shedding, rate limiting
 
 ## 28. Quorum Reads & Writes
 
-**Problem:** with N replicas, a write must reach enough nodes to be safe and a read must not return stale data — but you can't wait for *all* nodes (one slow node would block everything), and you don't know which are up.
-**Idea:** require **W** nodes to acknowledge a write and **R** nodes to answer a read, with **`W + R > N`** — then any read set and any write set are guaranteed to *overlap*, so every read sees at least one node that acknowledged the write. Same math as majority quorum in consensus (§23): N=3 with W=2, R=2 tolerates 1 node down and still never reads fully stale data.
+**Problem:** replicas can lag or be unavailable, so a read may miss a completed write unless the replication protocol and read policy are chosen deliberately.
+**Idea:** for a fixed set of **N** replicas, if **W** replicas acknowledge each write and a read consults **R** replicas, then **`W + R > N`** guarantees the two replica *sets intersect*. This is a set-intersection fact—not by itself a strong-consistency or linearizability guarantee. That stronger conclusion also depends on which replicas may acknowledge, how reads choose among versions, concurrent-write resolution, membership changes, and whether the read protocol returns the newest acknowledged version. In Dynamo-style systems, concurrent versions may be returned for application reconciliation; consensus systems such as Raft use a different leader/log protocol (§23). With N=3, W=2, R=2 can tolerate one unavailable replica only if the required acknowledgements and a suitable read quorum remain reachable.
 
 ![Quorum Reads & Writes](diagrams/concepts/concept-quorum.svg)
 
@@ -995,22 +995,22 @@ Pairs with: backpressure (§21) to slow producers before shedding, rate limiting
 
 | N | W | R | W + R > N? | Behavior |
 | - | - | - | ---------- | -------- |
-| 3 | 2 | 2 | ✓ | any 1 node down; reads never fully stale — the default |
-| 3 | 3 | 1 | ✓ | writes must hit all nodes; any single read is guaranteed fresh |
-| 3 | 1 | 3 | ✓ | fast writes (any node); reads hit all nodes |
+| 3 | 2 | 2 | ✓ | quorum sets intersect; freshness depends on the read/version protocol |
+| 3 | 3 | 1 | ✓ | quorum sets intersect; a single-replica read still needs a version/freshness rule |
+| 3 | 1 | 3 | ✓ | quorum sets intersect; read all replicas and resolve versions/concurrency |
 | 3 | 1 | 1 | ✗ | overlap NOT guaranteed — reads can be stale |
 
-**Keeping quorums honest when nodes miss writes:**
+**Repair and availability mechanisms (not substitutes for consistency semantics):**
 - **Read repair:** a read that returns a stale value also fetches the fresh one from the overlapping node and writes it back.
 - **Hinted handoff:** a node that was down during a write gets the write stored ("hinted") on a live neighbor and delivered when it returns.
 - **Anti-entropy:** background comparison with Merkle trees (§22) finds and fixes the rest.
 - **Sloppy quorum:** during a partition Cassandra accepts the write from *any* W reachable nodes (even non-owners) and replays later — writes stay available, guarantees weaken.
 
-**The limits:** quorum fixes *stale reads*; it does not order *concurrent writes* — two clients writing different values to overlapping quorums still need versioning (vector clocks §19) or last-writer-wins.
+**The limits:** quorum intersection is not a complete consistency protocol. It does not order concurrent writes, ensure linearizability, or guarantee that a read returns the newest version. Two clients can write different values to intersecting quorums; use causal versioning (for example, vector clocks §19) and an explicit conflict policy, or a consensus/transaction protocol when the contract requires a single linearizable order.
 
 ```js
-// Quorum check + which answers a read can return (N=3, W=2, R=2)
-const guaranteed = 2 + 2 > 3;                 // true → every read sees a fresh value
+// Quorum intersection only (N=3, W=2, R=2); it does not prove linearizability.
+const intersects = 2 + 2 > 3;                  // true → read and write sets overlap
 
 const replicas = [
   { id: "A", up: true,  acked: true  },       // acked the last write
@@ -1019,8 +1019,10 @@ const replicas = [
 ];
 const answers = replicas.filter(r => r.up).slice(0, 2);   // pick R of the up nodes
 const fresh = answers.filter(r => r.acked).length;
-// guaranteed: fresh >= 1 whenever W + R > N — the read can never be all-stale
-if (fresh < answers.length) repairStale(answers);         // read repair fills C
+// Intersection means at least one read replica acknowledged the write,
+// assuming the same replica set and protocol. Version selection/conflicts
+// still determine what the application may safely return.
+if (fresh < answers.length) repairStale(answers);         // illustrative read repair
 ```
 
 ---

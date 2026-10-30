@@ -172,7 +172,7 @@ How the architecture grows from MVP to global scale:
 2. **DynamoDB over RDS**: Serverless, auto-scaling, no DB management
 3. **S3 for Content**: Cheap, durable, unlimited scale for paste text
 4. **CDN for Reads**: 99% read traffic served from edge, <50ms
-5. **Redis TTL for Expiry**: Native TTL support, no polling needed
+5. **Expiry is enforced by the source of truth, not by the cache**: `expires_at` lives in the metadata store and is checked on read, with an object-store lifecycle rule and a cleanup worker deleting the body. A Redis TTL is only a fast-path hint — Redis can evict the key early, and a key that vanishes must never resurrect a paste that should be gone
 
 ---
 

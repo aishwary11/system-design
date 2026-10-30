@@ -165,6 +165,7 @@ CREATE INDEX idx_busy ON events (calendar_id, start_utc, end_utc)
 - **Idempotency**: RSVP updates keyed by (event, user, sequence) to survive retries
 - **RFC 5545 RRULE + IANA tzdb**: expand recurrences over a bounded window and resolve named zones, so DST and political boundary changes do not move meetings
 - **CalDAV (RFC 4791)**: the interop protocol third-party clients use instead of a bespoke sync API
+- **Incremental sync with an opaque cursor**: one full sync, then a persisted sync token; deletions arrive as tombstones, responses may page, and an expired token returns HTTP 410 so the client must re-run a full sync — the contract Google Calendar's API documents
 
 ---
 

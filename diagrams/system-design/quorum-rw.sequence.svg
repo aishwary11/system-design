@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 738" width="900" role="img">
 <rect x="0.5" y="0.5" width="1039" height="737" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-<title>Quorum Write (W=2) then Quorum Read (R=2), with Hinted Handoff</title>
+<title>Quorum Set Intersection (W=2, R=2), Single-Write Example</title>
 <line x1="16" y1="120" x2="1024" y2="120" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3 5"/>
 <text x="12" y="124" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#94a3b8" text-anchor="start">WRITE PATH</text>
 <line x1="16" y1="330" x2="1024" y2="330" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3 5"/>
@@ -53,8 +53,8 @@
 <rect x="507.8" y="536.0" width="24.4" height="18.0" rx="9.0" fill="#ffffff" stroke="#e2e8f0" stroke-width="0.8"/>
 <text x="520.0" y="549.5" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#475569">v3</text>
 <line x1="313.4" y1="592" x2="121.8" y2="592" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arr-base)"/>
-<rect x="143.4" y="572.0" width="148.4" height="18.0" rx="9.0" fill="#ffffff" stroke="#e2e8f0" stroke-width="0.8"/>
-<text x="217.6" y="585.5" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#475569">v3 (quorums intersect)</text>
+<rect x="134.1" y="572.0" width="167.0" height="18.0" rx="9.0" fill="#ffffff" stroke="#e2e8f0" stroke-width="0.8"/>
+<text x="217.6" y="585.5" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#475569">v3 (single-write example)</text>
 <line x1="918.2" y1="628" x2="323.4" y2="628" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arr-base)"/>
 <rect x="574.5" y="608.0" width="92.6" height="18.0" rx="9.0" fill="#ffffff" stroke="#e2e8f0" stroke-width="0.8"/>
 <text x="620.8" y="621.5" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#475569">ack v3 (late)</text>

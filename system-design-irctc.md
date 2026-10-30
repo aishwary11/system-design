@@ -495,6 +495,8 @@ The recurring techniques and patterns this design applies, mapped to where they 
 | Event Sourced PNR Status | Current status folded from an append-only log (booked, waitlisted, cancelled, charted) | Status |
 | Dynamic Fare Calculation | Versioned fare rules over distance, class and quota, auditable per ticket | Fares |
 
+**A PNR is a booking, not one passenger state.** Each passenger carries its own status (confirmed / RAC / waitlist) plus coach and berth, so a single booking can be split across them. Chart preparation is the deadline that resolves remaining waitlist/RAC outcomes, and a fully-waitlisted e-ticket that never confirms is cancelled under that ticket type's refund rules. Model booking-level and passenger-level state machines plus an explicit chart event — not one `status` column on the ticket.
+
 ## Common Interview Follow-ups
 
 **Q: How does Tatkal booking handle 2M concurrent users at 10:00 AM?**

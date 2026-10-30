@@ -16,7 +16,7 @@
 A quick-reference catalog of MongoDB features used in document-oriented backends: documents & collections, CRUD, indexes, the aggregation pipeline, schema design (embedding vs referencing), multi-document transactions, change streams, replication, sharding, time-series collections, and performance fundamentals — each with a small, concrete example.
 
 **MongoDB in one line:** a distributed **document database** — you store JSON-like BSON documents, query them with a rich expression language, and scale horizontally with built-in sharding and replica sets. It trades relational joins for flexible schemas and locality.
-> **Latest stable (Oct 2026): MongoDB 9.0** (Sep 2026; 9.0.2 patch) — up to 2× throughput, 35% faster reads, 30% faster updates, re-enabled WASM-based server-side JS. 8.3 remains supported through Oct 2029. Major releases every ~2 years; minors quarterly.
+> **Latest stable (verified 28 Oct 2026): MongoDB 9.0.4** (13 Oct). MongoDB 9.0 adds a configurable per-operation memory limit and caps concurrently open multi-document transactions; 9.0.4 includes security and reliability fixes. Treat patch releases as important operational updates, not feature versions; see the [official 9.0 release notes](https://www.mongodb.com/docs/manual/release-notes/9.0/) and [current stable-release page](https://www.mongodb.com/docs/manual/release-notes/).
 
 
 ### Document database at a glance

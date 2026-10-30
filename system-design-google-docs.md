@@ -95,7 +95,7 @@ Real-time collaborative document editor with OT/CRDT conflict resolution.
 
 ### Two Inserts at the Same Index
 
-Both editors insert at index 5 against revision 41. Applying both literally interleaves the characters; the server therefore transforms the second operation against the first before assigning it a revision. Every client converges on `catdog` regardless of arrival order — that is the property that matters, not which character ends up first. CRDTs reach the same convergence by making the merge commutative instead of transforming operations, at the cost of larger metadata per character.
+Both editors insert at index 5 against revision 41. In this illustrative server-authoritative OT protocol, the server orders operations, transforms a stale operation against intervening revisions, validates the base revision, and then commits/broadcasts it. Correct convergence depends on the transform functions and protocol invariants; a reconnecting client must resync if the required operation history has been compacted. A sequence CRDT can instead merge concurrent operations under its own identity/order rules, but convergence is not a guarantee that arbitrary edits are lossless or that every transport/protocol is correct. Google Docs' public API documents revision-aware batch updates; it does not establish which internal OT/CRDT algorithm its product currently uses. (See [Google Docs batchUpdate revisions](https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/batchUpdate), [OT convergence conditions](https://arxiv.org/html/1007.5093v1), and [Yjs networking assumptions](https://docs.yjs.dev/).)
 
 ![Concurrent Edits — Why Two Inserts at Index 5 Need Transformation](diagrams/system-design/doc-merge.sequence.svg)
 
@@ -161,10 +161,10 @@ The choices that shape this architecture, and why each was made:
 
 | Decision | Choice | Why |
 | ---------- | -------- | ----- |
-| Conflict Resolution | Operational Transformation | Proven for text editing, deterministic |
+| Conflict Resolution | One specified OT or CRDT protocol | Correctness depends on algorithm invariants, operation identity/order, revision retention and reconnect behavior |
 | Storage Format | JSON operations log | Enables version history and undo |
 | Sync Protocol | WebSocket + heartbeat | Bidirectional real-time sync |
-| Offline Support | Local op queue + merge | Never lose user edits |
+| Offline Support | Local op queue + merge | Survives disconnects; merging offline edits is best-effort and depends on retained history, not a no-loss guarantee |
 | Cursor Presence | Redis pub/sub | Low-latency cursor sharing |
 
 ---
@@ -177,7 +177,7 @@ What can go wrong in production, and how the system detects and recovers:
 | OT Server crash | Sync stops | Save-only mode, queue locally |
 | Database failure | State lost | Restore from op log replay |
 | Redis failure | Presence lost | Rebuild from client heartbeats |
-| Network partition | Split-brain | OT guarantees convergence |
+| Network partition / stale client | Edits cannot be transformed with missing history | Buffer locally; resync a snapshot plus revision, then transform/merge with the chosen protocol; do not claim convergence from OT alone |
 | Op log overflow | Slow lookups | Archive old ops to cold storage |
 
 ---
@@ -204,7 +204,7 @@ The alternatives considered, and which one won and why:
 | Conflict Resolution | OT | CRDT | OT | Proven for text editing |
 | Storage Model | Snapshot | Op Log | Op Log | Version history + undo |
 | Sync Protocol | WebSocket | SSE | WebSocket | Bidirectional, lower latency |
-| Offline Strategy | Conflict-free | LWW | Conflict-free | Never lose edits |
+| Offline Strategy | Conflict-free | LWW | Conflict-free | Preserves concurrent inserts where the protocol is conflict-free; LWW silently discards one edit |
 
 ---
 
@@ -236,8 +236,8 @@ The recurring techniques and patterns this design applies, mapped to where they 
 
 | Technique | Description | Used In |
 | ----------- | ------------- | ---------- |
-| Operational Transformation (OT) | Server transforms concurrent ops against each other (Jupiter-style) so replicas converge without tombstones | Sync |
-| CRDT for Offline | Sequence CRDTs (Yjs, Automerge) for offline edits; Figma uses CRDT-like last-writer-wins for some properties, not one global CRDT | Offline |
+| Operational Transformation (OT) | A server-authoritative protocol transforms concurrent ops; convergence requires correct transforms and valid base revisions/history | Sync |
+| CRDT for Offline | A sequence CRDT can merge concurrent edits when its protocol assumptions hold; the product must still define identity, ordering, deletion, metadata compaction and resync | Offline |
 | WebSocket for Real-time Sync | One persistent socket per document carrying ops and presence together | Transport |
 | Version History (Op Log) | Append-only op log plus periodic snapshots; restore is a new op, never a truncation of history | History |
 | Cursor Presence | Ephemeral and lossy by design; presence is dropped first when the fan-out tier saturates | Presence |
@@ -246,10 +246,10 @@ The recurring techniques and patterns this design applies, mapped to where they 
 ## Common Interview Follow-ups
 
 **Q: How does OT handle conflicting edits on the same position?**
-A: The OT server receives operations in causal order. When two users edit the same position, transformation functions reconcile the operations. Regardless of arrival order, the final document state is identical.
+A: The server accepts an operation against a base revision, transforms it against every intervening operation, then commits it at the next revision. Convergence follows only if the chosen transform functions satisfy the protocol's required properties and the necessary history is available; otherwise reject and resync rather than silently apply a stale edit.
 
 **Q: How do you handle offline editing?**
-A: Operations are queued locally using the same OT engine. On reconnect, pending operations are sent to the server, transformed against concurrent edits, and broadcast to other clients.
+A: Persist a local operation queue and the last acknowledged revision. On reconnect, request changes since that revision; if retained, transform/rebase pending operations, otherwise fetch a snapshot and use the protocol's recovery path. Deduplicate operation IDs and make acknowledgements resumable.
 
 **Q: How do you prevent edit conflicts in formatting?**
 A: Formatting operations are represented as spans with start/end positions. Concurrent overlapping spans are merged, and both formats are applied.

@@ -253,8 +253,9 @@ Level 20: ~1 m cells (street)
 
 ### 1. Why Redis GEO over PostGIS for Hot Queries?
 
-- Redis GEO: O(log N) for GEORADIUS, sub-millisecond
-- PostGIS: O(N) for complex polygon queries, millisecond-range
+- Redis GEO: `GEOSEARCH` is O(N + log M) for N members inside the searched area and M matches — fast because the cell is small, not because the command is O(log N) in the index
+- A radius hit is straight-line distance: road distance and travel time need a routing step, so keep "nearby" and "reachable in 10 minutes" as separate queries
+- PostGIS `ST_DWithin` can use a spatial index, but its units follow the geometry type and SRID (geography defaults to metres on the spheroid)
 - Use Redis for hot nearby searches, PostGIS for complex spatial queries
 
 ### 2. Why S2 Cells over Geohashing?
