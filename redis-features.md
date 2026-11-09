@@ -15,8 +15,8 @@
 
 A quick-reference catalog of Redis features used in real backends: the data structures (String, Hash, List, Set, Sorted Set, Bitmap, Bitfield, HyperLogLog, Geo, Stream — plus module types JSON, Time Series, Vector set, Array, and probabilistic filters), caching patterns, distributed locking, rate limiting, Pub/Sub, reliable queues via Streams, transactions, Lua scripting, persistence, and high availability — each with a small, copy-paste-able `redis-cli` example.
 
-**Redis in one line:** an in-memory, single-threaded data-structure server with sub-millisecond operations, built-in replication/clustering, optional persistence (RDB/AOF), and scripting — the default cache, lock, counter, and lightweight queue in system design.
-> **Latest stable (verified 29 Oct 2026): Redis 8.10.3** (26 Oct), a security patch for a cluster-bus heap overflow on oversized `PUBLISH`/`SPUBLISH` messages. The Redis 8.10 feature line adds compact hashes, `HIMPORT` and JSONPath extensions; the older [8.10 release notes](https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/release-notes/redisce/redisos-8.10-release-notes/) may lag current patch tags. Redis Cluster uses asynchronous primary/replica replication; it is not a strongly consistent Raft cache (see the [cluster specification](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/)).
+**Redis in one line:** an in-memory data-structure server that serializes most command execution, with threaded I/O and background work, built-in replication/clustering, optional persistence (RDB/AOF), and scripting — a common cache, lock, counter, and lightweight queue in system design.
+> **Latest stable (verified 9 Nov 2026): Redis 8.10.3** (26 Oct), a security patch for a cluster-bus heap overflow on oversized `PUBLISH`/`SPUBLISH` messages. The Redis 8.10 feature line adds compact hashes, `HIMPORT` and JSONPath extensions; the older [8.10 release notes](https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/release-notes/redisce/redisos-8.10-release-notes/) may lag current patch tags. Redis Cluster uses asynchronous primary/replica replication; it is not a strongly consistent Raft cache (see the [cluster specification](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/)).
 
 
 ### Where Redis sits in a system
@@ -352,7 +352,7 @@ return 0              -- deny
 ---
 
 ## 5. Counters & Analytics
-Atomic counters are Redis’s bread and butter - every INCR is race-free because the server is single-threaded:
+Atomic counters are Redis’s bread and butter: each `INCR`/`INCRBY` command executes as one indivisible operation, so competing client commands cannot interleave with its update:
 
 ```bash
 INCRBY user:42:points 10           # points
@@ -367,7 +367,7 @@ EXPIRE stats:video:9:minute:1725300060 86400
 INCR global:order_seq
 ```
 
-Redis counters are atomic because the server is single-threaded — **no `INCR` race condition ever**.
+Redis counters are atomic at the command level — **no read-modify-write race inside `INCR`**.
 
 ---
 
@@ -434,7 +434,7 @@ XPENDING order:events workers
 XAUTOCLAIM order:events workers consumer-1 60000 0
 ```
 
-Group semantics make it a **competing-consumers queue** (each message to one worker), while plain `XREAD` is fan-out. Messages live until trimmed (`XTRIM`/`MAXLEN`), so slow consumers never lose data — they just lag.
+Group semantics make it a **competing-consumers queue** (each message to one worker), while plain `XREAD` is fan-out. Messages remain available until trimmed or deleted; a slow consumer can lose access to entries if retention trims them before it processes them. Size retention for the maximum expected lag and monitor pending entries.
 
 ---
 
@@ -510,7 +510,7 @@ Typical: balance transfers, stock decrement+history in one shot, "do X only if Y
 
 ## 12. Lua Scripting — Atomic Custom Logic
 
-`EVAL` runs a Lua script server-side. Because Redis is single-threaded, the whole script executes **atomically** — the standard tool for lock release, rate limiting, and inventory checks.
+`EVAL` runs a Lua script without interleaving other client commands, so its state changes are observed **atomically** — the standard tool for lock release, rate limiting, and inventory checks. Scripts block command processing while they run, so keep them short.
 
 ```lua
 -- Atomic inventory: decrement only if stock remains >= 0
@@ -754,7 +754,7 @@ Caches fail in predictable ways - here are the classic traps and how to avoid th
 - [Rate Limiter](system-design-rate-limiter.md) — token bucket and sliding window in Lua
 - [Delayed Job Scheduler](system-design-delayed-job-scheduler.md) — sorted-set timing wheels and leases
 - [Leaderboard (Ranked Counters)](system-design-leaderboard.md) — sorted sets and top-K merges
-- [Key-Value Store (DynamoDB)](system-design-key-value-store.md) — TTL, persistence, and cluster trade-offs
+- [Distributed Key-Value Store (Dynamo-style)](system-design-key-value-store.md) — TTL, persistence, and cluster trade-offs
 - [PostgreSQL Features Guide](postgresql-features.md)
 - [Kafka Features Guide](kafka-features.md)
 

@@ -71,10 +71,10 @@ A real-time search autocomplete system providing instant suggestions as users ty
 
 | Metric | Value |
 | :--- | :--- |
-| **queries per day** | 100M+ |
-| **<** | 100ms response time |
-| **unique search terms** | 10M+ |
-| **QPS at peak** | 100K+ |
+| **Queries per day** | 100M+ (illustrative workload assumption) |
+| **Latency target** | < 100ms |
+| **Unique search terms** | 10M+ (illustrative index-size assumption) |
+| **Peak QPS** | 100K+ (illustrative capacity assumption) |
 
 ---
 
@@ -96,7 +96,7 @@ A real-time search autocomplete system providing instant suggestions as users ty
 | **Throughput** | 100K+ queries/sec |
 | **Availability** | 99.99% uptime |
 | **Consistency** | Eventually consistent |
-| **Scale** | 10B+ queries, 1M+ prefixes |
+| **Scale** | Size the index and query capacity from measured traffic and vocabulary |
 
 ---
 

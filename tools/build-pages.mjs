@@ -19,6 +19,7 @@ const CATEGORIES = [
   { dir: 'system-design', label: 'System Designs', icon: '🏗️', blurb: 'End-to-end designs: feed ranking, delivery routing, leaderboards, search, ads, and more' },
   { dir: 'features',      label: 'Technology Guides', icon: '🧰', blurb: 'At-a-glance architecture of Redis, Kafka, PostgreSQL, Kubernetes, agentic AI, and the cloud' },
   { dir: 'concepts',      label: 'Core Concepts', icon: '🧠', blurb: 'Foundational patterns: caching, consistency, distribution' },
+  { dir: 'reference',     label: 'Reference', icon: '📐', blurb: 'Reusable architecture templates and reference diagrams' },
 ];
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -39,11 +40,14 @@ for (const file of specs) {
   const spec = JSON.parse(readFileSync(join(ROOT, 'diagrams', 'json', file), 'utf8'));
   const out = spec.meta?.output;
   if (!out) continue;
-  const cat = CATEGORIES.find((c) => existsSync(join(ROOT, 'diagrams', c.dir, out)));
+  const isTemplate = file === 'template.architecture.json';
+  const cat = isTemplate
+    ? CATEGORIES.find((c) => c.dir === 'reference')
+    : CATEGORIES.find((c) => existsSync(join(ROOT, 'diagrams', c.dir, out)));
   if (!cat) { unmapped += 1; continue; }
   groups.get(cat.dir).push({
     title: spec.meta.title || file.replace('.architecture.json', ''),
-    href: `diagrams/${cat.dir}/${out}`,
+    href: isTemplate ? `diagrams/${out}` : `diagrams/${cat.dir}/${out}`,
   });
 }
 

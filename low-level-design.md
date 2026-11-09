@@ -904,7 +904,7 @@ The preparation document that prompted this guide lists 25 prompts. Twelve are p
 | 14 | Resumable file download manager | [File Storage](system-design-file-storage.md) — multipart upload, presigned parts, and a resumable-download path (`Range`/`If-Range`, durable bitmap, atomic rename); [RFC 9110 §13.1.5](https://www.rfc-editor.org/rfc/rfc9110.html#section-13.1.5) | Covered |
 | 15 | Internal metrics collection system | [Alerting & Monitoring](system-design-alerting.md) + [Observability Pipeline](system-design-observability-pipeline.md) | Covered |
 | 16 | Distributed job scheduler | [Delayed Job Scheduler](system-design-delayed-job-scheduler.md) — queues, retries, DLQ, worker pool | Covered |
-| 17 | Distributed key-value store | [Key-Value Store (DynamoDB)](system-design-key-value-store.md) | Covered |
+| 17 | Distributed key-value store | [Distributed Key-Value Store (Dynamo-style)](system-design-key-value-store.md) | Covered |
 | 18 | Distributed cache | [Distributed Cache (Redis)](system-design-distributed-cache.md) | Covered |
 | 19 | Distributed message queue | [Kafka](kafka-features.md) + [RabbitMQ](rabbitmq-features.md) | Covered |
 | 20 | Large-file transfer service | [File Storage](system-design-file-storage.md) — chunking, checksums, multipart commit | Covered |

@@ -961,8 +961,8 @@ Clients -> Job Acceptor -> HBase (durable store)
 
 **Effectively-Once Execution**:
 
-- True exactly-once is impossible in distributed systems
-- Achieve via at-least-once delivery + idempotent effect
+- Exactly-once delivery across independent systems is not generally available without a shared transaction or protocol
+- Use at-least-once delivery plus an idempotent effect as the practical contract
 - Job carries caller's idempotency key
 - Repeat execution checks key before doing anything (safe no-op)
 

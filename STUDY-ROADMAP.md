@@ -30,7 +30,7 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 2. [Week 2 — Data & Messaging (state, streams, and consistency)](#week-2--data--messaging-state-streams-and-consistency)
 3. [Week 3 — Delivery & Infrastructure (geo, video, money, deploys)](#week-3--delivery--infrastructure-geo-video-money-deploys)
 4. [Week 4 — Interview simulation (hard docs, tips, mock loops)](#week-4--interview-simulation-hard-docs-tips-mock-loops)
-5. [Complete Coverage Map — all 56 designs](#complete-coverage-map--all-58-designs)
+5. [Complete Coverage Map — all 58 designs](#complete-coverage-map--all-58-designs)
 6. [Rules that make it stick](#rules-that-make-it-stick)
 7. [Hidden Tips & Tricks](#hidden-tips--tricks)
 8. [Do's & Don'ts](#dos--donts)

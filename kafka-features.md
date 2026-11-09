@@ -16,7 +16,7 @@
 A quick-reference catalog of Apache Kafka features used in event-driven backends: topics, partitions, offsets, ordering, producers, consumer groups, replication, retention & compaction, delivery semantics, exactly-once, Kafka Connect, Kafka Streams, Schema Registry, and the classic use cases (event sourcing, CDC, log aggregation, outbox) — each with a small, concrete example.
 
 **Kafka in one line:** a distributed, partitioned, replicated **commit log** — you publish immutable events to topics; consumers read them in order, at their own pace, and can replay from any point in history. It is the backbone of event-driven architectures.
-> **Latest stable (verified 28 Oct 2026): Kafka 4.4.0** (22 Oct). KRaft-only since 4.0; 4.4 adds dead-letter queues for share groups, transactional state stores in Kafka Streams, and opt-in asynchronous bootstrap DNS resolution. Review the [4.4 release notes](https://kafka.apache.org/blog/2026/10/22/apache-kafka-4.4.0-release-announcement/) and upgrade guidance before rollout; a feature's availability does not imply it is enabled or safe for every cluster.
+> **Latest stable (verified 9 Nov 2026): Kafka 4.4.0** (22 Oct). KRaft-only since 4.0; 4.4 adds dead-letter queues for share groups, transactional state stores in Kafka Streams, and opt-in asynchronous bootstrap DNS resolution. Review the [4.4 release notes](https://kafka.apache.org/blog/2026/10/22/apache-kafka-4.4.0-release-announcement/) and upgrade guidance before rollout; a feature's availability does not imply it is enabled or safe for every cluster.
 
 
 ### Event streaming at a glance
@@ -219,8 +219,8 @@ How many times may a record be processed? Pick your delivery contract per pipeli
 | Semantics | What it means | How to get it |
 | --------- | ------------- | ------------- |
 | **At-most-once** | A record may be lost, never duplicated | auto-commit *before* processing; `acks=0` producer |
-| **At-least-once** | A record is never lost, may be processed twice | commit *after* processing (the Java example above). **Default & most common.** |
-| **Exactly-once** | Processed once, end-to-end effect | idempotent producer + transactions (§7) + idempotent consumer (make the *effect* idempotent) |
+| **At-least-once** | A record is delivered one or more times; duplicates are possible. No-loss depends on durable production, retention, and retry/commit configuration. | commit *after* processing (the Java example above). **Common default.** |
+| **Exactly-once effect** | One observable effect within a defined transactional or idempotency boundary | Kafka idempotent producer + transactions (§7) for Kafka-to-Kafka flows; external sinks need an atomic offset/write transaction or idempotent/deduplicated effects |
 
 The consumer side decides duplicates: crash between `process()` and `commitSync()` → on restart the same record is redelivered. So even with `enable.idempotence=true` on the producer, downstream **effects** must be idempotent (e.g. upsert by event id, dedupe table, or store offsets + result in one transaction).
 
@@ -251,7 +251,7 @@ Consumers opt in to only seeing committed data with `isolation.level=read_commit
 Each partition has replicas across brokers; one is the **leader** (all reads/writes), the rest are **followers** replicating from it. The **ISR** (in-sync replicas) set = replicas caught up with the leader.
 
 - `acks=all` + `min.insync.replicas=2` → a write is committed only when the leader **and** at least one follower acked it. If too few replicas are healthy, writes are rejected (fail-stop, no silent loss).
-- Broker crash → a follower in the ISR is elected leader; committed data is never lost.
+- Broker crash → an eligible in-sync follower can be elected leader, preserving acknowledged records replicated to it. This assumes the configured ISR/durability settings hold and does not protect against losing every replica or its storage.
 - **Unclean leader election** (allowing a lagging replica to become leader) trades durability for availability — off by default for good reason.
 
 ```bash
@@ -261,7 +261,7 @@ kafka-topics.sh --bootstrap-server localhost:9092 \
 # Producer pairs this with: acks=all
 ```
 
-Replication factor 3 with `min.insync.replicas=2` survives a single-broker loss without losing a single committed record.
+With replication factor 3, `acks=all`, `min.insync.replicas=2`, and unclean leader election disabled, a single broker loss can be tolerated without losing records acknowledged by at least two in-sync replicas. This is not protection against correlated loss of those replicas or their storage.
 
 ---
 

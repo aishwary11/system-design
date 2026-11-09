@@ -1569,7 +1569,7 @@ One table serves every access pattern because each query maps to one key shape �
 
 *Every client query maps to one key shape in the same table (or a GSI for the inverse lookup); a stream projects changes into read models for the shapes a KV store can't serve (solid = query paths, dashed = change sync).*
 
-**Pairs with:** indexing (§50) is how a relational DB claims a query shape; CQRS (§6) is what happens when one model can't serve both read and write shapes; sharding (§1) picks partition keys *from* access patterns; the DynamoDB-style design lives in `system-design-key-value-store.md`.
+**Pairs with:** indexing (§50) is how a relational DB claims a query shape; CQRS (§6) is what happens when one model can't serve both read and write shapes; sharding (§1) picks partition keys *from* access patterns; the Dynamo-style design lives in `system-design-key-value-store.md`.
 
 ---
 
@@ -2450,7 +2450,7 @@ Expected: `winner: Song B starts at frame 120` by a landslide — the true (song
 ## Related System Design Documents
 
 - [Distributed Cache (Redis)](system-design-distributed-cache.md) — consistent hashing, LRU, bloom, gossip in practice
-- [Key-Value Store (DynamoDB)](system-design-key-value-store.md) — vector clocks, quorum, gossip
+- [Distributed Key-Value Store (Dynamo-style)](system-design-key-value-store.md) — vector clocks, quorum, gossip
 - [Rate Limiter](system-design-rate-limiter.md) — token bucket, sliding window implementations
 - [Payment System (Stripe)](system-design-payment-system.md) — idempotency, saga
 - [E-Commerce (Amazon)](system-design-ecommerce.md) — sharding, caching, outbox

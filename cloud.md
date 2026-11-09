@@ -391,7 +391,7 @@ The sections above are the daily-driver core. This is the **long tail**, organiz
 
 | AWS | GCP | Azure | Pick it when |
 | :-- | :-- | :-- | :-- |
-| **SQS** (standard vs FIFO) | — | **Queue Storage** | Dumb reliable buffer; FIFO when order+exactly-once matter (max 300 TPS batching) |
+| **SQS** (standard vs FIFO) | — | **Queue Storage** | Reliable buffer; FIFO orders within a message group and deduplicates sends for 5 minutes. Default FIFO throughput is 300 API requests/s per partition (up to 3,000 messages/s batched); high-throughput quotas vary by Region and scale beyond this. Consumer effects still need idempotency |
 | **SNS** (topics; fan-out; mobile push) | **Pub/Sub** (the GCP default) | **Service Bus** (topics+sessions, DLQ, AMQP) | Pub/sub fan-out; Service Bus when you need message sessions, transactions, geo-DR |
 | **EventBridge** | **Eventarc** | **Event Grid** | Fine-grained event routing/filtering (not payloads-in-flight) |
 | **MSK** (Kafka) / MSK Serverless | **Managed Kafka / Confluent** | **Event Hubs** (Kafka protocol endpoint!) | Kafka ecosystem; Event Hubs if you want Kafka API on Azure |

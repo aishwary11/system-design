@@ -74,7 +74,7 @@ Music streaming service with personalized playlists, podcast hosting, social fea
 | **users (220M+ premium)** | 600M+ |
 | **tracks** | 100M+ |
 | **podcasts** | 5M+ |
-| **Sub-** | 200ms audio start |
+| **Audio-start latency target** | < 200 ms (design target; varies by client, network and playback state) |
 | **playlist saves** | 4B+ |
 
 ---

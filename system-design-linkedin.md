@@ -11,11 +11,11 @@
 </div>
 
 > [!TIP]
-> **THE PROBLEM** — Professional networking platform with job matching, feed, messaging, learning, and recruiter tools for 900M+ members.
+> **THE PROBLEM** — A professional network with job matching, feed, messaging, learning, and recruiter tools.
 
 ## Start here (plain English)
 
-**What it does.** A professional network with a feed, connections, jobs, messaging, and recruiter search for 900M+ members.
+**What it does.** A professional network with a feed, connections, jobs, messaging, and recruiter search.
 
 **Think of it like.** A convention center where everyone wears a name badge: the value is in who is connected to whom, and the graph is the product.
 
@@ -65,14 +65,15 @@
 
 ## Overview
 
-Professional networking platform with job matching, feed, messaging, learning, and recruiter tools for 900M+ members.
+Professional networking platform with job matching, feed, messaging, learning, and recruiter tools. The workload figures below are illustrative design assumptions, not current LinkedIn production metrics.
 
 ### Key Numbers
 
 | Metric | Value |
 | :--- | :--- |
-| **members, 55M+ companies, 20M+ job postings** | 900M+ |
-| **Feed P** | 99 < 200ms, 10M+ messages/day |
+| **Feed latency target** | p99 < 200ms |
+| **Feed event volume** | 10M/day (illustrative assumption) |
+| **Member, company, and job-posting counts** | Not specified; verify from current public reporting |
 
 ---
 
@@ -92,9 +93,9 @@ Professional networking platform with job matching, feed, messaging, learning, a
 | Attribute | Target |
 | :--- | :--- |
 | **Latency** | Feed < 200ms, Search < 100ms |
-| **Throughput** | 10M+ concurrent users |
+| **Throughput** | Size from measured peak request rates; do not infer it from account count |
 | **Availability** | 99.99% |
-| **Scale** | 900M+ members |
+| **Scale** | Large social graph; size storage and fan-out from measured workload |
 
 ---
 

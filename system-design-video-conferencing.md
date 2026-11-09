@@ -74,7 +74,7 @@ A real-time video conferencing platform supporting video/audio calls, screen sha
 | **daily meeting participants** | 300M+ |
 | **concurrent meeting participants** | 10M+ |
 | **concurrent meetings** | 100K+ |
-| **Sub-** | 200ms latency for real-time communication |
+| **One-way media latency target** | < 200 ms (illustrative end-to-end target; measure audio and video paths separately) |
 
 ---
 

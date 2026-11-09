@@ -258,13 +258,13 @@ db.ledger.find({ _id: x }).readConcern("majority");             // never read ro
 
 | Read preference | Use |
 | :--- | :--- |
-| `primary` | strong consistency (default) |
+| [`primary`](https://www.mongodb.com/docs/manual/reference/read-preference/#mongodb-readpref-primary) | Reads from the primary (default); not by itself a guarantee of linearizable or majority-committed reads |
 | `primaryPreferred` | primary if alive |
 | `secondary` | analytics / caches (may be stale) |
 | `secondaryPreferred` | read-heavy apps across regions |
 | `nearest` | geo-latency-sensitive reads |
 
-**Write concern:** `w: "majority"` = durable across failover (combine with `readConcern: "majority"` for causal consistency).
+**Write concern:** `w: "majority"` waits for acknowledgement from a voting majority, protecting acknowledged writes from ordinary primary failover. Crash durability also depends on journaling and deployment settings; use the documented `j` behavior for your version. Combine majority read and write concerns in a causally consistent session when that guarantee is required.
 
 ---
 
@@ -389,7 +389,7 @@ See also: document-vs-relational trade-off tables in those docs' **Trade-off Ana
 - [Discord](system-design-discord.md) — high-volume message buckets and sharded collections
 - [Fraud Detection](system-design-fraud-detection.md) — the streaming event store behind the ring detector
 - [Notification System](system-design-notification-system.md) — per-user inbox documents and TTL cleanup
-- [Key-Value Store (DynamoDB)](system-design-key-value-store.md) — what you give up when you drop the document model
+- [Distributed Key-Value Store (Dynamo-style)](system-design-key-value-store.md) — what you give up when you drop the document model
 
 ## 17. Hidden Tips & Tricks
 

@@ -198,7 +198,7 @@ disk → page cache → NIC      (DMA + scatter-gather; zero user copies)
 - Cross-socket NIC/IRQ steering hurts; bio-commerce latency percentile cliffs often trace to NUMA remote hits
 - On cloud VMs (usually one socket / vCPU-sliced), this matters less — but huge fleets on bare metal (Kafka, ClickHouse, Redis) tune it hard
 
-**Why Redis is single-threaded (mostly):** the data set fits L3, one thread avoids locking + context switches, and epoll provides concurrency. The bottleneck is memory/network, not CPU (§`redis-features.md`).
+**Redis's event loop is not the whole threading story:** most command execution is serialized, while nonblocking I/O multiplexing handles many sockets and I/O/background work can use threads. This avoids command-level locking for ordinary operations, but does not mean every Redis task is single-threaded or that the data set must fit in L3. Latency depends on workload, CPU, memory, network and persistence settings ([Redis client handling](https://redis.io/docs/latest/develop/reference/clients/); §`redis-features.md`).
 
 ---
 
@@ -258,7 +258,7 @@ epoll readiness multiplexing + non-blocking work: one thread serves thousands of
 ## Related System Design Documents
 
 - [Distributed Cache (Redis)](system-design-distributed-cache.md) — why an in-memory store is fast (page cache, syscalls)
-- [Key-Value Store (DynamoDB)](system-design-key-value-store.md) — fsync, WAL, and durability trade-offs
+- [Distributed Key-Value Store (Dynamo-style)](system-design-key-value-store.md) — fsync, WAL, and durability trade-offs
 - [LLM Inference (Production Serving)](system-design-llm-inference.md) — GPU scheduling, memory bandwidth, paging
 - [Online Judge](system-design-online-judge.md) — namespaces, cgroups, and seccomp for sandboxing
 - [Stock Exchange (Matching Engine)](system-design-stock-exchange.md) — CPU pinning, cache locality, kernel bypass

@@ -96,11 +96,11 @@ Design a real-time fraud-detection platform for a payments / fintech company (St
 
 | Attribute | Target |
 | :--- | :--- |
-| **p** | 99 scoring < 150 ms; ingest path separates from scoring path (backpressure, no drop) |
+| **Scoring latency** | p99 < 150 ms; ingest path separates from scoring path (backpressure, no drop) |
 | **Availability** | 99.99% — **fail-open** (approve + alert) or **fail-closed** per rule tier, decided explicitly |
-| **False-positive rate <** | 0.5% of good traffic; every decision fully explainable for disputes |
-| **Rules deploy in <** | 1 min without deploy; models deploy without downtime |
-| **Event immutability for compliance (PCI-DSS adjacent audit);** | 7-year decision retention |
+| **False-positive rate** | < 0.5% of good traffic (target; measure by segment); decisions retain reason codes and model/rule versions for disputes |
+| **Rules deployment latency** | < 1 min without application deploy; model deployment without downtime (design targets) |
+| **Decision audit retention** | 7 years (policy assumption; confirm applicable legal and contractual requirements) |
 
 ## High-Level Architecture
 

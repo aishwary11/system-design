@@ -74,7 +74,7 @@ Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporti
 | **registered users** | 400M+ |
 | **concurrent live viewers during peak events** | 25M+ |
 | **hours of content** | 100K+ |
-| **Sub-** | 3-second live stream latency |
+| **Live stream latency target** | < 3 seconds (design target; varies by protocol, player buffer and network) |
 
 ---
 

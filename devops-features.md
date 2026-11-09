@@ -45,9 +45,9 @@ A quick-reference catalog of the DevOps toolchain behind every design in this re
 13. [The Golden Pipeline (Reference Flow)](#13-the-golden-pipeline-reference-flow)
 14. [DevOps in This Repo's Designs](#14-devops-in-this-repos-designs)
 15. [Key Takeaways](#15-key-takeaways)
+16. [Version Matrix (verified 9 November 2026)](#16-version-matrix-verified-9-november-2026)
 17. [Hidden Tips & Tricks](#17-hidden-tips--tricks)
 18. [Do's & Don'ts](#18-dos--donts)
-16. [Version Matrix (verified 29 October 2026)](#16-version-matrix-verified-29-october-2026)
 
 </details>
 
@@ -119,7 +119,7 @@ spec:
 
 The mental model: a **pod** is the unit of scheduling (containers sharing localhost), a **Deployment** keeps N replicas alive and rolls them forward revision by revision, and a **Service** is the stable virtual IP fronting the ever-changing pod set. `kubectl rollout undo deployment/api` is your panic button — revisions are kept for exactly this.
 
-> **Latest stable (verified 29 Oct 2026): Kubernetes 1.37.2.** The 1.37 release stabilizes resilient watch-cache initialization, reducing API-server load spikes during startup and recovery. The upstream release-history page lagged the [1.37.2 release tag](https://github.com/kubernetes/kubernetes/releases/tag/v1.37.2); managed-cluster availability and supported upgrade paths vary by provider, so verify them before rollout. ([Kubernetes releases](https://github.com/kubernetes/kubernetes/releases) · [1.37 release notes](https://kubernetes.io/blog/2026/08/26/kubernetes-v1-37-release/))
+> **Latest stable (verified 9 Nov 2026): Kubernetes 1.37.2.** The 1.37 release stabilizes resilient watch-cache initialization, reducing API-server load spikes during startup and recovery. The upstream release-history page lagged the [1.37.2 release tag](https://github.com/kubernetes/kubernetes/releases/tag/v1.37.2); managed-cluster availability and supported upgrade paths vary by provider, so verify them before rollout. ([Kubernetes releases](https://github.com/kubernetes/kubernetes/releases) · [1.37 release notes](https://kubernetes.io/blog/2026/08/26/kubernetes-v1-37-release/))
 
 ## 3. Scheduling & Scaling — Requests, Limits, HPA
 
@@ -368,30 +368,30 @@ Every gate answers one question: *what is the cheapest place this defect could h
 - **Observability is a design input, not an afterthought**: metrics/logs/traces designed in from day one (§38 tracing, §45 SLOs).
 
 
-## 16. Version Matrix (verified 29 October 2026)
+## 16. Version Matrix (verified 9 November 2026)
 
 Pin your mental model to current releases — "which version?" is a real interview question, and stale versions in a design doc are a red flag. This is an upstream snapshot, not a blanket upgrade recommendation; verify provider channels and compatibility before quoting.
 
-| Tool | Latest stable (Oct 2026) | What changed recently |
+| Tool | Latest stable (Nov 2026) | What changed recently |
 | :--- | :--- | :--- |
 | Kubernetes | [**1.37.2**](https://github.com/kubernetes/kubernetes/releases/tag/v1.37.2) (28 Oct) | 1.37 stabilizes resilient watch-cache initialization; release-history docs lagged this patch tag |
-| Docker Engine | [**29.9.2**](https://docs.docker.com/engine/release-notes/29/) (20 Oct) | Security patch rejects compromised certificate chains; do not confuse Engine with Docker Desktop versioning |
+| Docker Engine | [**29.9.3**](https://docs.docker.com/engine/release-notes/29/) (3 Nov) | Security fixes across Engine, SwarmKit and BuildKit; do not confuse Engine with Docker Desktop versioning |
 | Redis | [**8.10.3**](https://github.com/redis/redis/releases/tag/8.10.3) (26 Oct) | Security patch fixes a >4GB `PUBLISH`/`SPUBLISH` cluster-bus heap overflow; update exposed clusters promptly |
 | Apache Kafka | [**4.4.0**](https://kafka.apache.org/blog/2026/10/22/apache-kafka-4.4.0-release-announcement/) (22 Oct) | Share-group DLQs, Kafka Streams transactional state stores, optional async bootstrap DNS resolution |
 | PostgreSQL | [**18.6**](https://www.postgresql.org/support/versioning/) (25 Sep); **19 RC 1** (15 Oct) is pre-release; GA planned 19 Nov | 18's async I/O, UUIDv7 and OAuth 2.0 are major-version features; 18.6 is a maintenance release. Use the current 18.x minor in production |
 | MongoDB | [**9.0.4**](https://www.mongodb.com/docs/manual/release-notes/9.0/) (13 Oct) | 9.0 adds per-operation memory bounds and limits concurrently open multi-document transactions |
-| Elasticsearch | [**9.5.5**](https://www.elastic.co/docs/release-notes/elasticsearch#elasticsearch-9.5.5-release-notes) (6 Oct) | Patch release includes security fixes and caps `multi_terms` aggregation to 128 fields; 9.5-series features have distinct maturity levels |
+| Elasticsearch | [**9.5.6**](https://www.elastic.co/docs/release-notes/elasticsearch) | Patch release includes security fixes; 9.5-series features have distinct maturity levels |
 | RabbitMQ | [**4.4.0**](https://www.rabbitmq.com/docs/download) (20 Oct) | Quorum queues add delayed/deferred messages and AZ-aware placement; see [4.4 highlights](https://www.rabbitmq.com/blog/2026/10/20/rabbitmq-4.4-release) |
-| Argo CD | **3.5.6 stable** ([releases](https://github.com/argoproj/argo-cd/releases)); 3.6.0-rc4 is prerelease | Never treat an RC as latest stable; read the upgrade notes before minor/major changes |
+| Argo CD | **3.6.1 stable** ([release](https://github.com/argoproj/argo-cd/releases/tag/v3.6.1)) | Read the upgrade notes before minor/major changes; do not install prereleases as stable |
 | Terraform | [**1.17.1**](https://github.com/hashicorp/terraform/releases/tag/v1.17.1) (28 Oct) | 1.17.0 added variables/locals in provider requirements, `-minimal-refresh` and Terraform Policy GA; 1.17.1 is the current patch |
-| Prometheus | [**3.15.1**](https://prometheus.io/download/) (21 Oct) | Current stable line; 3.13.5 is maintained LTS |
+| Prometheus | [**3.16.0**](https://github.com/prometheus/prometheus/releases/tag/v3.16.0) (4 Nov) | Current stable line; 3.13.5 is maintained LTS |
 | Grafana | [**13.3.0**](https://github.com/grafana/grafana/releases) (27 Oct) | Latest release includes alerting/config API work and security fixes |
 | Grafana Loki | [**3.7.9**](https://github.com/grafana/loki/releases) (20 Oct) | Patch includes WAL ordering and request-size/security fixes |
-| OpenTelemetry Collector | [**0.164.0**](https://github.com/open-telemetry/opentelemetry-collector-releases/releases) (26 Oct) | Core adds filelog, resource detection and transform components; Collector version is not the SDK version |
-| Trivy | [**0.76.1**](https://github.com/aquasecurity/trivy/releases) (21 Oct) | Security mitigation for the eMudhra CA incident; 0.76.0 adds Echo Maven/npm package scanning |
+| OpenTelemetry Collector | [**0.165.0**](https://github.com/open-telemetry/opentelemetry-collector-releases/releases) | 0.164.0 added filelog, resource detection and transform components to core; Collector version is not the SDK version |
+| Trivy | [**0.76.2**](https://github.com/aquasecurity/trivy/releases) | Security fixes in the bundled Alpine image and Go dependencies; redeploy images to apply them |
 | SonarQube Community Build | [**26.10.0.133078**](https://community.sonarsource.com/t/sonarqube-community-build-26-10-0-133078-released/189838) (14 Oct) | Adds core/extended/comprehensive quality profiles; Server LTA is a separate release channel |
 
-*Version snapshot checked 29 Oct 2026 against linked official release/download pages. “Latest” is not a compatibility recommendation: pin exact versions in production, follow each project’s support policy, validate plugins/operators/managed-service channels, and stage upgrades with rollback and schema compatibility in mind. GitHub Actions examples pin the verified releases `actions/checkout@v7.0.1` and `actions/setup-node@v7.1.0`; see [checkout releases](https://github.com/actions/checkout/releases) and [setup-node releases](https://github.com/actions/setup-node/releases) before updating.*
+*Version snapshot checked 9 Nov 2026 against linked official release/download pages. “Latest” is not a compatibility recommendation: pin exact versions in production, follow each project’s support policy, validate plugins/operators/managed-service channels, and stage upgrades with rollback and schema compatibility in mind. GitHub Actions examples pin the verified releases `actions/checkout@v7.0.1` and `actions/setup-node@v7.1.0`; see [checkout releases](https://github.com/actions/checkout/releases) and [setup-node releases](https://github.com/actions/setup-node/releases) before updating.*
 
 ## Related System Design Documents
 

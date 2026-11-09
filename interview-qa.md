@@ -190,7 +190,7 @@ Kafka/Pulsar/RabbitMQ/SQS vocabulary — same physics, different brokers (messag
 
 **Q1. Why is Redis so fast?**
 
-Everything is tuned to make one thread absurdly efficient: data lives in **RAM** (sub-microsecond access); command execution is **single-threaded** — no locks, no context switches — on top of an **epoll** event loop; the structures are hand-optimized (SDS strings, listpacks storing small collections contiguously, skiplists for sorted sets); the keyspace is an O(1) hash table with **incremental rehashing** (two tables, one bucket migrated per op — no stop-the-world resize). Network I/O moved to threads in Redis 6+, but the data path stays single-threaded: simplicity *is* the performance feature. Result: >1M ops/s per node, ~µs p99.
+Redis is tuned for low overhead: data lives in **RAM**; most command execution is serialized on the main event loop, while network I/O can use threads (Redis 6+) and background work uses separate threads/processes. The structures are hand-optimized (SDS strings, listpacks storing small collections contiguously, skiplists for sorted sets); the keyspace is a hash table with **incremental rehashing** (two tables, buckets migrated incrementally). Serialization avoids command-level locking and helps keep operations predictable, but it does not make every Redis activity single-threaded. Throughput and latency depend on workload, hardware, pipelining, persistence, and network; benchmark your own commands rather than relying on a universal ops/s or p99 figure.
 
 **Q2. What do you do when Redis goes down?** (the playbook answer)
 

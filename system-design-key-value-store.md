@@ -4,14 +4,14 @@
 
 <sub>INFRASTRUCTURE</sub>
 
-# System Design: Key-Value Store (DynamoDB)
+# System Design: Distributed Key-Value Store (Dynamo-style)
 
 <sub>16 SECTIONS · 5 MIN READ · 3 DIAGRAMS · 2 EXAMPLES</sub>
 
 </div>
 
 > [!TIP]
-> **THE PROBLEM** — Distributed key-value store providing eventually consistent reads/writes with high availability.
+> **THE PROBLEM** — A Dynamo-paper-style distributed key-value store with tunable replication and conflict handling. This design is not a description of DynamoDB's internal implementation.
 
 ## Start here (plain English)
 
@@ -19,11 +19,11 @@
 
 **Think of it like.** A fleet of librarians, each owning a slice of the card catalog; if one is out, a neighbour covers, and the catalog converges later.
 
-**Why it's hard.** Availability and partition tolerance force eventual consistency, but conflicting versions must not silently overwrite each other.
+**Why it's hard.** Favoring availability during a network partition can allow concurrent versions; they must not silently overwrite each other.
 
 **The core idea.** Consistent-hash the keyspace, replicate each key N times, require R/W quorums, and resolve conflicts with vector clocks or a read-repair path.
 
-**Watch out for.** Quorum overlap does not prove linearizability. It gives read-your-writes only with the right R+W>N and explicit conflict handling.
+**Watch out for.** Quorum overlap does not prove linearizability or read-your-writes. `R+W>N` makes the sets intersect under a fixed membership, but the read/version protocol and concurrent-write policy determine what value is returned.
 
 **Before this doc.** [Quorum reads & writes](system-design-concepts.md#28-quorum-reads--writes) · [Consistent hashing](system-design-concepts.md#2-consistent-hashing)
 
@@ -65,7 +65,7 @@
 
 ## Overview
 
-Distributed key-value store providing eventually consistent reads/writes with high availability.
+Distributed key-value store with tunable consistency and an explicit conflict-resolution policy.
 
 ### Key Numbers
 
@@ -94,7 +94,7 @@ Distributed key-value store providing eventually consistent reads/writes with hi
 | **Availability** | 99.99% (AP system) |
 | **Consistency** | Tunable quorum visibility; conflicts may require reconciliation |
 
-**Consistency is per operation, not per product.** In DynamoDB, for example, table and LSI reads accept an optional strongly-consistent read, while GSI and stream reads are eventually consistent; TTL is a background deletion that can lag expiry by hours or days, so treat an expired item as logically expired at read time rather than assuming the row is already gone. Judge each service, index and region on its documented contract instead of labelling "the key-value store" eventually consistent.
+**Consistency is per operation, not per product.** In DynamoDB, for example, table and LSI reads accept an optional strongly-consistent read, while GSI and stream reads are eventually consistent; TTL deletion is asynchronous and may take a few days, so treat an expired item as logically expired at read time rather than assuming the row is already gone. Judge each service, index and region on its documented contract instead of labelling "the key-value store" eventually consistent ([read consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) · [TTL](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html)).
 
 ---
 
@@ -129,7 +129,7 @@ With `N=3`, `W=2`, `R=2`, the acknowledged write set and read set intersect (`W 
 
 ### Raft, for Contrast
 
-Dynamo-style quorums let any coordinator serve a write; Raft centralises writes behind an elected leader and makes the *log* the source of truth. That changes what a failure costs. With quorums, a partition can accept writes on both sides and you reconcile later; with Raft, the minority simply cannot commit, so there is no reconciliation. The price is an election on leader loss — one or two seconds of unavailability, plus a log-repair round for any follower that fell behind. The rule that makes it safe is the quorum commit: a record is durable once a majority has it, not once the leader has it.
+Dynamo-style quorums can let coordinators accept writes on both sides of a partition when configured to favor availability; concurrent versions then need reconciliation. With Raft, the minority cannot commit, so there is no conflicting committed log; the price is reduced write availability until a majority is reachable. Leader-election time depends on configured timeouts and failure detection, and log replication alone is not a storage-durability guarantee unless the implementation persists entries before acknowledging them.
 
 ![Raft — Replicate, Commit on Quorum, Re-Elect, Repair a Divergent Log](diagrams/system-design/raft-replication.sequence.svg)
 

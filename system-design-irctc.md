@@ -11,11 +11,11 @@
 </div>
 
 > [!TIP]
-> **THE PROBLEM** — IRCTC powers one of the world's largest online train ticket booking platforms, serving 8.5 billion passengers annually across 13,500 trains and 7,300 stations.
+> **THE PROBLEM** — Design a high-concurrency railway ticketing platform where limited seat inventory must remain correct during demand spikes.
 
 ## Start here (plain English)
 
-**What it does.** Books train tickets for billions of passengers a year, including the Tatkal rush where millions compete for the same seats at 10:00.
+**What it does.** Books train tickets, including the Tatkal rush where many users compete for the same seats at fixed opening times.
 
 **Think of it like.** A railway ticket counter that opens one window for a whole city: the queue must be fair, and no seat may be sold twice.
 
@@ -65,19 +65,17 @@
 
 ## Overview
 
-IRCTC powers one of the world's largest online train ticket booking platforms, serving 8.5 billion passengers annually across 13,500 trains and 7,300 stations. The system must handle extreme concurrency during Tatkal booking windows (10 AM for AC classes, 11 AM for non-AC) when millions of users compete for limited seats in seconds.
+This is an interview-style design for a railway ticketing platform modeled on IRCTC's booking workflow, not a description of its production architecture or verified traffic. The system must handle demand spikes during Tatkal booking windows (10 AM for AC classes, 11 AM for non-AC) while protecting limited seat inventory.
 
 ### Key Numbers
 
 | Metric | Value |
 | :--- | :--- |
-| **passengers annually** | 8.5 billion |
-| **passenger trains** | 13,500 |
-| **railway stations** | 7,300 |
-| **page views per month** | 5 billion |
-| **tickets processed monthly** | 20 million |
-| **concurrent users during Tatkal** | 2 million+ |
-| **5 class types** | 1AC, 2AC, 3AC, Sleeper, General |
+| **Tatkal AC opening** | 10:00 (workflow detail) |
+| **Tatkal non-AC opening** | 11:00 (workflow detail) |
+| **Booking concurrency** | Capacity assumption; size from measured peak demand |
+| **Request rate** | Capacity assumption; derive from traffic and retry behavior |
+| **Seat allocation** | Strong consistency required to prevent overselling |
 
 ---
 
@@ -100,10 +98,10 @@ IRCTC powers one of the world's largest online train ticket booking platforms, s
 | Attribute | Target |
 | :--- | :--- |
 | **Latency** | Search < 500ms, Booking < 2s |
-| **Throughput** | 1M+ requests/second during Tatkal |
+| **Throughput** | Capacity target to be derived from measured peak demand |
 | **Availability** | 99.99% uptime |
 | **Consistency** | Strong for seat allocation (no overselling) |
-| **Scalability** | Handle 2M+ concurrent users during peak |
+| **Scalability** | Handle sudden demand spikes without overselling |
 
 ---
 

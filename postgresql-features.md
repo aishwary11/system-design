@@ -16,7 +16,7 @@
 A quick-reference catalog of PostgreSQL features used in everyday backends: data types, constraints, indexes, triggers, `LISTEN`/`NOTIFY`, stored functions, CTEs, window functions, full-text search, JSONB, MVCC & transactions, locking, partitioning, replication, CDC, caching, and the extension ecosystem — each with a small, copy-paste-able example.
 
 **PostgreSQL in one line:** an advanced open-source relational database that is fully ACID, uses MVCC for concurrency, speaks strong SQL, stores JSONB documents, does full-text search, supports triggers / pub-sub (`LISTEN`/`NOTIFY`) / stored procedures, scales with partitioning + streaming & logical replication, and grows via extensions (PostGIS, pgvector, pg_trgm, ...). In system design it is usually the *system of record*, often fronted by Redis as a cache.
-> **Latest stable (verified 28 Oct 2026): PostgreSQL 18.6** (25 Sep). PostgreSQL 19 reached **Release Candidate 1** on 15 Oct and is not a production-stable release. PostgreSQL 18 features include asynchronous I/O, `uuidv7()`, skip scans and OAuth 2.0 authentication; these arrived in 18.0, not in patch 18.6. Check the [versioning/support table](https://www.postgresql.org/support/versioning/) and [18.6 release announcement](https://www.postgresql.org/about/news/postgresql-186-179-1613-1517-and-1422-released-3146/) for the current patch line.
+> **Latest stable (verified 9 Nov 2026): PostgreSQL 18.6** (25 Sep). PostgreSQL 19 reached **Release Candidate 1** on 15 Oct and is not a production-stable release. PostgreSQL 18 features include asynchronous I/O, `uuidv7()`, skip scans and OAuth 2.0 authentication; these arrived in 18.0, not in patch 18.6. Check the [versioning/support table](https://www.postgresql.org/support/versioning/) for the current patch line.
 
 
 ### PostgreSQL in a typical stack
@@ -970,7 +970,7 @@ Also useful: **UNLOGGED** tables (fast, crash-unsafe — great for staging), **T
 ## Related System Design Documents
 
 - [Distributed Cache (Redis)](system-design-distributed-cache.md)
-- [Key-Value Store (DynamoDB)](system-design-key-value-store.md)
+- [Distributed Key-Value Store (Dynamo-style)](system-design-key-value-store.md)
 - [E-Commerce (Amazon)](system-design-ecommerce.md)
 - [Payment System (Stripe)](system-design-payment-system.md)
 - [IRCTC (Railway Booking)](system-design-irctc.md)

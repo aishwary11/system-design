@@ -3,7 +3,7 @@
   "diagram_type": "architecture",
   "meta": {
     "title": "Reference Architecture Template",
-    "output": "template.architecture.html",
+    "output": "template.html",
     "quality_profile": "showcase",
     "viewBox": [
       960,

@@ -6,10 +6,10 @@
  *   node tools/archify-all.mjs deliver
  *
  * Deliver layout (topic folders):
- *   diagrams/system-design/<topic>.arch.html   (32 system-design docs)
- *   diagrams/concepts/concept-*.arch.html      (sharding / replication / quorum)
- *   diagrams/features/<tech>-*.arch.html       (kafka / redis / postgresql + redis AI set)
- *   diagrams/template.arch.html                (README reference diagram)
+ *   diagrams/system-design/<topic>.architecture.html (58 system-design docs)
+ *   diagrams/concepts/concept-*.architecture.html    (sharding / replication / quorum)
+ *   diagrams/features/<tech>-*.architecture.html     (technology and AI feature maps)
+ *   diagrams/template.html                           (README reference diagram)
  */
 import { readdirSync, readFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';

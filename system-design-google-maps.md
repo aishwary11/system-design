@@ -71,12 +71,12 @@ Google Maps is a comprehensive mapping and navigation service providing map rend
 
 | Metric | Value |
 | :--- | :--- |
-| **monthly active users** | 1B+ |
-| **road segments in the road graph** | 200M+ |
-| **km of mapped roads** | 50M+ |
-| **Points of Interest** | 200M+ |
-| **map tile requests per day** | 1B+ |
-| **Sub-** | 100ms route computation |
+| **Planning scale: monthly active users** | 1B+ (illustrative; verify against a dated public disclosure before treating as a current Google metric) |
+| **Road segments in the road graph** | 200M+ (planning assumption; actual graph size is not publicly specified here) |
+| **Kilometres of mapped roads** | 50M+ (planning assumption; source and coverage definition required for a product claim) |
+| **Points of interest** | 200M+ (planning assumption; coverage and counting method vary) |
+| **Map tile requests per day** | 1B+ (workload assumption, not a published Google Maps figure) |
+| **Route computation latency target** | < 500 ms (design target; see non-functional requirements) |
 
 ---
 

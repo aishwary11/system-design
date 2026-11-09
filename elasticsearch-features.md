@@ -16,7 +16,7 @@
 A quick-reference catalog of Elasticsearch features used in search-heavy backends: inverted indexes & analyzers, mappings, CRUD & bulk indexing, queries (full-text vs term), aggregations, scoring (BM25), completion & fuzzy search, sharding & replication, near-real-time refresh, ILM (index lifecycle), and security — each with a small, concrete example.
 
 **Elasticsearch in one line:** a distributed **search and analytics engine** built on Apache Lucene — you index JSON documents, it maintains an inverted index, and queries scatter across shards with sub-second latency. It is the default answer to "make this searchable" between Postgres FTS and a bespoke postings engine.
-> **Latest stable (verified 28 Oct 2026): Elasticsearch 9.5.5** (6 Oct). The 9.5 feature line adds technical-preview Columnar Mode, VectorDB index mode with auto-calibration, and GA native Prometheus/PromQL support. These modes have different maturity and query/storage tradeoffs; see the [9.5 feature notes](https://www.elastic.co/blog/whats-new-elastic-9-5-0) and [9.5.5 patch notice](https://www.elastic.co/blog/elastic-stack-9-5-5-released) before choosing a production index mode.
+> **Latest stable (verified 9 Nov 2026): Elasticsearch 9.5.6.** The 9.5 feature line adds technical-preview Columnar Mode, VectorDB index mode with auto-calibration, and GA native Prometheus/PromQL support. These modes have different maturity and query/storage tradeoffs; see the [9.5 feature notes](https://www.elastic.co/blog/whats-new-elastic-9-5-0) and [9.5.6 release notes](https://www.elastic.co/docs/release-notes/elasticsearch#elasticsearch-9.5.6-release-notes) before choosing a production index mode.
 
 
 ### Search engine at a glance
