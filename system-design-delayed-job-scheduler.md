@@ -843,50 +843,17 @@ console.log('Batch size:', scheduler.batchSize);
 
 ### Job Lifecycle State Machine
 
-```
-                    +----------+
-                    | pending  |
-                    +----+-----+
-                         |
-              enqueue (immediate or delayed)
-                         |
-                         v
-                    +----------+
-            +------>| scheduled |<------+
-            |       +----+-----+       |
-            |            |             |
-            |   due (time reached)     |
-            |            |             |
-            |            v             |
-            |       +----------+       |
-            |       |  ready   |       |
-            |       +----+-----+       |
-            |            |             |
-            |      worker picks up     |
-            |            |             |
-            |            v             |
-            |       +----------+       |
-            |       | running  |       |
-            |       +----+-----+       |
-            |            |             |
-            |     +------+------+      |
-            |     |             |      |
-            |     v             v      |
-            | +-------+   +--------+   |
-            | |completed| | failed  |  |
-            | +---------+ +----+---+   |
-            |                  |       |
-            |          retry (if retries left)
-            |                  |       |
-            |                  +-------+
-            |
-            +----> (exhausted retries)
-                        |
-                        v
-                  +----------+
-                  |   dead   |
-                  +----------+
-```
+| From | Event | To |
+| --- | --- | --- |
+| `pending` | enqueue (immediate or delayed) | `scheduled` |
+| `scheduled` | due (time reached) | `ready` |
+| `ready` | worker picks up | `running` |
+| `running` | success | `completed` |
+| `running` | failure, retries left | `failed` |
+| `failed` | retry | `scheduled` |
+| `failed` | retries exhausted | `dead` |
+
+`completed` and `dead` are terminal; `failed` is transient and either retries or exhausts.
 
 ---
 

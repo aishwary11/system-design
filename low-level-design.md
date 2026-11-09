@@ -786,7 +786,7 @@ Expected: `fast` at 10 ms, `gone` never fires, `slow` at 30 ms — a 23 ms deadl
 | Question | Answer |
 | :--- | :--- |
 | Wheel vs heap? | Heap is simpler and exact; wheel is cheaper per insert and tolerates coarse precision. A million simultaneous expiries cost a million actions either way. |
-| Cancel vs fire race? | Atomic state machine (`PENDING → FIRED | CANCELLED`); once dispatched, cancellation is cooperative. |
+| Cancel vs fire race? | Atomic state machine (`PENDING → FIRED / CANCELLED`); once dispatched, cancellation is cooperative. |
 | Slow callback? | Never run user code on the timer thread; hand off to a bounded executor and shed when full. |
 | Clock jumps? | Use a monotonic clock for relative deadlines; wall clock only for calendar scheduling. |
 | Long delays? | Hierarchy (seconds/minutes/hours) or a heap overflow; a single small wheel wraps and mis-fires. |

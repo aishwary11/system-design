@@ -473,8 +473,8 @@ Use a relational schema for what is relational, and JSONB for flexible/evolving 
 | -------- | ------- | ------- |
 | `->` / `->>` | extract JSON / as text | `payload->'user'`, `payload->>'name'` |
 | `@>` / `<@` | contains / contained in | `payload @> '{"a":1}'` |
-| `?` / `?|` / `?&` | key exists (any/all) | `payload ? 'email'` |
-| `||` | concatenate / merge | `payload || '{"new": true}'::jsonb` |
+| `?` / `?\|` / `?&` | key exists (any/all) | `payload ? 'email'` |
+| `\|\|` | concatenate / merge | `payload \|\| '{"new": true}'::jsonb` |
 | `#>>` | path extraction | `payload #>> '{user,address,city}'` |
 | `jsonb_set`, `jsonb_build_object` | update / build | `jsonb_set(payload, '{a}', '2')` |
 | `jsonb_path_query` | JSONPath | SQL/JSON standard queries |

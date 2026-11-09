@@ -105,28 +105,28 @@ For engineers who have read the library before and need the shape back.
 Read upward. A design assumes the layer below it.
 
 ```text
-                    ┌──────────────────────────────┐
-                    │  Designs (58 worked examples) │
-                    └──────────────┬───────────────┘
-                                   │ uses
-                    ┌──────────────▼───────────────┐
-                    │  Technology guides (16)       │
-                    │  PostgreSQL · Redis · Kafka   │
-                    │  MongoDB · Elasticsearch ·    │
-                    │  RabbitMQ · cloud · DevOps    │
-                    └──────────────┬───────────────┘
-                                   │ assumes
-                    ┌──────────────▼───────────────┐
-                    │  Core concepts (75 sections)  │
-                    │  sharding · CAP · caching ·   │
-                    │  queues · consensus · SLOs    │
-                    └──────────────┬───────────────┘
-                                   │ assumes
-                    ┌──────────────▼───────────────┐
-                    │  Networking + Operating Systems│
-                    │  TCP · DNS · TLS · epoll ·    │
-                    │  page cache · fsync           │
-                    └──────────────────────────────┘
+                    ┌──────────────────────────────────┐
+                    │  Designs (58 worked examples)    │
+                    └─────────────────┬────────────────┘
+                                      │ uses
+                    ┌─────────────────▼────────────────┐
+                    │  Technology guides (16)          │
+                    │  PostgreSQL · Redis · Kafka      │
+                    │  MongoDB · Elasticsearch ·       │
+                    │  RabbitMQ · cloud · DevOps       │
+                    └─────────────────┬────────────────┘
+                                      │ assumes
+                    ┌─────────────────▼────────────────┐
+                    │  Core concepts (75 sections)     │
+                    │  sharding · CAP · caching ·      │
+                    │  queues · consensus · SLOs       │
+                    └─────────────────┬────────────────┘
+                                      │ assumes
+                    ┌─────────────────▼────────────────┐
+                    │  Networking + Operating Systems  │
+                    │  TCP · DNS · TLS · epoll ·       │
+                    │  page cache · fsync              │
+                    └──────────────────────────────────┘
 ```
 
 **The minimum viable chain for an interview:** concepts §1–§3, §10, §16, §28, §42; one database guide; one messaging guide; then the design.

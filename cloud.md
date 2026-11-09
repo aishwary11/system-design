@@ -444,7 +444,7 @@ The sections above are the daily-driver core. This is the **long tail**, organiz
 | **PrivateLink / VPC endpoints** | **Private Service Connect** | **Private Endpoints** | Private service access without internet detours |
 | **Direct Connect** | **Cloud Interconnect** | **ExpressRoute** | Dedicated private circuits (1/10/100 Gbps) |
 | **CloudFront** (+ Functions @ edge) | **Cloud CDN + Media CDN** | **Front Door** (+ CDN) | Global edge; Front Door = Azure's smart L7 global LB |
-| **Route 53** (latency/geo/failover policies) | **Cloud DNS** | **Traffic Manager
+| **Route 53** (latency/geo/failover policies) | **Cloud DNS** | **Traffic Manager** | DNS-based global routing with health-checked failover |
 | **API Gateway** (REST/HTTP/WS) | **API Gateway / Apigee** | **API Management** | Managed API front door; Apigee for enterprise monetization |
 | **AppSync** (GraphQL) | — (GraphQL hosting via Cloud Run) | — | Managed GraphQL with subscriptions + JS resolvers |
 

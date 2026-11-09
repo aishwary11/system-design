@@ -1500,12 +1500,21 @@ Do not evaluate a percentage flag with `Math.random()` per request: the user fli
 **Problem:** "venues within 5 km of me" — scanning every point is too slow, and (lat, lng) pairs don't sort into one key that supports range queries.
 **Idea:** **geohash**: encode (lat, lng) into a base32 string where *longer prefixes = smaller boxes* and nearby points share prefixes — a normal string index (B-tree §32) now serves "near me". **Quadtrees** split space into 4 recursively; **S2/H3** (Google/Uber) use spherical cells; PostGIS uses R-tree (GiST).
 
+| Point | Geohash prefix | What it tells you |
+| --- | --- | --- |
+| Mumbai (19.07, 72.87) | `te7u...` | shared prefix → same ~1.2 km box |
+| Mumbai (19.07, 72.87) | `te7um...` | longer prefix → smaller box |
+| Nearby venue | `te7um9...` | longer again → smaller box |
+| Delhi (28.61, 77.20) | `ttd...` | different prefix → different region |
+
+"near me" query: prefix match, then filter exact distance (haversine).
+
 ```text
-geohash "te7u..." (≈ 1.2 km box)          ┌───┬───┬───┐
-Mumbai (19.07, 72.87) → "te7um..."        │   │   │   │  4-way split (quadtree):
-nearby venue            → "te7um9..."      │ X │   │   │  recurse only into the
-Delhi (28.61, 77.20)    → "ttd..."         └───┴───┴───┘  cell that contains points
-"near me" query: prefix match, then filter exact distance (haversine)
+┌───┬───┐   4-way split (quadtree):
+│ X │   │   recurse only into the
+├───┼───┤   cell that contains points
+│   │   │
+└───┴───┘
 ```
 
 ```js
@@ -1528,31 +1537,29 @@ Two-tier pattern everywhere: coarse index (geohash prefix / bbox / S2 cell) gets
 **Problem:** teams design the schema first ("users, orders, products — normalize it") and only later discover the queries: the dashboards need joins across three tables, the product page needs six lookups, and the leaderboard needs a sorted set SQL can't serve in one digit.
 **Idea:** invert the order — **start from the queries** your product needs, then shape the data model so each one is a single cheap operation. A relational schema is one choice; a KV/document/wide-column model is another; the same data often lives several times, shaped differently per query path (that's CQRS §6 and read replicas §15 in disguise).
 
-```text
 Access-pattern taxonomy — name the shape of every query before modeling:
 
 | Pattern | Example query | Natural store |
-| ------- | ------------- | ------------- |
-| Point lookup | "get user 42" | KV store / indexed PK (DynamoDB, Redis, Postgres PK) |
-| Equality multi-get | "all orders for user 42" | index on user_id (B-tree §50) or partition key |
-| Range / time-window | "events between T1 and T2" | time-partitioned table, sorted log, TSDB (alerting doc) |
-| Top-K / ranked | "top 100 scores" | sorted set (Redis ZSET), precomputed board (leaderboard doc) |
-| Aggregation | "revenue by day by region" | pre-rolled rollup table, OLAP store, Elastic aggregations |
-| Full-text / fuzzy | "products matching 'shose'" | inverted index (Elasticsearch §50) |
-| Relationship / graph | "friends of friends who like X" | graph store or recursive CTE / BFS §58 |
-| Geo | "venues within 5 km" | geohash / S2 (§48) |
+| --- | --- | --- |
+| Point lookup | `"get user 42"` | KV store / indexed PK (DynamoDB, Redis, Postgres PK) |
+| Equality multi-get | `"all orders for user 42"` | index on user_id (B-tree §50) or partition key |
+| Range / time-window | `"events between T1 and T2"` | time-partitioned table, sorted log, TSDB (alerting doc) |
+| Top-K / ranked | `"top 100 scores"` | sorted set (Redis ZSET), precomputed board (leaderboard doc) |
+| Aggregation | `"revenue by day by region"` | pre-rolled rollup table, OLAP store, Elastic aggregations |
+| Full-text / fuzzy | `"products matching 'shose'"` | inverted index (Elasticsearch §50) |
+| Relationship / graph | `"friends of friends who like X"` | graph store or recursive CTE / BFS §58 |
+| Geo | `"venues within 5 km"` | geohash / S2 (§48) |
 
 Single-table design (DynamoDB style): one table, multiple "views" via composite keys.
 
-  PK = USER#<id>        SK = PROFILE            → user profile
-  PK = USER#<id>        SK = ORDER#<ts>#<id>    → that user's orders (newest first)
-  PK = ORDER#<id>       SK = ITEMS              → order detail
-  PK = GSI1PK = TS#<day> GSI1SK = TS#<ts>       → GSI: all orders that day, time-sorted
+| Partition key (PK) | Sort key (SK) | View |
+| --- | --- | --- |
+| `USER#<id>` | `PROFILE` | user profile |
+| `USER#<id>` | `ORDER#<ts>#<id>` | that user's orders (newest first) |
+| `ORDER#<id>` | `ITEMS` | order detail |
+| `GSI1PK = TS#<day>` | `GSI1SK = TS#<ts>` | GSI: all orders that day, time-sorted |
 
-One table serves every access pattern because each query maps to one key shape —
-no joins, no scans. The cost: denormalization is mandatory, and you maintain
-the copies yourself (or via streams — see outbox §9, CDC in the Postgres guide).
-```
+One table serves every access pattern because each query maps to one key shape — no joins, no scans. The cost: denormalization is mandatory, and you maintain the copies yourself (or via streams — see outbox §9, CDC in the Postgres guide).
 
 **Why it matters:** in DynamoDB/Cassandra, a scan is the sound of a wrong data model; in SQL, every N+1 is an access pattern nobody named. Write down each query with its QPS before writing the first `CREATE TABLE` — the doc template's "Database Design" section is exactly this exercise per system.
 
