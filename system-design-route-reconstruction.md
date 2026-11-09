@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — An end-to-end spatial pipeline that turns millions of chaotic last-mile GPS traces into high-fidelity ground truth: joint anomaly scoring → Kalman smoothing → OSRM map-matching with confidence labels → H3 + Hidden-Markov-Model consensus paths → real-time deviation scoring. Based on Zepto's Route IQ architecture.
 
+## Start here (plain English)
+
+**What it does.** Turns noisy GPS pings from millions of trips into clean, map-matched routes.
+
+**Think of it like.** A detective reconstructing a drive from blurry photos: remove the impossible jumps, smooth the path, then snap it to the road network.
+
+**Why it's hard.** GPS error can be 200 m, pings are missing, and the output must be consistent enough to compare across trips.
+
+**The core idea.** Clean anomalies, smooth with a Kalman filter, map-match with an HMM/Viterbi pass, then validate against the road graph.
+
+**Watch out for.** Snapping each point to the nearest road jumps across bridges and service roads; the sequence matters, not the single point.
+
+**Before this doc.** [Geospatial indexing](system-design-concepts.md#48-geospatial-indexing-geohash--s2) · [Back-of-the-envelope estimation](system-design-concepts.md#52-back-of-the-envelope-estimation)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Google Maps](system-design-google-maps.md) · [Proximity service](system-design-proximity-service.md)
+
+**Terms.** [geohash](GLOSSARY.md#geohash) · [sampling](GLOSSARY.md#sampling) · [backfill](GLOSSARY.md#backfill) · [data quality](GLOSSARY.md#data-quality)
+
+
 ---
 
 ## On this page

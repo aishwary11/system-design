@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A video-sharing and streaming platform supporting video upload, transcoding, streaming, search, recommendations, likes/comments, and view counts for 2B+ users.
 
+## Start here (plain English)
+
+**What it does.** Accepts video uploads, transcodes them into a ladder of resolutions, and streams them to 2B+ users.
+
+**Think of it like.** A publishing house that turns every submitted manuscript into several editions, then ships the right edition to each reader's device.
+
+**Why it's hard.** Transcoding is CPU-heavy and asynchronous, storage is enormous, and playback must start fast on any connection.
+
+**The core idea.** Chunk the upload, transcode a per-title ladder asynchronously, store segments in object storage, and serve them through a CDN with ABR.
+
+**Watch out for.** Transcoding one 1080p file and scaling it down on the fly is not how ABR stays cheap; pre-segmented per-title ladders are.
+
+**Before this doc.** [CDN & edge caching](system-design-concepts.md#37-cdn--edge-caching) · [Object storage](GLOSSARY.md#object-storage)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Netflix](system-design-netflix.md) · [Hotstar](system-design-hotstar.md)
+
+**Terms.** [CDN](GLOSSARY.md#cdn) · [object storage](GLOSSARY.md#object-storage) · [backpressure](GLOSSARY.md#backpressure) · [cache-aside](GLOSSARY.md#cache-aside)
+
+
 ---
 
 ## On this page

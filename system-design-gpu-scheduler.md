@@ -15,6 +15,27 @@
 > [!TIP]
 > **THE PROBLEM** — Design the control plane that decides **which tenant gets which GPU slice, and which model lives in GPU memory**. It combines Kubernetes-style admission and placement with a model cache: gang scheduling, topology-aware bin-packing, quota borrowing, MIG/MPS isolation, single-flight model loads, and drain-before-evict. The scarce resources are GPU **memory** and **interconnect topology**, not CPU.
 
+## Start here (plain English)
+
+**What it does.** Decides which tenant gets which GPU slice and which model stays resident in GPU memory.
+
+**Think of it like.** A hotel manager who assigns rooms by size and priority, and must also decide whose luggage stays unpacked in the room.
+
+**Why it's hard.** A GPU must never be double-assigned, gang scheduling needs all workers at once, and model loads are slow.
+
+**The core idea.** Treat GPUs as schedulable inventory with topology-aware placement, and make admission and model loading a single atomic decision.
+
+**Watch out for.** Adding more GPUs does not fix fragmentation. Topology and model-load time dominate; a bigger cluster can be slower if placement is naive.
+
+**Before this doc.** [Leader election](system-design-concepts.md#14-leader-election) · [Quorum reads & writes](system-design-concepts.md#28-quorum-reads--writes)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [LLM inference](system-design-llm-inference.md) · [Distributed training](system-design-distributed-training.md)
+
+**Terms.** [lease](GLOSSARY.md#lease) · [idempotency](GLOSSARY.md#idempotency) · [quorum](GLOSSARY.md#quorum) · [continuous batching](GLOSSARY.md#batching)
+
+
 | THE PROBLEM | THE HARD PART | THE BET |
 | :--- | :--- | :--- |
 | 200 tenants compete for 4,096 GPUs across training, inference and notebooks. | Placing a gang **and** keeping the right model resident — placement and eviction are one decision. | Separate admission from placement, reserve whole gangs, and drain before evicting a model. |

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Real-time collaborative document editor with OT/CRDT conflict resolution.
 
+## Start here (plain English)
+
+**What it does.** Lets many people edit the same document at once, with sub-100 ms sync and conflict resolution.
+
+**Think of it like.** Several people writing on the same whiteboard through a video feed: each stroke must land in the same place for everyone, even if two people draw at once.
+
+**Why it's hard.** Concurrent edits arrive out of order, and every client must converge to the same document without losing intent.
+
+**The core idea.** Transform each operation against concurrent operations (OT), or make the operations mergeable by construction (CRDT), then broadcast the result.
+
+**Watch out for.** Last-write-wins silently deletes one person's sentence. Collaborative editing needs intention-preserving merge, not a timestamp compare.
+
+**Before this doc.** [CRDTs](system-design-concepts.md#25-crdts--conflict-free-replicated-data-types) · [Vector clocks](system-design-concepts.md#19-vector-clocks--conflict-resolution)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [File storage](system-design-file-storage.md) · [Discord](system-design-discord.md)
+
+**Terms.** [CRDT](GLOSSARY.md#crdt) · [vector clock](GLOSSARY.md#vector-clock) · [idempotency](GLOSSARY.md#idempotency) · [consensus](GLOSSARY.md#consensus)
+
+
 ---
 
 ## On this page

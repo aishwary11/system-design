@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A social media platform supporting tweet posting, following, personalized timeline, likes/retweets, search, and trending topics for 500M+ users.
 
+## Start here (plain English)
+
+**What it does.** Publishes short posts, builds timelines, and runs search and trends for 500M+ users.
+
+**Think of it like.** A newspaper that prints a personalized front page for every reader, and must reprint it whenever someone they follow posts.
+
+**Why it's hard.** Fan-out on write is enormous for celebrity accounts; the timeline must still load in under 50 ms.
+
+**The core idea.** Hybrid fan-out: push posts into follower timelines for normal accounts, pull celebrity posts at read time, then merge and rank.
+
+**Watch out for.** Fanning out every post to every follower means one celebrity post can cause tens of millions of writes.
+
+**Before this doc.** [Fan-out & push vs pull](system-design-concepts.md#42-fan-out--push-vs-pull) · [Caching strategies](system-design-concepts.md#16-caching-strategies)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Instagram](system-design-instagram.md) · [Reddit](system-design-reddit.md)
+
+**Terms.** [fan-out](GLOSSARY.md#fan-out) · [cache-aside](GLOSSARY.md#cache-aside) · [hot key](GLOSSARY.md#hot-key) · [eventual consistency](GLOSSARY.md#eventual-consistency)
+
+
 ---
 
 ## On this page

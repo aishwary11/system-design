@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A distributed delayed job scheduling system (similar to Sidekiq, Celery, Bull, or Hangfire) that allows applications to enqueue jobs to be executed after a specified delay or at a specific time.
 
+## Start here (plain English)
+
+**What it does.** Accepts jobs with a future run time and executes each one once, close to its due time, at massive scale.
+
+**Think of it like.** A restaurant reservation book: every booking has a time, the host scans for parties due now, and a no-show is retried or cancelled.
+
+**Why it's hard.** Millions of timers, no missed jobs, no double execution, and a due-time promise that survives a node crash.
+
+**The core idea.** Keep the durable schedule in a database, use a sorted set for fast "what is due", and make execution idempotent with a visibility timeout.
+
+**Watch out for.** Polling every second does not fire a job once. Two workers can see the same due row; the claim has to be atomic.
+
+**Before this doc.** [Idempotency](system-design-concepts.md#10-idempotency) · [Leader election](system-design-concepts.md#14-leader-election)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Notification system](system-design-notification-system.md) · [Webhook delivery](system-design-webhook-delivery.md)
+
+**Terms.** [idempotency](GLOSSARY.md#idempotency) · [lease](GLOSSARY.md#lease) · [exactly-once](GLOSSARY.md#exactly-once) · [dead-letter queue](GLOSSARY.md#dead-letter-queue)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A photo/video sharing social platform supporting content upload, following, personalized feed, stories, likes/comments, and search for 2B+ users.
 
+## Start here (plain English)
+
+**What it does.** Shares photos and short videos, builds a personalized feed, and runs stories, likes, comments, and explore.
+
+**Think of it like.** A newspaper that prints a different front page for every reader, and must reprint it every time someone they follow posts.
+
+**Why it's hard.** Fan-out on write is expensive for celebrities, fan-out on read is expensive at page load; the feed must feel instant either way.
+
+**The core idea.** Hybrid fan-out: push to the timelines of normal users, pull celebrity posts at read time, then rank and merge.
+
+**Watch out for.** One fan-out strategy for everyone breaks at both ends: the celebrity case breaks write fan-out, the inactive-user case breaks read fan-out.
+
+**Before this doc.** [Fan-out & push vs pull](system-design-concepts.md#42-fan-out--push-vs-pull) · [Caching strategies](system-design-concepts.md#16-caching-strategies)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Twitter / X](system-design-twitter.md) · [LinkedIn](system-design-linkedin.md)
+
+**Terms.** [fan-out](GLOSSARY.md#fan-out) · [cache-aside](GLOSSARY.md#cache-aside) · [hot key](GLOSSARY.md#hot-key) · [CDN](GLOSSARY.md#cdn)
+
+
 ---
 
 ## On this page

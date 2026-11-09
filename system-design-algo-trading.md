@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Design the **buy-side** trading platform that turns a signal into an order and a fill into a position: normalized **market data** in, strategy decisions, a **pre-trade risk gate** that is legally responsible for what leaves the building, an **order/execution management system** (OMS/EMS) that owns the order lifecycle across venues, and a **reconciliation** path that treats every fill as a claim until the broker and the tape agree. The hot path is measured in **microseconds**, the audit trail in **years**, and the one bug that matters is *double-sending an order*.
 
+## Start here (plain English)
+
+**What it does.** Turns a trading signal into an order, passes it through pre-trade risk, sends it to a venue, and books the fill as a position.
+
+**Think of it like.** A pit trader with a checklist: check the order against limits, shout it to the exchange, and write every fill in a ledger that must reconcile.
+
+**Why it's hard.** The risk gate must reject before the wire in microseconds, while every retry and partial fill must leave the position correct.
+
+**The core idea.** Make order state a monotonic state machine with idempotent transitions; the risk check is a legal control, not a best-effort validation.
+
+**Watch out for.** Retrying an order when the ack is slow creates a second position. A retry without an idempotency key is a new trade.
+
+**Before this doc.** [Idempotency](system-design-concepts.md#10-idempotency) · [Optimistic concurrency](system-design-concepts.md#44-optimistic-concurrency--versioning)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Stock exchange](system-design-stock-exchange.md) · [Payment system](system-design-payment-system.md)
+
+**Terms.** [idempotency](GLOSSARY.md#idempotency) · [WAL](GLOSSARY.md#wal) · [fencing token](GLOSSARY.md#fencing-token) · [exactly-once](GLOSSARY.md#exactly-once)
+
+
 ---
 
 ## On this page

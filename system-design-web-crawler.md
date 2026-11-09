@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A distributed web crawler that systematically browses and downloads web pages for indexing, archiving, or data analysis.
 
+## Start here (plain English)
+
+**What it does.** Systematically fetches pages across the web, respects site rules, deduplicates content, and feeds an index.
+
+**Think of it like.** A team of door-to-door canvassers with a shared list: each street is visited once, politely, and every new address is added to the list.
+
+**Why it's hard.** The web is hostile: infinite calendars, duplicate content, rate limits, and traps that generate unbounded URLs.
+
+**The core idea.** A prioritized frontier, per-host politeness, URL normalization plus content hashing, and a seen-set that fits in memory.
+
+**Watch out for.** Plain BFS over every link loops forever and gets blocked. Politeness, dedup, and trap detection are the design.
+
+**Before this doc.** [Bloom filter](system-design-concepts.md#17-bloom-filter) · [Backpressure](system-design-concepts.md#21-backpressure)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Search engine](system-design-search-engine.md) · [Search autocomplete](system-design-search-autocomplete.md)
+
+**Terms.** [Bloom filter](GLOSSARY.md#bloom-filter) · [backpressure](GLOSSARY.md#backpressure) · [idempotency](GLOSSARY.md#idempotency) · [TTL](GLOSSARY.md#ttl)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Professional networking platform with job matching, feed, messaging, learning, and recruiter tools for 900M+ members.
 
+## Start here (plain English)
+
+**What it does.** A professional network with a feed, connections, jobs, messaging, and recruiter search for 900M+ members.
+
+**Think of it like.** A convention center where everyone wears a name badge: the value is in who is connected to whom, and the graph is the product.
+
+**Why it's hard.** The social graph is huge and multi-hop, the feed must be fresh, and job matching is a different access pattern from the feed.
+
+**The core idea.** Separate the graph store from the feed and search indexes; use fan-out with ranking for the feed and a graph traversal for recommendations.
+
+**Watch out for.** One database for the graph and the feed does not work: graph traversals and timeline reads have incompatible shapes.
+
+**Before this doc.** [Fan-out & push vs pull](system-design-concepts.md#42-fan-out--push-vs-pull) · [Indexing fundamentals](system-design-concepts.md#50-indexing-fundamentals--selection-strategy)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Instagram](system-design-instagram.md) · [Twitter / X](system-design-twitter.md)
+
+**Terms.** [fan-out](GLOSSARY.md#fan-out) · [secondary index](GLOSSARY.md#secondary-index) · [cache-aside](GLOSSARY.md#cache-aside) · [cqrs](GLOSSARY.md#cqrs)
+
+
 ---
 
 ## On this page

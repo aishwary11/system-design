@@ -6,7 +6,7 @@
 
 # 30-Day System Design Study Roadmap
 
-<sub>30 DAYS · 4 WEEKS · 56 DESIGNS · 16 GUIDES</sub>
+<sub>30 DAYS · 4 WEEKS · 58 DESIGNS · 16 GUIDES</sub>
 
 </div>
 
@@ -14,6 +14,8 @@
 > **THE PLAN** — A day-by-day path through the library: designs interleaved with the concepts behind them, the guides where each technology shows up, and the Q&A bank for the why/what-if layer.
 
 A day-by-day path through this repo: designs interleaved with the concepts that power them, guides where the tech shows up, and the Q&A bank for the "why/what-if" layer. Budget **~2 hours/day**; every 7th day is a consolidation checkpoint.
+
+**New to the library?** Start with [Learning paths](LEARNING-PATHS.md) and keep the [Glossary](GLOSSARY.md) open. The plan below assumes you have read the eight first documents it lists. **Need more time?** [Route A](LEARNING-PATHS.md#routes) spreads the same material over four weeks; use the day numbers as a sequence, not a deadline.
 
 **Legend:** design doc · concepts section · guide · interview Q&A · resource
 
@@ -28,7 +30,7 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 2. [Week 2 — Data & Messaging (state, streams, and consistency)](#week-2--data--messaging-state-streams-and-consistency)
 3. [Week 3 — Delivery & Infrastructure (geo, video, money, deploys)](#week-3--delivery--infrastructure-geo-video-money-deploys)
 4. [Week 4 — Interview simulation (hard docs, tips, mock loops)](#week-4--interview-simulation-hard-docs-tips-mock-loops)
-5. [Complete Coverage Map — all 56 designs](#complete-coverage-map--all-56-designs)
+5. [Complete Coverage Map — all 56 designs](#complete-coverage-map--all-58-designs)
 6. [Rules that make it stick](#rules-that-make-it-stick)
 7. [Hidden Tips & Tricks](#hidden-tips--tricks)
 8. [Do's & Don'ts](#dos--donts)
@@ -41,6 +43,7 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 
 | Day | Read | Do |
 | :--- | :--- | :--- |
+| 0 | 🧭 [Learning paths](LEARNING-PATHS.md) · [Glossary](GLOSSARY.md) | Pick a route; skim the terms you do not recognize |
 | 1 | 🧩 [Concepts §1–§8](system-design-concepts.md#1-sharding-data-partitioning) (sharding, hashing, CAP, ACID/BASE, SOLID, CQRS, event sourcing, saga) | Re-derive back-of-envelope math for a URL shortener on paper |
 | 1½ | 🧩 [§49–§52](system-design-concepts.md#49-data-models-vs-access-patterns) (data models vs access patterns, indexing & leftmost prefix, monolith vs microservices, estimation) | Write the 5 query shapes of your last project; check one EXPLAIN plan against the leftmost-prefix table |
 | 2 | 📐 [URL shortener](system-design-url-shortener.md) · 📐 [Pastebin](system-design-pastebin.md) · 📐 [Unique ID generator](system-design-unique-id-generator.md) | Estimate keys/sec + storage for both; write the Key Numbers from memory |
@@ -91,7 +94,7 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 
 ---
 
-## Complete Coverage Map — all 56 designs
+## Complete Coverage Map — all 58 designs
 
 Every design document and its scheduled day, so nothing gets skipped:
 
@@ -106,15 +109,15 @@ Every design document and its scheduled day, so nothing gets skipped:
 | 17 | [Metro ticketing](system-design-metro-ticketing.md) · [Parking system](system-design-parking-system.md) · [Food delivery](system-design-food-delivery.md) · [Airbnb](system-design-airbnb.md) |
 | 18 | [Netflix](system-design-netflix.md) · [YouTube](system-design-youtube.md) · [Hotstar](system-design-hotstar.md) · [Spotify](system-design-spotify.md) · [Video conferencing](system-design-video-conferencing.md) |
 | 20 | [Payment system](system-design-payment-system.md) · [Stock exchange](system-design-stock-exchange.md) · [Algorithmic trading](system-design-algo-trading.md) |
-| 22 | [Code deployment](system-design-code-deployment.md) · [Alerting & monitoring](system-design-alerting.md) · [Webhook delivery](system-design-webhook-delivery.md) · [Observability pipeline](system-design-observability-pipeline.md) |
+| 22 | [Code deployment](system-design-code-deployment.md) · [Alerting & monitoring](system-design-alerting.md) · [Webhook delivery](system-design-webhook-delivery.md) · [Observability pipeline](system-design-observability-pipeline.md) · [Data pipeline](system-design-data-pipeline.md) |
 | 23 | [Search engine](system-design-search-engine.md) · [Search autocomplete](system-design-search-autocomplete.md) · [Web crawler](system-design-web-crawler.md) · [Recommendation system](system-design-recommendation-system.md) · [A/B experimentation](system-design-ab-testing.md) |
-| 24 | [Google Ads](system-design-google-ads.md) · [Fraud detection](system-design-fraud-detection.md) · [Distributed lock manager](system-design-distributed-lock-manager.md) · [Leaderboard](system-design-leaderboard.md) |
+| 24 | [Google Ads](system-design-google-ads.md) · [Fraud detection](system-design-fraud-detection.md) · [Content moderation](system-design-content-moderation.md) · [Distributed lock manager](system-design-distributed-lock-manager.md) · [Leaderboard](system-design-leaderboard.md) |
 | 25 | [Serverless](system-design-serverless.md) · [Online judge](system-design-online-judge.md) · [File storage](system-design-file-storage.md) |
 | 26 | [Google Calendar](system-design-google-calendar.md) · [Reddit](system-design-reddit.md) · [Google Docs](system-design-google-docs.md) |
 | 27 | [LLM inference](system-design-llm-inference.md) · [AI gateway](system-design-ai-gateway.md) · [GPU scheduler](system-design-gpu-scheduler.md) · [Distributed training](system-design-distributed-training.md) |
 | 28 | [IRCTC](system-design-irctc.md) · [Ticketing system](system-design-ticketing-system.md) · [E-commerce](system-design-ecommerce.md) |
 
-Guides are interleaved the same way: [Concepts](system-design-concepts.md) (days 1–15, 30), [Redis](redis-features.md) (5), [Kafka](kafka-features.md) (9), [RabbitMQ](rabbitmq-features.md) (11), [PostgreSQL](postgresql-features.md) + [MongoDB](mongodb-features.md) (12), [Networking](networking.md) (19), [Cloud](cloud.md) (19, 27), [DevOps](devops-features.md) (22), [Elasticsearch](elasticsearch-features.md) + [Agentic AI](agentic-ai-features.md) (27), [Operating Systems](operating-systems.md) (28), [Low-Level Design](low-level-design.md) (6½), [Resources](resources.md) (29), [Interview Q&A](interview-qa.md) (days 5, 9, 11, 25, 29).
+Guides are interleaved the same way: [Concepts](system-design-concepts.md) (days 1–15, 30), [Redis](redis-features.md) (5), [Kafka](kafka-features.md) (9), [RabbitMQ](rabbitmq-features.md) (11), [PostgreSQL](postgresql-features.md) + [MongoDB](mongodb-features.md) (12), [Networking](networking.md) (19), [Cloud](cloud.md) (19, 27), [DevOps](devops-features.md) (22), [Elasticsearch](elasticsearch-features.md) + [Agentic AI](agentic-ai-features.md) (27), [Operating Systems](operating-systems.md) (28), [Low-Level Design](low-level-design.md) (6½), [Resources](resources.md) (29), [Interview Q&A](interview-qa.md) (days 5, 9, 11, 25, 29), [Glossary](GLOSSARY.md) (all days), [Learning paths](LEARNING-PATHS.md) (day 0).
 
 ---
 

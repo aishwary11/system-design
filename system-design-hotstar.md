@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Hotstar (now Disney+ Hotstar) is a large-scale video streaming platform supporting live sports (cricket, football), entertainment shows, and Video-on-Demand (VOD).
 
+## Start here (plain English)
+
+**What it does.** Streams live cricket and entertainment to tens of millions of concurrent viewers without falling over at the opening ball.
+
+**Think of it like.** A stadium that sells 25 million seats for one match: the gates, the replay screens, and the food stalls all peak at the same second.
+
+**Why it's hard.** Traffic is spiky and synchronized; a cache miss or a thundering herd at the start of a match is fatal.
+
+**The core idea.** Push content to the edge, pre-warm and shard the hot manifest, and degrade gracefully (lower bitrate, fewer features) instead of failing.
+
+**Watch out for.** Autoscaling does not save a synchronized spike. Instances take minutes to boot; capacity must be pre-provisioned and the origin shielded.
+
+**Before this doc.** [CDN & edge caching](system-design-concepts.md#37-cdn--edge-caching) · [Backpressure](system-design-concepts.md#21-backpressure)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Netflix](system-design-netflix.md) · [YouTube](system-design-youtube.md)
+
+**Terms.** [CDN](GLOSSARY.md#cdn) · [cache stampede](GLOSSARY.md#cache-stampede) · [thundering herd](GLOSSARY.md#thundering-herd) · [backpressure](GLOSSARY.md#backpressure)
+
+
 ---
 
 ## On this page

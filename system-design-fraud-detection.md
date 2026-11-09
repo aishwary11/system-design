@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Sub-100ms risk scoring with streaming features, rules plus models, and a review queue that closes the feedback loop.
 
+## Start here (plain English)
+
+**What it does.** Scores transactions in under 100 ms against velocity rules, device fingerprints, and ML models, then feeds confirmed fraud back into training.
+
+**Think of it like.** A bank teller with a sixth sense: the teller checks the signature, the amount, and whether this customer has ever done anything like this before.
+
+**Why it's hard.** Deep, stateful analysis must fit inside a payment latency budget, and a false positive blocks a legitimate customer.
+
+**The core idea.** Precompute features into an online store, score with a cheap cascade, and push anything uncertain to an asynchronous review queue.
+
+**Watch out for.** If scoring is down, silence is not a policy. Decide explicitly whether to fail open or closed, and alert either way.
+
+**Before this doc.** [Caching strategies](system-design-concepts.md#16-caching-strategies) · [Idempotency](system-design-concepts.md#10-idempotency)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Payment system](system-design-payment-system.md) · [Observability pipeline](system-design-observability-pipeline.md)
+
+**Terms.** [cache-aside](GLOSSARY.md#cache-aside) · [cardinality](GLOSSARY.md#cardinality) · [sampling](GLOSSARY.md#sampling) · [backpressure](GLOSSARY.md#backpressure)
+
+
 ---
 
 ## On this page

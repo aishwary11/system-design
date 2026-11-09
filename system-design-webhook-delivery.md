@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — At-least-once outbound fan-out with signed payloads, retries that cannot stampede a recovering endpoint, and a replayable dead-letter queue.
 
+## Start here (plain English)
+
+**What it does.** Pushes events to customer endpoints at least once, with signatures, retries, and a replayable dead-letter queue.
+
+**Think of it like.** A courier who keeps knocking: if nobody answers, they try again later, leave a signed parcel, and never pretend it was delivered.
+
+**Why it's hard.** Endpoints fail, retries can stampede a recovering service, and duplicate deliveries must be safe.
+
+**The core idea.** Write one delivery intent per endpoint, sign the payload with a timestamp, retry with full jitter, and dead-letter after the ladder.
+
+**Watch out for.** Retrying immediately in a tight loop turns one outage into a self-inflicted DDoS; use exponential backoff with jitter.
+
+**Before this doc.** [Retries, backoff & jitter](system-design-concepts.md#39-retries-backoff--jitter) · [Idempotency](system-design-concepts.md#10-idempotency)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Notification system](system-design-notification-system.md) · [Payment system](system-design-payment-system.md)
+
+**Terms.** [webhook](GLOSSARY.md#webhook) · [HMAC](GLOSSARY.md#hmac) · [dead-letter queue](GLOSSARY.md#dead-letter-queue) · [idempotency](GLOSSARY.md#idempotency) · [thundering herd](GLOSSARY.md#thundering-herd)
+
+
 ---
 
 ## On this page

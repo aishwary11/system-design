@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Metrics, logs and traces at scale — cardinality control, tail sampling and cost-aware retention without losing the signals that matter.
 
+## Start here (plain English)
+
+**What it does.** Collects metrics, logs, and traces from every service, controls cardinality and cost, and keeps the signals that matter.
+
+**Think of it like.** A city CCTV system: you cannot store every camera forever, so you keep every alarm clip and sample the quiet streets.
+
+**Why it's hard.** Volume grows faster than budget, high-cardinality labels explode storage, and tail sampling must keep errors without knowing the future yet.
+
+**The core idea.** Buffer at the edge, enforce per-tenant cardinality budgets, fingerprint logs, and tail-sample traces with a delay window.
+
+**Watch out for.** Keeping everything is not cheap at observability volume. Indexing and query cost dominate, not raw disk.
+
+**Before this doc.** [Cardinality](GLOSSARY.md#cardinality) · [Backpressure](system-design-concepts.md#21-backpressure)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Alerting](system-design-alerting.md) · [Code deployment](system-design-code-deployment.md)
+
+**Terms.** [cardinality](GLOSSARY.md#cardinality) · [sampling](GLOSSARY.md#sampling) · [backpressure](GLOSSARY.md#backpressure) · [SLO](GLOSSARY.md#slo)
+
+
 ---
 
 ## On this page

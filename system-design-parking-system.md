@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A smart parking management system that enables real-time parking spot discovery, reservation, guided navigation, automated entry/exit, and payment processing.
 
+## Start here (plain English)
+
+**What it does.** Finds nearby parking, holds a spot, opens the gate, and charges for the stay.
+
+**Think of it like.** A valet stand with numbered spaces: the board says which spaces are free, a cone reserves yours, and the exit clock starts when you drive in.
+
+**Why it's hard.** Physical entry and exit events arrive late or out of order, and a reservation must expire without double-booking.
+
+**The core idea.** Model the spot as a state machine, hold with a TTL, and treat gate events as the source of truth for occupancy.
+
+**Watch out for.** The app reservation is not the ground truth. The car is; sensors and gate events must reconcile the digital state.
+
+**Before this doc.** [Idempotency](system-design-concepts.md#10-idempotency) · [Geospatial indexing](system-design-concepts.md#48-geospatial-indexing-geohash--s2)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Metro ticketing](system-design-metro-ticketing.md) · [Proximity service](system-design-proximity-service.md)
+
+**Terms.** [geohash](GLOSSARY.md#geohash) · [lease](GLOSSARY.md#lease) · [idempotency](GLOSSARY.md#idempotency) · [TTL](GLOSSARY.md#ttl)
+
+
 ---
 
 ## On this page

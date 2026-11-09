@@ -313,6 +313,24 @@ for (const g of new Set(guideTargets)) {
   if (!/^##+ .*Do.?s & Don'?t/im.test(text)) issues.push(`${g}: no "Do's & Don'ts" section (README promises one)`);
 }
 
+// Comprehension checks: every design must open with a plain-English card,
+// code must not hide in a text fence, and a Key Numbers metric must not be
+// a bare number (the value belongs in the second column).
+for (const f of designDocs) {
+  const raw = readFileSync(join(ROOT, f), 'utf8');
+  if (!/^## Start here \(plain English\)$/m.test(raw))
+    issues.push(`${f}: missing "## Start here (plain English)" card`);
+  for (const m of raw.matchAll(/```text\n([\s\S]*?)\n```/g)) {
+    if (/\b(class|function|const|let|=>|require\()/.test(m[1]))
+      issues.push(`${f}: code inside a text fence (use a js fence)`);
+  }
+  const kn = (raw.split('### Key Numbers')[1] || '').split(/\n## /)[0];
+  for (const m of kn.matchAll(/^\| \*\*(.+?)\*\* \| (.+?) \|$/gm)) {
+    if (/^[\d.,]+\s*%?$/.test(m[1].trim()))
+      issues.push(`${f}: Key Numbers metric is a bare number — ${m[0]}`);
+  }
+}
+
 // "§N" cross-references must resolve in concepts or interview-qa.
 const conceptsText = readFileSync(join(ROOT, 'system-design-concepts.md'), 'utf8');
 const maxConcept = Math.max(...[...conceptsText.matchAll(/^## (\d+)\./gm)].map(m => +m[1]));

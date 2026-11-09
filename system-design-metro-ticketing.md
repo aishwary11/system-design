@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A metro transit ticketing system supporting smart cards, QR code tickets, fare calculation, and real-time passenger tracking.
 
+## Start here (plain English)
+
+**What it does.** Handles tap-in and tap-out at subway gates, computes the fare, and reconciles the money.
+
+**Think of it like.** A turnstile that reads a card, remembers where you entered, and charges you when you leave, even if the network is down.
+
+**Why it's hard.** The gate must decide in under 500 ms, the network may be unavailable, and an incomplete journey still needs a fair fare.
+
+**The core idea.** Validate offline with a signed token, record entry and exit as immutable events, and compute the fare asynchronously with a reconciliation pass.
+
+**Watch out for.** Charging at tap-in is usually wrong. The gate needs a local decision, but the backend needs the exit event to compute the final fare.
+
+**Before this doc.** [Idempotency](system-design-concepts.md#10-idempotency) · [Event sourcing](system-design-concepts.md#7-event-sourcing)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [IRCTC](system-design-irctc.md) · [Smart parking](system-design-parking-system.md)
+
+**Terms.** [idempotency](GLOSSARY.md#idempotency) · [event-sourcing](GLOSSARY.md#event-sourcing) · [lease](GLOSSARY.md#lease) · [TTL](GLOSSARY.md#ttl)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A ride-hailing platform supporting real-time location tracking, driver matching, trip management, fare calculation, and payment for millions of riders and drivers.
 
+## Start here (plain English)
+
+**What it does.** Matches riders to nearby drivers, tracks trips, computes fares, and handles payments in real time.
+
+**Think of it like.** A dispatcher with a live map: drivers are dots, riders are pins, and the dispatcher pairs the closest free dot with each pin.
+
+**Why it's hard.** Location updates are constant, matching is a two-sided market, and the trip state must survive driver, rider, and network failures.
+
+**The core idea.** Keep live locations in a geospatial index, make trip state an explicit machine, and treat matching as a proposal with an expiring claim.
+
+**Watch out for.** The nearest driver is not always the best match. ETA, direction, acceptance rate, and surge all matter; distance alone is a weak proxy.
+
+**Before this doc.** [Geospatial indexing](system-design-concepts.md#48-geospatial-indexing-geohash--s2) · [Idempotency](system-design-concepts.md#10-idempotency)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Food delivery](system-design-food-delivery.md) · [Google Maps](system-design-google-maps.md)
+
+**Terms.** [geohash](GLOSSARY.md#geohash) · [lease](GLOSSARY.md#lease) · [idempotency](GLOSSARY.md#idempotency) · [fan-out](GLOSSARY.md#fan-out)
+
+
 ---
 
 ## On this page

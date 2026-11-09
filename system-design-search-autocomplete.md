@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A real-time search autocomplete system providing instant suggestions as users type, with < 100ms response time.
 
+## Start here (plain English)
+
+**What it does.** Returns the top few query completions within 100 ms of each keystroke.
+
+**Think of it like.** A librarian who has already ranked every phrase people might start saying, so the answer is a lookup, not a search.
+
+**Why it's hard.** The vocabulary changes constantly, personalization must not blow the latency budget, and typos are common.
+
+**The core idea.** Keep a prefix index (trie or finite-state transducer) of top queries, rank by popularity and context, and update it from the query log.
+
+**Watch out for.** Querying Elasticsearch on every keystroke is too slow and too expensive; autocomplete is a separate, precomputed index.
+
+**Before this doc.** [Trie](system-design-concepts.md#64-trie-prefix-tree) · [Caching strategies](system-design-concepts.md#16-caching-strategies)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Search engine](system-design-search-engine.md) · [Leaderboard](system-design-leaderboard.md)
+
+**Terms.** [cache-aside](GLOSSARY.md#cache-aside) · [shard](GLOSSARY.md#shard) · [hot key](GLOSSARY.md#hot-key) · [TTL](GLOSSARY.md#ttl)
+
+
 ---
 
 ## On this page

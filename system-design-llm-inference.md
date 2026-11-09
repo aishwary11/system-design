@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Design the serving platform behind a production LLM product: stream tokens to millions of users while serving GPU-expensive autoregressive models.
 
+## Start here (plain English)
+
+**What it does.** Serves a language model to millions of users, streaming tokens while keeping GPUs busy and costs bounded.
+
+**Think of it like.** A kitchen with one very expensive oven: the job is to keep it full, not to cook one dish at a time.
+
+**Why it's hard.** Autoregressive decoding is sequential, KV-cache memory is finite, and requests arrive with wildly different lengths.
+
+**The core idea.** Continuous batching with a paged KV cache, prefix caching for shared prompts, and admission control that budgets tokens rather than requests.
+
+**Watch out for.** Batch size is not a fixed number. The right batch changes every decode step; static batching wastes GPU time.
+
+**Before this doc.** [Continuous batching](GLOSSARY.md#batching) · [Backpressure](system-design-concepts.md#21-backpressure)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [AI gateway](system-design-ai-gateway.md) · [GPU scheduler](system-design-gpu-scheduler.md)
+
+**Terms.** [KV cache](GLOSSARY.md#kv-cache) · [continuous batching](GLOSSARY.md#batching) · [quantization](GLOSSARY.md#quantization) · [prompt caching](GLOSSARY.md#prompt-caching) · [token](GLOSSARY.md#token)
+
+
 ---
 
 ## On this page

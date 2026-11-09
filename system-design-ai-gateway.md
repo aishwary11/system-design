@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — One API in front of many model providers — routing, quotas, fallback and cost control that survive a provider having a bad hour.
 
+## Start here (plain English)
+
+**What it does.** One API in front of many model providers that routes each request, enforces quotas, and falls back when a provider fails.
+
+**Think of it like.** A company switchboard that routes calls to the right department, limits how long each caller may talk, and redials another line if one is busy.
+
+**Why it's hard.** Model quality, price, and latency differ per provider; a quota must count tokens before the response exists, and failover must not double-charge.
+
+**The core idea.** Normalize every provider behind one schema, meter tokens and dollars per tenant, and route with capacity-aware weights plus bounded failover.
+
+**Watch out for.** Adding a retry is not resilience. Retrying a streaming call can duplicate spend and produce two answers; failover must be bounded and idempotent.
+
+**Before this doc.** [Rate limiting](system-design-concepts.md#12-rate-limiting) · [Circuit breaker](system-design-concepts.md#11-circuit-breaker)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [LLM inference](system-design-llm-inference.md) · [Rate limiter](system-design-rate-limiter.md)
+
+**Terms.** [token](GLOSSARY.md#token) · [prompt caching](GLOSSARY.md#prompt-caching) · [rate limiting](GLOSSARY.md#rate-limiting) · [circuit breaker](GLOSSARY.md#circuit-breaker)
+
+
 ---
 
 ## On this page

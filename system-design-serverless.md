@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A Function-as-a-Service platform: users upload code, the platform runs it on demand in milliseconds using microVM snapshots (Firecracker-style), scales from zero to thousands of workers, and bills per 1ms — a scheduling and isolation problem disguised as "just run my function."
 
+## Start here (plain English)
+
+**What it does.** Runs user functions on demand, scaling from zero to thousands of workers, with per-invocation billing.
+
+**Think of it like.** A taxi rank that only summons a car when you hail one: you pay for the ride, not for the fleet waiting.
+
+**Why it's hard.** Cold starts must be tiny, tenants must be isolated, and a function may run for milliseconds or minutes.
+
+**The core idea.** Keep a pool of pre-warmed microVMs with snapshot restore, bin-pack by function shape, and route each invocation to a matching warm worker.
+
+**Watch out for.** Containers are not fast enough to start per request. A cold container can take seconds; snapshot restore and warm pools are the product.
+
+**Before this doc.** [Backpressure](system-design-concepts.md#21-backpressure) · [Idempotency](system-design-concepts.md#10-idempotency)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Online judge](system-design-online-judge.md) · [Code deployment](system-design-code-deployment.md)
+
+**Terms.** [idempotency](GLOSSARY.md#idempotency) · [backpressure](GLOSSARY.md#backpressure) · [lease](GLOSSARY.md#lease) · [object storage](GLOSSARY.md#object-storage)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — The system that takes a git commit to thousands of production hosts safely: artifact builds, staged environments, health-checked canary rollouts, automatic rollback — blue-green and canary as first-class state machines, not vibes.
 
+## Start here (plain English)
+
+**What it does.** Takes a commit through build, test, artifact, staged rollout, health checks, and rollback across thousands of hosts.
+
+**Think of it like.** A relay race with a safety inspector at every handoff: the baton only moves if the runner is healthy.
+
+**Why it's hard.** The deploy must be fast enough to matter, safe enough to stop on its own, and reversible before the bad version spreads.
+
+**The core idea.** Make artifacts immutable and content-addressed, then let a controller advance through health-gated batches with automatic rollback.
+
+**Watch out for.** Rollback is not just redeploying the old commit. Without immutable artifacts and a compatible schema, the "old" build may no longer exist or cannot read the new data.
+
+**Before this doc.** [Deployment strategies](system-design-concepts.md#47-deployment-strategies) · [Circuit breaker](system-design-concepts.md#11-circuit-breaker)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Serverless platform](system-design-serverless.md) · [Observability pipeline](system-design-observability-pipeline.md)
+
+**Terms.** [canary](GLOSSARY.md#canary) · [blue-green](GLOSSARY.md#blue-green) · [feature flag](GLOSSARY.md#feature-flag) · [idempotency](GLOSSARY.md#idempotency)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A leaderboard service (game scores, like counters, trending lists) that absorbs millions of score updates per second and answers top-K and rank queries in milliseconds — the canonical "counting at scale" problem.
 
+## Start here (plain English)
+
+**What it does.** Absorbs millions of score updates per second and answers "top 100" and "what is my rank" in milliseconds.
+
+**Think of it like.** A live scoreboard at a stadium: every point updates the board, but nobody scans every player to answer "who is winning?".
+
+**Why it's hard.** A single sorted set cannot hold 50 million members, and rank queries must stay fast as scores change.
+
+**The core idea.** Shard the board by score band, keep a per-shard top-K, and merge the shards at query time.
+
+**Watch out for.** One Redis ZSET works until the set is too large for one node and every update becomes a hot key.
+
+**Before this doc.** [Caching strategies](system-design-concepts.md#16-caching-strategies) · [Sharding](system-design-concepts.md#1-sharding-data-partitioning)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Search autocomplete](system-design-search-autocomplete.md) · [Recommendation system](system-design-recommendation-system.md)
+
+**Terms.** [hot key](GLOSSARY.md#hot-key) · [shard](GLOSSARY.md#shard) · [cache-aside](GLOSSARY.md#cache-aside) · [fan-out](GLOSSARY.md#fan-out)
+
+
 ---
 
 ## On this page

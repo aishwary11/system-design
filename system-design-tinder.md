@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A location-based dating platform supporting profile discovery, swiping, matching, messaging, and preferences for 50M+ daily active users.
 
+## Start here (plain English)
+
+**What it does.** Shows nearby profiles, records swipes, detects mutual likes, and opens a chat when two people match.
+
+**Think of it like.** A party where everyone has a card: you only see the people near you, and a conversation starts only when both cards say yes.
+
+**Why it's hard.** Discovery must be fast and local, swipes are write-heavy, and a match must be detected exactly once.
+
+**The core idea.** Index by location and preferences, keep the swipe graph in a store with a uniqueness constraint, and detect matches with a conditional write.
+
+**Watch out for.** Scanning all nearby users for every swipe is too slow; pre-filtering and a cached candidate set make discovery cheap.
+
+**Before this doc.** [Geospatial indexing](system-design-concepts.md#48-geospatial-indexing-geohash--s2) · [Idempotency](system-design-concepts.md#10-idempotency)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Proximity service](system-design-proximity-service.md) · [Messaging app](system-design-messaging-app.md)
+
+**Terms.** [geohash](GLOSSARY.md#geohash) · [cache-aside](GLOSSARY.md#cache-aside) · [idempotency](GLOSSARY.md#idempotency) · [fan-out](GLOSSARY.md#fan-out)
+
+
 ---
 
 ## On this page

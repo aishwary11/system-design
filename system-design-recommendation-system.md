@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A production recommender for feeds/e-commerce/video: candidate generation from multiple retrievers → feature enrichment → ML ranking → re-ranking with business logic. The classic "How does YouTube/Netflix/Amazon decide what to show" system, from embeddings to serving.
 
+## Start here (plain English)
+
+**What it does.** Turns a catalog of millions into a short, ranked list personalized for one user.
+
+**Think of it like.** A sommelier who first narrows thousands of bottles to a dozen promising ones, then picks the three that fit your taste and the meal.
+
+**Why it's hard.** The funnel must retrieve from a huge catalog, score accurately, and stay fast enough for a page load.
+
+**The core idea.** Retrieve with multiple cheap sources (ANN, co-visitation, trending), enrich with features, rank with a heavier model, then re-rank for diversity and business rules.
+
+**Watch out for.** A bigger ranker does not fix retrieval. The ranker can only choose from candidates it is given; bad retrieval makes it useless.
+
+**Before this doc.** [Caching strategies](system-design-concepts.md#16-caching-strategies) · [Vector index](GLOSSARY.md#vector-index)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Search engine](system-design-search-engine.md) · [Google Ads](system-design-google-ads.md)
+
+**Terms.** [embedding](GLOSSARY.md#embedding) · [vector index](GLOSSARY.md#vector-index) · [HNSW](GLOSSARY.md#hnsw) · [cache-aside](GLOSSARY.md#cache-aside)
+
+
 ---
 
 ## On this page

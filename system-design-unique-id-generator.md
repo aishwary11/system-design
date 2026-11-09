@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Generate ~64-bit, roughly sorted, globally unique IDs at scale without a coordinating database sequence — the primitive behind order IDs, tweet IDs, and every primary key that must be minted thousands of times per second.
 
+## Start here (plain English)
+
+**What it does.** Mints roughly sortable 64-bit IDs at high volume without a central database sequence.
+
+**Think of it like.** A ticket dispenser at each gate, each with its own roll: the numbers never collide because every gate has a different prefix.
+
+**Why it's hard.** Clock skew, machine restarts, and multi-region deployment can all produce duplicates or go backwards.
+
+**The core idea.** Compose the ID from timestamp + machine ID + sequence, and on clock regression either wait or borrow from the future.
+
+**Watch out for.** Random UUIDs are fine for uniqueness but fragment B-tree indexes and do not sort; Snowflake-style IDs trade coordination for locality.
+
+**Before this doc.** [Back-of-the-envelope estimation](system-design-concepts.md#52-back-of-the-envelope-estimation) · [Consensus](system-design-concepts.md#23-consensus-algorithms-raft--paxos)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [URL shortener](system-design-url-shortener.md) · [Key-value store](system-design-key-value-store.md)
+
+**Terms.** [shard](GLOSSARY.md#shard) · [lease](GLOSSARY.md#lease) · [idempotency](GLOSSARY.md#idempotency) · [WAL](GLOSSARY.md#wal)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A distributed rate limiting system that controls API request rates per user/IP/API key to prevent abuse and ensure fair usage.
 
+## Start here (plain English)
+
+**What it does.** Caps API traffic per user, key, or tenant, and returns a clear "slow down" response.
+
+**Think of it like.** A nightclub with a capacity limit: the doorman counts arrivals, lets in up to the limit, and asks the rest to wait.
+
+**Why it's hard.** The check must be atomic across distributed nodes, fast enough to sit on every request, and fair under bursts.
+
+**The core idea.** Run an atomic Lua script in Redis against a sliding-window or token-bucket key, and fail open or closed by product policy.
+
+**Watch out for.** Counting requests in each app instance multiplies the real limit by the fleet size. The counter must be shared.
+
+**Before this doc.** [Rate limiting](system-design-concepts.md#12-rate-limiting) · [Caching strategies](system-design-concepts.md#16-caching-strategies)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [AI gateway](system-design-ai-gateway.md) · [Notification system](system-design-notification-system.md)
+
+**Terms.** [token bucket](GLOSSARY.md#token-bucket) · [sliding window](GLOSSARY.md#sliding-window) · [rate limiting](GLOSSARY.md#rate-limiting) · [hot key](GLOSSARY.md#hot-key)
+
+
 ---
 
 ## On this page

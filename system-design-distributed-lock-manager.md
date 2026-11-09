@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A coordination service: locks, leases, leader election, and small-config storage built on consensus. The design behind Chubby, ZooKeeper, and etcd — and the reason "just use Redis locks" fails under partition. Consensus-as-a-service.
 
+## Start here (plain English)
+
+**What it does.** A coordination service that grants locks, leases, leader election, and small configuration reads on top of consensus.
+
+**Think of it like.** A building key cabinet: one key per room, a sign-out ledger, and a rule that a key left too long is reclaimed.
+
+**Why it's hard.** A paused client can wake up believing it still holds a lock; the lock service cannot see the pause.
+
+**The core idea.** Every grant is a consensus log entry with a monotonic fencing token, and every protected write checks that token.
+
+**Watch out for.** Redis SETNX is not a safe lock. Without a fencing token, a stale holder can still write after the lock has moved.
+
+**Before this doc.** [Consensus](system-design-concepts.md#23-consensus-algorithms-raft--paxos) · [Idempotency](system-design-concepts.md#10-idempotency)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Delayed job scheduler](system-design-delayed-job-scheduler.md) · [Code deployment](system-design-code-deployment.md)
+
+**Terms.** [lease](GLOSSARY.md#lease) · [fencing token](GLOSSARY.md#fencing-token) · [consensus](GLOSSARY.md#consensus) · [leader election](GLOSSARY.md#leader-election)
+
+
 ---
 
 ## On this page

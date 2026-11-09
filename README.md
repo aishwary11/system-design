@@ -6,7 +6,7 @@
 
 # System Design & Technology Guides
 
-<sub>56 SYSTEM DESIGNS · 16 GUIDES · 92 DIAGRAMS (87 INTERACTIVE) · 43 ALGORITHMS · 30-DAY ROADMAP</sub>
+<sub>58 SYSTEM DESIGNS · 16 GUIDES · 94 DIAGRAMS (89 INTERACTIVE) · 47 ALGORITHMS · 30-DAY ROADMAP</sub>
 
 </div>
 
@@ -15,12 +15,14 @@
 
 [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=6366f1&labelColor=0a0a0a)](https://github.com/aishwary11/system-design/commits)
 [![Stars](https://img.shields.io/github/stars/aishwary11/system-design?style=flat-square&color=6366f1&labelColor=0a0a0a)](https://github.com/aishwary11/system-design/stargazers)
-[![Docs](https://img.shields.io/badge/docs-74-6366f1?style=flat-square&labelColor=0a0a0a)](README.md)
+[![Docs](https://img.shields.io/badge/docs-78-6366f1?style=flat-square&labelColor=0a0a0a)](README.md)
 
 High-Level Architecture → Low-Level Design → database design → scaling tiers → interview prep,
 each with a **diagram image** plus a **self-contained interactive HTML** (pan/zoom, search, dark/light, export).
 
-**Start here:** [Browse the designs](#system-designs) · [Technology guides](#feature-guides) · [30-day roadmap](STUDY-ROADMAP.md)
+**Start here:** [Learning paths](LEARNING-PATHS.md) — three routes through the library · [Glossary](GLOSSARY.md) — every term in plain English · [Browse the designs](#system-designs) · [Technology guides](#feature-guides) · [30-day roadmap](STUDY-ROADMAP.md)
+
+**If you are new:** start with the [first eight reads](LEARNING-PATHS.md#first-eight) in order. Short on time? [URL shortener](system-design-url-shortener.md) → [Distributed cache](system-design-distributed-cache.md) → [Messaging app](system-design-messaging-app.md) → [Payment system](system-design-payment-system.md), reading the two concept sections each Start-here card lists first.
 
 The industry concept map — the named technique behind each design (Uber's H3, Google's S2, Stripe's GCRA and ledger, Kafka's LinkedIn origin), with primary sources — lives in [industry-concepts.md](industry-concepts.md).
 
@@ -51,10 +53,11 @@ The industry concept map — the named technique behind each design (Uber's H3, 
 
 | Surface | What you get | Start |
 | :--- | :--- | :--- |
-| **56 system designs** | Streaming, social, commerce, transport, infrastructure, trust & safety, AI infrastructure and more | [Browse by topic](#system-designs) |
+| **58 system designs** | Streaming, social, commerce, transport, infrastructure, trust & safety, AI infrastructure and more | [Browse by topic](#system-designs) |
 | **16 guides** | PostgreSQL, Redis, Kafka, MongoDB, Elasticsearch, RabbitMQ, cloud, agentic AI, concepts, LLD, networking, operating systems and more | [Jump to guides](#feature-guides) |
-| **92 diagrams** | One architecture map per design, plus sequence, lifecycle and anatomy figures where prose alone was doing the work | [Diagram style](#diagrams-archify) |
-| **43 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga and more | [Algorithm library](#algorithms-library) |
+| **Plain-English on-ramp** | Every design opens with a Start-here card; the glossary defines every term | [Learning paths](LEARNING-PATHS.md) |
+| **94 diagrams** | One architecture map per design, plus sequence, lifecycle and anatomy figures where prose alone was doing the work | [Diagram style](#diagrams-archify) |
+| **47 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga and more | [Algorithm library](#algorithms-library) |
 | **33 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker and more | [Techniques](#techniques--patterns) |
 
 ---
@@ -118,7 +121,7 @@ The industry concept map — the named technique behind each design (Uber's H3, 
 
 <a id="infra"></a>
 <details open>
-<summary><b>Infrastructure</b> · 17 docs</summary>
+<summary><b>Infrastructure</b> · 18 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
@@ -139,6 +142,7 @@ The industry concept map — the named technique behind each design (Uber's H3, 
 | 15 | Webhook Delivery (Outbound Fan-Out) | [View](system-design-webhook-delivery.md) |
 | 16 | Observability Pipeline (Metrics, Logs & Traces) | [View](system-design-observability-pipeline.md) |
 | 17 | A/B Experimentation Platform | [View](system-design-ab-testing.md) |
+| 18 | Data Pipeline (Batch + Streaming) | [View](system-design-data-pipeline.md) |
 
 </details>
 
@@ -178,11 +182,12 @@ The industry concept map — the named technique behind each design (Uber's H3, 
 
 <a id="trust-safety"></a>
 <details open>
-<summary><b>Trust & Safety</b> · 1 doc</summary>
+<summary><b>Trust & Safety</b> · 2 docs</summary>
 
 | # | Topic | File |
 | :- | :--- | :--- |
 | 1 | Fraud Detection (Real-Time Risk) | [View](system-design-fraud-detection.md) |
+| 2 | Content Moderation (Trust & Safety) | [View](system-design-content-moderation.md) |
 
 </details>
 
@@ -306,6 +311,8 @@ The guides cover the technology stack behind the design documents, each with run
 15. Low-Level Design (Algorithms & Data Structures)
 
 </details>
+
+Every design also opens with a plain-English **Start here** card before this template: what it does, an analogy, why it's hard, the core idea, the common misconception, two prerequisites, and a 5/20-minute reading plan.
 
 <details>
 <summary><b>Feature guide</b> — reference catalog layout</summary>
@@ -468,6 +475,10 @@ Executable implementations of the algorithms used across the designs:
 | Smooth Weighted Round-Robin Routing | ai-gateway | Provider selection that respects capacity weights without bursts |
 | Tail-Based Trace Sampling | observability-pipeline | Keep every error and latency outlier, sample the rest |
 | Idempotent Order State Machine | algo-trading | A retried submit becomes a 409, never a double position — monotonic guards reject fills for cancelled orders |
+| Event-Time Window + Watermark | data-pipeline | Complete event-time windows with a bounded allowance for late data |
+| Idempotent Sink | data-pipeline | Replay-safe writes on a deterministic key, so a retry is a no-op |
+| Perceptual Hash Matching | content-moderation | Find near-duplicate images and video after crops, resizes and re-encodes |
+| Review Priority Queue | content-moderation | Order the human queue by harm, reach and age instead of arrival |
 
 <p align="right"><a href="#top">↑ Back to top</a></p>
 

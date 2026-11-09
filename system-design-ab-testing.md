@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Deterministic bucketing, always-valid statistics and guardrail rollback for experiments that run while the product is live.
 
+## Start here (plain English)
+
+**What it does.** Runs two versions of a product change on live traffic and measures which one is actually better.
+
+**Think of it like.** A restaurant testing a new menu on half its tables and comparing tips, without telling the diners.
+
+**Why it's hard.** The result has to be trustworthy: users must be split deterministically, the metric must not be peeked at, and a guardrail must stop a harmful variant on its own.
+
+**The core idea.** Hash the user ID with a layer salt to assign a stable bucket, then judge the metric with always-valid statistics and CUPED.
+
+**Watch out for.** It is not "compare the averages." Sample-ratio mismatch and peeking are what make most experiment results wrong.
+
+**Before this doc.** [Consistent hashing](system-design-concepts.md#2-consistent-hashing) · [SLIs, SLOs & error budgets](system-design-concepts.md#45-slis-slos--error-budgets)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Recommendation system](system-design-recommendation-system.md) · [Code deployment](system-design-code-deployment.md)
+
+**Terms.** [feature flag](GLOSSARY.md#feature-flag) · [canary](GLOSSARY.md#canary) · [SLO](GLOSSARY.md#slo) · [sampling](GLOSSARY.md#sampling)
+
+
 ---
 
 ## On this page

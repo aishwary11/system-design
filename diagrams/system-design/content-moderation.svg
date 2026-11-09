@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1020" width="900" role="img" aria-label="Content Moderation — Trust &amp; Safety Architecture">
+<title>Content Moderation — Trust &amp; Safety Architecture</title>
+<rect x="0.5" y="0.5" width="959" height="1019" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+<path d="M480 120 L480 180" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M480 240 L480 300" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M480 360 L480 420" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M480 480 L480 540" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M480 600 L480 660" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M480 720 L480 780" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M480 840 L480 900" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M380 570 L200 570" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M120 600 L120 660" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M120 720 L120 780" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M200 810 L380 810" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M760 570 L580 570" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)" stroke-dasharray="5 4"/>
+<path d="M580 930 L760 930" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)"/>
+<path d="M840 900 L840 600" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-content-moderation)" stroke-dasharray="5 4"/>
+<rect x="380" y="63" width="200" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="380" y="60" width="200" height="60" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="383" y="63" width="194" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="480" y="96" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Content</text>
+<rect x="380" y="183" width="200" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="380" y="180" width="200" height="60" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="383" y="183" width="194" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="480" y="216" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Moderation API</text>
+<rect x="380" y="303" width="200" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="380" y="300" width="200" height="60" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="383" y="303" width="194" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="480" y="336" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Hash Index</text>
+<rect x="380" y="423" width="200" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="380" y="420" width="200" height="60" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="383" y="423" width="194" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="480" y="456" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Classifier Cascade</text>
+<rect x="380" y="543" width="200" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="380" y="540" width="200" height="60" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="383" y="543" width="194" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="480" y="576" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Policy Engine</text>
+<rect x="380" y="663" width="200" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="380" y="660" width="200" height="60" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="383" y="663" width="194" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="480" y="696" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Enforcement</text>
+<rect x="380" y="783" width="200" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="380" y="780" width="200" height="60" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<rect x="383" y="783" width="194" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="480" y="816" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#4c1d95">Audit &amp; Evidence</text>
+<rect x="380" y="903" width="200" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="380" y="900" width="200" height="60" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="383" y="903" width="194" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="480" y="936" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Feedback / Training</text>
+<rect x="40" y="543" width="160" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="40" y="540" width="160" height="60" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="43" y="543" width="154" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="120" y="576" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Review Queue</text>
+<rect x="40" y="663" width="160" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="40" y="660" width="160" height="60" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
+<rect x="43" y="663" width="154" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="120" y="696" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#064e3b">Human Reviewers</text>
+<rect x="40" y="783" width="160" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="40" y="780" width="160" height="60" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+<rect x="43" y="783" width="154" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="120" y="816" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#312e81">Appeals</text>
+<rect x="760" y="543" width="160" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="760" y="540" width="160" height="60" rx="12" fill="#f0f9ff" stroke="#0ea5e9" stroke-width="1.4"/>
+<rect x="763" y="543" width="154" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="840" y="576" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#0c4a6e">Policy Admin</text>
+<rect x="760" y="903" width="160" height="60" rx="12" fill="#0f172a" fill-opacity="0.08"/>
+<rect x="760" y="900" width="160" height="60" rx="12" fill="#f0f9ff" stroke="#0ea5e9" stroke-width="1.4"/>
+<rect x="763" y="903" width="154" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+<text x="840" y="936" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="bold" fill="#0c4a6e">Model Registry</text>
+<defs><marker id="arr-content-moderation" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="arrEm-content-moderation" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker></defs>
+</svg>

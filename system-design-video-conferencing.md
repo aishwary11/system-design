@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A real-time video conferencing platform supporting video/audio calls, screen sharing, chat, and recording for millions of concurrent users.
 
+## Start here (plain English)
+
+**What it does.** Runs real-time multi-party audio and video with screen sharing, chat, and recording.
+
+**Think of it like.** A conference room where the hotel staff mix and forward each speaker's microphone, instead of every guest calling every other guest.
+
+**Why it's hard.** Media is latency-sensitive, uploads are asymmetric, and a server must fan out each stream without re-encoding everything.
+
+**The core idea.** Use an SFU: each participant sends one stream, the server forwards selected streams to the others, and adaptive bitrate handles bad networks.
+
+**Watch out for.** A mesh where everyone sends to everyone collapses on home broadband as participants grow; the SFU is the scalable shape.
+
+**Before this doc.** [CDN & edge caching](system-design-concepts.md#37-cdn--edge-caching) · [Backpressure](system-design-concepts.md#21-backpressure)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Hotstar](system-design-hotstar.md) · [Discord](system-design-discord.md)
+
+**Terms.** [CDN](GLOSSARY.md#cdn) · [backpressure](GLOSSARY.md#backpressure) · [fan-out](GLOSSARY.md#fan-out) · [continuous batching](GLOSSARY.md#batching)
+
+
 ---
 
 ## On this page

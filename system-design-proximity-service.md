@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A geospatial service that finds nearby users, drivers, restaurants, or stores based on geographic location with sub-second response times.
 
+## Start here (plain English)
+
+**What it does.** Answers "what is near me?" over millions of moving and static points, in under 200 ms.
+
+**Think of it like.** A city map with a grid of transparent overlays: you only look at the squares near you, not the whole city.
+
+**Why it's hard.** Geospatial indexes must handle dense cities, sparse oceans, and constantly moving points without hot spots.
+
+**The core idea.** Index by geohash or S2 cell, query the target cell plus its neighbours, and rank by exact distance after the candidate set.
+
+**Watch out for.** One geohash prefix is not enough. A radius crosses cell boundaries; you must query neighbours and deduplicate.
+
+**Before this doc.** [Geospatial indexing](system-design-concepts.md#48-geospatial-indexing-geohash--s2) · [Caching strategies](system-design-concepts.md#16-caching-strategies)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Uber](system-design-uber.md) · [Google Maps](system-design-google-maps.md)
+
+**Terms.** [geohash](GLOSSARY.md#geohash) · [cache-aside](GLOSSARY.md#cache-aside) · [hot key](GLOSSARY.md#hot-key) · [shard](GLOSSARY.md#shard)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A code-execution platform: run untrusted user code in sandboxed microVMs against hidden test cases, with queues, per-language runtimes, anti-cheat, and result streaming — a scheduling + security problem where the workload is actively adversarial.
 
+## Start here (plain English)
+
+**What it does.** Runs untrusted user code against hidden tests in sandboxes and returns a verdict quickly.
+
+**Think of it like.** A firing range with disposable rooms: every submission gets its own sealed booth, time limit, and cleanup crew.
+
+**Why it's hard.** Untrusted code can fork-bomb, escape, or hang; contest spikes are 100x normal, and the verdict must be trustworthy.
+
+**The core idea.** One microVM per submission, hard resource limits at the kernel boundary, per-language warm pools, and streaming verdicts.
+
+**Watch out for.** Docker is not a strong sandbox. Containers share a kernel; hostile code needs a stronger boundary (microVM, gVisor) plus limits.
+
+**Before this doc.** [Backpressure](system-design-concepts.md#21-backpressure) · [Idempotency](system-design-concepts.md#10-idempotency)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Serverless platform](system-design-serverless.md) · [Code deployment](system-design-code-deployment.md)
+
+**Terms.** [backpressure](GLOSSARY.md#backpressure) · [idempotency](GLOSSARY.md#idempotency) · [lease](GLOSSARY.md#lease) · [object storage](GLOSSARY.md#object-storage)
+
+
 ---
 
 ## On this page

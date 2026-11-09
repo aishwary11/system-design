@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Group chat at Discord scale: servers with hundreds of thousands of members, millions of concurrent WebSocket sessions, voice/video over UDP — where naive fan-out breaks the moment a 100K-member room receives one message.
 
+## Start here (plain English)
+
+**What it does.** Runs huge community chat rooms with millions of simultaneous WebSocket connections, plus voice and video.
+
+**Think of it like.** A stadium with thousands of sections: a message is announced once to each section speaker, not to every seat individually.
+
+**Why it's hard.** A 500,000-member room cannot fan out per member, and a single gateway node cannot hold every socket.
+
+**The core idea.** Fan out hierarchically: room to gateway clusters, then gateway to local sockets, with an append-only message log underneath.
+
+**Watch out for.** A bigger WebSocket server is not the fix. The bottleneck is the fan-out work per message, not socket count alone.
+
+**Before this doc.** [Fan-out & push vs pull](system-design-concepts.md#42-fan-out--push-vs-pull) · [Backpressure](system-design-concepts.md#21-backpressure)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Messaging app](system-design-messaging-app.md) · [Video conferencing](system-design-video-conferencing.md)
+
+**Terms.** [fan-out](GLOSSARY.md#fan-out) · [backpressure](GLOSSARY.md#backpressure) · [idempotency](GLOSSARY.md#idempotency) · [consumer group](GLOSSARY.md#consumer-group)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — High-performance in-memory caching layer providing sub-millisecond reads for frequently accessed data, reducing database load.
 
+## Start here (plain English)
+
+**What it does.** A shared in-memory layer that serves hot reads in under a millisecond and protects the database.
+
+**Think of it like.** A row of quick-access shelves in front of the warehouse: most requests never need the warehouse, but a missing item sends a runner.
+
+**Why it's hard.** The cache must survive node loss without losing the keyspace, and a hot key must not melt one shard.
+
+**The core idea.** Shard with consistent hashing, replicate each shard, and treat a miss as the normal path with single-flight protection.
+
+**Watch out for.** Invalidation is not just deleting the key. The hard part is the race between the database write and the cache fill.
+
+**Before this doc.** [Caching strategies](system-design-concepts.md#16-caching-strategies) · [Consistent hashing](system-design-concepts.md#2-consistent-hashing)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Key-value store](system-design-key-value-store.md) · [URL shortener](system-design-url-shortener.md)
+
+**Terms.** [consistent hashing](GLOSSARY.md#consistent-hashing) · [cache-aside](GLOSSARY.md#cache-aside) · [eviction](GLOSSARY.md#eviction) · [LRU](GLOSSARY.md#lru) · [hot key](GLOSSARY.md#hot-key) · [cache stampede](GLOSSARY.md#cache-stampede)
+
+
 ---
 
 ## On this page

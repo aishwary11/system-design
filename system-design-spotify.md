@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Music streaming service with personalized playlists, podcast hosting, social features, and offline listening for 600M+ users.
 
+## Start here (plain English)
+
+**What it does.** Streams music and podcasts, builds personalized playlists, and supports offline listening across devices.
+
+**Think of it like.** A radio station that knows your taste, but also lets you download the songs before you go into the tunnel.
+
+**Why it's hard.** The catalog is large but each stream is small, personalization is continuous, and offline devices must reconcile plays.
+
+**The core idea.** Separate the catalog, the playlist/recommendation layer, and the streaming edge; precompute personalized mixes and sync play state.
+
+**Watch out for.** Recommendations are not only a nightly batch job. The best systems blend batch candidates with near-real-time signals.
+
+**Before this doc.** [CDN & edge caching](system-design-concepts.md#37-cdn--edge-caching) · [Caching strategies](system-design-concepts.md#16-caching-strategies)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Netflix](system-design-netflix.md) · [YouTube](system-design-youtube.md)
+
+**Terms.** [CDN](GLOSSARY.md#cdn) · [cache-aside](GLOSSARY.md#cache-aside) · [embedding](GLOSSARY.md#embedding) · [fan-out](GLOSSARY.md#fan-out)
+
+
 ---
 
 ## On this page

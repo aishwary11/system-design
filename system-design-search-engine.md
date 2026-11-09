@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Full-stack web search: a crawling frontend feeding an inverted index the size of the web, a serving stack that returns ranked results in <200ms, and the indexing pipeline that makes documents searchable within minutes. The crawler exists in this repo already — this doc is the index and ranking behind it.
 
+## Start here (plain English)
+
+**What it does.** Crawls the web, builds an inverted index, and returns ranked results in under 200 ms.
+
+**Think of it like.** The index at the back of a book, rebuilt continuously for billions of pages, with a ranking judge on top.
+
+**Why it's hard.** The index is larger than any one machine, documents change constantly, and ranking must be both relevant and fast.
+
+**The core idea.** Shard the index by document and by term, serve from replicated shards, and rank with a cascade from cheap to expensive signals.
+
+**Watch out for.** One index on one big machine does not reach web scale; sharding and a serving cascade are the design.
+
+**Before this doc.** [Indexing fundamentals](system-design-concepts.md#50-indexing-fundamentals--selection-strategy) · [Sharding](system-design-concepts.md#1-sharding-data-partitioning)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Search autocomplete](system-design-search-autocomplete.md) · [Web crawler](system-design-web-crawler.md)
+
+**Terms.** [shard](GLOSSARY.md#shard) · [secondary index](GLOSSARY.md#secondary-index) · [cache-aside](GLOSSARY.md#cache-aside) · [cardinality](GLOSSARY.md#cardinality)
+
+
 ---
 
 ## On this page

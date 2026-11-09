@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Distributed key-value store providing eventually consistent reads/writes with high availability.
 
+## Start here (plain English)
+
+**What it does.** A distributed map from key to value that stays available across node and network failures.
+
+**Think of it like.** A fleet of librarians, each owning a slice of the card catalog; if one is out, a neighbour covers, and the catalog converges later.
+
+**Why it's hard.** Availability and partition tolerance force eventual consistency, but conflicting versions must not silently overwrite each other.
+
+**The core idea.** Consistent-hash the keyspace, replicate each key N times, require R/W quorums, and resolve conflicts with vector clocks or a read-repair path.
+
+**Watch out for.** Quorum overlap does not prove linearizability. It gives read-your-writes only with the right R+W>N and explicit conflict handling.
+
+**Before this doc.** [Quorum reads & writes](system-design-concepts.md#28-quorum-reads--writes) · [Consistent hashing](system-design-concepts.md#2-consistent-hashing)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Distributed cache](system-design-distributed-cache.md) · [Distributed lock manager](system-design-distributed-lock-manager.md)
+
+**Terms.** [consistent hashing](GLOSSARY.md#consistent-hashing) · [quorum](GLOSSARY.md#quorum) · [vector clock](GLOSSARY.md#vector-clock) · [read repair](GLOSSARY.md#read-repair) · [hinted handoff](GLOSSARY.md#hinted-handoff)
+
+
 ---
 
 ## On this page

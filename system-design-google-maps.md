@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Google Maps is a comprehensive mapping and navigation service providing map rendering, location search, turn-by-turn directions, real-time traffic updates, ETA estimation, Street View, and Points of Interest (POI) discovery.
 
+## Start here (plain English)
+
+**What it does.** Renders map tiles, geocodes places, computes routes over a road graph, and updates ETAs from live traffic.
+
+**Think of it like.** A paper atlas with a traffic reporter on every road: the map is static, but the recommended route changes as the reporter calls in.
+
+**Why it's hard.** The road graph is enormous, traffic changes every few seconds, and routes must be recomputed without recomputing the world.
+
+**The core idea.** Precompute tiles and contraction hierarchies, keep traffic in a streaming layer, and update only the affected edge weights.
+
+**Watch out for.** Running Dijkstra on the full graph for every request does not scale. Preprocessing and hierarchical routing are what make continent-scale queries fast.
+
+**Before this doc.** [Geospatial indexing](system-design-concepts.md#48-geospatial-indexing-geohash--s2) · [CDN & edge caching](system-design-concepts.md#37-cdn--edge-caching)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Uber](system-design-uber.md) · [Proximity service](system-design-proximity-service.md)
+
+**Terms.** [geohash](GLOSSARY.md#geohash) · [CDN](GLOSSARY.md#cdn) · [cache-aside](GLOSSARY.md#cache-aside) · [read repair](GLOSSARY.md#read-repair)
+
+
 ---
 
 ## On this page

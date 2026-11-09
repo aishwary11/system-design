@@ -15,6 +15,27 @@
 > [!TIP]
 > **THE PROBLEM** — Design durable state for a 1,024-GPU training job: snapshot weights, optimizer, RNG and data position without stopping training for a minute, commit the checkpoint atomically, and restore onto a **different** world size after a node fails. The hard parts are distributed snapshot consistency, sharded I/O throughput, and the commit protocol — not the file format.
 
+## Start here (plain English)
+
+**What it does.** Snapshots a 1,000-GPU training job (weights, optimizer, RNG, data position) and restores it after a failure.
+
+**Think of it like.** A group project saving a consistent draft: every member must save the same version, or the merged document is nonsense.
+
+**Why it's hard.** All shards must come from the same step, the pause must be short, and a committed checkpoint must survive a region loss.
+
+**The core idea.** Pin a global step, stage shards asynchronously to a replicated object store, and commit the manifest atomically only when every shard is durable.
+
+**Watch out for.** Checkpointing each GPU independently produces a set that cannot be resumed correctly; the step boundary is the unit of consistency.
+
+**Before this doc.** [WAL & durability](system-design-concepts.md#31-write-ahead-log-wal--durability) · [Quorum reads & writes](system-design-concepts.md#28-quorum-reads--writes)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [GPU scheduler](system-design-gpu-scheduler.md) · [LLM inference](system-design-llm-inference.md)
+
+**Terms.** [quorum](GLOSSARY.md#quorum) · [object storage](GLOSSARY.md#object-storage) · [WAL](GLOSSARY.md#wal) · [idempotency](GLOSSARY.md#idempotency)
+
+
 | THE PROBLEM | THE HARD PART | THE BET |
 | :--- | :--- | :--- |
 | 1,024 ranks must survive node loss, preemption and elastic resizes. | A consistent snapshot of more than weights, written without a 60-second stall. | Stage at a step boundary, write shards in parallel, and commit a manifest last. |

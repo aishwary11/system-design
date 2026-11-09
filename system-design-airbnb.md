@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Two-sided marketplace connecting hosts and guests with search, booking, payments, reviews, and trust/safety systems.
 
+## Start here (plain English)
+
+**What it does.** A two-sided marketplace where hosts list places and guests search, book, and pay for them.
+
+**Think of it like.** A hotel front desk that owns no rooms: it checks availability across thousands of independent landlords and holds a room while you pay.
+
+**Why it's hard.** Search must stay fast while availability changes constantly, and two guests must never book the same dates.
+
+**The core idea.** Keep search in a read-optimized index, but make the authoritative booking decision a single conditional write on the availability row.
+
+**Watch out for.** A Redis lock does not make booking safe. It reduces contention; the database constraint is what prevents the double booking.
+
+**Before this doc.** [Caching strategies](system-design-concepts.md#16-caching-strategies) · [Optimistic concurrency](system-design-concepts.md#44-optimistic-concurrency--versioning)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Ticketing system](system-design-ticketing-system.md) · [E-commerce](system-design-ecommerce.md)
+
+**Terms.** [cache-aside](GLOSSARY.md#cache-aside) · [optimistic locking](GLOSSARY.md#optimistic-locking) · [idempotency](GLOSSARY.md#idempotency) · [shard](GLOSSARY.md#shard)
+
+
 ---
 
 ## On this page

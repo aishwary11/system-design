@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — IRCTC powers one of the world's largest online train ticket booking platforms, serving 8.5 billion passengers annually across 13,500 trains and 7,300 stations.
 
+## Start here (plain English)
+
+**What it does.** Books train tickets for billions of passengers a year, including the Tatkal rush where millions compete for the same seats at 10:00.
+
+**Think of it like.** A railway ticket counter that opens one window for a whole city: the queue must be fair, and no seat may be sold twice.
+
+**Why it's hard.** The opening-second load is extreme, seat inventory is finite, and payment may fail after the seat is held.
+
+**The core idea.** Hold the seat atomically with an expiry, make payment idempotent, and treat the database constraint, not the queue, as the final arbiter.
+
+**Watch out for.** A queue does not make booking correct. Fairness is a product rule; the correctness rule is the atomic seat claim plus a compensating release.
+
+**Before this doc.** [Idempotency](system-design-concepts.md#10-idempotency) · [Pessimistic locking](GLOSSARY.md#pessimistic-locking)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Ticketing system](system-design-ticketing-system.md) · [Metro ticketing](system-design-metro-ticketing.md)
+
+**Terms.** [pessimistic locking](GLOSSARY.md#pessimistic-locking) · [idempotency](GLOSSARY.md#idempotency) · [saga](GLOSSARY.md#saga) · [lease](GLOSSARY.md#lease)
+
+
 ---
 
 ## On this page

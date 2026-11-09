@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A cloud file storage system supporting file upload/download, sync, sharing, and versioning for millions of users.
 
+## Start here (plain English)
+
+**What it does.** Stores files in chunks, syncs changes across devices, and shares them with other users.
+
+**Think of it like.** A library that keeps the catalog card and the book on separate shelves: the card is small and fast, the book is large and slow.
+
+**Why it's hard.** Differential sync must move only changed chunks, and two devices editing the same file must not silently overwrite each other.
+
+**The core idea.** Content-address immutable chunks in object storage, keep metadata in a transactional database, and sync by comparing chunk hashes.
+
+**Watch out for.** Re-uploading the whole file on every edit destroys the product. Chunk-level hashing is what makes sync feel instant.
+
+**Before this doc.** [Merkle trees](system-design-concepts.md#22-merkle-trees-anti-entropy) · [Object storage](GLOSSARY.md#object-storage)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Google Docs](system-design-google-docs.md) · [YouTube](system-design-youtube.md)
+
+**Terms.** [object storage](GLOSSARY.md#object-storage) · [Merkle tree](GLOSSARY.md#merkle-tree) · [idempotency](GLOSSARY.md#idempotency) · [TTL](GLOSSARY.md#ttl)
+
+
 ---
 
 ## On this page

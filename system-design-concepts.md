@@ -1470,6 +1470,29 @@ traffic ──► canary 2% ──► watch error budget / latency ──► ram
 
 Best practice is a stack: **canary + feature flags + error-budget monitoring + automated rollback**, with migrations designed backward-compatible (additive columns, dual writes) so old and new code can coexist during any of these.
 
+### Feature flags: the operational half of deployment
+
+A flag is a runtime decision, not a deploy. Treat its lifecycle as a product surface:
+
+| Stage | What it means | Guardrail |
+| :--- | :--- | :--- |
+| **Create** | Owner, purpose, expiry date, default value | No permanent flags; every flag has an owner |
+| **Release** | Off by default, then internal users, then a percentage | Ramp only while the guardrail metric is healthy |
+| **Kill switch** | Disable a risky path instantly, without a deploy | The flag service must be independent of the app deploy |
+| **Cleanup** | Remove the flag and the dead branch | A flag older than its expiry fails CI |
+
+**Evaluation consistency** is the subtle part. If the same user hits two services and one evaluates the flag differently, the experience fractures. Hash a stable unit key (user ID or tenant ID) with a per-flag salt, and keep the definition in one service that both callers read. Cache the definition locally with a short TTL, and version it so a stale cache is detectable.
+
+```text
+unitKey = user:42
+bucket  = hash(flagSalt + ":" + unitKey) % 10000
+enabled = bucket < rolloutPercent * 100      // 5% -> bucket < 500
+```
+
+Do not evaluate a percentage flag with `Math.random()` per request: the user flips between variants. Do not put the flag service on the critical path without a local cache; a flag outage must not take the product down.
+
+**Kill switches are not ordinary flags.** They must be readable when the rest of the system is degraded, so keep a small, replicated snapshot on the edge or in the service process. A kill switch that depends on the service it is trying to kill is not a switch.
+
 ---
 
 ## 48. Geospatial Indexing (Geohash & S2)
@@ -1712,6 +1735,46 @@ mTLS: both sides present certs; mesh sidecars (§36) handle it per-hop
 | OIDC on top of OAuth2 | identity (who), not just access | ad-hoc login protocols |
 | Client-credentials + mTLS | service-to-service | shared secrets in config |
 | Per-service scopes | least privilege | one god-token |
+
+### SSO, OIDC and SAML in one picture
+
+Enterprise customers do not want another password. They want their identity provider (Okta, Entra ID, Google Workspace) to authenticate the user, and your app to trust the result.
+
+```text
+Browser ──► App ──► IdP /authorize (client_id, redirect_uri, state, PKCE)
+                ◄── authorization code
+App ──► IdP /token (code + verifier) ◄── ID token (JWT) + access token
+App verifies signature, issuer, audience, expiry, nonce → session
+```
+
+- **OIDC** is the modern default: JSON/JWT, works for SPAs and mobile with authorization code + PKCE.
+- **SAML** is the enterprise legacy: XML assertions, still required by many large customers. Support it as a connector, not as your primary protocol.
+- **SSO** is the product feature; OIDC and SAML are the protocols underneath it.
+
+The security-critical checks are boring and mandatory: validate the signature against the provider's published keys, check `iss`, `aud`, `exp` and `nonce`, and never accept an unsigned or `alg: none` token.
+
+### Sessions vs JWTs
+
+| | Server session | JWT |
+| :--- | :--- | :--- |
+| **State** | Stored server-side; the cookie carries an opaque ID | Self-contained claims in the token |
+| **Revocation** | Immediate: delete the session | Hard: wait for expiry or keep a deny-list |
+| **Scale** | Needs a shared session store | Stateless verification |
+| **Best use** | Browser apps that need instant logout | Service-to-service, short-lived API access |
+
+The practical pattern is a **short-lived access JWT (5–15 min) plus a refresh token** backed by a server-side session record. The access token stays stateless; the refresh token can be revoked. Do not put secrets in the JWT payload: it is signed, not encrypted, and anyone can read it.
+
+### Authorization: RBAC, ABAC and the policy boundary
+
+- **RBAC** is the default: roles → permissions, users → roles. Easy to reason about and audit.
+- **ABAC** is for rules a role cannot express: "a support agent may read a customer record only for their region and only during an open ticket".
+- Keep authorization decisions in one policy service or library, not scattered `if (user.role === 'admin')` checks. The decision should be testable, versioned and logged.
+
+A useful test: name the principal, the resource, the action and the context for every rule. If a check cannot name all four, it is probably an authentication check wearing an authorization costume.
+
+### Secrets and rotation
+
+Never bake a secret into an image or a repository. Load it from a secret manager at runtime, scope it to one service, and rotate it on a schedule with an overlap window: issue the new version, deploy consumers that accept both, switch the producer, then revoke the old version. A rotation that breaks a live consumer is an outage with a security justification.
 
 **Webhook signatures** (HMAC of body + timestamp) and **idempotency keys** (§10) complete the money-flow story (`system-design-payment-system.md`). Security review should also cover the LLM surface — see `agentic-ai-features.md` §9.
 

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Data Pipeline — Batch and Streaming Architecture",
+    "output": "data-pipeline.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [960, 1020]
+  },
+  "components": [
+    { "id": "sources", "type": "external", "label": "Sources", "sublabel": "CDC · events · APIs · logs", "pos": [380, 60], "size": [200, 60] },
+    { "id": "gateway", "type": "backend", "label": "Ingestion Gateway", "sublabel": "auth · envelope · ingest_id", "pos": [380, 180], "size": [200, 60] },
+    { "id": "bus", "type": "messagebus", "label": "Event Bus", "sublabel": "Kafka · durable buffer", "pos": [380, 300], "size": [200, 60] },
+    { "id": "bronze", "type": "database", "label": "Bronze", "tag": "raw · immutable · replayable", "pos": [380, 420], "size": [200, 60] },
+    { "id": "batch", "type": "backend", "label": "Batch Processor", "tag": "Spark · history · backfill", "pos": [160, 540], "size": [200, 60] },
+    { "id": "stream", "type": "backend", "label": "Stream Processor", "tag": "Flink · watermarks · state", "pos": [600, 540], "size": [200, 60] },
+    { "id": "silver", "type": "database", "label": "Silver", "tag": "clean · deduped · typed", "pos": [380, 660], "size": [200, 60] },
+    { "id": "gold", "type": "database", "label": "Gold", "tag": "facts · marts · features", "pos": [380, 780], "size": [200, 60] },
+    { "id": "serve", "type": "backend", "label": "Serving", "tag": "BI · ML · reverse ETL", "pos": [380, 900], "size": [200, 60] },
+    { "id": "registry", "type": "cloud", "label": "Schema Registry", "tag": "contracts · compatibility", "pos": [40, 180], "size": [160, 60] },
+    { "id": "quality", "type": "cloud", "label": "Quality Gate", "tag": "assertions · quarantine", "pos": [760, 420], "size": [160, 60] },
+    { "id": "catalog", "type": "cloud", "label": "Catalog & Lineage", "tag": "schemas · snapshots", "pos": [760, 660], "size": [160, 60] }
+  ],
+  "connections": [
+    { "id": "e1-sources-gateway", "from": "sources", "to": "gateway", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e2-gateway-bus", "from": "gateway", "to": "bus", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e3-bus-bronze", "from": "bus", "to": "bronze", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e4-bronze-batch", "from": "bronze", "to": "batch", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e5-bronze-stream", "from": "bronze", "to": "stream", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e6-batch-silver", "from": "batch", "to": "silver", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e7-stream-silver", "from": "stream", "to": "silver", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e8-silver-gold", "from": "silver", "to": "gold", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e9-gold-serve", "from": "gold", "to": "serve", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e10-registry-gateway", "from": "registry", "to": "gateway", "fromSide": "right", "toSide": "left", "variant": "dashed" },
+    { "id": "e11-quality-bronze", "from": "quality", "to": "bronze", "fromSide": "left", "toSide": "right", "variant": "dashed" },
+    { "id": "e12-catalog-silver", "from": "catalog", "to": "silver", "fromSide": "left", "toSide": "right", "variant": "dashed" }
+  ]
+}

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Design the observability backend for a fleet of thousands of services: metrics are scraped/emitted at scale, stored in a time-series database, queried by dashboards, evaluated by rule engines, and converted into deduplicated, routed, escalating **alerts** with on-call paging.
 
+## Start here (plain English)
+
+**What it does.** Collects metrics from thousands of services, stores them as time series, evaluates rules, and pages the right person.
+
+**Think of it like.** A hospital monitor bank: sensors stream vitals, a rules engine watches thresholds, and only the alarms that need a human ring.
+
+**Why it's hard.** Ingest volume is enormous and bursty, but the query path must stay fast and alerts must not flap.
+
+**The core idea.** Buffer ingest in a log, write to a time-series store with tiered retention, and evaluate rules against a consistent snapshot rather than raw events.
+
+**Watch out for.** More metrics does not mean better alerting. Cardinality is the cost driver; one high-cardinality label can double the bill and slow every query.
+
+**Before this doc.** [SLIs, SLOs & error budgets](system-design-concepts.md#45-slis-slos--error-budgets) · [Backpressure](system-design-concepts.md#21-backpressure)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Observability pipeline](system-design-observability-pipeline.md) · [Code deployment](system-design-code-deployment.md)
+
+**Terms.** [cardinality](GLOSSARY.md#cardinality) · [SLO](GLOSSARY.md#slo) · [error budget](GLOSSARY.md#error-budget) · [sampling](GLOSSARY.md#sampling)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — An e-commerce platform supporting product search, shopping cart, inventory management, order processing, payment, shipping, and reviews for millions of products and users.
 
+## Start here (plain English)
+
+**What it does.** Product catalog, search, cart, checkout, inventory, payment, and order management for millions of shoppers.
+
+**Think of it like.** A department store where the shelf, the cash register, and the stockroom are separate systems that must agree on what is actually for sale.
+
+**Why it's hard.** Browse traffic is huge and tolerant of staleness; checkout is small and must be exactly right.
+
+**The core idea.** Split the read path (cache plus search index) from the write path (authoritative database plus inventory reservation), and make the order boundary a transaction.
+
+**Watch out for.** Decrementing inventory when the order is placed is too late. The reserve must happen before payment, or you sell stock you do not have.
+
+**Before this doc.** [Caching strategies](system-design-concepts.md#16-caching-strategies) · [Saga pattern](system-design-concepts.md#8-saga-pattern)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Payment system](system-design-payment-system.md) · [Ticketing system](system-design-ticketing-system.md)
+
+**Terms.** [cache-aside](GLOSSARY.md#cache-aside) · [saga](GLOSSARY.md#saga) · [idempotency](GLOSSARY.md#idempotency) · [optimistic locking](GLOSSARY.md#optimistic-locking)
+
+
 ---
 
 ## On this page

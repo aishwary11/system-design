@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A calendar platform: events with recurrence and time zones, cross-user free/busy queries, invites with RSVP state machines, and conflict resolution — deceptively hard because the data model (recurrence × timezones × invites) explodes quietly.
 
+## Start here (plain English)
+
+**What it does.** Stores events with recurrence and time zones, answers free/busy queries across users, and manages invites and RSVPs.
+
+**Think of it like.** A shared scheduling assistant that keeps everyone's calendar, but must reconcile "every second Tuesday" with daylight saving and a guest in another country.
+
+**Why it's hard.** Recurrence expands into a huge number of instances, and free/busy must be fast without scanning every event.
+
+**The core idea.** Store the recurrence rule once, materialize exceptions only, and maintain a per-user interval index of busy blocks.
+
+**Watch out for.** Expanding every recurrence into rows turns a daily meeting for ten years into thousands of rows per event and a migration nightmare.
+
+**Before this doc.** [Indexing fundamentals](system-design-concepts.md#50-indexing-fundamentals--selection-strategy) · [Materialized view](GLOSSARY.md#materialized-view)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Google Docs](system-design-google-docs.md) · [Notification system](system-design-notification-system.md)
+
+**Terms.** [materialized view](GLOSSARY.md#materialized-view) · [secondary index](GLOSSARY.md#secondary-index) · [idempotency](GLOSSARY.md#idempotency) · [TTL](GLOSSARY.md#ttl)
+
+
 ---
 
 ## On this page

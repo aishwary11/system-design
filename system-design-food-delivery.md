@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A food delivery platform supporting restaurant discovery, order placement, real-time tracking, and delivery partner management.
 
+## Start here (plain English)
+
+**What it does.** Connects hungry customers, restaurants, and delivery partners in real time, from discovery to doorstep.
+
+**Think of it like.** An air-traffic controller for dinners: it finds nearby drivers, assigns the closest one, and tracks every order until it lands.
+
+**Why it's hard.** The matching decision is a moving target: drivers, restaurants, and traffic all change while the order is being assigned.
+
+**The core idea.** Keep live locations in a geospatial index, make assignment a state machine with an expiring claim, and stream status changes to both sides.
+
+**Watch out for.** Picking the nearest driver once is not enough. Nearest at assignment time may be far away by pickup time; the claim must expire and re-match.
+
+**Before this doc.** [Geospatial indexing](system-design-concepts.md#48-geospatial-indexing-geohash--s2) · [Idempotency](system-design-concepts.md#10-idempotency)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Uber](system-design-uber.md) · [Proximity service](system-design-proximity-service.md)
+
+**Terms.** [geohash](GLOSSARY.md#geohash) · [idempotency](GLOSSARY.md#idempotency) · [fan-out](GLOSSARY.md#fan-out) · [cache-aside](GLOSSARY.md#cache-aside)
+
+
 ---
 
 ## On this page

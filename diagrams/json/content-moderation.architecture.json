@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Content Moderation — Trust & Safety Architecture",
+    "output": "content-moderation.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [960, 1020]
+  },
+  "components": [
+    { "id": "content", "type": "external", "label": "Content", "sublabel": "upload · edit · message", "pos": [380, 60], "size": [200, 60] },
+    { "id": "api", "type": "backend", "label": "Moderation API", "sublabel": "auth · context · route", "pos": [380, 180], "size": [200, 60] },
+    { "id": "hash", "type": "backend", "label": "Hash Index", "tag": "SHA · PDQ · SimHash", "pos": [380, 300], "size": [200, 60] },
+    { "id": "cascade", "type": "backend", "label": "Classifier Cascade", "tag": "text → image → video", "pos": [380, 420], "size": [200, 60] },
+    { "id": "policy", "type": "backend", "label": "Policy Engine", "tag": "score + context → action", "pos": [380, 540], "size": [200, 60] },
+    { "id": "action", "type": "backend", "label": "Enforcement", "tag": "remove · limit · label", "pos": [380, 660], "size": [200, 60] },
+    { "id": "audit", "type": "database", "label": "Audit & Evidence", "tag": "immutable · encrypted", "pos": [380, 780], "size": [200, 60] },
+    { "id": "feedback", "type": "backend", "label": "Feedback / Training", "tag": "labels · hash updates", "pos": [380, 900], "size": [200, 60] },
+    { "id": "review", "type": "backend", "label": "Review Queue", "tag": "severity · reach · age", "pos": [40, 540], "size": [160, 60] },
+    { "id": "reviewers", "type": "external", "label": "Human Reviewers", "sublabel": "language · category · 24×7", "pos": [40, 660], "size": [160, 60] },
+    { "id": "appeals", "type": "backend", "label": "Appeals", "tag": "independent reviewer", "pos": [40, 780], "size": [160, 60] },
+    { "id": "admin", "type": "cloud", "label": "Policy Admin", "tag": "draft · shadow · rollback", "pos": [760, 540], "size": [160, 60] },
+    { "id": "training", "type": "cloud", "label": "Model Registry", "tag": "versioned · shadow eval", "pos": [760, 900], "size": [160, 60] }
+  ],
+  "connections": [
+    { "id": "e1-content-api", "from": "content", "to": "api", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e2-api-hash", "from": "api", "to": "hash", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e3-hash-cascade", "from": "hash", "to": "cascade", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e4-cascade-policy", "from": "cascade", "to": "policy", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e5-policy-action", "from": "policy", "to": "action", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e6-action-audit", "from": "action", "to": "audit", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e7-audit-feedback", "from": "audit", "to": "feedback", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e8-policy-review", "from": "policy", "to": "review", "fromSide": "left", "toSide": "right" },
+    { "id": "e9-review-reviewers", "from": "review", "to": "reviewers", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e10-reviewers-appeals", "from": "reviewers", "to": "appeals", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e11-appeals-audit", "from": "appeals", "to": "audit", "fromSide": "right", "toSide": "left" },
+    { "id": "e12-admin-policy", "from": "admin", "to": "policy", "fromSide": "left", "toSide": "right", "variant": "dashed" },
+    { "id": "e13-feedback-training", "from": "feedback", "to": "training", "fromSide": "right", "toSide": "left" },
+    { "id": "e14-training-admin", "from": "training", "to": "admin", "fromSide": "top", "toSide": "bottom", "variant": "dashed" }
+  ]
+}

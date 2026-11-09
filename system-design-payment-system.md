@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A payment processing platform supporting online payments, refunds, subscriptions, and multi-currency transactions.
 
+## Start here (plain English)
+
+**What it does.** Moves money between customers, merchants, and banks, with idempotency, fraud checks, and a double-entry ledger.
+
+**Think of it like.** A bank vault with two keys: one for the customer side and one for the merchant side, and every movement is written in a book that must balance.
+
+**Why it's hard.** Retries, partial failures, and provider timeouts are normal; the ledger must never double-charge or lose a cent.
+
+**The core idea.** Make the payment intent idempotent, record every movement as a balanced pair, and reconcile against the provider asynchronously.
+
+**Watch out for.** The provider saying success is not the end. The webhook can arrive twice or not at all; reconcile, do not trust a single signal.
+
+**Before this doc.** [Idempotency](system-design-concepts.md#10-idempotency) · [Saga pattern](system-design-concepts.md#8-saga-pattern)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [E-commerce](system-design-ecommerce.md) · [Stock exchange](system-design-stock-exchange.md)
+
+**Terms.** [idempotency](GLOSSARY.md#idempotency) · [saga](GLOSSARY.md#saga) · [outbox](GLOSSARY.md#outbox) · [WAL](GLOSSARY.md#wal)
+
+
 ---
 
 ## On this page

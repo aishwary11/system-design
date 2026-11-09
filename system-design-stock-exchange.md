@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Design the core trading platform of a stock exchange (NSE / NASDAQ / BSE-style): order intake from broker OMSs, a deterministic matching engine that runs a continuous two-sided auction per symbol, tick-by-tick market data dissemination, and T+1 clearing & settlement.
 
+## Start here (plain English)
+
+**What it does.** Accepts orders from brokers, matches them deterministically, and publishes trades and market data.
+
+**Think of it like.** A single auctioneer with a rulebook: everyone shouts orders, but the auctioneer processes them in one exact order so the outcome is reproducible.
+
+**Why it's hard.** The matching engine must be deterministic, microsecond-fast, and recoverable without losing or duplicating an order.
+
+**The core idea.** Sequence every order through one shard, match in memory with a price-time priority book, and replicate the command log for recovery.
+
+**Watch out for.** Running one symbol on many threads destroys determinism. Scale by symbol, not by thread.
+
+**Before this doc.** [Idempotency](system-design-concepts.md#10-idempotency) · [WAL & durability](system-design-concepts.md#31-write-ahead-log-wal--durability)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Algorithmic trading](system-design-algo-trading.md) · [Payment system](system-design-payment-system.md)
+
+**Terms.** [WAL](GLOSSARY.md#wal) · [idempotency](GLOSSARY.md#idempotency) · [fencing token](GLOSSARY.md#fencing-token) · [offset](GLOSSARY.md#offset)
+
+
 ---
 
 ## On this page

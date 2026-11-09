@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Text sharing service allowing users to paste code/text snippets and share via unique URLs.
 
+## Start here (plain English)
+
+**What it does.** Stores text snippets and serves them at short URLs, with expiry and optional privacy.
+
+**Think of it like.** A public locker room: you put a note in a locker, get the number, and anyone with the number can read it.
+
+**Why it's hard.** Writes are large and read-heavy, content may be huge, and expired pastes must disappear reliably.
+
+**The core idea.** Put the blob in object storage, keep metadata in a database, cache hot reads, and expire with a TTL plus a sweeper.
+
+**Watch out for.** A 10 MB paste in a database row bloats backups and ruins cache efficiency. Use object storage for the blob.
+
+**Before this doc.** [Object storage](GLOSSARY.md#object-storage) · [Caching strategies](system-design-concepts.md#16-caching-strategies)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [URL shortener](system-design-url-shortener.md) · [File storage](system-design-file-storage.md)
+
+**Terms.** [object storage](GLOSSARY.md#object-storage) · [cache-aside](GLOSSARY.md#cache-aside) · [TTL](GLOSSARY.md#ttl) · [idempotency](GLOSSARY.md#idempotency)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A URL shortening service that converts long URLs to short, shareable links with analytics tracking.
 
+## Start here (plain English)
+
+**What it does.** Turns a long URL into a short code and redirects every visit to the original, counting clicks.
+
+**Think of it like.** A coat-check ticket: a small numbered tag that the desk can exchange for your coat.
+
+**Why it's hard.** Reads outnumber writes 100:1, so redirects must never wait on the database, and codes must be unique across regions.
+
+**The core idea.** Mint IDs in bulk (counter ranges or Snowflake), encode them in Base62, and serve the mapping from cache with the database as fallback.
+
+**Watch out for.** Hashing the URL and taking the first seven characters collides. A counter or a checked-unique hash is safer.
+
+**Before this doc.** [Caching strategies](system-design-concepts.md#16-caching-strategies) · [Base62 & Snowflake IDs](system-design-concepts.md#73-base62-encoding--snowflake-ids)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Pastebin](system-design-pastebin.md) · [Unique ID generator](system-design-unique-id-generator.md)
+
+**Terms.** [cache-aside](GLOSSARY.md#cache-aside) · [TTL](GLOSSARY.md#ttl) · [idempotency](GLOSSARY.md#idempotency) · [shard](GLOSSARY.md#shard)
+
+
 ---
 
 ## On this page
@@ -52,7 +73,7 @@ A URL shortening service that converts long URLs to short, shareable links with 
 | :--- | :--- |
 | **URLs shortened per day** | 100M+ |
 | **redirects per day** | 10B+ |
-| **100** | 1 read/write ratio |
+| **Read/write ratio** | 100:1 |
 
 ---
 
@@ -355,166 +376,201 @@ A: Async Kafka counting, batch Cassandra aggregation
 
 ## Low-Level Design (LLD) - Algorithms & Data Structures
 
-### 1. Base62 Encoding (URL to Short Code)
+### 1. Base62 encoding
 
 ```js
-const BASE62 = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+const BASE62 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 function encodeBase62(num) {
-  // Convert number to base62 string
-  // Time Complexity: O(log62 N)
+  // Convert a non-negative integer to a Base62 string. O(log62 n) time.
+  if (!Number.isInteger(num) || num < 0) throw new Error('non-negative integer required');
   if (num === 0) return BASE62[0];
-  let result = '';
+  let out = '';
   while (num > 0) {
-    result = BASE62[num % 62] + result;
+    out = BASE62[num % 62] + out;
     num = Math.floor(num / 62);
   }
-  return result;
+  return out;
 }
 
 function decodeBase62(str) {
-  // Convert base62 string back to number
-  // Time Complexity: O(N) where N = string length
-  let result = 0;
-  for (const char of str) {
-    result = result * 62 + BASE62.indexOf(char);
+  // Convert a Base62 string back to an integer. O(n) time.
+  let n = 0;
+  for (const ch of str) {
+    const digit = BASE62.indexOf(ch);
+    if (digit < 0) throw new Error(`invalid base62 character: ${ch}`);
+    n = n * 62 + digit;
   }
-  return result;
+  return n;
 }
 
-class UrlShortener {
-  constructor(dbClient, idGenerator) {
-    this.db = dbClient;        // key-value store
-    this.generator = idGenerator; // Snowflake or similar
-  }
-
-  async shorten(longUrl) {
-    const id = this.generator.nextId();
-    const shortCode = encodeBase62(id);
-    await this.db.set(`url:${shortCode}`, longUrl, { EX: 86400 * 30 });  // 30 day TTL
-    return shortCode;
-  }
-
-  async resolve(shortCode) {
-    return this.db.get(`url:${shortCode}`);
-  }
-}
+console.log(encodeBase62(125));  // "21"
+console.log(decodeBase62('21')); // 125
+console.log(62 ** 7);            // 3521614606208 — the 7-character keyspace
 ```
 
-### 2. Counter-Based Distributed ID Generation
+Seven characters give `62^7 ≈ 3.5 trillion` codes. Base62 is used instead of Base64 because `+` and `/` are unsafe in a URL path, and instead of hex because hex needs 13 characters for the same space.
+
+### 2. Range-based distributed ID generation
 
 ```js
-class AnalyticsTracker {
-  // Track URL clicks with deduplication
-  // Time Complexity: O(1) per click
-  constructor(redisClient, kafkaProducer) {
-    this.r = redisClient;
-    this.kafka = kafkaProducer;
+class CounterStore {
+  constructor() { this.value = 0; }
+  incrementAndGet() { return ++this.value; } // Redis INCR is atomic
+}
+
+class RangeAllocator {
+  // Each server reserves a block of IDs, then hands them out locally.
+  // No coordination per URL: one round trip per block.
+  constructor(store, rangeSize = 1000) {
+    this.store = store;
+    this.rangeSize = rangeSize;
+    this.next = 0;
+    this.end = 0;
   }
 
-  async trackClick(shortCode, userId, userAgent, ip) {
-    // Deduplicate: same user+URL within 5 minutes = 1 click
-    const dedupKey = `click:${shortCode}:${userId}:${this.getFiveMinWindow()}`;
-    const isNew = await this.r.set(dedupKey, '1', 'EX', 300, 'NX');
-
-    if (isNew) {
-      // Increment click counter
-      await this.r.incr(`stats:${shortCode}:clicks`);
-
-      // Send to Kafka for detailed analytics
-      await this.kafka.produce('url.clicks', {
-        shortCode, userId, userAgent, ip,
-        timestamp: Date.now()
-      });
-    }
+  reserve() {
+    const block = this.store.incrementAndGet();
+    this.next = block * this.rangeSize;
+    this.end = this.next + this.rangeSize;
   }
 
-  async getStats(shortCode) {
-    const clicks = await this.r.get(`stats:${shortCode}:clicks`) || '0';
-    return { shortCode, clicks: parseInt(clicks) };
-  }
-
-  getFiveMinWindow() {
-    return Math.floor(Date.now() / 1000 / 300);  // 5-minute windows
+  nextId() {
+    if (this.next >= this.end) this.reserve();
+    return this.next++;
   }
 }
+
+const store = new CounterStore();
+const serverA = new RangeAllocator(store);
+const serverB = new RangeAllocator(store);
+const ids = new Set();
+for (let i = 0; i < 2500; i++) ids.add(serverA.nextId());
+for (let i = 0; i < 2500; i++) ids.add(serverB.nextId());
+console.log(ids.size); // 5000: two servers, no collisions
 ```
 
-### 3. Bloom Filter for Duplicate URL Detection
+The failure mode is a lost block after a crash: the IDs in an unissued block are simply never used. That is a gap in the keyspace, not a duplicate, which is the safe direction to fail.
 
-```text
-const mmh3 = require('mmh3');
-const { bitarray } = require('bitarray');
+### 3. Bloom filter for duplicate-URL detection
 
+```js
 class BloomFilter {
-    // Probabilistic data structure to check if a URL was already shortened.
-    // Prevents collisions
-    return url;
+  // A compact "definitely not present / possibly present" set.
+  // False positives are possible; false negatives are not.
+  constructor(bitCount = 1 << 20, hashCount = 7) {
+    this.bits = new Uint8Array(bitCount);
+    this.size = bitCount;
+    this.k = hashCount;
+  }
+
+  // Double hashing: derive k positions from two independent 32-bit hashes.
+  positions(value) {
+    let h1 = 0x811c9dc5;
+    let h2 = 0x01000193;
+    for (let i = 0; i < value.length; i++) {
+      const c = value.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
+      h2 = Math.imul(h2 ^ c, 0x85ebca6b) >>> 0;
+    }
+    const out = [];
+    for (let i = 0; i < this.k; i++) out.push(((h1 + i * h2) >>> 0) % this.size);
+    return out;
+  }
+
+  add(value) { for (const i of this.positions(value)) this.bits[i] = 1; }
+
+  mightContain(value) {
+    for (const i of this.positions(value)) if (!this.bits[i]) return false;
+    return true;
   }
 }
 
+const seen = new BloomFilter(1 << 16, 7);
+seen.add('https://example.com/a');
+console.log(seen.mightContain('https://example.com/a')); // true
+console.log(seen.mightContain('https://example.com/b')); // false (almost certainly)
 ```
 
+A Bloom filter answers "have we probably seen this URL before?" without storing every URL. It is a pre-filter in front of the database, not a replacement for the unique constraint: a positive still needs a lookup.
+
+### 4. Cache-aside redirect with single-flight
+
 ```js
-class SpamDetector {
-  // Detect and block malicious URLs
-  // Time Complexity: O(1) per check
-  constructor(redisClient, dbClient) {
-    this.r = redisClient;
-    this.db = dbClient;
+class SingleFlightCache {
+  // Reads cache -> database, but collapses concurrent misses for one key
+  // into a single database read. The "thundering herd" fix.
+  constructor(cache, db) {
+    this.cache = cache;
+    this.db = db;
+    this.inflight = new Map();
   }
 
-  async checkUrl(url) {
-    // Rule 1: Check against known malicious domains
-    const domain = new URL(url).hostname;
-    const isBlocked = await this.r.sismember('blocked:domains', domain);
-    if (isBlocked) return { safe: false, reason: 'blocked_domain' };
+  async get(key) {
+    const hit = this.cache.get(key);
+    if (hit !== undefined) return { value: hit, source: 'cache' };
 
-    // Rule 2: Check for phishing patterns
-    const suspiciousPatterns = [/login.*verify/i, /account.*suspended/i, /click.*here.*urgent/i];
-    for (const pattern of suspiciousPatterns) {
-      if (pattern.test(url)) {
-        return { safe: false, reason: 'phishing_pattern' };
-      }
+    if (this.inflight.has(key)) {
+      return { value: await this.inflight.get(key), source: 'single-flight' };
     }
 
-    // Rule 3: Rate limit URL creation (max 10 per hour per user)
-    // Handled separately in UrlShortener class
+    const pending = (async () => {
+      const value = await this.db.get(key);
+      if (value !== undefined) this.cache.set(key, value);
+      return value;
+    })();
 
-    return { safe: true };
-  }
-
-  async blockDomain(domain) {
-    await this.r.sadd('blocked:domains', domain);
-  }
-}
-```text
-class CacheService {
-  constructor(redisClient, dbClient) {
-    this.r = redisClient;
-    this.db = dbClient;
-  }
-
-  async resolve(shortCode) {
-    // Try cache first
-    const cached = await this.r.get(`cache:url:${shortCode}`);
-    if (cached) return cached;
-
-    // Fallback to database
-    const url = await this.db.getUrl(shortCode);
-    if (url) {
-      // Cache with TTL (cache hot URLs longer)
-      await this.r.setex(`cache:url:${shortCode}`, 3600, url);  // 1 hour TTL
+    this.inflight.set(key, pending);
+    try {
+      return { value: await pending, source: 'database' };
+    } finally {
+      this.inflight.delete(key);
     }
-    return url;
-  }
-
-  async invalidate(shortCode) {
-    await this.r.del(`cache:url:${shortCode}`);
   }
 }
 
-const gen = new URLGenerator(); console.log("Short URL:", gen.generate());
+(async () => {
+  const cache = new Map();
+  const db = new Map([['abc', 'https://example.com']]);
+  const svc = new SingleFlightCache(cache, { get: async k => db.get(k) });
+  const [a, b] = await Promise.all([svc.get('abc'), svc.get('abc')]);
+  console.log(a, b); // one database read, one request joins the in-flight promise
+})();
+```
+
+The redirect path should also set a short TTL and a cache-control header at the edge. The database remains the source of truth; the cache is allowed to be stale for the TTL window.
+
+### 5. Click deduplication
+
+```js
+class ClickDeduper {
+  // Count at most one click per (short code, user) per window.
+  // In production this is Redis SET NX EX 300, not an in-process map.
+  constructor(windowMs = 300_000) {
+    this.windowMs = windowMs;
+    this.seen = new Map();
+  }
+
+  first(shortCode, userId, now = Date.now()) {
+    const window = Math.floor(now / this.windowMs);
+    const key = `${shortCode}:${userId}:${window}`;
+    const expiry = (window + 1) * this.windowMs;
+
+    for (const [k, exp] of this.seen) if (exp <= now) this.seen.delete(k);
+    if (this.seen.has(key)) return false;
+
+    this.seen.set(key, expiry);
+    return true;
+  }
+}
+
+const deduper = new ClickDeduper(300_000);
+console.log(deduper.first('abc', 'u1', 1_000));   // true
+console.log(deduper.first('abc', 'u1', 2_000));   // false, same 5-minute window
+console.log(deduper.first('abc', 'u1', 400_000)); // true, new window
+```
+
+Deduplicating clicks keeps analytics honest without blocking the redirect: the counter is incremented asynchronously, and the redirect never waits for Kafka.
 
 ## Do's & Don'ts
 

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — An ad platform: advertisers bid on keywords, an auction runs per search/session in <100ms with quality scoring and budget pacing, and click/billing events flow through an auditable, deduplicated ledger with reconciliation. The hardest "money" system: zero tolerance for overcharging, plus fraud everywhere.
 
+## Start here (plain English)
+
+**What it does.** Runs an auction for every ad slot, ranks ads by bid and quality, and paces each advertiser budget across the day.
+
+**Think of it like.** A live auction where the auctioneer also knows how much each bidder has left to spend and refuses to let one bidder empty their wallet in the first hour.
+
+**Why it's hard.** The auction must finish inside the search latency budget, and budget pacing must be fair without letting spend run out early.
+
+**The core idea.** Retrieve eligible ads with an inverted index, score with an auction-time model, and pace with a probabilistic filter driven by remaining budget.
+
+**Watch out for.** The highest bid does not always win. Quality and expected impact are part of the rank, otherwise the platform fills with bad ads.
+
+**Before this doc.** [Back-of-the-envelope estimation](system-design-concepts.md#52-back-of-the-envelope-estimation) · [Caching strategies](system-design-concepts.md#16-caching-strategies)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Search engine](system-design-search-engine.md) · [Recommendation system](system-design-recommendation-system.md)
+
+**Terms.** [token bucket](GLOSSARY.md#token-bucket) · [cache-aside](GLOSSARY.md#cache-aside) · [cardinality](GLOSSARY.md#cardinality) · [idempotency](GLOSSARY.md#idempotency)
+
+
 ---
 
 ## On this page

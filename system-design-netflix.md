@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — Netflix is the world's leading subscription-based video streaming platform with 260M+ subscribers across 190+ countries.
 
+## Start here (plain English)
+
+**What it does.** Streams licensed video to 260M+ subscribers, personalizes the catalog, and runs its own CDN.
+
+**Think of it like.** A global video vending machine: the catalog is centralized, but the tapes are copied to neighborhood lockers so the last mile is short.
+
+**Why it's hard.** The catalog is read-heavy and personal, video is enormous, and the system must survive a region outage without stopping playback.
+
+**The core idea.** Keep metadata in a read-optimized store with a large cache, pre-position video in an owned CDN, and isolate playback from the control plane.
+
+**Watch out for.** Streaming quality is not just a player problem. The encoding ladder, CDN placement, and client ABR all decide it.
+
+**Before this doc.** [CDN & edge caching](system-design-concepts.md#37-cdn--edge-caching) · [Caching strategies](system-design-concepts.md#16-caching-strategies)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Hotstar](system-design-hotstar.md) · [YouTube](system-design-youtube.md)
+
+**Terms.** [CDN](GLOSSARY.md#cdn) · [cache-aside](GLOSSARY.md#cache-aside) · [eventual consistency](GLOSSARY.md#eventual-consistency) · [shard](GLOSSARY.md#shard)
+
+
 ---
 
 ## On this page

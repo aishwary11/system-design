@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A real-time messaging platform supporting one-to-one and group messaging, media sharing, online/offline status, delivery receipts, and push notifications for 2B+ users globally.
 
+## Start here (plain English)
+
+**What it does.** Delivers one-to-one and group messages in real time, with presence, receipts, media, and offline delivery.
+
+**Think of it like.** A postal service with a live doorbell: if you are home, the letter is handed over instantly; if not, it waits in your box.
+
+**Why it's hard.** 100B+ messages a day, mostly tiny, with strict per-conversation ordering and delivery to online and offline devices.
+
+**The core idea.** Route by a connection registry, append to a per-conversation log, push to online sockets, and queue for offline devices.
+
+**Watch out for.** Storing messages in the chat service database is not the whole design. Connection routing, ordering, and multi-device fan-out are the hard parts.
+
+**Before this doc.** [Fan-out & push vs pull](system-design-concepts.md#42-fan-out--push-vs-pull) · [Backpressure](system-design-concepts.md#21-backpressure)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Discord](system-design-discord.md) · [Notification system](system-design-notification-system.md)
+
+**Terms.** [fan-out](GLOSSARY.md#fan-out) · [offset](GLOSSARY.md#offset) · [consumer group](GLOSSARY.md#consumer-group) · [idempotency](GLOSSARY.md#idempotency)
+
+
 ---
 
 ## On this page

@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A ticket booking and hotel reservation platform supporting search, availability checking, seat/room selection, reservation with concurrency control, payment processing, and booking confirmation.
 
+## Start here (plain English)
+
+**What it does.** Sells seats or rooms for events and stays, holding inventory while a buyer pays.
+
+**Think of it like.** A box office with a seat map: the clerk puts a temporary "reserved" sticker on your seat, then removes it if you do not pay.
+
+**Why it's hard.** Flash sales put 50K+ users on one event, and a hold that never expires or a payment that arrives twice both break inventory.
+
+**The core idea.** Make the hold an atomic, expiring row in the authoritative store; treat the Redis lock as a contention reducer, not the correctness boundary.
+
+**Watch out for.** A cache-only hold can oversell after a failover. The database constraint is the source of truth.
+
+**Before this doc.** [Pessimistic locking](GLOSSARY.md#pessimistic-locking) · [Idempotency](system-design-concepts.md#10-idempotency)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [IRCTC](system-design-irctc.md) · [E-commerce](system-design-ecommerce.md)
+
+**Terms.** [pessimistic locking](GLOSSARY.md#pessimistic-locking) · [lease](GLOSSARY.md#lease) · [idempotency](GLOSSARY.md#idempotency) · [saga](GLOSSARY.md#saga)
+
+
 ---
 
 ## On this page

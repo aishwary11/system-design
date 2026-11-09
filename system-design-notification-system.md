@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A multi-channel notification system supporting push, email, SMS, and in-app notifications for millions of users.
 
+## Start here (plain English)
+
+**What it does.** Sends push, email, SMS, and in-app notifications with preferences, templates, priorities, and delivery tracking.
+
+**Think of it like.** A postal sorting office with different carriers: the same letter may go by bike, van, or overnight courier depending on urgency and address.
+
+**Why it's hard.** Multiple providers with different latency and failure modes, plus user preferences and quiet hours, must produce one reliable decision.
+
+**The core idea.** Normalize every channel behind one event, resolve preferences once, and route to per-channel workers with retries and a DLQ.
+
+**Watch out for.** Retrying until it succeeds turns a provider outage into a spam storm. Cap, back off, and dead-letter.
+
+**Before this doc.** [Dead letter queue](system-design-concepts.md#20-dead-letter-queue) · [Retries, backoff & jitter](system-design-concepts.md#39-retries-backoff--jitter)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Webhook delivery](system-design-webhook-delivery.md) · [Messaging app](system-design-messaging-app.md)
+
+**Terms.** [dead-letter queue](GLOSSARY.md#dead-letter-queue) · [idempotency](GLOSSARY.md#idempotency) · [backpressure](GLOSSARY.md#backpressure) · [token bucket](GLOSSARY.md#token-bucket)
+
+
 ---
 
 ## On this page

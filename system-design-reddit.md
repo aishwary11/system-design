@@ -13,6 +13,27 @@
 > [!TIP]
 > **THE PROBLEM** — A community/link-aggregation platform: threaded comment trees, vote-based ranking with time decay, per-subreddit feeds, and moderation. Distinct from Twitter/Instagram because the core object is a **mutable tree**, not a flat feed.
 
+## Start here (plain English)
+
+**What it does.** Hosts community forums with threaded comments, votes, and time-decayed ranking.
+
+**Think of it like.** A giant noticeboard per neighborhood: posts are pinned, comments branch like a tree, and votes slowly rotate the board.
+
+**Why it's hard.** Comment trees are deep, votes are frequent, and ranking must balance freshness with quality without recomputing the world.
+
+**The core idea.** Store the tree by parent pointer, aggregate votes incrementally, and recompute hot scores on a schedule with a decay function.
+
+**Watch out for.** Sorting comments by score at read time is expensive at depth and volume; cache the ordered children and update incrementally.
+
+**Before this doc.** [Fan-out & push vs pull](system-design-concepts.md#42-fan-out--push-vs-pull) · [Caching strategies](system-design-concepts.md#16-caching-strategies)
+
+**Read it in.** 5 min: [Overview](#overview) + [Architecture](#high-level-architecture) · 20 min: add [Design decisions](#key-design-decisions) + [Failure modes](#failure-modes--recovery) · full: all 16 sections.
+
+**Read next.** [Twitter / X](system-design-twitter.md) · [Discord](system-design-discord.md)
+
+**Terms.** [fan-out](GLOSSARY.md#fan-out) · [cache-aside](GLOSSARY.md#cache-aside) · [hot key](GLOSSARY.md#hot-key) · [eventual consistency](GLOSSARY.md#eventual-consistency)
+
+
 ---
 
 ## On this page
