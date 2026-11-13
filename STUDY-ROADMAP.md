@@ -50,8 +50,8 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 | 3 | 🧩 [§9–§16](system-design-concepts.md#9-outbox-pattern) (outbox, idempotency, breaker, rate limiting, LB, leader election, replication, caching) · 🌍 [Industry concept map](industry-concepts.md) | Implement the single-flight snippet; explain cache-aside vs write-through aloud |
 | 4 | 📐 [Rate limiter](system-design-rate-limiter.md) · 📐 [Distributed cache](system-design-distributed-cache.md) · 📐 [Key-value store](system-design-key-value-store.md) | Trace which pattern each doc uses and why; compare LRU vs LFU eviction |
 | 5 | 🧰 [Redis guide](redis-features.md) (+ §20 tips, §21 do's) · ❓ [Q&A §81](interview-qa.md#81-caching--redis) | Run every redis-cli example locally |
-| 6 | 🧩 [§58–§74](system-design-concepts.md#58-luhns-algorithm-credit-card-validation) algorithms (Luhn → sliding window) | Execute the drift-guard minter; break it on purpose (clock skew) |
-| 6½ | 🧵 [Low-Level Design](low-level-design.md) — the twelve concurrency primitives | For five of them, write the invariant, the shutdown contract and the overload policy from memory |
+| 6 | 🧩 [§58–§74](system-design-concepts.md#58-luhns-algorithm-credit-card-validation) + [Part II-B extended algorithms](system-design-concepts.md#part-iib--extended-algorithms) (Luhn → sliding window, LFU → Bellman-Ford) | Execute the drift-guard minter; break it on purpose (clock skew) |
+| 6½ | 🧵 [Low-Level Design](low-level-design.md) — the twelve concurrency primitives · 🧵 [Classic LLD Problems](lld-problems.md) | For five primitives, write the invariant, the shutdown contract and the overload policy from memory; then model the parking lot and ATM classes |
 | 7 | **Checkpoint** | Whiteboard: design a pastebin end-to-end in 45 min. Compare against the doc's trade-off table |
 
 ## Week 2 — Data & Messaging (state, streams, and consistency)
@@ -74,7 +74,7 @@ A day-by-day path through this repo: designs interleaved with the concepts that 
 | 16 | 📐 [Uber](system-design-uber.md) · 📐 [Route reconstruction](system-design-route-reconstruction.md) · 📐 [Proximity service](system-design-proximity-service.md) · 📐 [Google Maps](system-design-google-maps.md) | Compute a geohash by hand for your city; explain the H3/HMM consensus |
 | 17 | 📐 [Metro ticketing](system-design-metro-ticketing.md) · 📐 [Parking system](system-design-parking-system.md) · 📐 [Food delivery](system-design-food-delivery.md) · 📐 [Airbnb](system-design-airbnb.md) | Where does each system need a hard consistency boundary, and where is eventual consistency fine? |
 | 18 | 📐 [Netflix](system-design-netflix.md) · 📐 [YouTube](system-design-youtube.md) · 📐 [Hotstar](system-design-hotstar.md) · 📐 [Spotify](system-design-spotify.md) · 📐 [Video conferencing](system-design-video-conferencing.md) | Compare CDN strategies; estimate bandwidth for 1M concurrent 4K streams |
-| 19 | 🧰 [Networking guide](networking.md) · 🧰 [Cloud map](cloud.md) | Trace one request through DNS → TLS → CDN → LB → service; pick the cloud service for each hop |
+| 19 | 🧰 [Networking guide](networking.md) · 🧰 [Cloud map](cloud.md) · 🧰 [Tools guide](tools.md) | Trace one request through DNS → TLS → CDN → LB → service; pick the cloud service and the open-source alternative for each hop |
 | 20 | 📐 [Payment system](system-design-payment-system.md) · 📐 [Stock exchange](system-design-stock-exchange.md) · 📐 [Algorithmic trading](system-design-algo-trading.md) | Write the double-spend prevention flow; then trace one order from signal → risk gate → venue → fill → reconciliation |
 | 21 | **Checkpoint** | Whiteboard: multi-region payments with reconciliation |
 
@@ -117,7 +117,7 @@ Every design document and its scheduled day, so nothing gets skipped:
 | 27 | [LLM inference](system-design-llm-inference.md) · [AI gateway](system-design-ai-gateway.md) · [GPU scheduler](system-design-gpu-scheduler.md) · [Distributed training](system-design-distributed-training.md) |
 | 28 | [IRCTC](system-design-irctc.md) · [Ticketing system](system-design-ticketing-system.md) · [E-commerce](system-design-ecommerce.md) |
 
-Guides are interleaved the same way: [Concepts](system-design-concepts.md) (days 1–15, 30), [Redis](redis-features.md) (5), [Kafka](kafka-features.md) (9), [RabbitMQ](rabbitmq-features.md) (11), [PostgreSQL](postgresql-features.md) + [MongoDB](mongodb-features.md) (12), [Networking](networking.md) (19), [Cloud](cloud.md) (19, 27), [DevOps](devops-features.md) (22), [Elasticsearch](elasticsearch-features.md) + [Agentic AI](agentic-ai-features.md) (27), [Operating Systems](operating-systems.md) (28), [Low-Level Design](low-level-design.md) (6½), [Resources](resources.md) (29), [Interview Q&A](interview-qa.md) (days 5, 9, 11, 25, 29), [Glossary](GLOSSARY.md) (all days), [Learning paths](LEARNING-PATHS.md) (day 0).
+Guides are interleaved the same way: [Concepts](system-design-concepts.md) (days 1–15, 30), [Redis](redis-features.md) (5), [Kafka](kafka-features.md) (9), [RabbitMQ](rabbitmq-features.md) (11), [PostgreSQL](postgresql-features.md) + [MongoDB](mongodb-features.md) (12), [Networking](networking.md) (19), [Cloud](cloud.md) (19, 27), [DevOps](devops-features.md) (22), [Elasticsearch](elasticsearch-features.md) + [Agentic AI](agentic-ai-features.md) (27), [Operating Systems](operating-systems.md) (28), [Low-Level Design](low-level-design.md) (6½), [Classic LLD Problems](lld-problems.md) (6½), [Tools](tools.md) (19), [Resources](resources.md) (29), [Interview Q&A](interview-qa.md) (days 5, 9, 11, 25, 29), [Glossary](GLOSSARY.md) (all days), [Learning paths](LEARNING-PATHS.md) (day 0).
 
 ---
 

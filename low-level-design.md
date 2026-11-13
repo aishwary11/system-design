@@ -15,6 +15,8 @@
 > [!TIP]
 > **The thesis** — HLD rounds ask *which boxes*; LLD rounds ask *what invariant your lock protects*. Every section follows the same shape: **scope → invariant → baseline → what production does → what breaks**, then the follow-up that separates recall from engineering judgement.
 
+**Companion guide:** this file covers concurrency primitives. For the classic object-oriented prompts — parking lot, elevator, vending machine, library, ATM — use [Classic LLD Problems](lld-problems.md), which follows the same invariant-first shape.
+
 ---
 
 ## On this page
@@ -913,6 +915,8 @@ The preparation document that prompted this guide lists 25 prompts. Twelve are p
 | 23 | Dynamic batching scheduler | [LLM Inference](system-design-llm-inference.md) — request-level dynamic batching vs iteration-level continuous batching, queue delay and KV admission | Covered |
 | 24 | Model loading & eviction across GPUs | [GPU Scheduler & Model Lifecycle](system-design-gpu-scheduler.md) | **New** |
 | 25 | Checkpoint & recovery for distributed training | [Distributed Training Checkpoints](system-design-distributed-training.md) | **New** |
+
+**Classic object-oriented prompts:** the 25-question set above is concurrency-heavy. Parking lot, elevator, vending machine, library management, ATM, Splitwise, chess, and movie booking are covered in [Classic LLD Problems](lld-problems.md), so this guide stays focused on primitives rather than repeating object models.
 
 **15 NEW · 10 LINKED EXISTING DOCS · 0 DUPLICATE TOPICS**
 

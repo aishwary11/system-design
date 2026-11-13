@@ -6,7 +6,7 @@
 
 # System Design & Technology Guides
 
-<sub>58 SYSTEM DESIGNS · 16 GUIDES · 94 DIAGRAMS (89 INTERACTIVE) · 47 ALGORITHMS · 30-DAY ROADMAP</sub>
+<sub>58 SYSTEM DESIGNS · 18 GUIDES · 94 DIAGRAMS (89 INTERACTIVE) · 60 ALGORITHMS · 30-DAY ROADMAP</sub>
 
 </div>
 
@@ -15,7 +15,7 @@
 
 [![Last commit](https://img.shields.io/github/last-commit/aishwary11/system-design?style=flat-square&color=6366f1&labelColor=0a0a0a)](https://github.com/aishwary11/system-design/commits)
 [![Stars](https://img.shields.io/github/stars/aishwary11/system-design?style=flat-square&color=6366f1&labelColor=0a0a0a)](https://github.com/aishwary11/system-design/stargazers)
-[![Docs](https://img.shields.io/badge/docs-78-6366f1?style=flat-square&labelColor=0a0a0a)](README.md)
+[![Docs](https://img.shields.io/badge/docs-80-6366f1?style=flat-square&labelColor=0a0a0a)](README.md)
 
 High-Level Architecture → Low-Level Design → database design → scaling tiers → interview prep,
 each with a **diagram image** plus a **self-contained interactive HTML** (pan/zoom, search, dark/light, export).
@@ -56,10 +56,10 @@ The industry concept map — the named technique behind each design (Uber's H3, 
 | Surface | What you get | Start |
 | :--- | :--- | :--- |
 | **58 system designs** | Streaming, social, commerce, transport, infrastructure, trust & safety, AI infrastructure and more | [Browse by topic](#system-designs) |
-| **16 guides** | PostgreSQL, Redis, Kafka, MongoDB, Elasticsearch, RabbitMQ, cloud, agentic AI, concepts, LLD, networking, operating systems and more | [Jump to guides](#feature-guides) |
+| **18 guides** | PostgreSQL, Redis, Kafka, MongoDB, Elasticsearch, RabbitMQ, cloud, agentic AI, concepts, LLD, classic LLD problems, tools, networking, operating systems and more | [Jump to guides](#feature-guides) |
 | **Plain-English on-ramp** | Every design opens with a Start-here card; the glossary defines every term | [Learning paths](LEARNING-PATHS.md) |
 | **94 diagrams** | One architecture map per design, plus sequence, lifecycle and anatomy figures where prose alone was doing the work | [Diagram style](#diagrams-archify) |
-| **47 algorithms** | Executable JavaScript — LRU, consistent hashing, Dijkstra, saga and more | [Algorithm library](#algorithms-library) |
+| **60 algorithms** | Executable JavaScript — LRU/LFU, consistent hashing, Dijkstra, cuckoo filter, BM25, PageRank, Aho-Corasick and more | [Algorithm library](#algorithms-library) |
 | **33 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker and more | [Techniques](#techniques--patterns) |
 
 ---
@@ -278,7 +278,7 @@ The guides cover the technology stack behind the design documents, each with run
 | 6 | **RabbitMQ** | Exchanges (direct/fanout/topic/headers), bindings & routing keys, acks & publisher confirms, prefetch/backpressure, DLX, quorum queues & streams, delayed messages, priority queues, RPC, federation/shovel, RabbitMQ-vs-Kafka | [View](rabbitmq-features.md) |
 | 7 | <a id="cloud-guide"></a> **Cloud Services Map** | AWS/GCP/Azure side-by-side + **full service catalog (§19)**: Lambda→Bedrock→Step Functions→EventBridge→DynamoDB→Spanner→Cosmos→Synapse and 150+ more, each with when-to-use; "which tool when" decision table | [View](cloud.md) |
 | 8 | <a id="agentic-ai-guide"></a> **Agentic AI & LLMs** | Tokens/context, ReAct agent loop, MCP tool integration, A2A agent-to-agent, context engineering, memory, RAG, orchestration patterns (supervisor/handoffs/graphs), guardrails, evals, model routing, prompt-prefix caching | [View](agentic-ai-features.md) |
-| 9 | **Core Concepts** | Sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus, 2PC, CRDTs, event-driven architecture, DLQ, backpressure, quorum reads & writes, consistency models, PACELC, WAL, B-tree vs LSM, checksums, distributed locking, service discovery, API gateway vs service mesh, CDN, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLI/SLO, multi-region DR, deployment strategies, geospatial indexing, data models vs access patterns, indexing fundamentals & leftmost prefix, monolith vs microservices & service decomposition — plus 17 classic algorithms with runnable JS (Luhn, Dijkstra, A*, BFS/DFS, topological sort, union-find, trie, LRU cache, external sort, reservoir sampling, count-min sketch, HyperLogLog, Levenshtein, KMP/Rabin-Karp, haversine, Base62/Snowflake, sliding window), each with an example | [View](system-design-concepts.md) |
+| 9 | **Core Concepts** | 75 numbered concept sections plus 30 runnable algorithms: sharding, CAP, consistency, caching, queues, sagas, observability, SQL vs NoSQL, indexing, API contracts, multi-tenancy, estimation and security — from Luhn/Dijkstra to LFU, BM25, PageRank and Aho-Corasick | [View](system-design-concepts.md) |
 | 10 | <a id="devops-guide"></a> **DevOps & Kubernetes** | Docker multi-stage builds, pods/deployments/services, requests/limits & HPA, ConfigMaps/Secrets/RBAC, probes, ingress & mesh, Jenkins vs GitHub Actions vs GitLab CI, ArgoCD GitOps & canary rollouts, SonarQube/Trivy gates, Terraform, Prometheus/Grafana/Loki, SLOs & error budgets, golden pipeline + **official version matrix checked 9 Nov 2026** (K8s 1.37.2, Redis 8.10.3, Terraform 1.17.1, MongoDB 9.0.4, Kafka 4.4.0, PG 18.6…) | [View](devops-features.md) |
 | 11 | <a id="resources-guide"></a> **Curated Resources** | The canon GitHub repos, engineering deep dives (Discord, Slack, Uber, Netflix, Stripe…), Medium/newsletter picks, interview platforms, classic papers, AI-era (MCP/A2A/vLLM) — plus a topic → best modern resource map | [View](resources.md) |
 | 12 | <a id="interview-qa-guide"></a> **Interview Q&A** | Cross-tech failure glossary with solutions (cache stampede/avalanche/penetration, rebalance storms, split-brain, OOMKilled, gray failure…) + high-level answers: why Kafka is fast, the Redis-down playbook, Redis Cluster internals, GitOps, the bad-deploy first-5-minutes | [View](interview-qa.md) |
@@ -286,6 +286,8 @@ The guides cover the technology stack behind the design documents, each with run
 | 14 | <a id="networking-guide"></a> **Networking** | OSI vs TCP/IP, TCP/UDP internals (handshake, congestion, Nagle), HTTP/1.1→2→3/QUIC, TLS 1.3 + mTLS, DNS chain & TTL strategy, L4/L7 balancing + algorithms, CDN caching semantics, VPC/subnets/NAT, proxies & API gateways, REST/gRPC/WebSocket/SSE, the latency table + interview Q&A | [View](networking.md) |
 | 15 | <a id="operating-systems-guide"></a> **Operating Systems** | Processes vs threads, CFS scheduling & throttling, virtual memory/page cache, fsync & durability, epoll→io_uring, zero-copy (Kafka's secret), CPU caches/NUMA, cgroups+namespaces (what containers really are), OOM mechanics + interview Q&A | [View](operating-systems.md) |
 | 16 | <a id="lld-guide"></a> **Low-Level Design** | Thread-safe LRU, hash map without STL, bounded blocking queue, thread pool, priority scheduler, malloc/free allocator, fixed-size object pool, reader–writer lock, ring buffer, async logger, timing wheel, connection pool — each with the invariant, the production reference (CacheLib, Folly, oneTBB, TCMalloc, glibc, Netty, HikariCP) and the failure modes interviewers probe, plus a 25-question coverage map | [View](low-level-design.md) |
+| 17 | <a id="lld-problems-guide"></a> **Classic LLD Problems** | Parking lot, elevator, vending machine, library and ATM — scope, entities, runnable class models, invariants, extension points and failure modes; plus a coverage map for Splitwise, chess, call center, deck, movie booking, ride matching and more | [View](lld-problems.md) |
+| 18 | <a id="tools-guide"></a> **Tools & Technology Selection** | Edge (DNS/CDN/LB/Nginx/HAProxy/Envoy/API gateway/WAF), compute/Kubernetes/serverless, data stores (Postgres/MySQL/Mongo/Cassandra/Dynamo/Redis/ClickHouse/Snowflake/BigQuery/Elastic/Neo4j/vector/S3), caching, Kafka/Rabbit/SQS/SNS/Pulsar/NATS/Temporal, Spark/Flink/Airflow/dbt/Debezium, Prometheus/Grafana/Loki/Jaeger/Tempo/OTel, CI/CD/IaC, AI serving, and a which-tool-when decision table | [View](tools.md) |
 
 <p align="right"><a href="#top">↑ Back to top</a></p>
 
@@ -408,7 +410,7 @@ Every system design document includes infrastructure recommendations at three sc
 
 ## Technology Stack
 
-Technologies referenced across the system design documents:
+Technologies referenced across the system design documents. For the selection layer — which tool when, trade-offs, failure modes, and lock-in — read [Tools & Technology Selection](tools.md).
 
 | Category | Technologies |
 | :--- | :--- |
@@ -481,6 +483,19 @@ Executable implementations of the algorithms used across the designs:
 | Idempotent Sink | data-pipeline | Replay-safe writes on a deterministic key, so a retry is a no-op |
 | Perceptual Hash Matching | content-moderation | Find near-duplicate images and video after crops, resizes and re-encodes |
 | Review Priority Queue | content-moderation | Order the human queue by harm, reach and age instead of arrival |
+| LFU Cache | concepts | Frequency-aware eviction with an LRU tie-break |
+| Leaky Bucket | concepts | Smooth output rate by draining a fixed-capacity bucket |
+| Cuckoo Filter | concepts | Approximate membership with deletion support |
+| Skip List | concepts | Probabilistic ordered map with O(log n) search |
+| MinHash | concepts | Estimate Jaccard similarity from a compact signature |
+| t-digest Quantile Sketch | concepts | Approximate p50/p99 with bounded memory |
+| BM25 | concepts | Lexical relevance ranking with term saturation |
+| Cosine Similarity + IVF | concepts | Semantic retrieval with a coarse vector index |
+| PageRank | concepts | Graph importance by iterative rank propagation |
+| Top-K Heap | concepts | Maintain the largest K values from a stream in O(n log k) |
+| Quickselect | concepts | Find the k-th value without sorting the whole array |
+| Aho-Corasick | concepts | Match thousands of keywords in one pass |
+| Bellman-Ford | concepts | Shortest paths with negative edges and negative-cycle detection |
 
 <p align="right"><a href="#top">↑ Back to top</a></p>
 

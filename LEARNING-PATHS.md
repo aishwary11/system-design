@@ -110,14 +110,14 @@ Read upward. A design assumes the layer below it.
                     └─────────────────┬────────────────┘
                                       │ uses
                     ┌─────────────────▼────────────────┐
-                    │  Technology guides (16)          │
+                    │  Technology guides (18)          │
                     │  PostgreSQL · Redis · Kafka      │
                     │  MongoDB · Elasticsearch ·       │
                     │  RabbitMQ · cloud · DevOps       │
                     └─────────────────┬────────────────┘
                                       │ assumes
                     ┌─────────────────▼────────────────┐
-                    │  Core concepts (75 sections)     │
+                    │  Core concepts (75 + 13 algos)   │
                     │  sharding · CAP · caching ·      │
                     │  queues · consensus · SLOs       │
                     └─────────────────┬────────────────┘
@@ -220,6 +220,24 @@ The tiers are about the number of interacting constraints, not the length of the
 
 The list below merges the topic indexes of the [System Design Primer](https://github.com/donnemartin/system-design-primer), [karanpratapsingh/system-design](https://github.com/karanpratapsingh/system-design), [ByteByteGo's system-design-101](https://github.com/ByteByteGoHq/system-design-101), and the [awesome-system-design-resources](https://github.com/ashishps1/awesome-system-design-resources) list. Each row points at the place this library explains it.
 
+### Interview prompt coverage — the 13-prompt set
+
+| Prompt | Document | What it already covers | Status |
+| :--- | :--- | :--- | :--- |
+| Netflix / video streaming | [Netflix](system-design-netflix.md) | upload → transcode → per-title ladder → Open Connect CDN, ABR LLD | Covered |
+| WhatsApp / messaging | [Messaging app](system-design-messaging-app.md) | WebSockets, offline delivery, receipts, fan-out | Covered |
+| Uber / ride sharing | [Uber](system-design-uber.md) | H3/geo indexing, matching, surge, trip state | Covered |
+| Google Maps | [Google Maps](system-design-google-maps.md) | routing, tiles, traffic, geospatial indexes | Covered |
+| Notification system | [Notification system](system-design-notification-system.md) | push/SMS/email, preferences, dedupe, retries | Covered |
+| Rate limiter | [Rate limiter](system-design-rate-limiter.md) | token bucket, sliding window, distributed state | Covered |
+| Key-value store | [Key-value store](system-design-key-value-store.md) | quorum, consistent hashing, LSM, vector clocks | Covered |
+| Distributed cache | [Distributed cache](system-design-distributed-cache.md) | eviction, partitioning, stampede, replication | Covered |
+| Search autocomplete | [Search autocomplete](system-design-search-autocomplete.md) | trie, top-K, typeahead ranking, caching | Covered |
+| Payment system | [Payment system](system-design-payment-system.md) | idempotency, ledger, saga, reconciliation | Covered |
+| Distributed task scheduler | [Delayed job scheduler](system-design-delayed-job-scheduler.md) | priority queues, retries, delayed jobs, DLQ | Covered |
+| Leaderboard | [Leaderboard](system-design-leaderboard.md) | real-time counters, rank, top-K, score-band sharding | Covered |
+| Logging & monitoring | [Observability pipeline](system-design-observability-pipeline.md) · [Alerting](system-design-alerting.md) | log aggregation, metrics, traces, alerting | Covered |
+
 ### Fundamentals
 
 | Topic | Where |
@@ -247,6 +265,16 @@ The list below merges the topic indexes of the [System Design Primer](https://gi
 | B-tree vs LSM, WAL, compaction | [Concepts §31–§32](system-design-concepts.md#31-write-ahead-log-wal--durability) |
 | Indexing, leftmost prefix, secondary indexes | [Concepts §50](system-design-concepts.md#50-indexing-fundamentals--selection-strategy) |
 | Data models vs access patterns, denormalization | [Concepts §49](system-design-concepts.md#49-data-models-vs-access-patterns) |
+| SQL vs NoSQL decision table | [Concepts §49](system-design-concepts.md#49-data-models-vs-access-patterns) |
+| Queue vs log, delivery semantics, consumer groups | [Concepts §26](system-design-concepts.md#26-event-driven-architecture) |
+| Batch vs stream vs CDC, durable workflows | [Concepts §26](system-design-concepts.md#26-event-driven-architecture) · [Data pipeline](system-design-data-pipeline.md) |
+| OLTP vs OLAP, columnar store, time-series | [Concepts §32](system-design-concepts.md#32-storage-engines-b-trees-vs-lsm-trees) |
+| Observability signals (metrics/logs/traces), RED/USE | [Concepts §38](system-design-concepts.md#38-distributed-tracing) · [Observability pipeline](system-design-observability-pipeline.md) |
+| API contracts: pagination, versioning, errors, idempotency | [Concepts §55](system-design-concepts.md#55-api-styles--rest-vs-grpc-vs-graphql) |
+| Serialization and schema evolution | [Concepts §55](system-design-concepts.md#55-api-styles--rest-vs-grpc-vs-graphql) · [Kafka §Schema Registry](kafka-features.md) |
+| Multi-tenancy (silo/pool/bridge) | [Concepts §51](system-design-concepts.md#51-monolith-vs-microservices--service-decomposition) |
+| Bulkhead isolation | [Concepts §27](system-design-concepts.md#27-load-shedding--graceful-degradation) |
+| Little's law and queue sizing | [Concepts §52](system-design-concepts.md#52-back-of-the-envelope-estimation) |
 | CDC and logical replication | [PostgreSQL §17](postgresql-features.md#17-logical-replication--change-data-capture-cdc) · [Data pipeline](system-design-data-pipeline.md) |
 | Batch and stream processing, MapReduce/Spark/Flink | [Data pipeline](system-design-data-pipeline.md) |
 | Data warehouse vs lake vs lakehouse | [Data pipeline](system-design-data-pipeline.md) · [Cloud §8](cloud.md#8-analytics-warehouses--data-lakes) |
@@ -309,6 +337,8 @@ The list below merges the topic indexes of the [System Design Primer](https://gi
 | Trust and safety | [Fraud detection](system-design-fraud-detection.md) · [Content moderation](system-design-content-moderation.md) |
 | AI infrastructure | [LLM inference](system-design-llm-inference.md) · [AI gateway](system-design-ai-gateway.md) · [GPU scheduler](system-design-gpu-scheduler.md) · [Distributed training](system-design-distributed-training.md) · [Agentic AI](agentic-ai-features.md) |
 | Productivity and collaboration | [Google Docs](system-design-google-docs.md) · [Google Calendar](system-design-google-calendar.md) |
+| Classic object-oriented LLD | [Classic LLD Problems](lld-problems.md) — parking, elevator, vending, library, ATM, plus the rest of the classic set |
+| Tool selection | [Tools & Technology Selection](tools.md) — databases, queues, CDN, observability, CI/CD, AI serving |
 | Communities and dating | [Reddit](system-design-reddit.md) · [Tinder](system-design-tinder.md) |
 | Infrastructure primitives | [URL shortener](system-design-url-shortener.md) · [Rate limiter](system-design-rate-limiter.md) · [Unique ID](system-design-unique-id-generator.md) · [Leaderboard](system-design-leaderboard.md) · [Distributed cache](system-design-distributed-cache.md) · [Key-value store](system-design-key-value-store.md) · [File storage](system-design-file-storage.md) · [Web crawler](system-design-web-crawler.md) · [Notification](system-design-notification-system.md) · [Webhook](system-design-webhook-delivery.md) · [Delayed job scheduler](system-design-delayed-job-scheduler.md) · [Distributed lock](system-design-distributed-lock-manager.md) |
 
@@ -324,9 +354,6 @@ Being explicit about the gaps is part of being a good reference. These topics ar
 | **Distributed file systems (HDFS, GFS)** | The library covers object storage and sync, not block placement and NameNode design | [Data pipeline](system-design-data-pipeline.md) explains the storage layer it uses; the original GFS/HDFS papers are the primary source |
 | **Multiplayer game servers** | A different latency and state-replication model (tick loops, rollback, interest management) | [Video conferencing](system-design-video-conferencing.md) and [Discord](system-design-discord.md) share the real-time fan-out mechanics |
 | **Garbage collection / language runtimes** | Belongs to operating systems and language internals, not distributed design | [Operating systems](operating-systems.md) covers memory and scheduling |
-| **Queueing theory (Little's law, M/M/1)** | Mentioned inside capacity estimation but not derived | [Concepts §52](system-design-concepts.md#52-back-of-the-envelope-estimation) |
-| **Bulkhead isolation** | Related to circuit breaking and load shedding, but no dedicated section | [Concepts §11](system-design-concepts.md#11-circuit-breaker) and [§27](system-design-concepts.md#27-load-shedding--graceful-degradation) |
-| **Workflow orchestration (Temporal-style)** | The delayed job scheduler covers timers, not long-running durable workflows | [Delayed job scheduler](system-design-delayed-job-scheduler.md) · [Data pipeline](system-design-data-pipeline.md) |
 | **Configuration service** | Feature flags are covered in §47; a full config distribution service is not | [Concepts §47](system-design-concepts.md#47-deployment-strategies) |
 | **Blockchain / distributed ledgers** | A different trust model; out of scope for this library | [Payment system](system-design-payment-system.md) covers the ledger mechanics that transfer |
 

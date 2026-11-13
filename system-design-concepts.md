@@ -6,7 +6,7 @@
 
 # System Design Concepts — Quick Reference with Basic Examples
 
-<sub>75 SECTIONS · 56 MIN READ · 6 DIAGRAMS · 35 EXAMPLES</sub>
+<sub>75 NUMBERED SECTIONS + 13 EXTENDED ALGORITHMS · 64 MIN READ · 6 DIAGRAMS</sub>
 
 </div>
 
@@ -15,14 +15,14 @@
 
 The foundational concepts behind every distributed system, each explained in a few lines with a tiny, concrete example: **sharding, consistent hashing, CAP, ACID vs BASE, SOLID, CQRS, event sourcing, saga, outbox, idempotency, circuit breaker, rate limiting, load balancing, leader election, replication, caching, bloom filters, gossip, vector clocks, Merkle trees, consensus (Raft/Paxos), two-phase commit, CRDTs, event-driven architecture, DLQs, backpressure, quorum reads & writes, consistency models, PACELC, write-ahead logs, B-tree vs LSM storage engines, checksums, distributed locking, service discovery, API gateways vs service meshes, CDNs, distributed tracing, retries & backoff, timeouts & hedging, logical clocks, fan-out, hot keys, optimistic concurrency, SLIs/SLOs, multi-region disaster recovery, deployment strategies, load shedding & graceful degradation, geospatial indexing, data models vs access patterns, indexing fundamentals (leftmost prefix, clustered vs secondary), monolith vs microservices & service decomposition, back-of-the-envelope estimation, DNS, security & auth (OAuth2/JWT/mTLS), API styles (REST/gRPC/GraphQL) and performance vs scalability.**
 
-**Part II adds 17 classic algorithms** — Luhn's (credit card validation), Dijkstra, A*, BFS/DFS, topological sort, union-find, trie, LRU cache, external sort, reservoir sampling, count-min sketch, HyperLogLog, Levenshtein, KMP/Rabin-Karp, haversine, Base62/Snowflake IDs, sliding window — each with a runnable JavaScript implementation and where it's used in system design.
+**Part II adds 17 classic algorithms** — Luhn's (credit card validation), Dijkstra, A*, BFS/DFS, topological sort, union-find, trie, LRU cache, external sort, reservoir sampling, count-min sketch, HyperLogLog, Levenshtein, KMP/Rabin-Karp, haversine, Base62/Snowflake IDs, sliding window — each with a runnable JavaScript implementation and where it's used in system design. **Part II-B adds 9 extended algorithms** — LFU, leaky bucket, cuckoo filter, skip list, MinHash, t-digest, BM25, cosine/IVF, and PageRank — for the gaps that show up in LLD and infrastructure interviews. **Part II-C adds 4 operations algorithms** — Top-K heap, Quickselect, Aho-Corasick, and Bellman-Ford — for streaming, percentile, multi-pattern, and routing problems.
 
 ---
 
 ## On this page
 
 <details open>
-<summary><b>75 sections</b></summary>
+<summary><b>75 numbered sections + 13 extended algorithms</b></summary>
 
 1. [Sharding (Data Partitioning)](#1-sharding-data-partitioning)
 2. [Consistent Hashing](#2-consistent-hashing)
@@ -102,6 +102,23 @@ The foundational concepts behind every distributed system, each explained in a f
 72. [Haversine Distance](#72-haversine-distance)
 73. [Base62 Encoding & Snowflake IDs](#73-base62-encoding--snowflake-ids)
 74. [Sliding Window & Two Pointers](#74-sliding-window--two-pointers)
+
+**Part II-B — Extended Algorithms (unnumbered)**
+- [LFU Cache](#extended-lfu-cache)
+- [Leaky Bucket](#extended-leaky-bucket)
+- [Cuckoo Filter](#extended-cuckoo-filter)
+- [Skip List](#extended-skip-list)
+- [MinHash](#extended-minhash)
+- [t-digest Quantile Sketch](#extended-t-digest-quantile-sketch)
+- [BM25](#extended-bm25)
+- [Cosine Similarity + IVF](#extended-cosine-similarity--ivf)
+- [PageRank](#extended-pagerank)
+
+**Part II-C — Operations Algorithms (unnumbered)**
+- [Top-K Heap](#extended-top-k-heap)
+- [Quickselect](#extended-quickselect)
+- [Aho-Corasick](#extended-aho-corasick)
+- [Bellman-Ford](#extended-bellman-ford)
 
 **Part III — Tricky "Magic" Questions (How Does It Even Work?)**
 75. [The "Magic" Questions — With Answers](#75-the-magic-questions--with-answers)
@@ -368,15 +385,12 @@ new NotificationService(new FakeSender());           // tests
 **Problem:** the same model can't be optimal for both *writes* (normalized, transactional) and *reads* (denormalized, aggregated, searchable).
 **Idea:** split the model — **commands** (writes) go to one store, **queries** (reads) go to a separate read-optimized store. A projection keeps the read model in sync (sync call, CDC, or events).
 
-```
-                 ┌─────────────── write path ───────────────┐
-  client ──POST──► CommandService ──► PostgreSQL (source of truth)
-                 └──────────────────────────────────────────┘
-                 ┌─────────────── read path ────────────────┐
-  client ──GET───► QueryService ──► Elasticsearch / read replica
-                    ▲                    ▲
-                    └──── projection (events / CDC) ────────┘
-```
+| Path | Entry | Store | How it stays current |
+| :--- | :--- | :--- | :--- |
+| Write (command) | `POST` → `CommandService` | PostgreSQL (source of truth) | validates and writes transactionally |
+| Read (query) | `GET` → `QueryService` | Elasticsearch / read replica | projection from events or CDC |
+
+The read model is disposable: rebuild it from the write model when the projection logic changes.
 
 ```text
 // Example: order service
@@ -957,6 +971,21 @@ OrderService ──OrderCreated──► Kafka topic "orders"
 | new consumers without touching producers | needs schema governance (Schema Registry) |
 | natural backpressure: consumers lag, nothing crashes | must handle duplicates (idempotency) & poison messages (DLQ) |
 
+**Queue vs log.** A queue is a work distributor; a log is a replayable fact stream. Pick the model before the product.
+
+| Model | Examples | Ack / retention | Ordering | Replay | Best for |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Queue | SQS, RabbitMQ | ack deletes; retention until ack/DLX | best-effort; FIFO only on a FIFO queue | no | tasks, background jobs, work distribution |
+| Log | Kafka, Kinesis, Pulsar | offset commit; retention by time/size | per partition | yes | event backbone, CDC, multiple consumers, backfills |
+
+**Delivery semantics.** At-most-once can lose a message; at-least-once can duplicate it; exactly-once is a property of a *pipeline*, not a broker slogan. Kafka transactions can make consume→produce atomic inside Kafka, but an external side effect (charge a card, send an email) still needs an idempotency key (§10). Design every consumer to be idempotent; treat the broker guarantee as an optimization.
+
+**Ordering and consumer groups.** Ordering is per partition/key, never per topic. Pick a key that matches the invariant (order id, user id); a hot key becomes a hot partition. A consumer group assigns each partition to at most one consumer, so parallelism is capped by partition count; adding consumers beyond that leaves them idle.
+
+**Batch vs stream vs CDC.** Batch reads a bounded input and writes a bounded output (Spark, nightly reconciliation); stream reads an unbounded input and maintains state over windows/watermarks (Flink, Kafka Streams); CDC tails the database log and publishes row changes so downstreams see committed state without dual writes (Debezium, Postgres logical replication). Start with batch; move the hot path to stream only when freshness changes a decision.
+
+**Durable workflows.** A queue retries a message; a workflow remembers where it was. Temporal/Step Functions model multi-step processes with timers, retries, compensation, and human approvals. If the process can run for hours or must resume after a crash, use a workflow engine instead of chaining queues and cron.
+
 Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the log is the source of truth, and Kafka as the durable backbone (`kafka-features.md`).
 
 ## 27. Load Shedding & Graceful Degradation
@@ -964,15 +993,13 @@ Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the 
 **Problem:** when load exceeds capacity (flash sale, viral moment, dependency outage), queues grow and latency explodes everywhere — a totally overloaded service is *less* useful than a partially available one, and unbounded queues just delay the failure.
 **Idea:** measure saturation (queue depth, concurrency, CPU), and when above a threshold **reject excess work early** with a clear signal (`503` + `Retry-After`), dropping the cheapest requests first — shed reads before writes, unauthenticated traffic before logged-in users, background jobs before interactive requests. Combine with **graceful degradation**: pre-planned reduced-quality modes (skip recommendations, drop images, serve cached pages, disable non-critical features) so the core flow survives.
 
-```text
-                saturation = queue_depth / queue_capacity
-                ┌────────────────────────────────────────────┐
-  requests ───► │ < 70%: admit all                           │
-                │ 70-90%: admit priority users, shed others  │
-                │ > 90%: admit writes/critical only, 503 rest│
-                └────────────────────────────────────────────┘
-   degraded mode: homepage serves cached HTML, checkout stays up
-```
+| Saturation (`queue_depth / queue_capacity`) | Admission policy |
+| :--- | :--- |
+| Below 70% | admit all requests |
+| 70–90% | admit priority users; shed the rest |
+| Above 90% | admit writes/critical traffic only; return `503` for the rest |
+
+Degraded mode: serve cached HTML for the homepage and keep checkout available.
 
 | Mechanism | What it does | Cost |
 | --------- | ------------ | ---- |
@@ -980,6 +1007,8 @@ Pairs with: outbox (§9) for reliable publishing, event sourcing (§7) when the 
 | Priority classes | VIP/paid/interactive traffic survives | fairness rules must be defined up front |
 | Feature flags | turn off non-critical features under load | product must accept reduced functionality |
 | Static fallback | serve last-known-good cached content | data may be stale |
+
+**Bulkhead isolation.** A bulkhead partitions resources so one slow dependency or tenant cannot exhaust the whole service. Give each dependency its own bounded pool (threads, connections, in-flight requests) and reject when that pool is full; a shared pool lets one 30-second downstream turn every endpoint into a timeout. Per-tenant concurrency caps are the same pattern at the customer boundary. Size each pool from the dependency's own limit — the sum of all pools must fit the backend's connection budget — and monitor queue depth per pool, not just globally.
 
 Pairs with: backpressure (§21) to slow producers before shedding, rate limiting (§12) to cap per-client load, circuit breaker (§11) so downstream failures trigger degradation, and timeouts & hedging (§40) so rejected requests fail fast elsewhere.
 
@@ -1128,6 +1157,16 @@ LSM write path:
 
 Rule of thumb: heavy inserts / logs / time-series → LSM; read-mostly with range queries and predictable latency → B-tree. PostgreSQL and MySQL InnoDB are B-tree; RocksDB (used inside Kafka tiered storage and many other systems) is LSM.
 
+**OLTP vs OLAP — do not run dashboards on the write primary.**
+
+| Workload | Access shape | Physical layout | Examples |
+| :--- | :--- | :--- | :--- |
+| OLTP | point reads/writes, short transactions, high concurrency | row store + B-tree indexes | PostgreSQL, MySQL, DynamoDB |
+| OLAP | large scans, few columns, aggregations | columnar + compression + vectorized execution | ClickHouse, BigQuery, Snowflake, Redshift |
+| HTAP | mixed, usually with separate engines/replicas | row + column replicas | TiDB, SingleStore |
+
+A row store keeps a record together (good for "fetch order 42"); a columnar store keeps a column together (good for "sum revenue by region over 1B rows"), compresses better, and reads less. Replicate/CDC into a warehouse or lakehouse for analytics; an analytical query on the OLTP primary competes with checkout for buffer pool and I/O. **Time-series** is a third shape: append-only points, time-partitioned, with rollups/downsampling (Prometheus, TimescaleDB, InfluxDB) rather than updates in place.
+
 ---
 
 ## 33. Checksums & Data Integrity
@@ -1209,11 +1248,14 @@ Health checks matter more than the registry: a "healthy" instance serving errors
 **Problem:** clients shouldn't each know and authenticate against a dozen services, and intra-cluster traffic (service → service) needs mTLS, retries, and tracing without rewriting every service.
 **Idea:** an **API gateway** (north-south) is the single edge L7 proxy: authN/authZ, TLS termination, rate limiting, routing, response caching, WAF. A **service mesh** (east-west) injects a **sidecar proxy** next to every instance: mTLS between services, retries, timeouts, circuit breaking, tracing, policy — application code stays unaware.
 
-```text
-clients ──► [API Gateway] ──► svcA ─sidecar──► svcB ─sidecar──► svcC ──► db
-             authn / TLS /        └────── mTLS + retries + tracing between sidecars ──────┘
-             rate-limit / route
-```
+`clients → API gateway → svcA → svcB → svcC → db`
+
+| Path | Component | Responsibility |
+| :--- | :--- | :--- |
+| North–south | API gateway | authN/authZ, TLS termination, rate limiting, routing, WAF |
+| East–west | Sidecar per service | mTLS, retries, timeouts, circuit breaking, tracing |
+
+Application code stays unaware of the east–west policy; the sidecar enforces it.
 
 | | API Gateway | Service Mesh |
 | -- | ----------- | ------------ |
@@ -1275,6 +1317,16 @@ async function handle(req, res) {
   finally { reportSpan(traceparent, "handle", Date.now() - start); }
 }
 ```
+
+**Observability is three signals, not one.**
+
+| Signal | Answers | Cost control |
+| :--- | :--- | :--- |
+| Metrics | how many / how fast, trends, alerts | cardinality caps; pre-aggregate; never put `user_id` in a label |
+| Logs | what exactly happened to this request | structured JSON, sampling, retention tiers |
+| Traces | where the time went across services | head/tail sampling, span limits |
+
+Use **RED** for services (rate, errors, duration) and **USE** for resources (utilization, saturation, errors). Put `trace_id`/`request_id` in structured logs and use exemplars to jump from a latency histogram to a slow trace. **Cardinality** is the budget: one label with 1M user IDs creates 1M series and kills the metrics store. OpenTelemetry is the vendor-neutral SDK/collector; instrument once and export to Jaeger/Tempo/Datadog rather than running three agents.
 
 ---
 
@@ -1569,6 +1621,21 @@ One table serves every access pattern because each query maps to one key shape �
 
 *Every client query maps to one key shape in the same table (or a GSI for the inverse lookup); a stream projects changes into read models for the shapes a KV store can't serve (solid = query paths, dashed = change sync).*
 
+**SQL vs NoSQL is a data-shape decision, not a maturity badge.**
+
+| Store | Model | Strong at | Weak at | Choose when |
+| :--- | :--- | :--- | :--- | :--- |
+| Relational | rows, joins, transactions | constraints, multi-row ACID, ad-hoc queries | horizontal write scale, sparse/evolving shape | money, inventory, anything with invariants |
+| Document | JSON documents | flexible shape, aggregate reads | cross-document joins/transactions | catalog, profile, CMS |
+| Key-value | key → value | O(1) lookup, massive scale | range/query without a key | session, cache, feature store |
+| Wide-column | partitioned rows | write-heavy, huge tables, multi-region | ad-hoc joins | messages, activity, time-series |
+| Graph | nodes/edges | multi-hop relationships | bulk scans | social graph, fraud rings |
+| Search | inverted index | relevance, fuzzy, facets | source-of-truth transactions | product/search |
+| Time-series | timestamped points | range scans + rollups | arbitrary updates | metrics, IoT |
+| Vector | embeddings + ANN | semantic similarity | exact filters/transactions | RAG, recommendations |
+
+**Default:** PostgreSQL until a measured constraint forces a split. "NoSQL" does not mean "no schema"; schema-on-read moves validation into every producer and consumer. Polyglot persistence is a consistency project: each extra store needs an outbox/CDC path (§9, §26) and a reconciliation job.
+
 **Pairs with:** indexing (§50) is how a relational DB claims a query shape; CQRS (§6) is what happens when one model can't serve both read and write shapes; sharding (§1) picks partition keys *from* access patterns; the Dynamo-style design lives in `system-design-key-value-store.md`.
 
 ---
@@ -1623,6 +1690,10 @@ Column order rule: **equality columns first, then the range/sort column** — `(
 
 **Covering indexes** add the selected columns to the index (`INCLUDE`) so the query is answered from the index alone — no second lookup. **When NOT to index:** low-selectivity columns (gender, boolean), tiny tables (planner ignores it anyway), and write-heavy paths — every index is an extra structure updated per insert/update, the same write amplification §32 warns about. Index the query shapes you run at high QPS; measure with `EXPLAIN` (Postgres guide §19, Mongo explain §13) before and after.
 
+**Inverted index: the data structure behind search.** An analyzer turns text into normalized tokens; the index stores a **postings list** per token (document IDs, positions, term frequencies). A query intersects/union postings, then ranks. **BM25** is the default ranking function: term-frequency saturation (the 10th occurrence matters less than the 2nd), inverse document frequency (rare terms are informative), and document-length normalization (long docs do not win by length alone).
+
+Facets are separate doc-value columns; prefix/fuzzy queries use automata or tries; Elasticsearch/Lucene keeps immutable segments, refreshes for NRT visibility, merges in the background, and marks deletes until merge. For semantic search, embeddings + **ANN** (HNSW/IVF) trade exact recall for latency and memory; hybrid search combines keyword BM25 with vector recall and a reranker. Search is a read model, not the source of truth — index from CDC/outbox, and make reindexing a first-class operation.
+
 **Pairs with:** B-tree vs LSM (§32) for the storage-engine side; data models vs access patterns (§49) for where the shapes come from; Postgres guide §3 for concrete DDL; `mongodb-features.md` (ESR rule) and `elasticsearch-features.md` for the non-relational side.
 
 ---
@@ -1667,6 +1738,16 @@ Phase N:  monolith shrinks until only trivial routes remain (or dies)
 
 **When NOT to split:** small team + unclear domain + early product = premature microservices, distributed spaghetti with network bills and no business win. The scaling-tier sections in every design doc start at Tier 1 "MVP" for exactly this reason — see `system-design-netflix.md` (started as a monolith, split over a decade) and `devops-features.md` for the deployment machinery the split adds (service discovery §35, gateway vs mesh §36).
 
+**Multi-tenancy: silo, pool, or bridge.**
+
+| Model | Isolation | Cost | Choose when |
+| :--- | :--- | :--- | :--- |
+| Silo | one stack/database per tenant | highest | regulated, enterprise, noisy tenants |
+| Pool | shared database, `tenant_id` on every row | lowest | SMB/consumer, many small tenants |
+| Bridge | shared database, schema/partition per tenant | middle | mid-market, per-tenant restore matters |
+
+The tenant ID must come from the authenticated token, never from a client-supplied query parameter; enforce it in the data layer (row-level security or a mandatory repository filter), not only in the controller. Pooled tenants need per-tenant quotas and concurrency caps (§27) so one tenant cannot starve the rest. Plan per-tenant migrations, export, and deletion (GDPR) before the first enterprise contract; "just add a WHERE clause" is how cross-tenant leaks happen.
+
 **Pairs with:** CQRS (§6), saga (§8) and outbox (§9) — the transaction patterns split services force; event-driven architecture (§26); service discovery (§35) and API gateway vs mesh (§36) for the runtime plumbing; `interview-qa.md` §79–80 for the failure vocabulary the split adds.
 
 ---
@@ -1697,6 +1778,8 @@ Latency numbers every programmer should know (2026 hardware)
 | 3 | actions → QPS | 600M posts/day ≈ 7K write QPS avg, 35K peak (5×) |
 | 4 | QPS → storage | 7K/s × 1KB × 86,400s ≈ 600GB/day ≈ 200TB/yr |
 | 5 | storage → servers | 7K QPS at 1K/instance = 7 + replicas; feed reads 100× that → cache-heavy |
+
+**Little's law and the queue cliff.** For a stable system, `L = λW`: the average number of items in the system equals arrival rate times average time in system. Rearranged, concurrency needed to sustain throughput is `λ × W`; if each request takes 200 ms and you need 5,000 RPS, you need about 1,000 in flight, not 50. Utilization `ρ = λ/μ` (arrival rate / service rate) predicts the queue: latency grows slowly until about 70%, then explodes near 100%. This is why "add more threads" past the bottleneck makes tail latency worse. The formula is exact for averages; M/M/1 gives the shape, not the production number — measure with a load test and leave headroom for bursts.
 
 Pairs with: every design doc's **Key Numbers** table is a worked example; sharding math (§1), cache sizing (§16), and cost tiers in each doc all fall out of this arithmetic.
 
@@ -1806,6 +1889,21 @@ Mobile BFF:  GraphQL gateway over domain REST/gRPC (one round trip)
 Realtime:    WebSocket gateway → fan-out (messaging-app, discord docs)
 ```
 
+**The contract is more than the verb.**
+
+| Concern | Default | Why |
+| :--- | :--- | :--- |
+| Pagination | cursor (opaque) | stable under inserts; offset drifts and gets slower deep |
+| Versioning | additive fields + `/v1` major | never break a field; deprecate with headers and metrics |
+| Errors | RFC 9457 `application/problem+json` | stable `type`/`code`, human message, `trace_id` |
+| Idempotency | `Idempotency-Key` on POST | store key → response hash for 24h; retries replay |
+| Concurrency | `ETag` + `If-Match` | optimistic; 412 on stale write |
+| Long-running | `202` + job ID + poll/webhook | do not hold a request open for minutes |
+| Rate limits | `429` + `Retry-After` + quota headers | clients can back off instead of hammering |
+| Serialization | JSON public, Protobuf internal, Avro events | schema evolution and performance |
+
+**Schema evolution:** add optional fields, never reuse field numbers/tags, and declare compatibility (backward, forward, full) in a schema registry. Use expand/contract migrations: add the new column/field, dual-write/backfill, switch reads, then remove the old one. A breaking change is a new major version or a new event type, not a silent type change.
+
 Pairs with: API gateway vs mesh (§36) — the gateway terminates the public style, the mesh carries the internal one; JSON is the interoperability baseline covered in `mongodb-features.md`.
 
 ---
@@ -1888,6 +1986,18 @@ Lost? Start here - find the concept that matches the problem you are solving:
 | Data models vs access patterns | schema shaped by queries, not the other way | system-design-key-value-store.md |
 | Indexing & leftmost prefix | queries hit an index instead of scanning | postgresql-features.md §3 |
 | Monolith vs microservices | when (and how) to split services safely | system-design-netflix.md |
+| SQL vs NoSQL | choose the data model from the access pattern | system-design-key-value-store.md |
+| Queue vs log | work distribution vs replayable event history | kafka-features.md, rabbitmq-features.md |
+| Batch vs stream vs CDC | bounded vs unbounded processing; change capture | system-design-data-pipeline.md |
+| OLTP vs OLAP | transactions vs scans; row vs columnar | cloud.md §8 |
+| Observability signals | metrics, logs, traces, RED/USE | system-design-observability-pipeline.md |
+| API contract | pagination, versioning, errors, idempotency | networking.md |
+| Multi-tenancy | silo, pool, bridge; tenant isolation | §51 above |
+| Bulkhead isolation | one dependency cannot exhaust the service | §27 above |
+| Little's law | concurrency and queue sizing | §52 above |
+| Extended algorithms | LFU, cuckoo, skip list, MinHash, BM25, ANN, PageRank, top-K heap, quickselect, Aho-Corasick, Bellman-Ford | Part II-B/C below |
+| Classic LLD problems | parking, elevator, vending, library, ATM | lld-problems.md |
+| Tool selection | which database, queue, CDN or observability tool | tools.md |
 | Algorithms (Luhn, Dijkstra, LRU, …) | classic LLD interview tools, JS included | Part II — §58–§74 |
 
 ---
@@ -2331,6 +2441,759 @@ class SlidingWindowRateLimiter {
 ```
 
 Where: rate-limiter.md (token bucket vs sliding window trade-offs), metrics aggregation, session windows — see `system-design-rate-limiter.md`.
+
+---
+
+<a id="part-iib--extended-algorithms"></a>
+
+## Part II-B — Extended Algorithms
+
+The nine algorithms below cover the gaps that show up in LLD and infrastructure interviews but are not in the numbered set: caches, rate limits, approximate membership, ordered maps, similarity, quantiles, ranking, vector retrieval, and graph importance.
+
+## Extended: LFU Cache
+
+**Problem:** LRU evicts the item that was used least *recently*, which is wrong for a scan-heavy workload or a small hot set that is accessed constantly but not recently.
+**Idea:** track a frequency per key and evict the lowest-frequency key; break ties by least-recently-used within that frequency. A frequency bucket plus a min pointer gives O(1) average operations.
+
+```js
+class LFUCache {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.nodes = new Map();
+    this.frequencies = new Map();
+    this.minFrequency = 0;
+  }
+  _bucket(frequency) {
+    if (!this.frequencies.has(frequency)) this.frequencies.set(frequency, new Set());
+    return this.frequencies.get(frequency);
+  }
+  _recomputeMin() {
+    let min = Infinity;
+    for (const [frequency, bucket] of this.frequencies) {
+      if (bucket.size > 0) min = Math.min(min, frequency);
+    }
+    this.minFrequency = min === Infinity ? 0 : min;
+  }
+  _touch(node) {
+    const oldBucket = this.frequencies.get(node.frequency);
+    oldBucket.delete(node.key);
+    if (oldBucket.size === 0 && this.minFrequency === node.frequency) this._recomputeMin();
+    node.frequency += 1;
+    this._bucket(node.frequency).add(node.key);
+  }
+  get(key) {
+    const node = this.nodes.get(key);
+    if (!node) return -1;
+    this._touch(node);
+    return node.value;
+  }
+  put(key, value) {
+    if (this.capacity === 0) return;
+    const existing = this.nodes.get(key);
+    if (existing) { existing.value = value; this._touch(existing); return; }
+    if (this.nodes.size >= this.capacity) {
+      const bucket = this.frequencies.get(this.minFrequency);
+      const victim = bucket.values().next().value;
+      bucket.delete(victim);
+      this.nodes.delete(victim);
+      if (bucket.size === 0) this._recomputeMin();
+    }
+    const node = { key, value, frequency: 1 };
+    this.nodes.set(key, node);
+    this._bucket(1).add(key);
+    this.minFrequency = 1;
+  }
+}
+
+const lfu = new LFUCache(2);
+lfu.put('a', 1); lfu.put('b', 2); lfu.get('a'); lfu.put('c', 3);
+console.log(lfu.get('b'), lfu.get('a'), lfu.get('c')); // -1 1 3
+```
+
+**Cost:** O(1) average `get`/`put`; O(number of frequency buckets) only when the minimum bucket empties.
+**Use it:** cache admission/eviction (Redis `allkeys-lfu`, Caffeine's TinyLFU inspiration), CDN hot-object retention.
+**Limit:** frequency is not value; a once-hot item can crowd out a newly hot one. Add aging (decay counts periodically) or use TinyLFU's window.
+
+## Extended: Leaky Bucket
+
+**Problem:** token bucket allows a burst up to the bucket size; some downstreams need a strictly smooth output rate.
+**Idea:** requests enter a fixed-capacity bucket and leak out at a constant rate. If the bucket is full, the request is rejected (or queued). It is the dual of token bucket: token bucket controls *admission*, leaky bucket controls *drain*.
+
+```js
+class LeakyBucket {
+  constructor(capacity, leakPerSecond) {
+    this.capacity = capacity;
+    this.leakPerSecond = leakPerSecond;
+    this.water = 0;
+    this.last = null;
+  }
+  _leak(now) {
+    if (this.last === null) { this.last = now; return; }
+    const elapsed = Math.max(0, (now - this.last) / 1000);
+    this.water = Math.max(0, this.water - elapsed * this.leakPerSecond);
+    this.last = now;
+  }
+  allow(now = Date.now(), cost = 1) {
+    this._leak(now);
+    if (this.water + cost > this.capacity) return false;
+    this.water += cost;
+    return true;
+  }
+}
+
+const bucket = new LeakyBucket(2, 1);
+console.log(bucket.allow(0), bucket.allow(0), bucket.allow(0)); // true true false
+console.log(bucket.allow(1000), bucket.allow(1500));           // true false
+```
+
+**Cost:** O(1) time and O(1) space.
+**Use it:** traffic shaping, smoothing writes to a database, per-tenant egress limits.
+**Limit:** it adds latency if you queue instead of reject; a strict constant drain can underutilize a bursty backend.
+
+## Extended: Cuckoo Filter
+
+**Problem:** Bloom filters cannot delete safely and saturate as the set grows; you need approximate membership with deletion and a bounded false-positive rate.
+**Idea:** store a short fingerprint in one of two candidate buckets. Insert relocates an existing fingerprint (cuckoo hashing) to make room. Lookup checks both buckets; deletion removes the fingerprint.
+
+```js
+class CuckooFilter {
+  constructor(size = 64, bucketSize = 2, maxKicks = 16) {
+    if ((size & (size - 1)) !== 0) throw new Error('size must be a power of two');
+    this.size = size; this.bucketSize = bucketSize; this.maxKicks = maxKicks;
+    this.buckets = Array.from({ length: size }, () => []);
+  }
+  _hash(value, seed = 0) {
+    let hash = 2166136261 ^ seed;
+    for (const character of String(value)) {
+      hash ^= character.charCodeAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+  _fingerprint(value) { return (this._hash(value, 0x9e3779b9) % 255) + 1; }
+  _i1(value) { return this._hash(value) % this.size; }
+  _i2(index, fingerprint) { return ((index ^ this._hash(fingerprint, 0x85ebca6b)) >>> 0) % this.size; }
+  insert(value) {
+    const fingerprint = this._fingerprint(value);
+    const i1 = this._i1(value);
+    const i2 = this._i2(i1, fingerprint);
+    for (const index of [i1, i2]) {
+      if (this.buckets[index].length < this.bucketSize) {
+        this.buckets[index].push(fingerprint);
+        return true;
+      }
+    }
+    let index = i1;
+    let carry = fingerprint;
+    for (let kick = 0; kick < this.maxKicks; kick++) {
+      const bucket = this.buckets[index];
+      const slot = carry % bucket.length;
+      const displaced = bucket[slot];
+      bucket[slot] = carry;
+      carry = displaced;
+      index = this._i2(index, carry);
+      if (this.buckets[index].length < this.bucketSize) {
+        this.buckets[index].push(carry);
+        return true;
+      }
+    }
+    return false;
+  }
+  has(value) {
+    const fingerprint = this._fingerprint(value);
+    const i1 = this._i1(value);
+    return this.buckets[i1].includes(fingerprint) ||
+      this.buckets[this._i2(i1, fingerprint)].includes(fingerprint);
+  }
+  delete(value) {
+    const fingerprint = this._fingerprint(value);
+    const i1 = this._i1(value);
+    for (const index of [i1, this._i2(i1, fingerprint)]) {
+      const at = this.buckets[index].indexOf(fingerprint);
+      if (at >= 0) { this.buckets[index].splice(at, 1); return true; }
+    }
+    return false;
+  }
+}
+
+const filter = new CuckooFilter();
+filter.insert('alpha'); filter.insert('beta');
+console.log(filter.has('alpha'), filter.has('gamma')); // true false
+filter.delete('alpha');
+console.log(filter.has('alpha')); // false
+```
+
+**Cost:** O(1) average lookup/insert/delete; O(1) space per item plus fingerprint overhead.
+**Use it:** cache admission, deduplication, “have I seen this?” sets where deletion matters.
+**Limit:** false positives are possible, but a successful insert should not create false negatives. Deletion is fingerprint-based, so a collision can remove another key's fingerprint. Insertion can fail under a high load factor; rebuild the table, because a failed insertion may leave it partially rearranged.
+
+## Extended: Skip List
+
+**Problem:** a balanced tree gives O(log n) search but is hard to implement lock-free; a sorted linked list is simple but O(n).
+**Idea:** add express lanes. Each node promotes to a random number of levels; search descends from the top, dropping a level when the next key is too large. Expected O(log n), and range scans are linked-list easy.
+
+```js
+class SkipNode {
+  constructor(key, value, level) {
+    this.key = key; this.value = value;
+    this.next = Array(level).fill(null);
+  }
+}
+
+class SkipList {
+  constructor(maxLevel = 16, probability = 0.5) {
+    this.maxLevel = maxLevel; this.probability = probability;
+    this.head = new SkipNode(-Infinity, null, maxLevel);
+    this.level = 1; this.size = 0;
+  }
+  _randomLevel() {
+    let level = 1;
+    while (Math.random() < this.probability && level < this.maxLevel) level += 1;
+    return level;
+  }
+  _predecessors(key) {
+    const update = Array(this.level).fill(this.head);
+    let node = this.head;
+    for (let level = this.level - 1; level >= 0; level--) {
+      while (node.next[level] && node.next[level].key < key) node = node.next[level];
+      update[level] = node;
+    }
+    return update;
+  }
+  find(key) {
+    let node = this.head;
+    for (let level = this.level - 1; level >= 0; level--) {
+      while (node.next[level] && node.next[level].key < key) node = node.next[level];
+    }
+    node = node.next[0];
+    return node && node.key === key ? node.value : undefined;
+  }
+  insert(key, value) {
+    const update = this._predecessors(key);
+    const found = update[0].next[0];
+    if (found && found.key === key) { found.value = value; return; }
+    const level = this._randomLevel();
+    if (level > this.level) {
+      for (let i = this.level; i < level; i++) update[i] = this.head;
+      this.level = level;
+    }
+    const node = new SkipNode(key, value, level);
+    for (let i = 0; i < level; i++) {
+      node.next[i] = update[i].next[i];
+      update[i].next[i] = node;
+    }
+    this.size += 1;
+  }
+  delete(key) {
+    const update = this._predecessors(key);
+    const target = update[0].next[0];
+    if (!target || target.key !== key) return false;
+    for (let level = 0; level < this.level; level++) {
+      if (update[level].next[level] === target) update[level].next[level] = target.next[level];
+    }
+    while (this.level > 1 && !this.head.next[this.level - 1]) this.level -= 1;
+    this.size -= 1;
+    return true;
+  }
+}
+
+const skip = new SkipList();
+skip.insert('b', 2); skip.insert('a', 1); skip.insert('c', 3);
+console.log(skip.find('b'), skip.delete('b'), skip.find('b')); // 2 true undefined
+```
+
+**Cost:** O(log n) expected search/insert/delete; O(n) space with ~2 pointers per node on average.
+**Use it:** Redis sorted sets (when not using a balanced tree), in-memory ordered maps, lock-free indexes.
+**Limit:** probabilistic balance; a bad random sequence degrades toward O(n). Determinism is hard to test.
+
+## Extended: MinHash
+
+**Problem:** comparing the Jaccard similarity of two huge sets (documents, shingles, users) is expensive; you need a small signature that preserves the estimate.
+**Idea:** hash every element with K independent hash functions and keep the minimum hash per function. The fraction of positions where two signatures agree is a practical estimate of Jaccard similarity; with independent hash functions it is unbiased in expectation.
+
+```js
+function hash32(value, seed = 0) {
+  let hash = 2166136261 ^ seed;
+  for (const character of String(value)) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function shingles(text, size = 3) {
+  const normalized = text.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const set = new Set();
+  for (let i = 0; i + size <= normalized.length; i++) set.add(normalized.slice(i, i + size));
+  return set;
+}
+
+class MinHash {
+  constructor(numHashes = 128) {
+    this.seeds = Array.from({ length: numHashes }, (_, index) =>
+      Math.imul(index + 1, 2654435761) >>> 0);
+  }
+  signature(set) {
+    return this.seeds.map(seed => {
+      let minimum = Infinity;
+      for (const item of set) minimum = Math.min(minimum, hash32(item, seed));
+      return minimum === Infinity ? 0 : minimum;
+    });
+  }
+  static similarity(a, b) {
+    let same = 0;
+    for (let i = 0; i < a.length; i++) if (a[i] === b[i]) same += 1;
+    return same / a.length;
+  }
+  static jaccard(a, b) {
+    let intersection = 0;
+    for (const item of a) if (b.has(item)) intersection += 1;
+    return intersection / (a.size + b.size - intersection);
+  }
+}
+
+const minhash = new MinHash(128);
+const left = shingles('the quick brown fox jumps over the lazy dog');
+const right = shingles('the quick brown fox leaps over a lazy dog');
+console.log(MinHash.jaccard(left, right).toFixed(3));
+console.log(MinHash.similarity(minhash.signature(left), minhash.signature(right)).toFixed(3));
+```
+
+**Cost:** O(K × set size) to build, O(K) storage; K = 128 is usually within a few percent.
+**Use it:** near-duplicate documents, plagiarism detection, recommendation candidate sets, large-scale clustering.
+**Limit:** it estimates set similarity, not semantic similarity; shingling choice and hash quality dominate the result.
+
+## Extended: t-digest Quantile Sketch
+
+**Problem:** exact p99 latency or median over billions of values needs retaining every value; a histogram with fixed buckets loses tail accuracy.
+**Idea:** keep a small set of weighted centroids, merging nearby points as the sketch fills. A production t-digest uses a scale function that keeps tail centroids small, so p99 stays accurate; the code below is a simplified uniform-centroid sketch that demonstrates the merge/query mechanics, not a full t-digest.
+
+```js
+class QuantileSketch {
+  constructor(compression = 100) {
+    this.compression = compression;
+    this.centroids = [];
+    this.count = 0;
+  }
+  add(value) {
+    this.centroids.push({ mean: value, count: 1 });
+    this.count += 1;
+    if (this.centroids.length > this.compression) this._compress();
+  }
+  _compress() {
+    this.centroids.sort((a, b) => a.mean - b.mean);
+    const merged = [];
+    const maxCount = Math.max(1, Math.ceil(this.count / this.compression));
+    for (const centroid of this.centroids) {
+      const last = merged[merged.length - 1];
+      if (last && last.count + centroid.count <= maxCount) {
+        const total = last.count + centroid.count;
+        last.mean = (last.mean * last.count + centroid.mean * centroid.count) / total;
+        last.count = total;
+      } else {
+        merged.push({ ...centroid });
+      }
+    }
+    this.centroids = merged;
+  }
+  quantile(q) {
+    if (this.centroids.length === 0) return NaN;
+    this.centroids.sort((a, b) => a.mean - b.mean);
+    const target = Math.min(1, Math.max(0, q)) * this.count;
+    let seen = 0;
+    for (const centroid of this.centroids) {
+      seen += centroid.count;
+      if (seen >= target) return centroid.mean;
+    }
+    return this.centroids[this.centroids.length - 1].mean;
+  }
+  percentile(p) { return this.quantile(p / 100); }
+}
+
+const sketch = new QuantileSketch(100);
+for (let value = 1; value <= 1000; value++) sketch.add(value);
+console.log(Math.round(sketch.percentile(50)), Math.round(sketch.percentile(99))); // 500 990
+```
+
+**Cost:** O(compression) memory, O(compression log compression) per periodic merge, O(compression) quantile query.
+**Use it:** latency percentiles, Prometheus histograms/native histograms, Elasticsearch `percentiles`, streaming SLO dashboards.
+**Limit:** this simplified version caps every centroid at the same size, so it does not reproduce t-digest's tail guarantee; it is approximate and order-dependent. Use a maintained library when error bounds matter.
+
+## Extended: BM25
+
+**Problem:** raw term-frequency ranking lets a long document win by repeating a word; Boolean matching ignores relevance entirely.
+**Idea:** score each query term with saturating term frequency, inverse document frequency, and document-length normalization. BM25 is the default lexical ranking function behind Lucene/Elasticsearch.
+
+```js
+function tokenize(text) {
+  return text.toLowerCase().match(/[a-z0-9]+/g) ?? [];
+}
+
+class BM25 {
+  constructor(k1 = 1.5, b = 0.75) {
+    this.k1 = k1; this.b = b;
+    this.documents = []; this.documentFrequency = new Map();
+    this.averageLength = 0;
+  }
+  add(text) {
+    const tokens = tokenize(text);
+    const termFrequency = new Map();
+    for (const term of tokens) termFrequency.set(term, (termFrequency.get(term) ?? 0) + 1);
+    this.documents.push({ tokens, termFrequency });
+    for (const term of termFrequency.keys()) {
+      this.documentFrequency.set(term, (this.documentFrequency.get(term) ?? 0) + 1);
+    }
+    this.averageLength = this.documents.reduce((sum, doc) => sum + doc.tokens.length, 0) /
+      this.documents.length;
+  }
+  score(query, index) {
+    const document = this.documents[index];
+    const total = this.documents.length;
+    let score = 0;
+    for (const term of tokenize(query)) {
+      const frequency = document.termFrequency.get(term) ?? 0;
+      if (frequency === 0) continue;
+      const matching = this.documentFrequency.get(term) ?? 0;
+      const idf = Math.log(1 + (total - matching + 0.5) / (matching + 0.5));
+      const denominator = frequency + this.k1 *
+        (1 - this.b + this.b * document.tokens.length / this.averageLength);
+      score += idf * (frequency * (this.k1 + 1)) / denominator;
+    }
+    return score;
+  }
+  search(query) {
+    return this.documents
+      .map((_, index) => [index, this.score(query, index)])
+      .filter(([, score]) => score > 0)
+      .sort((a, b) => b[1] - a[1]);
+  }
+}
+
+const bm25 = new BM25();
+bm25.add('the quick brown fox');
+bm25.add('the lazy dog sleeps');
+bm25.add('quick quick quick fox');
+console.log(bm25.search('quick fox').map(([index]) => index));
+```
+
+**Cost:** O(query terms × postings) per search; O(total tokens) index memory.
+**Use it:** search engines, Elasticsearch/OpenSearch, hybrid retrieval candidate generation, log search.
+**Limit:** lexical only — synonyms and semantics need embeddings/query expansion; tuning `k1`/`b` changes the ranking.
+
+## Extended: Cosine Similarity + IVF
+
+**Problem:** semantic search compares a query embedding to millions of document embeddings; brute force is O(N × dimensions) per query.
+**Idea:** cosine similarity measures the angle between vectors. **IVF** (inverted file) clusters vectors around centroids, then searches only the nearest `nprobe` lists. **HNSW** goes further, building a navigable multi-layer graph; both trade exact recall for latency.
+
+```js
+function cosine(a, b) {
+  let dot = 0, normA = 0, normB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
+  }
+  return dot / (Math.sqrt(normA) * Math.sqrt(normB) || 1);
+}
+
+class IVFIndex {
+  constructor(dimension, lists = 2) {
+    this.dimension = dimension;
+    this.lists = Array.from({ length: lists }, () => []);
+    this.centroids = [];
+  }
+  train(vectors) {
+    this.centroids = vectors.slice(0, this.lists.length).map(vector => vector.slice());
+    for (let iteration = 0; iteration < 5; iteration++) {
+      const groups = this.lists.map(() => []);
+      for (const vector of vectors) {
+        let best = 0, bestScore = -Infinity;
+        for (let i = 0; i < this.centroids.length; i++) {
+          const score = cosine(vector, this.centroids[i]);
+          if (score > bestScore) { bestScore = score; best = i; }
+        }
+        groups[best].push(vector);
+      }
+      this.centroids = groups.map((group, index) => group.length === 0
+        ? this.centroids[index]
+        : group[0].map((_, dimension) =>
+          group.reduce((sum, vector) => sum + vector[dimension], 0) / group.length));
+    }
+  }
+  add(id, vector) { this.lists[this._nearest(vector)].push({ id, vector }); }
+  _nearest(vector) {
+    let best = 0, bestScore = -Infinity;
+    for (let i = 0; i < this.centroids.length; i++) {
+      const score = cosine(vector, this.centroids[i]);
+      if (score > bestScore) { bestScore = score; best = i; }
+    }
+    return best;
+  }
+  search(query, k = 3, nprobe = 1) {
+    const probes = this.centroids
+      .map((centroid, index) => [index, cosine(query, centroid)])
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, nprobe)
+      .map(([index]) => index);
+    return probes
+      .flatMap(index => this.lists[index])
+      .map(item => [item.id, cosine(query, item.vector)])
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, k);
+  }
+}
+
+const vectors = [[1, 0], [0.9, 0.1], [0, 1], [0.1, 0.9]];
+const ivf = new IVFIndex(2, 2);
+ivf.train(vectors);
+vectors.forEach((vector, index) => ivf.add(`doc-${index}`, vector));
+console.log(ivf.search([1, 0], 2)); // doc-0, doc-1
+```
+
+**Cost:** cosine O(d); IVF query O(nprobe × list size × d) plus centroid scan; HNSW is O(log N) expected with more memory.
+**Use it:** RAG retrieval, recommendations, image/audio similarity, deduplication.
+**Limit:** ANN can miss the true nearest neighbor; recall depends on `nprobe`/graph quality. Filters and updates need careful handling.
+
+## Extended: PageRank
+
+**Problem:** “most important node” in a directed graph is not the same as “most incoming links”; a link from a spammy node should not count like a link from a trusted hub.
+**Idea:** importance flows along edges. Each node distributes its rank across its outlinks; a damping factor models random jumps. Power iteration converges to the principal eigenvector.
+
+```js
+function pageRank(graph, damping = 0.85, iterations = 50) {
+  const nodes = Object.keys(graph);
+  const total = nodes.length;
+  let ranks = Object.fromEntries(nodes.map(node => [node, 1 / total]));
+  for (let iteration = 0; iteration < iterations; iteration++) {
+    const next = Object.fromEntries(nodes.map(node => [node, (1 - damping) / total]));
+    for (const node of nodes) {
+      const outgoing = graph[node] ?? [];
+      if (outgoing.length === 0) {
+        for (const target of nodes) next[target] += damping * ranks[node] / total;
+      } else {
+        for (const target of outgoing) next[target] += damping * ranks[node] / outgoing.length;
+      }
+    }
+    ranks = next;
+  }
+  const sum = Object.values(ranks).reduce((acc, value) => acc + value, 0);
+  for (const node of nodes) ranks[node] /= sum;
+  return ranks;
+}
+
+const ranks = pageRank({ A: ['B', 'C'], B: ['C'], C: ['A'], D: ['C'] });
+console.log(Object.entries(ranks).sort((a, b) => b[1] - a[1])[0][0]); // C
+```
+
+**Cost:** O(iterations × (nodes + edges)); sparse graphs are cheap; convergence slows near the damping limit.
+**Use it:** web search authority, social influence, fraud-ring centrality, recommendation graphs.
+**Limit:** dangling nodes and disconnected components need handling; personalized/temporal graphs need variants. It measures link structure, not user satisfaction.
+
+<a id="part-iic--operations-algorithms"></a>
+
+## Part II-C — Operations Algorithms
+
+These four algorithms show up in streaming, search, content safety, and routing. They are unnumbered for the same reason as Part II-B: the existing §76–§85 numbering in `interview-qa.md` stays stable.
+
+## Extended: Top-K Heap
+
+**Problem:** a stream has millions of values and you need the largest K at any moment; sorting the whole stream is O(n log n) and storing it is wasteful.
+**Idea:** keep a **min-heap of size K**. The heap root is the smallest value currently in the top K; a new value replaces it only if it is larger. This is the streaming top-K pattern behind leaderboards and heavy-hitter dashboards.
+
+```js
+class MinHeap {
+  constructor() { this.items = []; }
+  get size() { return this.items.length; }
+  peek() { return this.items[0]; }
+  push(value) {
+    this.items.push(value);
+    let index = this.items.length - 1;
+    while (index > 0) {
+      const parent = Math.floor((index - 1) / 2);
+      if (this.items[parent] <= this.items[index]) break;
+      [this.items[parent], this.items[index]] = [this.items[index], this.items[parent]];
+      index = parent;
+    }
+  }
+  pop() {
+    if (this.items.length === 0) return undefined;
+    const root = this.items[0];
+    const last = this.items.pop();
+    if (this.items.length > 0) {
+      this.items[0] = last;
+      let index = 0;
+      while (true) {
+        const left = index * 2 + 1, right = left + 1;
+        let smallest = index;
+        if (left < this.items.length && this.items[left] < this.items[smallest]) smallest = left;
+        if (right < this.items.length && this.items[right] < this.items[smallest]) smallest = right;
+        if (smallest === index) break;
+        [this.items[index], this.items[smallest]] = [this.items[smallest], this.items[index]];
+        index = smallest;
+      }
+    }
+    return root;
+  }
+  values() { return [...this.items]; }
+}
+
+function topK(values, k) {
+  const heap = new MinHeap();
+  for (const value of values) {
+    if (heap.size < k) heap.push(value);
+    else if (value > heap.peek()) { heap.pop(); heap.push(value); }
+  }
+  return heap.values().sort((a, b) => b - a);
+}
+
+console.log(topK([5, 1, 9, 3, 7, 2, 8], 3)); // [9, 8, 7]
+```
+
+**Cost:** O(n log k) time, O(k) space; each insert/pop is O(log k).
+**Use it:** leaderboard top-K, trending hashtags, heavy hitters, “top N slowest queries”, streaming anomaly candidates.
+**Limit:** it returns exact top-K for a single stream; merging sharded top-K needs a second heap, and ties need a deterministic rule.
+
+## Extended: Quickselect
+
+**Problem:** you need the median or the k-th largest value, but sorting the whole array is more work than necessary.
+**Idea:** partition around a pivot like quicksort, then recurse only into the side that contains the target index. Average O(n); worst O(n²) with bad pivots, so randomize or use median-of-medians for a guarantee.
+
+```js
+function quickselect(values, k) {
+  const array = values.slice();
+  const target = k - 1;
+  let left = 0, right = array.length - 1;
+  while (left <= right) {
+    const pivot = array[Math.floor((left + right) / 2)];
+    let i = left, j = right;
+    while (i <= j) {
+      while (array[i] < pivot) i++;
+      while (array[j] > pivot) j--;
+      if (i <= j) {
+        [array[i], array[j]] = [array[j], array[i]];
+        i++; j--;
+      }
+    }
+    if (target <= j) right = j;
+    else if (target >= i) left = i;
+    else return array[target];
+  }
+  return array[target];
+}
+
+console.log(quickselect([7, 1, 5, 3, 9, 2], 3)); // 3
+```
+
+**Cost:** O(n) average, O(n²) worst; O(1) extra space if partitioning in place.
+**Use it:** p50/p95 latency from a sample, k-th largest score, top-K when you can mutate a copy, percentile dashboards.
+**Limit:** the worst case is adversarial; production systems prefer a heap for streaming or a sketch (t-digest) for distributed quantiles.
+
+## Extended: Aho-Corasick
+
+**Problem:** matching thousands of keywords against a stream with a separate regex or `includes` call per keyword is O(patterns × text).
+**Idea:** build a trie of all patterns, add failure links (the longest proper suffix that is also a prefix), and scan the text once. Every match is reported in O(text length + matches).
+
+```js
+class AhoCorasick {
+  constructor(patterns) {
+    this.next = [new Map()];
+    this.fail = [0];
+    this.output = [[]];
+    for (const pattern of patterns) this.add(pattern);
+    this.build();
+  }
+  add(pattern) {
+    let node = 0;
+    for (const character of pattern) {
+      if (!this.next[node].has(character)) {
+        const child = this.next.length;
+        this.next[node].set(character, child);
+        this.next.push(new Map());
+        this.fail.push(0);
+        this.output.push([]);
+      }
+      node = this.next[node].get(character);
+    }
+    this.output[node].push(pattern);
+  }
+  build() {
+    const queue = [];
+    for (const child of this.next[0].values()) { this.fail[child] = 0; queue.push(child); }
+    while (queue.length > 0) {
+      const node = queue.shift();
+      for (const [character, child] of this.next[node]) {
+        let fallback = this.fail[node];
+        while (fallback !== 0 && !this.next[fallback].has(character)) fallback = this.fail[fallback];
+        if (this.next[fallback].has(character) && this.next[fallback].get(character) !== child) {
+          fallback = this.next[fallback].get(character);
+        }
+        this.fail[child] = fallback;
+        this.output[child].push(...this.output[fallback]);
+        queue.push(child);
+      }
+    }
+  }
+  search(text) {
+    let node = 0;
+    const hits = [];
+    for (let index = 0; index < text.length; index++) {
+      const character = text[index];
+      while (node !== 0 && !this.next[node].has(character)) node = this.fail[node];
+      if (this.next[node].has(character)) node = this.next[node].get(character);
+      for (const pattern of this.output[node]) {
+        hits.push({ pattern, index: index - pattern.length + 1 });
+      }
+    }
+    return hits;
+  }
+}
+
+const matcher = new AhoCorasick(['he', 'she', 'his', 'hers']);
+console.log(matcher.search('ushers').map(hit => hit.pattern)); // [ 'she', 'he', 'hers' ]
+```
+
+**Cost:** O(total pattern length) to build, O(text length + matches) to scan, O(total pattern length) memory.
+**Use it:** content moderation/keyword blocking, intrusion detection, log redaction, search highlighting, bioinformatics motif matching.
+**Limit:** it matches exact strings; Unicode normalization, case folding, and token boundaries are your responsibility. Very large dictionaries need memory planning.
+
+## Extended: Bellman-Ford
+
+**Problem:** Dijkstra assumes non-negative edge weights. Routing, currency exchange, and dependency graphs can have negative edges — and can contain negative cycles.
+**Idea:** relax every edge V−1 times. If an edge can still be relaxed on the V-th pass, a negative cycle exists and the shortest path is undefined. This is the algorithm behind distance-vector routing.
+
+```js
+function bellmanFord(nodes, edges, source) {
+  const distance = Object.fromEntries(nodes.map(node => [node, Infinity]));
+  distance[source] = 0;
+  for (let pass = 0; pass < nodes.length - 1; pass++) {
+    let changed = false;
+    for (const [from, to, weight] of edges) {
+      if (distance[from] !== Infinity && distance[from] + weight < distance[to]) {
+        distance[to] = distance[from] + weight;
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+  for (const [from, to, weight] of edges) {
+    if (distance[from] !== Infinity && distance[from] + weight < distance[to]) {
+      return { distance, negativeCycle: true };
+    }
+  }
+  return { distance, negativeCycle: false };
+}
+
+const result = bellmanFord(
+  ['A', 'B', 'C'],
+  [['A', 'B', 4], ['A', 'C', 5], ['B', 'C', -2]],
+  'A',
+);
+console.log(result); // { distance: { A: 0, B: 4, C: 2 }, negativeCycle: false }
+```
+
+**Cost:** O(V × E) time, O(V) space; slower than Dijkstra but handles negative edges and detects negative cycles.
+**Use it:** distance-vector routing, currency-arbitrage detection, dependency constraints, graphs where edge weights can be negative.
+**Limit:** it does not produce a usable shortest path when a negative cycle is reachable; use Johnson's algorithm for all-pairs with negative edges.
 
 ---
 

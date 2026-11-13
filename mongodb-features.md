@@ -270,11 +270,12 @@ db.ledger.find({ _id: x }).readConcern("majority");             // never read ro
 
 ## 10. Sharding — Horizontal Scale-Out
 
-```
-                ┌─ mongos (query router) ─┐
-   clients ───► │   routes by shard key   │ ───► shards (each = a replica set)
-                └──── config servers (RS) ┘
-```
+| Component | Role |
+| :--- | :--- |
+| Clients | connect to a `mongos` router, not directly to a shard |
+| `mongos` | stateless query router; selects shards from the shard key |
+| Config servers | replica set that stores cluster metadata and chunk ranges |
+| Shards | each shard is itself a replica set holding a subset of the data |
 
 ```javascript
 sh.enableSharding("shop");

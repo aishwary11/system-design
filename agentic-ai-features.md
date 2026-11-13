@@ -87,19 +87,15 @@ const res = await llm.chat({
 
 An agent is a while-loop around an LLM: the model decides **which tool to call**, the runtime executes it, results go back as context, repeat until the model stops or a budget is exhausted.
 
-```text
-        ┌────────────────────────────────────────┐
-        │  1. assemble context (system + history │
-        │     + tool schemas + retrieved docs)   │
-        ▼                                        │
-   ┌─────────┐   tool call     ┌────────────┐    │
-   │   LLM   │ ──────────────► │  Runtime   │    │
-   │ (think) │ ◄────────────── │ (execute)  │    │
-   └─────────┘   observation  └────────────┘    │
-        │  no more tool calls                   │
-        ▼                                       │
-     answer ────────────────────────────────────┘ (loop)
-```
+| Step | What happens | Output |
+| :--- | :--- | :--- |
+| 1 | Assemble context: system prompt, history, tool schemas, retrieved docs | prompt |
+| 2 | LLM decides whether to answer or call a tool | text or tool call |
+| 3 | Runtime executes the requested tool | observation |
+| 4 | Append the observation and loop until no tool calls or the step budget is exhausted | next turn |
+| 5 | Return the final answer | response |
+
+The loop is `assemble → LLM → tool? → observe → repeat`, with a hard step/token budget so a confused agent cannot run forever.
 
 ```javascript
 async function runAgent(goal, tools, llm, maxSteps = 10) {

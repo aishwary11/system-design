@@ -6,7 +6,7 @@
 
 # Glossary — System Design Terms in Plain English
 
-<sub>84 TERMS · 8 GROUPS · 12 MIN READ</sub>
+<sub>104 TERMS · 9 GROUPS · 14 MIN READ</sub>
 
 </div>
 
@@ -31,7 +31,8 @@ Design docs use short labels because repeating a definition in 56 files wastes t
 5. [Delivery & operations](#delivery)
 6. [Security & identity](#security)
 7. [Data & analytics](#data)
-8. [AI infrastructure](#ai)
+8. [Algorithms & search](#algorithms-search)
+9. [AI infrastructure](#ai)
 
 </details>
 
@@ -243,6 +244,18 @@ Take a lock before reading or writing, so no one else can change the row until y
 **Failure it prevents:** high-contention races (seat booking, inventory) at the cost of blocking and deadlock risk.
 **Go deeper:** [Locking](postgresql-features.md#13-locking-rows-tables-advisory) · [Ticketing](system-design-ticketing-system.md).
 
+<a id="sql-vs-nosql"></a>
+### SQL vs NoSQL
+Choosing a relational model (rows, joins, multi-row transactions) versus a document, key-value, wide-column, graph, search, time-series, or vector model based on the access pattern and the invariants.
+**Failure it prevents:** picking a store for the logo, then discovering the hot query needs a join or transaction the store cannot provide.
+**Go deeper:** [Data models vs access patterns](system-design-concepts.md#49-data-models-vs-access-patterns).
+
+<a id="schema-evolution"></a>
+### Schema evolution
+Changing a stored or event schema without breaking existing readers and writers: add optional fields, never reuse tags, use expand/contract migrations.
+**Failure it prevents:** a deploy that removes a field while an old consumer is still reading it.
+**Go deeper:** [API contracts](system-design-concepts.md#55-api-styles--rest-vs-grpc-vs-graphql) · [Kafka Schema Registry](kafka-features.md).
+
 <a id="denormalization"></a>
 ### Denormalization
 Duplicating data to avoid joins, accepting the cost of keeping copies in sync.
@@ -361,6 +374,18 @@ A large group of clients retrying or reconnecting simultaneously, amplifying the
 <a id="messaging"></a>
 ## Messaging & streaming
 
+<a id="queue-vs-log"></a>
+### Queue vs log
+A queue deletes a message after acknowledgement and distributes work; a log retains ordered partitions so consumers can replay facts.
+**Failure it prevents:** using a queue as event history, or a log as a per-task work queue.
+**Go deeper:** [Event-driven architecture](system-design-concepts.md#26-event-driven-architecture).
+
+<a id="delivery-semantics"></a>
+### Delivery semantics
+At-most-once can lose a message; at-least-once can duplicate it; exactly-once is a property of the whole pipeline, and external side effects still need idempotency.
+**Failure it prevents:** assuming the broker makes a charge or email happen exactly once.
+**Go deeper:** [Event-driven architecture](system-design-concepts.md#26-event-driven-architecture) · [Idempotency](system-design-concepts.md#10-idempotency).
+
 <a id="fan-out"></a>
 ### Fan-out
 Delivering one event to many consumers or timelines. Fan-out on write does the work at publish time; fan-out on read does it at fetch time.
@@ -466,6 +491,81 @@ Separating the write model from one or more read models, each optimised for its 
 ---
 
 <a id="delivery"></a>
+<a id="algorithms-search"></a>
+## Algorithms & search
+
+<a id="inverted-index"></a>
+### Inverted index
+A map from each normalized token to the documents (and positions) that contain it, used for full-text search and ranking.
+**Failure it prevents:** scanning every document for every query term.
+**Go deeper:** [Indexing](system-design-concepts.md#50-indexing-fundamentals--selection-strategy).
+
+<a id="bm25"></a>
+### BM25
+A lexical ranking function that combines saturating term frequency, inverse document frequency, and document-length normalization.
+**Failure it prevents:** long or repetitive documents winning by raw term count.
+**Go deeper:** [BM25](system-design-concepts.md#extended-bm25).
+
+<a id="lfu"></a>
+### LFU
+Least-frequently-used eviction: remove the key with the lowest access count, with an LRU tie-break.
+**Failure it prevents:** a scan evicting a small hot set that LRU would keep.
+**Go deeper:** [LFU cache](system-design-concepts.md#extended-lfu-cache).
+
+<a id="leaky-bucket"></a>
+### Leaky bucket
+A fixed-capacity bucket that drains at a constant rate, smoothing output instead of allowing token-bucket bursts.
+**Failure it prevents:** a bursty client overwhelming a downstream that needs a steady request rate.
+**Go deeper:** [Leaky bucket](system-design-concepts.md#extended-leaky-bucket).
+
+<a id="cuckoo-filter"></a>
+### Cuckoo filter
+A compact approximate-membership index storing fingerprints in two candidate buckets, supporting deletion and relocation.
+**Failure it prevents:** a Bloom filter's inability to delete safely as the set churns.
+**Go deeper:** [Cuckoo filter](system-design-concepts.md#extended-cuckoo-filter).
+
+<a id="skip-list"></a>
+### Skip list
+A layered linked list with random express lanes, giving expected O(log n) search and easy range scans.
+**Failure it prevents:** the implementation complexity of a balanced tree when an ordered map is needed.
+**Go deeper:** [Skip list](system-design-concepts.md#extended-skip-list).
+
+<a id="minhash"></a>
+### MinHash
+A compact signature built from the minimum hash of a set under many hash functions; signature agreement estimates Jaccard similarity.
+**Failure it prevents:** comparing every element of two huge sets to find near-duplicates.
+**Go deeper:** [MinHash](system-design-concepts.md#extended-minhash).
+
+<a id="pagerank"></a>
+### PageRank
+Iterative graph importance: each node distributes its rank across outlinks, with a damping factor for random jumps.
+**Failure it prevents:** treating every incoming link as equally authoritative.
+**Go deeper:** [PageRank](system-design-concepts.md#extended-pagerank).
+
+<a id="top-k-heap"></a>
+### Top-K heap
+A min-heap of size K that keeps the largest K values seen so far; each new value replaces the root only if it is larger.
+**Failure it prevents:** sorting or storing an unbounded stream to answer "top 10" on every request.
+**Go deeper:** [Top-K heap](system-design-concepts.md#extended-top-k-heap).
+
+<a id="quickselect"></a>
+### Quickselect
+A partition-based selection algorithm that finds the k-th value in average O(n) without fully sorting.
+**Failure it prevents:** paying O(n log n) for a median or percentile when only one order statistic is needed.
+**Go deeper:** [Quickselect](system-design-concepts.md#extended-quickselect).
+
+<a id="aho-corasick"></a>
+### Aho-Corasick
+A trie with failure links that matches thousands of patterns in one pass over the text, reporting all hits.
+**Failure it prevents:** running one regex or substring search per keyword, which becomes patterns × text.
+**Go deeper:** [Aho-Corasick](system-design-concepts.md#extended-aho-corasick).
+
+<a id="bellman-ford"></a>
+### Bellman-Ford
+Relax every edge V−1 times to find shortest paths even with negative weights; a further relaxation proves a negative cycle.
+**Failure it prevents:** Dijkstra returning wrong distances when edge weights can be negative.
+**Go deeper:** [Bellman-Ford](system-design-concepts.md#extended-bellman-ford).
+
 ## Delivery & operations
 
 <a id="cdn"></a>
@@ -579,6 +679,30 @@ Encoding latitude/longitude into a short string whose shared prefix means spatia
 ---
 
 <a id="security"></a>
+<a id="multi-tenancy"></a>
+### Multi-tenancy
+Sharing infrastructure across customers using one of three isolation models: silo (separate stack), pool (shared rows with tenant ID), or bridge (shared database, per-tenant schema/partition).
+**Failure it prevents:** a missing tenant filter leaking one customer's data to another; pooled tenants also need quotas to stop noisy neighbours.
+**Go deeper:** [Monolith vs microservices](system-design-concepts.md#51-monolith-vs-microservices--service-decomposition).
+
+<a id="pagination"></a>
+### Pagination
+Returning a bounded page of results using an opaque cursor (stable under inserts) or an offset (simple but drifts and slows deep in the result set).
+**Failure it prevents:** missing or duplicated rows when a user pages while data is being written.
+**Go deeper:** [API contracts](system-design-concepts.md#55-api-styles--rest-vs-grpc-vs-graphql).
+
+<a id="bulkhead"></a>
+### Bulkhead
+Partitioning threads, connections, or in-flight requests per dependency or tenant so one slow caller cannot exhaust the whole service.
+**Failure it prevents:** a single degraded downstream turning every endpoint into a timeout.
+**Go deeper:** [Load shedding](system-design-concepts.md#27-load-shedding--graceful-degradation).
+
+<a id="littles-law"></a>
+### Little's law
+`L = λW`: the average number of items in a stable system equals arrival rate times average time in the system; use it to size concurrency and queues.
+**Failure it prevents:** provisioning far fewer in-flight requests than the throughput and latency require, then blaming the database.
+**Go deeper:** [Estimation](system-design-concepts.md#52-back-of-the-envelope-estimation).
+
 ## Security & identity
 
 <a id="tls"></a>
