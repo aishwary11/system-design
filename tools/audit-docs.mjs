@@ -19,6 +19,8 @@
  *   invisible to this audit before)
  * - truncated stub blocks (a class/function header with no body) are reported
  * - require() of a Python stdlib name (time, math, heapq, ...) is reported
+ * - canonical algorithm/class owners are unique and keep their required links
+ *   (tools/canonical-ownership.json)
  *
  * Repo truth
  * - README headline / "What's Inside" counts match the filesystem
@@ -117,7 +119,7 @@ for (const f of files) {
     slugCount.set(base, n + 1);
     anchors.add(n === 0 ? base : `${base}-${n}`);
   }
-  docs.set(f, { anchors, prose, nums });
+  docs.set(f, { anchors, prose, nums, blocks });
 
   // Version stamps older than ~60 days: re-verify against upstream.
   for (let i = 0; i < prose.length; i++) {
@@ -353,6 +355,107 @@ for (const f of files) {
   if (!/<sub>[^<]+<\/sub>/.test(head) || !/^# /m.test(head)) issues.push(`${f}: incomplete masthead`);
   if (f !== 'README.md' && !/^## On this page\s*$/m.test(raw)) issues.push(`${f}: missing "## On this page"`);
   if (!/<p align="right"><a href="#top">↑ Back to top<\/a><\/p>\s*$/.test(raw)) issues.push(`${f}: missing standard footer`);
+}
+
+// Canonical ownership: one owner per algorithm/class, explicit variants only.
+const registryPath = join(ROOT, 'tools', 'canonical-ownership.json');
+let registry = null;
+try {
+  registry = JSON.parse(readFileSync(registryPath, 'utf8'));
+} catch (e) {
+  issues.push(`tools/canonical-ownership.json: ${String(e.message).slice(0, 120)}`);
+}
+
+if (registry) {
+  const definitionsByFile = new Map();
+  const definitionFiles = new Map();
+  for (const [f, doc] of docs) {
+    const names = new Set();
+    for (const b of doc.blocks) {
+      if (!/^(js|javascript)\b/.test(b.lang)) continue;
+      for (const m of b.code.matchAll(/\b(?:class|function)\s+([A-Za-z_$][\w$]*)/g)) names.add(m[1]);
+    }
+    definitionsByFile.set(f, names);
+    for (const name of names) {
+      if (!definitionFiles.has(name)) definitionFiles.set(name, new Set());
+      definitionFiles.get(name).add(f);
+    }
+  }
+
+  const hasCanonicalLink = (f, owner, anchor) => {
+    const doc = docs.get(f);
+    return !!doc && doc.prose.join('\n').includes(`](${owner}${anchor})`);
+  };
+  const canonicalByName = new Map();
+  const registered = new Set();
+  const variantsByName = new Map();
+  const variants = registry.variants || [];
+  for (const v of variants) variantsByName.set(v.name, v);
+
+  for (const entry of registry.canonical || []) {
+    if (!entry.name || !entry.owner || !entry.anchor) {
+      issues.push('tools/canonical-ownership.json: canonical entry needs name, owner and anchor');
+      continue;
+    }
+    const ownerDoc = docs.get(entry.owner);
+    if (!ownerDoc) {
+      issues.push(`tools/canonical-ownership.json: owner not found for ${entry.name}: ${entry.owner}`);
+      continue;
+    }
+    if (!ownerDoc.anchors.has(entry.anchor.slice(1)))
+      issues.push(`tools/canonical-ownership.json: dead anchor for ${entry.name}: ${entry.owner}${entry.anchor}`);
+    canonicalByName.set(entry.name, entry);
+
+    const names = entry.definitions || [entry.name];
+    for (const name of names) {
+      registered.add(name);
+      if (entry.definition === false) continue;
+      if (!(definitionsByFile.get(entry.owner) || new Set()).has(name))
+        issues.push(`${entry.owner}: canonical ${name} is missing its definition (owner: ${entry.name})`);
+      for (const f of definitionFiles.get(name) || [])
+        if (f !== entry.owner && !variantsByName.has(name))
+          issues.push(`${f}: duplicate definition of canonical ${name} (owner: ${entry.owner})`);
+    }
+
+    for (const consumer of entry.consumers || []) {
+      if (!docs.has(consumer)) {
+        issues.push(`tools/canonical-ownership.json: missing consumer ${consumer} for ${entry.name}`);
+      } else if (!hasCanonicalLink(consumer, entry.owner, entry.anchor)) {
+        issues.push(`${consumer}: missing canonical link for ${entry.name} — expected ${entry.owner}${entry.anchor}`);
+      }
+    }
+  }
+
+  for (const v of variants) {
+    registered.add(v.name);
+    const canonical = canonicalByName.get(v.canonical);
+    if (!v.name || !v.owner || !canonical) {
+      issues.push(`tools/canonical-ownership.json: invalid variant ${JSON.stringify(v)}`);
+      continue;
+    }
+    if (!(definitionsByFile.get(v.owner) || new Set()).has(v.name))
+      issues.push(`${v.owner}: explicit variant ${v.name} is missing its definition`);
+    for (const f of definitionFiles.get(v.name) || [])
+      if (f !== v.owner)
+        issues.push(`${f}: duplicate definition of explicit variant ${v.name} (owner: ${v.owner})`);
+    if (!hasCanonicalLink(v.owner, canonical.owner, canonical.anchor))
+      issues.push(`${v.owner}: variant ${v.name} is missing canonical link to ${canonical.owner}${canonical.anchor}`);
+  }
+
+  for (const d of registry.domainVariants || []) {
+    registered.add(d.name);
+    const owners = d.owners || [];
+    const files = definitionFiles.get(d.name) || new Set();
+    if (files.size === 0) issues.push(`tools/canonical-ownership.json: domain variant ${d.name} has no definition`);
+    for (const f of files) if (!owners.includes(f))
+      issues.push(`${f}: duplicate definition of domain variant ${d.name} (allowed: ${owners.join(', ')})`);
+    for (const owner of owners) if (!files.has(owner))
+      issues.push(`${owner}: domain variant ${d.name} is missing from its registered owner`);
+  }
+
+  for (const [name, files] of definitionFiles)
+    if (files.size > 1 && !registered.has(name))
+      issues.push(`${name}: duplicate definition in ${[...files].join(', ')} — register a canonical owner or explicit variant in tools/canonical-ownership.json`);
 }
 
 console.log(`audited ${files.length} markdown files, ${jsBlocks} js blocks (${jsFailed} failed, ${jsWarned} need injected globals)`);

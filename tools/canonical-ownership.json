@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "policy": "One canonical implementation per algorithm or class. Design docs link to the owner instead of redefining it. Explicit variants are allowed only when named distinctly and linked to their canonical parent. Domain-specific same-name classes are allowed only in the listed owner docs.",
+  "canonical": [
+    {
+      "name": "TokenBucket",
+      "owner": "system-design-concepts.md",
+      "anchor": "#12-rate-limiting",
+      "consumers": [
+        "system-design-rate-limiter.md",
+        "system-design-ai-gateway.md"
+      ]
+    },
+    {
+      "name": "BloomFilter",
+      "owner": "system-design-concepts.md",
+      "anchor": "#17-bloom-filter",
+      "consumers": [
+        "system-design-url-shortener.md",
+        "system-design-web-crawler.md"
+      ]
+    },
+    {
+      "name": "Trie",
+      "owner": "system-design-concepts.md",
+      "anchor": "#64-trie-prefix-tree",
+      "consumers": [
+        "system-design-search-autocomplete.md"
+      ]
+    },
+    {
+      "name": "LeakyBucket",
+      "owner": "system-design-concepts.md",
+      "anchor": "#extended-leaky-bucket",
+      "consumers": [
+        "system-design-rate-limiter.md"
+      ]
+    },
+    {
+      "name": "MinHeap",
+      "owner": "system-design-concepts.md",
+      "anchor": "#extended-top-k-heap",
+      "consumers": [
+        "system-design-notification-system.md"
+      ]
+    },
+    {
+      "name": "LRU",
+      "owner": "system-design-concepts.md",
+      "anchor": "#65-lru-cache",
+      "consumers": [
+        "system-design-distributed-cache.md"
+      ]
+    },
+    {
+      "name": "LRUCache",
+      "owner": "low-level-design.md",
+      "anchor": "#2-thread-safe-lru-cache",
+      "consumers": []
+    },
+    {
+      "name": "ConsistentHash",
+      "definition": false,
+      "owner": "system-design-concepts.md",
+      "anchor": "#2-consistent-hashing",
+      "consumers": [
+        "system-design-distributed-cache.md",
+        "system-design-key-value-store.md"
+      ]
+    },
+    {
+      "name": "SlidingWindowLog",
+      "owner": "system-design-rate-limiter.md",
+      "anchor": "#2-sliding-window-log-algorithm",
+      "consumers": [
+        "system-design-ai-gateway.md"
+      ]
+    },
+    {
+      "name": "SlidingWindowCounter",
+      "owner": "system-design-rate-limiter.md",
+      "anchor": "#3-sliding-window-counter-algorithm",
+      "consumers": []
+    },
+    {
+      "name": "FixedWindowCounter",
+      "owner": "system-design-rate-limiter.md",
+      "anchor": "#5-fixed-window-counter-algorithm",
+      "consumers": []
+    },
+    {
+      "name": "luhnValid",
+      "definitions": [
+        "luhnValid",
+        "generateCheckDigit"
+      ],
+      "owner": "system-design-concepts.md",
+      "anchor": "#58-luhns-algorithm-credit-card-validation",
+      "consumers": [
+        "system-design-payment-system.md"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "name": "LeakyBucketQueue",
+      "owner": "system-design-rate-limiter.md",
+      "canonical": "LeakyBucket"
+    },
+    {
+      "name": "DueAtMinHeap",
+      "owner": "system-design-notification-system.md",
+      "canonical": "MinHeap"
+    }
+  ],
+  "domainVariants": [
+    {
+      "name": "AdaptiveBitrate",
+      "owners": [
+        "system-design-spotify.md",
+        "system-design-youtube.md"
+      ],
+      "reason": "Audio and video have different ABR ladders and constraints."
+    },
+    {
+      "name": "BookingSaga",
+      "owners": [
+        "system-design-irctc.md",
+        "system-design-ticketing-system.md"
+      ],
+      "reason": "Railway and event ticketing have different inventory and refund sagas."
+    },
+    {
+      "name": "calculateETA",
+      "owners": [
+        "system-design-food-delivery.md",
+        "system-design-uber.md"
+      ],
+      "reason": "Delivery and ride-hailing ETA formulas use different speed and stop assumptions."
+    },
+    {
+      "name": "FareCalculator",
+      "owners": [
+        "system-design-irctc.md",
+        "system-design-metro-ticketing.md"
+      ],
+      "reason": "Rail and metro fare rules are different products."
+    },
+    {
+      "name": "hash",
+      "owners": [
+        "system-design-concepts.md",
+        "system-design-observability-pipeline.md"
+      ],
+      "reason": "Local hash helpers in unrelated examples; not a shared algorithm implementation."
+    },
+    {
+      "name": "hash32",
+      "owners": [
+        "system-design-concepts.md",
+        "system-design-netflix.md"
+      ],
+      "reason": "Local 32-bit hash helpers in unrelated examples; not a shared algorithm implementation."
+    },
+    {
+      "name": "haversineDistance",
+      "owners": [
+        "system-design-food-delivery.md",
+        "system-design-proximity-service.md"
+      ],
+      "reason": "Local distance helpers embedded in different design examples."
+    },
+    {
+      "name": "MatchingEngine",
+      "owners": [
+        "system-design-stock-exchange.md",
+        "system-design-tinder.md"
+      ],
+      "reason": "Order matching and people matching are unrelated domains."
+    },
+    {
+      "name": "SurgePricing",
+      "owners": [
+        "system-design-food-delivery.md",
+        "system-design-uber.md"
+      ],
+      "reason": "Delivery and ride-hailing use different surge caps and formulas."
+    }
+  ]
+}

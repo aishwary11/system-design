@@ -442,6 +442,8 @@ console.log(dedup.claim(evt), dedup.claim(evt));
 
 ### 3. Priority Queue for Notification Batching
 
+Use a dueAt-ordered specialization of the canonical [MinHeap](system-design-concepts.md#extended-top-k-heap); the implementation below stays design-specific.
+
 ```js
 class DueAtMinHeap {
   // Design-specific heap ordered by dueAt; the generic numeric MinHeap is
