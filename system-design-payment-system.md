@@ -359,35 +359,9 @@ A: Idempotency key per request, TTL dedup, cached response
 
 ## Low-Level Design (LLD) - Algorithms & Data Structures
 
-### 1. Luhn's Algorithm (Credit Card Validation)
+### 1. Card Validation
 
-```js
-function luhnCheck(cardNumber) {
-  // Validate credit card number using Luhn algorithm
-  // Time Complexity: O(N) where N = number of digits
-  const digits = cardNumber.replace(/\D/g, '').split('').reverse().map(Number);
-
-  let sum = 0;
-  for (let i = 0; i < digits.length; i++) {
-    let d = digits[i];
-    if (i % 2 === 1) {  // Double every second digit from right
-      d *= 2;
-      if (d > 9) d -= 9;
-    }
-    sum += d;
-  }
-
-  return sum % 10 === 0;  // Valid if sum is multiple of 10
-}
-
-function generateCheckDigit(partialCard) {
-  // Generate the last digit to make card number valid
-  for (let d = 0; d <= 9; d++) {
-    if (luhnCheck(partialCard + d)) return d;
-  }
-  return -1;
-}
-```
+Card-number checksum validation lives in [Concepts §58 — Luhn's Algorithm](system-design-concepts.md#58-luhns-algorithm-credit-card-validation), including the `luhnValid` and `generateCheckDigit` helpers. This payment design starts with the ledger and money-movement logic that is unique to payments.
 
 ### 2. Double-Entry Ledger
 
@@ -747,9 +721,6 @@ console.log(convertCurrency(1099, 'USD', 'USD', { rateProvider }));
 | ✅ Do | ❌ Don't |
 | :-- | :-- |
 | Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — payment system lives or dies there |
-| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
-| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
-| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 

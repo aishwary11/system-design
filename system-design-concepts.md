@@ -575,7 +575,7 @@ Always pair with a **fallback** (cached value, default, error) and stream **metr
 ## 12. Rate Limiting
 
 **Problem:** one abusive client (or a buggy loop) can take down the whole service.
-**Idea:** cap requests per key (user/IP/token) over a time window. Classic algorithms (implemented fully in `system-design-rate-limiter.md`):
+**Idea:** cap requests per key (user/IP/token) over a time window. The `TokenBucket` below is the canonical generic implementation; [`system-design-rate-limiter.md`](system-design-rate-limiter.md) owns the design-specific policies, Redis placement, and failure modes:
 
 | Algorithm | Behavior | Analogy |
 | --------- | -------- | ------- |
@@ -586,7 +586,7 @@ Always pair with a **fallback** (cached value, default, error) and stream **metr
 | Leaky bucket | fixed output rate, drops overflow | shapes traffic to a constant rate |
 
 ```js
-// Token bucket — the interview favorite, in ~10 lines
+// Token bucket — cost can be one request (RPM) or many tokens (TPM).
 class TokenBucket {
   constructor(capacity, refillPerSec) {
     this.capacity = capacity;
@@ -594,15 +594,22 @@ class TokenBucket {
     this.rate = refillPerSec;
     this.last = Date.now();
   }
-  allow() {
-    const now = Date.now();
-    this.tokens = Math.min(this.capacity,
-                           this.tokens + ((now - this.last) / 1000) * this.rate);
+  refill(now = Date.now()) {
+    const elapsed = Math.max(0, (now - this.last) / 1000);
+    this.tokens = Math.min(this.capacity, this.tokens + elapsed * this.rate);
     this.last = now;
-    if (this.tokens < 1) return false;   // deny (HTTP 429 + Retry-After)
-    this.tokens -= 1;
-    return true;                         // allow
   }
+  consume(cost = 1, now = Date.now()) {
+    this.refill(now);
+    if (this.tokens >= cost) {
+      this.tokens -= cost;
+      return { allowed: true, remaining: Math.floor(this.tokens), retryAfterMs: 0 };
+    }
+    const deficit = cost - this.tokens;
+    return { allowed: false, remaining: 0,
+             retryAfterMs: Math.ceil((deficit / this.rate) * 1000) };
+  }
+  allow(now = Date.now()) { return this.consume(1, now).allowed; }
 }
 ```
 
@@ -733,24 +740,33 @@ function getUser(id) {
 
 ## 17. Bloom Filter
 
+This is the canonical implementation; design docs link here instead of redefining it.
+
 **Problem:** "have we seen this before?" checks (dedupe URL, cache-miss guard, DB lookup guard) over billions of items — a real set won't fit in memory.
 **Idea:** a compact **bit array + k hash functions**. Insert = set k bits; membership = all k bits set. Answer is **"definitely not in set"** (no false negatives) or **"probably in set"** (small false-positive rate ε).
 
 ```js
-// Minimal bloom filter (m = bit size, k = hash count)
+// Bloom filter — double hashing derives k positions from two 32-bit hashes.
 class BloomFilter {
-  constructor(m, k) { this.bits = new Uint8Array(m); this.k = k; }
-  _hashes(x) {           // k different hash values
-    const out = [];
-    let h = 0;
-    for (let i = 0; i < this.k; i++) {
-      for (const c of x) h = (h * 31 + c.charCodeAt(0) + i * 97) >>> 0;
-      out.push(h % this.bits.length);
+  constructor(bitCount = 1 << 20, hashCount = 7) {
+    this.bits = new Uint8Array(bitCount);
+    this.size = bitCount;
+    this.k = hashCount;
+  }
+  positions(value) {
+    let h1 = 0x811c9dc5;
+    let h2 = 0x01000193;
+    for (let i = 0; i < value.length; i++) {
+      const c = value.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
+      h2 = Math.imul(h2 ^ c, 0x85ebca6b) >>> 0;
     }
+    const out = [];
+    for (let i = 0; i < this.k; i++) out.push(((h1 + i * h2) >>> 0) % this.size);
     return out;
   }
-  add(x)    { for (const i of this._hashes(x)) this.bits[i] = 1; }
-  maybeHas(x) { return this._hashes(x).every(i => this.bits[i] === 1); }
+  add(value) { for (const i of this.positions(value)) this.bits[i] = 1; }
+  maybeHas(value) { return this.positions(value).every(i => this.bits[i] === 1); }
 }
 
 const bf = new BloomFilter(1000, 7);
@@ -2023,6 +2039,13 @@ function luhnValid(card) {
 }
 luhnValid("4532015112830366");  // true — Visa test number
 luhnValid("4532015112830367");  // false — last digit flipped
+
+function generateCheckDigit(partialCard) {
+  for (let digit = 0; digit <= 9; digit++) {
+    if (luhnValid(partialCard + digit)) return digit;
+  }
+  return -1;
+}
 ```
 
 Luhn is a *format* check, not security: still verify with the issuer, tokenize (never store PANs), and keep PCI scope minimal — see `system-design-payment-system.md`.
@@ -2174,6 +2197,8 @@ Where: social networks (mutual friends), fraud detection (linked accounts), craw
 ---
 
 ## 64. Trie (Prefix Tree)
+
+This is the canonical implementation; design docs link here instead of redefining it.
 
 **Problem:** prefix queries at scale — autocomplete, dictionary lookup, IP routing — where comparing full strings repeatedly is wasteful.
 **Idea:** a tree where each edge is one character and every node is a prefix. Insert / search / prefix-walk cost O(key length), independent of dictionary size.
@@ -2515,6 +2540,8 @@ console.log(lfu.get('b'), lfu.get('a'), lfu.get('c')); // -1 1 3
 **Limit:** frequency is not value; a once-hot item can crowd out a newly hot one. Add aging (decay counts periodically) or use TinyLFU's window.
 
 ## Extended: Leaky Bucket
+
+This is the canonical implementation; the rate-limiter design shows a FIFO queue variant.
 
 **Problem:** token bucket allows a burst up to the bucket size; some downstreams need a strictly smooth output rate.
 **Idea:** requests enter a fixed-capacity bucket and leak out at a constant rate. If the bucket is full, the request is rejected (or queued). It is the dual of token bucket: token bucket controls *admission*, leaky bucket controls *drain*.
@@ -2996,6 +3023,8 @@ console.log(Object.entries(ranks).sort((a, b) => b[1] - a[1])[0][0]); // C
 These four algorithms show up in streaming, search, content safety, and routing. They are unnumbered for the same reason as Part II-B: the existing §76–§85 numbering in `interview-qa.md` stays stable.
 
 ## Extended: Top-K Heap
+
+This is the canonical numeric `MinHeap`; the notification design uses a `dueAt`-ordered specialization.
 
 **Problem:** a stream has millions of values and you need the largest K at any moment; sorting the whole stream is O(n log n) and storing it is wasteful.
 **Idea:** keep a **min-heap of size K**. The heap root is the smallest value currently in the top K; a new value replaces it only if it is larger. This is the streaming top-K pattern behind leaderboards and heavy-hitter dashboards.

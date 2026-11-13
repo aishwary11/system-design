@@ -720,17 +720,8 @@ console.log(`effective sample-size multiplier: ${(result.rawVar / result.adjuste
 
 ### 5. Two-Proportion Test (lift, CI, decision)
 
-```js
-function erf(x) {
-  const sign = x < 0 ? -1 : 1;
-  const ax = Math.abs(x);
-  const t = 1 / (1 + 0.3275911 * ax); // A&S 7.1.26: t = 1/(1 + p|x|), exp uses |x|
-  const a = [0.254829592, -0.284496736, 1.421413741, -1.453152027, 1.061405429];
-  const y = 1 - ((((a[4] * t + a[3]) * t + a[2]) * t + a[1]) * t + a[0]) * t * Math.exp(-ax * ax);
-  return sign * y;
-}
-const normalCdf = (z) => 0.5 * (1 + erf(z / Math.SQRT2));
-
+```js no-run
+// Uses erf and normalCdf defined once in §3 above.
 /** Relative lift with a 95% CI on the absolute difference, plus the decision. */
 function twoProportion({ convA, nA, convB, nB, alpha = 0.05 }) {
   const pA = convA / nA;

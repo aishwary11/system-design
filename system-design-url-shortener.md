@@ -454,45 +454,7 @@ The failure mode is a lost block after a crash: the IDs in an unissued block are
 
 ### 3. Bloom filter for duplicate-URL detection
 
-```js
-class BloomFilter {
-  // A compact "definitely not present / possibly present" set.
-  // False positives are possible; false negatives are not.
-  constructor(bitCount = 1 << 20, hashCount = 7) {
-    this.bits = new Uint8Array(bitCount);
-    this.size = bitCount;
-    this.k = hashCount;
-  }
-
-  // Double hashing: derive k positions from two independent 32-bit hashes.
-  positions(value) {
-    let h1 = 0x811c9dc5;
-    let h2 = 0x01000193;
-    for (let i = 0; i < value.length; i++) {
-      const c = value.charCodeAt(i);
-      h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
-      h2 = Math.imul(h2 ^ c, 0x85ebca6b) >>> 0;
-    }
-    const out = [];
-    for (let i = 0; i < this.k; i++) out.push(((h1 + i * h2) >>> 0) % this.size);
-    return out;
-  }
-
-  add(value) { for (const i of this.positions(value)) this.bits[i] = 1; }
-
-  mightContain(value) {
-    for (const i of this.positions(value)) if (!this.bits[i]) return false;
-    return true;
-  }
-}
-
-const seen = new BloomFilter(1 << 16, 7);
-seen.add('https://example.com/a');
-console.log(seen.mightContain('https://example.com/a')); // true
-console.log(seen.mightContain('https://example.com/b')); // false (almost certainly)
-```
-
-A Bloom filter answers "have we probably seen this URL before?" without storing every URL. It is a pre-filter in front of the database, not a replacement for the unique constraint: a positive still needs a lookup.
+Use the canonical [Bloom filter in Concepts §17](system-design-concepts.md#17-bloom-filter). Keep the bit array in Redis or a per-node cache, rotate it on a schedule, and treat a positive as "look up the database" — never as proof of duplication.
 
 ### 4. Cache-aside redirect with single-flight
 
@@ -577,9 +539,6 @@ Deduplicating clicks keeps analytics honest without blocking the redirect: the c
 | ✅ Do | ❌ Don't |
 | :-- | :-- |
 | Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — url shortener lives or dies there |
-| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
-| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
-| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 

@@ -280,81 +280,18 @@ A: Redis supports data structures (lists, sets, sorted sets), persistence, repli
 
 ## Low-Level Design (LLD)
 
-### 1. LRU Cache Implementation
+The cache internals are already implemented in the concepts guide. This design composes them instead of repeating the code:
 
-```js
-class LRUCache {
-  constructor(capacity) {
-    this.capacity = capacity;
-    this.cache = new Map();
-  }
-
-  get(key) {
-    if (!this.cache.has(key)) return null;
-    const value = this.cache.get(key);
-    this.cache.delete(key);
-    this.cache.set(key, value);
-    return value;
-  }
-
-  put(key, value) {
-    if (this.cache.has(key)) this.cache.delete(key);
-    this.cache.set(key, value);
-    if (this.cache.size > this.capacity) {
-      const oldest = this.cache.keys().next().value;
-      this.cache.delete(oldest);
-    }
-  }
-}
-```
-
-### 2. Consistent Hashing
-
-```js
-class ConsistentHash {
-  constructor(virtualNodes = 150) {
-    this.ring = new Map();
-    this.sortedKeys = [];
-    this.virtualNodes = virtualNodes;
-  }
-
-  addNode(nodeId) {
-    for (let i = 0; i < this.virtualNodes; i++) {
-      const hash = this.hash(nodeId + ':' + i);
-      this.ring.set(hash, nodeId);
-      this.sortedKeys.push(hash);
-    }
-    this.sortedKeys.sort((a, b) => a - b);
-  }
-
-  getNode(key) {
-    const hash = this.hash(key);
-    for (const k of this.sortedKeys) {
-      if (k >= hash) return this.ring.get(k);
-    }
-    return this.ring.get(this.sortedKeys[0]);
-  }
-
-  hash(key) {
-    let h = 0;
-    for (let i = 0; i < key.length; i++) {
-      h = (h * 31 + key.charCodeAt(i)) & 0xffffffff;
-    }
-    return h;
-  }
-}
-
-const cache = new LRUCache(1000); cache.put("key", "value"); console.log("Cache:", cache.get("key"));
-```
+| Concern | Canonical implementation | Why it matters here |
+| :--- | :--- | :--- |
+| LRU eviction | [Concepts §65 — LRU Cache](system-design-concepts.md#65-lru-cache) | Keeps hot objects resident without unbounded memory. |
+| Consistent hashing | [Concepts §2 — Consistent Hashing](system-design-concepts.md#2-consistent-hashing) | Moves only about 1/N of keys; use ~150 virtual nodes per physical node to smooth hotspots. |
 
 ## Do's & Don'ts
 
 | ✅ Do | ❌ Don't |
 | :-- | :-- |
 | Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — distributed cache lives or dies there |
-| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
-| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
-| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 

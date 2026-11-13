@@ -357,73 +357,7 @@ A: Model each as a strategy with its own key, state and failure mode; evaluate t
 
 ### 1. Token Bucket Algorithm
 
-```js
-class TokenBucket {
-  // Token bucket rate limiter
-  // Time Complexity: O(1) per request
-  constructor(capacity, refillRate) {
-    this.capacity = capacity;      // Max burst size
-    this.tokens = capacity;        // Current available tokens
-    this.refillRate = refillRate;  // Tokens added per second
-    this.lastRefill = Date.now();
-  }
-
-  consume(tokens = 1) {
-    this.refill();
-    if (this.tokens >= tokens) {
-      this.tokens -= tokens;
-      return { allowed: true, remaining: Math.floor(this.tokens) };
-    }
-    return { allowed: false, remaining: 0, retryAfter: this.retryTime(tokens) };
-  }
-
-  refill() {
-    const now = Date.now();
-    const elapsed = (now - this.lastRefill) / 1000;
-    this.tokens = Math.min(this.capacity, this.tokens + elapsed * this.refillRate);
-    this.lastRefill = now;
-  }
-
-  retryTime(tokens) {
-    const deficit = tokens - this.tokens;
-    return Math.ceil((deficit / this.refillRate) * 1000);  // ms until tokens available
-  }
-}
-
-class SlidingWindowCounter {
-  // Sliding window rate limiter using two fixed windows
-  // Time Complexity: O(1) per request
-  constructor(windowSizeSec, maxRequests) {
-    this.windowSize = windowSizeSec;
-    this.maxRequests = maxRequests;
-    this.prevCount = 0;
-    this.currCount = 0;
-    this.windowStart = Math.floor(Date.now() / 1000 / windowSizeSec) * windowSizeSec;
-  }
-
-  allow() {
-    this.rollWindow();
-    if (this.currCount < this.maxRequests) {
-      this.currCount++;
-      return true;
-    }
-    return false;
-  }
-
-  rollWindow() {
-    const now = Math.floor(Date.now() / 1000);
-    const currentWindow = Math.floor(now / this.windowSize) * this.windowSize;
-
-    if (currentWindow > this.windowStart) {
-      // Shift windows
-      const elapsed = (currentWindow - this.windowStart) / this.windowSize;
-      this.prevCount = elapsed >= 2 ? 0 : this.currCount;
-      this.currCount = 0;
-      this.windowStart = currentWindow;
-    }
-  }
-}
-```
+The canonical implementation is in [Concepts §12 — Rate Limiting](system-design-concepts.md#12-rate-limiting). It allows a burst up to capacity, refills at a steady rate, and should return `429` with `Retry-After` when `allow()` is false.
 
 ### 2. Sliding Window Log Algorithm
 
@@ -490,9 +424,12 @@ console.log(swc.allow(Date.now()));
 
 ### 4. Leaky Bucket Algorithm
 
+This design uses a **FIFO queue variant** for request shaping; the canonical water-level meter is [Concepts — Extended: Leaky Bucket](system-design-concepts.md#extended-leaky-bucket).
+
 ```js
-class LeakyBucket {
-  // FIFO queue drained at a fixed rate; overflow is dropped.
+class LeakyBucketQueue {
+  // Design-specific FIFO variant: queue drained at a fixed rate; overflow is dropped.
+  // Generic water-level implementation: Concepts — Extended: Leaky Bucket.
   // Smooths bursts into a steady output stream (a burst is queued, never forwarded at once).
   constructor(capacity, leakPerSecond) {
     this.capacity = capacity;
@@ -519,7 +456,7 @@ class LeakyBucket {
   }
 }
 
-const bucket = new LeakyBucket(5, 1);
+const bucket = new LeakyBucketQueue(5, 1);
 for (let i = 0; i < 7; i++) console.log(i, bucket.allow(Date.now()));
 ```
 
@@ -661,9 +598,6 @@ The demo's third request passes the tenant limit (3 of 5) but fails the route li
 | ✅ Do | ❌ Don't |
 | :-- | :-- |
 | Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — rate limiter lives or dies there |
-| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
-| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
-| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 

@@ -600,39 +600,7 @@ segment_1001.ts
 segment_1002.ts
 ```
 
-### 2. Adaptive Bitrate (ABR) Selection Algorithm
-
-```js
-class TokenBucket {
-  // Rate limiter using token bucket algorithm
-  // Time Complexity: O(1) per request
-  constructor(capacity, refillRate) {
-    this.capacity = capacity;        // Max tokens
-    this.tokens = capacity;          // Current tokens
-    this.refillRate = refillRate;    // Tokens per second
-    this.lastRefill = Date.now();
-  }
-
-  consume(tokens = 1) {
-    this.refill();
-    if (this.tokens >= tokens) {
-      this.tokens -= tokens;
-      return true;  // Request allowed
-    }
-    return false;   // Rate limited
-  }
-
-  refill() {
-    const now = Date.now();
-    const elapsed = (now - this.lastRefill) / 1000;
-    const newTokens = elapsed * this.refillRate;
-    this.tokens = Math.min(this.capacity, this.tokens + newTokens);
-    this.lastRefill = now;
-  }
-}
-```
-
-### 3. Stream Key Generation (DRM Token)
+### 2. ABR & Stream Key Generation (DRM Token)
 
 ```js
 class StreamManager {
@@ -667,7 +635,7 @@ class StreamManager {
 }
 ```
 
-### 4. Live Viewer Count (Exact Count with Redis)
+### 3. Live Viewer Count (Exact Count with Redis)
 
 ```text
 function get_exact_viewer_count(content_id) {
@@ -1115,9 +1083,6 @@ CREATE TABLE match_summary (
 | ✅ Do | ❌ Don't |
 | :-- | :-- |
 | Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — hotstar lives or dies there |
-| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
-| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
-| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 

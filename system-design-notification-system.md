@@ -443,8 +443,9 @@ console.log(dedup.claim(evt), dedup.claim(evt));
 ### 3. Priority Queue for Notification Batching
 
 ```js
-class MinHeap {
-  // Tiny binary heap — the JS stand-in for Python's heapq.
+class DueAtMinHeap {
+  // Design-specific heap ordered by dueAt; the generic numeric MinHeap is
+  // Concepts — Extended: Top-K Heap. This wrapper keeps the dueAt comparator.
   constructor() { this.items = []; }
   get size() { return this.items.length; }
   push(item) {
@@ -484,7 +485,7 @@ class NotificationBatcher {
     this.maxWaitMs = maxWaitSeconds * 1000;
     this.maxBatch = maxBatch;
     this.byUser = new Map(); // userId -> { items: [], dueAt }
-    this.timer = new MinHeap();
+    this.timer = new DueAtMinHeap();
   }
 
   add(userId, notification, now = Date.now()) {
@@ -611,9 +612,6 @@ function render_notification(template_name, variables) {
 | ✅ Do | ❌ Don't |
 | :-- | :-- |
 | Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — notification system lives or dies there |
-| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
-| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
-| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 

@@ -420,40 +420,7 @@ A: Kalman filter, sensor fusion, confidence score, fallback to last-known-good
 
 ## Low-Level Design (LLD) - Algorithms & Data Structures
 
-### 1. Driver Matching Algorithm
-
-```js
-class SurgePricing {
-  // Dynamic pricing based on supply/demand ratio per zone
-  // Time Complexity: O(1) per calculation
-  constructor(redisClient) {
-    this.r = redisClient;
-  }
-
-  async getMultiplier(zoneId) {
-    // Get current demand (pending rides) and supply (available drivers)
-    const demand = parseInt(await this.r.get(`zone:${zoneId}:demand`) || '0');
-    const supply = parseInt(await this.r.get(`zone:${zoneId}:supply`) || '1');
-
-    const ratio = demand / Math.max(supply, 1);
-
-    // Apply thresholds (capped at 3x)
-    if (ratio <= 1.0) return 1.0;   // No surge
-    if (ratio <= 1.5) return 1.2;
-    if (ratio <= 2.0) return 1.5;
-    if (ratio <= 3.0) return 2.0;
-    return 3.0;  // Max surge
-  }
-
-  async updateDemand(zoneId) {
-    // Increment demand counter with TTL
-    await this.r.incr(`zone:${zoneId}:demand`);
-    await this.r.expire(`zone:${zoneId}:demand`, 300);  // 5 min TTL
-  }
-}
-```
-
-### 2. Ride Request Flow (Distributed Lock)
+### 1. Driver Matching & Ride Request
 
 ```js
 class RideService {
@@ -484,20 +451,7 @@ class RideService {
 }
 ```
 
-### 3. Surge Pricing Algorithm
-
-```text
-function calculate_surge_multiplier(zone_id) {
-    // Dynamic surge pricing based on demand/supply ratio
-    // - Updated every 2 minutes
-    // - Smoothed to prevent jarring changes
-    return multiplier;
-  }
-}
-
-```
-
-### Algorithm 2
+### 2. Surge Pricing Algorithm
 
 ```js
 class SurgePricing {
@@ -519,22 +473,18 @@ class SurgePricing {
     if (ratio <= 3.0) return 2.0;
     return 3.0;  // Max surge cap
   }
-}
-```
 
-    // // Step 3: Traffic multiplier
-        // "free_flow": 1.0,
-        // "light": 1.2,
-        // "mode": "fastest"
-    return routes;
+  async updateDemand(zoneId, ttlSeconds = 300) {
+    // TTL prevents a stale counter from holding surge high forever.
+    await this.r.incr(`zone:${zoneId}:demand`);
+    await this.r.expire(`zone:${zoneId}:demand`, ttlSeconds);
   }
 }
-
 ```
 
-### Algorithm 3
+### 3. ETA Calculation
 
-```text
+```js
 function calculateETA(pickup, dropoff, trafficMultiplier = 1.0) {
   const R = 6371;  // Earth radius in km
   const dLat = ((dropoff.lat - pickup.lat) * Math.PI) / 180;
@@ -549,9 +499,6 @@ function calculateETA(pickup, dropoff, trafficMultiplier = 1.0) {
 }
 ```
 
-        // // Side effects
-
-```
 ```js
 class TripStateMachine {
   // Trip lifecycle: requested -> accepted -> arrived -> in_progress -> completed
@@ -589,9 +536,6 @@ const pricing = new SurgePricing(); console.log("Surge pricing ready");
 | ✅ Do | ❌ Don't |
 | :-- | :-- |
 | Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — uber lives or dies there |
-| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
-| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
-| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 

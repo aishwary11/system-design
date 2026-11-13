@@ -381,31 +381,7 @@ class LinkParser {
 }
 ```
 
-### 3. Robots.txt Parser
-
-```js
-class ContentDedup {
-  constructor(redisClient) { this.r = redisClient; }
-  async isDuplicate(content) {
-    const hash = this.simHash(content);
-    const existing = await this.r.get('content:' + hash);
-    if (existing) return true;
-    await this.r.setex('content:' + hash, 86400 * 30, '1');
-    return false;
-  }
-  simHash(content) {
-    let hash = 0;
-    for (let i = 0; i < content.length; i++) {
-      hash = ((hash << 5) - hash + content.charCodeAt(i)) | 0;
-    }
-    return hash.toString(16);
-  }
-}
-
-const fetcher = new FetcherService(); console.log("Fetcher service ready");
-```
-
-### 4. Content Fingerprinting for Dedup
+### 3. Content Fingerprinting for Dedup
 
 ```js
 class ContentDedup {
@@ -475,6 +451,8 @@ class ContentDedup {
   }
 }
 
+// At production scale, back seenUrls and fingerprints with Redis (`SETEX`, ~30 days)
+// so dedup survives crawler restarts; the in-memory version above is for the demo.
 const dedup = new ContentDedup();
 console.log('first  :', dedup.seenRecently('https://Example.com/a?utm_source=x'));
 console.log('again  :', dedup.seenRecently('https://example.com/a/'));
@@ -596,9 +574,6 @@ function check_robots_txt(url, user_agent) {
 | ✅ Do | ❌ Don't |
 | :-- | :-- |
 | Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — web crawler lives or dies there |
-| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
-| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
-| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 

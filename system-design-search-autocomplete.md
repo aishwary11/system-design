@@ -346,38 +346,7 @@ A: Popularity with time decay, user history personalization, CTR feedback
 
 ### 1. Trie Data Structure
 
-```js
-class TrieNode {
-  constructor() { this.children = {}; this.isEnd = false; this.frequency = 0; }
-}
-class Trie {
-  constructor() { this.root = new TrieNode(); }
-  insert(word) {
-    let node = this.root;
-    for (const ch of word.toLowerCase()) {
-      if (!node.children[ch]) node.children[ch] = new TrieNode();
-      node = node.children[ch];
-    }
-    node.isEnd = true;
-    node.frequency++;
-  }
-  search(prefix) {
-    let node = this.root;
-    for (const ch of prefix.toLowerCase()) {
-      if (!node.children[ch]) return [];
-      node = node.children[ch];
-    }
-    return this._collect(node, prefix, []).sort((a, b) => b.freq - a.freq).slice(0, 10);
-  }
-  _collect(node, prefix, results) {
-    if (node.isEnd) results.push({ word: prefix, freq: node.frequency });
-    for (const [ch, child] of Object.entries(node.children)) {
-      this._collect(child, prefix + ch, results);
-    }
-    return results;
-  }
-}
-```
+Use the canonical [Trie in Concepts §64](system-design-concepts.md#64-trie-prefix-tree). For autocomplete, store a frequency on each terminal node and collect the top suggestions for a prefix; the ranking layers below sit on top of that trie.
 
 ### 2. Top-K with Min-Heap
 
@@ -395,8 +364,6 @@ class SearchRanker {
     return scores.sort((a, b) => b.score - a.score);
   }
 }
-
-const trie = new TrieService(); console.log("Trie service ready");
 ```
 
 ### 3. Prefix Ranking with Time Decay
@@ -476,25 +443,7 @@ console.log(personal.rank('k', [
 
 ### Key Algorithms
 
-### 1. Trie Data Structure (Implementation)
-
-```js
-class TrieNode {
-  constructor() {
-    this.children = new Map(); // char -> TrieNode
-    this.isEnd = false;
-    this.frequency = 0;        // times this exact query was searched
-  }
-}
-
-const root = new TrieNode();
-root.children.set('k', new TrieNode());
-root.children.get('k').isEnd = true;
-root.children.get('k').frequency = 42;
-console.log('trie root children:', [...root.children.keys()], 'kfreq:', root.children.get('k').frequency);
-```
-
-### 2. Trie Caching (Redis)
+### 1. Trie Caching (Redis)
 
 ```js
 class CachedAutocomplete {
@@ -535,7 +484,7 @@ const cached = new CachedAutocomplete(trie, fakeCache);
 cached.suggest('k').then(r => console.log('cached suggestions:', r));
 ```
 
-### 3. Popularity Scoring
+### 2. Popularity Scoring
 
 ```js
 function calculate_popularity_score(query, windowHours = 24) {
@@ -556,7 +505,7 @@ searchAnalytics.record('vector db', 'u1', 3);
 console.log('popularity:', calculate_popularity_score('vector db').toFixed(2));
 ```
 
-### 4. Trending Boost
+### 3. Trending Boost
 
 ```js
 function get_trending_boost(query) {
@@ -577,7 +526,7 @@ searchAnalytics.record('kafka vs rabbitmq', 'u2', 1);
 console.log('trending boost:', get_trending_boost('kafka vs rabbitmq'));
 ```
 
-### 5. Analytics Pipeline
+### 4. Analytics Pipeline
 
 ```js
 function record_search(query, userId, resultCount) {
@@ -600,9 +549,6 @@ console.log('recorded:', searchAnalytics.events('kafka exactly once').length, 'e
 | ✅ Do | ❌ Don't |
 | :-- | :-- |
 | Pin down the key numbers before drawing boxes | Don't hand-wave the hardest component — search autocomplete lives or dies there |
-| Justify the functional requirements choice against one alternative out loud | Don't default to the trendiest store without a consistency/scale argument |
-| State the failure mode of non-functional requirements explicitly (what breaks first?) | Don't present a sunny-day design only — the follow-up question is always "and when it fails?" |
-| Anchor capacity numbers before proposing shards/replicas | Don't introduce a component you can't cost or size with the numbers on the board |
 
 *More cross-topic rules: [Interview Q&A §84](interview-qa.md#84-universal-dos--donts) · Concepts: [Networking](networking.md) · [Operating Systems](operating-systems.md)*
 

@@ -42,8 +42,8 @@ A vendor-neutral map of cloud services across **AWS, GCP, and Azure**, organized
 10. [Networking, CDN & DNS](#10-networking-cdn--dns)
 11. [AI / ML Platforms & LLM APIs](#11-ai--ml-platforms--llm-apis)
 12. [Identity, Secrets & Security](#12-identity-secrets--security)
-13. [Observability](#13-observability)
-14. [Which Tool When — Decision Table](#14-which-tool-when--decision-table)
+13. [Managed Observability Services](#13-managed-observability-services)
+14. [Cloud Provider Selection (AWS/GCP/Azure)](#14-cloud-provider-selection-awsgcpazure)
 15. [Mapping to This Repo's Designs](#15-mapping-to-this-repos-designs)
 16. [Key Takeaways](#16-key-takeaways)
 17. [Hidden Tips & Tricks](#17-hidden-tips--tricks)
@@ -266,7 +266,7 @@ aws sqs send-message --queue-url tasks --message-body '{"job":"render","id":"7"}
 
 ---
 
-## 13. Observability
+## 13. Managed Observability Services
 
 | Need | AWS | GCP | Azure |
 | :--- | :--- | :--- | :--- |
@@ -274,11 +274,13 @@ aws sqs send-message --queue-url tasks --message-body '{"job":"render","id":"7"}
 | Tracing | X-Ray | Cloud Trace (OpenTelemetry native) | Application Insights |
 | Managed Prometheus/Grafana | Amazon Managed Prometheus | GMP (Google Managed Prometheus) | Azure Managed Grafana |
 
-**Use it when:** OpenTelemetry SDKs from day one — then CloudWatch/GMP/App Insights become backends you can swap (see `system-design-concepts.md` §38 and the alerting design for the architecture these plug into).
+**Use it when:** OpenTelemetry SDKs from day one — then CloudWatch/GMP/App Insights become backends you can swap (see `system-design-concepts.md` §38 and the alerting design for the architecture these plug into). For vendor-neutral tool selection, see [Tools §8 — Observability](tools.md#8-observability).
 
 ---
 
-## 14. Which Tool When — Decision Table
+## 14. Cloud Provider Selection (AWS/GCP/Azure)
+
+These are provider-specific picks for common workloads. For the framework-agnostic default/upgrade table, use [Tools §11 — Which Tool When](tools.md#11-which-tool-when--decision-table).
 
 | Requirement | Reach for | Avoid |
 | :--- | :--- | :--- |

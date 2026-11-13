@@ -537,41 +537,9 @@ A: Three layers: per-tenant quotas in Redis, per-provider global token buckets s
 
 ### 1. Token-Aware Quota (RPM + TPM + $/day)
 
+RPM uses the canonical [Sliding Window Log](system-design-rate-limiter.md#2-sliding-window-log-algorithm); TPM uses the canonical [Token Bucket](system-design-concepts.md#12-rate-limiting) with a token cost, not one request per token. The gateway-specific piece is the daily budget:
+
 ```js
-/** Sliding-window request counter (RPM) — exact, cheap, and burst-tolerant. */
-class SlidingWindowCounter {
-  constructor(limit, windowMs) {
-    this.limit = limit;
-    this.windowMs = windowMs;
-    this.hits = [];
-  }
-  tryAcquire(nowMs) {
-    this.hits = this.hits.filter(t => nowMs - t < this.windowMs);
-    if (this.hits.length >= this.limit) return { ok: false, retryAfterMs: this.windowMs - (nowMs - this.hits[0]) };
-    this.hits.push(nowMs);
-    return { ok: true, remaining: this.limit - this.hits.length };
-  }
-}
-
-/** Token bucket for TPM: steady refill, burst up to `capacity` tokens. */
-class TokenBucket {
-  constructor(capacity, refillPerMs) {
-    this.capacity = capacity;
-    this.tokens = capacity;
-    this.refillPerMs = refillPerMs;
-    this.updatedAt = 0;
-  }
-  tryConsume(nTokens, nowMs) {
-    const elapsed = Math.max(0, nowMs - this.updatedAt);
-    this.tokens = Math.min(this.capacity, this.tokens + elapsed * this.refillPerMs);
-    this.updatedAt = nowMs;
-    if (this.tokens < nTokens) return { ok: false, deficit: Math.ceil(nTokens - this.tokens) };
-    this.tokens -= nTokens;
-    return { ok: true, tokensLeft: Math.floor(this.tokens) };
-  }
-}
-
-/** Daily budget with reserve/settle: reserve up front, correct with actual usage. */
 class DailyBudget {
   constructor(limitUsd) { this.limitUsd = limitUsd; this.settledUsd = 0; this.reservedUsd = 0; }
   reserve(estUsd, hedgeFactor = 1.15) {
@@ -586,17 +554,6 @@ class DailyBudget {
     return { spentUsd: +this.settledUsd.toFixed(4), reservedUsd: +this.reservedUsd.toFixed(4) };
   }
 }
-
-const rpm = new SlidingWindowCounter(3, 60000);
-for (const t of [0, 100, 200, 300]) {
-  const r = rpm.tryAcquire(t);
-  console.log(`t=${t}ms rpm:`, r.ok ? `ok (${r.remaining} left)` : `rejected (retry in ${r.retryAfterMs}ms)`);
-}
-
-const tpm = new TokenBucket(10000, 10000 / 60000); // 10K TPM
-console.log('tpm burst 8000:', tpm.tryConsume(8000, 0));
-console.log('tpm next 4000:', tpm.tryConsume(4000, 0));
-console.log('tpm after 24s refill:', tpm.tryConsume(4000, 24000));
 
 const budget = new DailyBudget(50);
 const first = budget.reserve(0.42);
