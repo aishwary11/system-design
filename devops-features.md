@@ -197,24 +197,27 @@ The rules that prevent the liveness death spiral (see interview-qa.md §79): **r
 ## 6. Ingress, Service Mesh & Traffic Splitting
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
   name: api
-  annotations:
-    nginx.ingress.kubernetes.io/canary: "true"
-    nginx.ingress.kubernetes.io/canary-weight: "5"      # 5% to the canary
 spec:
+  parentRefs:
+    - name: public-gateway
+  hostnames: ["api.example.com"]
   rules:
-    - host: api.example.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend: { service: { name: api-canary, port: { number: 80 } } }
+    - backendRefs:
+        - name: api-stable
+          port: 80
+          weight: 95
+        - name: api-canary
+          port: 80
+          weight: 5
 ```
 
-An Ingress (nginx/HAProxy/Envoy) is the L7 front door: TLS termination, host/path routing, header-based canary weights. A **service mesh** (Istio/Linkerd) pushes that into per-pod sidecars — mTLS everywhere, retries/outlier ejection, and precise traffic splitting (1→5→25→100%) that canary deployments (Argo Rollouts/Flagger) automate. Rule of thumb: start with ingress only; adopt a mesh when you need mTLS + fine-grained routing across many services, not before — sidecars cost memory and ops maturity.
+An **Ingress** used to be the L7 front door: TLS termination, host/path routing, and controller-specific annotations for canaries. The Ingress API still exists, but it is **feature-frozen**, and **Ingress-NGINX was retired on 24 March 2026** — no further releases, bug fixes, or security patches. New clusters should use **Gateway API**, the role-oriented successor: `GatewayClass` (infrastructure owner), `Gateway` (cluster operator), and `HTTPRoute`/`GRPCRoute`/`TCPRoute`/`UDPRoute` (app owner). Weights on `backendRefs` are relative, not required to sum to 100; header matches handle internal canaries. Gateway API [v1.6](https://kubernetes.io/blog/2026/08/03/gateway-api-v1-6-release) standardized TCPRoute and UDPRoute in June 2026, and [`ingress2gateway`](https://kubernetes.io/blog/2026/03/20/ingress2gateway-1-0-release/) translates existing Ingress resources. See the [Ingress-NGINX retirement notice](https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/) and the [Gateway API migration guide](https://gateway-api.sigs.k8s.io/guides/getting-started/migrating-from-ingress).
+
+A **service mesh** (Istio/Linkerd) adds mTLS, retries/outlier ejection, and precise traffic splitting across services. The traditional **sidecar** model injects a proxy into every pod; **ambient mode** splits the data plane into a node-level `ztunnel` for L4 identity and mTLS plus optional waypoint proxies for L7 policy. Ambient removes the per-pod proxy tax and lets sidecar and ambient workloads coexist during migration, but not every sidecar feature has parity. Rule of thumb: start with Gateway API; adopt a mesh when you need mTLS and fine-grained routing across many services, not before — sidecars or ambient both add operational maturity requirements.
 
 ## 7. CI — Jenkins vs GitHub Actions vs GitLab CI
 
@@ -286,6 +289,21 @@ Flow: CI builds + pushes image → CI bumps the tag in the **manifests repo** �
 
 The shift-left stack, cheapest catch first: **lint/format** (pre-commit) → **SAST** (SonarQube, Semgrep — code patterns) → **dependency scanning** (Dependabot/Snyk — CVEs in libraries) → **image scanning** (Trivy) → **secrets scanning** (gitleaks, so no key ships in a commit) → **DAST** (ZAP against staging). Gates belong on *new* code ("no new blockers") — gating the entire legacy codebase at once just trains people to override the gate.
 
+### Supply-chain integrity — SBOM, provenance and signatures
+
+The scan stack answers "is this component known-bad?" It does not answer "is this the artifact we built, from the source we reviewed, by the builder we trust?" That is the supply-chain layer:
+
+| Control | What it proves | Default implementation |
+| :--- | :--- | :--- |
+| **SBOM** | Every direct and transitive component in the artifact | Syft or Trivy producing SPDX/CycloneDX; [CISA's 2026 minimum-elements update](https://www.cisa.gov/sites/default/files/2026-07/2026_cisa_sbom_minimum_elements_508c.pdf) expects transitive coverage |
+| **Provenance** | Which source, build definition, and builder produced the digest | [SLSA v1.2](https://slsa.dev/spec/v1.2) Build L0–L3, plus the Source track (L1–L4); generate it in CI, then **verify it** against the expected repository and builder identity |
+| **Signature** | The artifact was signed by the identity it claims | [Sigstore/cosign](https://docs.sigstore.dev/) keyless signing by digest; verify with Kyverno or OPA Gatekeeper at admission |
+| **Pipeline identity** | A compromised PR cannot mint release credentials | Short-lived OIDC tokens, least-privilege `GITHUB_TOKEN`, protected environments, and no secrets on fork builds |
+
+- Pin third-party Actions to a **full commit SHA**, not a movable tag; review workflow changes like production code.
+- Treat the pipeline as privileged infrastructure: isolate untrusted PR builds, separate build from release, and log who changed what. The [OWASP Top 10 CI/CD Security Risks](https://owasp.org/projects/top-10-cicd-security-risks) names poisoned pipeline execution and improper artifact-integrity validation as core risks.
+- An SBOM or provenance file that nobody verifies is storage, not assurance. Make verification failure block, quarantine, or require a documented exception.
+
 ## 10. Infrastructure as Code — Terraform
 
 ```hcl
@@ -327,7 +345,9 @@ spec:
   endpoints: [{ port: metrics, interval: 15s }]
 ```
 
-The three pillars, concretely: **metrics** (Prometheus — cheap to store, great for alerting: RED rates: *rate*, *errors*, *duration* per service), **logs** (Loki — label-indexed, queries like `app="api" | json | level="error"`), **traces** (OpenTelemetry → Tempo/Jaeger — the *why is p99 bad* answer across service hops). Grafana stitches all three into one pane. Alert on **symptoms users feel** (SLO burn rate, §45), never on causes alone ("CPU > 90%" pages nobody).
+The three stable signals, concretely: **metrics** (Prometheus — cheap to store, great for alerting: RED rates: *rate*, *errors*, *duration* per service), **logs** (Loki — label-indexed, queries like `app="api" | json | level="error"`), **traces** (OpenTelemetry → Tempo/Jaeger — the *why is p99 bad* answer across service hops). Grafana stitches all three into one pane. Alert on **symptoms users feel** (SLO burn rate, §45), never on causes alone ("CPU > 90%" pages nobody).
+
+**Profiles (Alpha) and eBPF** are covered in the observability pipeline guide — OTel Profiles status, OBI, Cilium Hubble/Tetragon, and caveats. See [Profiles and eBPF](system-design-observability-pipeline.md#profiles-and-ebpf--the-fourth-signal-still-alpha).
 
 ## 12. SRE Practice — SLOs, Error Budgets, Postmortems
 
@@ -339,9 +359,9 @@ The three pillars, concretely: **metrics** (Prometheus — cheap to store, great
 ## 13. The Golden Pipeline (Reference Flow)
 
 ```text
-PR opened ──▶ lint+unit+SAST (SonarQube gate) ──▶ build image ──▶ Trivy scan ──▶ sign (cosign)
-   ──▶ push to registry ──▶ bump tag in GitOps repo ──▶ ArgoCD syncs
-   ──▶ canary 5% (analysis: error rate, p99) ──▶ 25% ──▶ 100%
+PR opened ──▶ lint+unit+SAST (SonarQube gate) ──▶ build image ──▶ SBOM + Trivy scan ──▶ sign (cosign)
+   ──▶ push by digest ──▶ verify signature/provenance at admission ──▶ bump digest in GitOps repo
+   ──▶ ArgoCD syncs ──▶ canary 5% (analysis: error rate, p99) ──▶ 25% ──▶ 100%
    ──▶ rollback path at every step: kubectl rollout undo / git revert / halt ramp
 ```
 

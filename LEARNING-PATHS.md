@@ -308,6 +308,10 @@ The list below merges the topic indexes of the [System Design Primer](https://gi
 | Containers, Kubernetes, CI/CD, IaC | [DevOps guide](devops-features.md) · [Code deployment](system-design-code-deployment.md) |
 | Serverless and cold starts | [Serverless](system-design-serverless.md) |
 | Multi-region and disaster recovery | [Concepts §46](system-design-concepts.md#46-multi-region--disaster-recovery) |
+| Cell-based architecture and blast-radius isolation | [Concepts §46](system-design-concepts.md#cell-based-architecture-blast-radius-design) |
+| Gateway API, ambient mesh, traffic splitting | [DevOps §6](devops-features.md#6-ingress-service-mesh--traffic-splitting) |
+| SBOM, SLSA provenance, artifact signing | [DevOps §9](devops-features.md#9-quality--security-gates--sonarqube-trivy-sast) |
+| eBPF and continuous profiling | [Observability pipeline](system-design-observability-pipeline.md#profiles-and-ebpf--the-fourth-signal-still-alpha) |
 
 ### Security and identity
 
@@ -315,6 +319,8 @@ The list below merges the topic indexes of the [System Design Primer](https://gi
 | :--- | :--- |
 | Authentication vs authorization | [Concepts §54](system-design-concepts.md#54-security--authnauthz-oauth2-jwt-mtls) |
 | OAuth 2.0, OIDC, SSO, SAML | [Concepts §54](system-design-concepts.md#54-security--authnauthz-oauth2-jwt-mtls) |
+| Passkeys / WebAuthn and account recovery | [Concepts §54](system-design-concepts.md#passkeys-and-webauthn) |
+| OAuth 2.1 (draft), DPoP, SCIM | [Concepts §54](system-design-concepts.md#oauth-21-dpop-and-scim) |
 | JWT, sessions, token revocation | [Concepts §54](system-design-concepts.md#54-security--authnauthz-oauth2-jwt-mtls) |
 | RBAC, ABAC, least privilege | [Concepts §54](system-design-concepts.md#54-security--authnauthz-oauth2-jwt-mtls) |
 | TLS, mTLS, zero trust | [Networking §5](networking.md#5-tls--mtls) · [Concepts §54](system-design-concepts.md#54-security--authnauthz-oauth2-jwt-mtls) |
@@ -338,7 +344,7 @@ The list below merges the topic indexes of the [System Design Primer](https://gi
 | AI infrastructure | [LLM inference](system-design-llm-inference.md) · [AI gateway](system-design-ai-gateway.md) · [GPU scheduler](system-design-gpu-scheduler.md) · [Distributed training](system-design-distributed-training.md) · [Agentic AI](agentic-ai-features.md) |
 | Productivity and collaboration | [Google Docs](system-design-google-docs.md) · [Google Calendar](system-design-google-calendar.md) |
 | Classic object-oriented LLD | [Classic LLD Problems](lld-problems.md) — parking, elevator, vending, library, ATM, plus the rest of the classic set |
-| Tool selection | [Tools & Technology Selection](tools.md) — databases, queues, CDN, observability, CI/CD, AI serving |
+| Tool selection | [Tools & Technology Selection](tools.md) — databases, queues, CDN, Gateway API/IDP, observability (profiles/eBPF), SBOM/SLSA, CI/CD, AI serving |
 | Communities and dating | [Reddit](system-design-reddit.md) · [Tinder](system-design-tinder.md) |
 | Infrastructure primitives | [URL shortener](system-design-url-shortener.md) · [Rate limiter](system-design-rate-limiter.md) · [Unique ID](system-design-unique-id-generator.md) · [Leaderboard](system-design-leaderboard.md) · [Distributed cache](system-design-distributed-cache.md) · [Key-value store](system-design-key-value-store.md) · [File storage](system-design-file-storage.md) · [Web crawler](system-design-web-crawler.md) · [Notification](system-design-notification-system.md) · [Webhook](system-design-webhook-delivery.md) · [Delayed job scheduler](system-design-delayed-job-scheduler.md) · [Distributed lock](system-design-distributed-lock-manager.md) |
 

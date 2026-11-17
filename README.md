@@ -60,7 +60,7 @@ The industry concept map — the named technique behind each design (Uber's H3, 
 | **Plain-English on-ramp** | Every design opens with a Start-here card; the glossary defines every term | [Learning paths](LEARNING-PATHS.md) |
 | **94 diagrams** | One architecture map per design, plus sequence, lifecycle and anatomy figures where prose alone was doing the work | [Diagram style](#diagrams-archify) |
 | **60 algorithms** | Executable JavaScript — LRU/LFU, consistent hashing, Dijkstra, cuckoo filter, BM25, PageRank, Aho-Corasick and more | [Algorithm library](#algorithms-library) |
-| **33 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker and more | [Techniques](#techniques--patterns) |
+| **37 patterns** | Consistent hashing, CQRS, saga, outbox, circuit breaker, passkeys, cell-based isolation and more | [Techniques](#techniques--patterns) |
 
 ---
 
@@ -278,8 +278,8 @@ The guides cover the technology stack behind the design documents, each with run
 | 6 | **RabbitMQ** | Exchanges (direct/fanout/topic/headers), bindings & routing keys, acks & publisher confirms, prefetch/backpressure, DLX, quorum queues & streams, delayed messages, priority queues, RPC, federation/shovel, RabbitMQ-vs-Kafka | [View](rabbitmq-features.md) |
 | 7 | <a id="cloud-guide"></a> **Cloud Services Map** | AWS/GCP/Azure side-by-side + **full service catalog (§19)**: Lambda→Bedrock→Step Functions→EventBridge→DynamoDB→Spanner→Cosmos→Synapse and 150+ more, each with when-to-use; "which tool when" decision table | [View](cloud.md) |
 | 8 | <a id="agentic-ai-guide"></a> **Agentic AI & LLMs** | Tokens/context, ReAct agent loop, MCP tool integration, A2A agent-to-agent, context engineering, memory, RAG, orchestration patterns (supervisor/handoffs/graphs), guardrails, evals, model routing, prompt-prefix caching | [View](agentic-ai-features.md) |
-| 9 | **Core Concepts** | 75 numbered concept sections plus 30 runnable algorithms: sharding, CAP, consistency, caching, queues, sagas, observability, SQL vs NoSQL, indexing, API contracts, multi-tenancy, estimation and security — from Luhn/Dijkstra to LFU, BM25, PageRank and Aho-Corasick | [View](system-design-concepts.md) |
-| 10 | <a id="devops-guide"></a> **DevOps & Kubernetes** | Docker multi-stage builds, pods/deployments/services, requests/limits & HPA, ConfigMaps/Secrets/RBAC, probes, ingress & mesh, Jenkins vs GitHub Actions vs GitLab CI, ArgoCD GitOps & canary rollouts, SonarQube/Trivy gates, Terraform, Prometheus/Grafana/Loki, SLOs & error budgets, golden pipeline + **official version matrix checked 9 Nov 2026** (K8s 1.37.2, Redis 8.10.3, Terraform 1.17.1, MongoDB 9.0.4, Kafka 4.4.0, PG 18.6…) | [View](devops-features.md) |
+| 9 | **Core Concepts** | 75 numbered concept sections plus 30 runnable algorithms: sharding, CAP, consistency, caching, queues, sagas, observability, SQL vs NoSQL, indexing, API contracts, multi-tenancy, cell-based isolation, passkeys/WebAuthn, estimation and security — from Luhn/Dijkstra to LFU, BM25, PageRank and Aho-Corasick | [View](system-design-concepts.md) |
+| 10 | <a id="devops-guide"></a> **DevOps & Kubernetes** | Docker multi-stage builds, pods/deployments/services, requests/limits & HPA, ConfigMaps/Secrets/RBAC, probes, Gateway API & ambient mesh, supply-chain provenance (SBOM/SLSA/Sigstore), Jenkins vs GitHub Actions vs GitLab CI, ArgoCD GitOps & canary rollouts, SonarQube/Trivy gates, Terraform, Prometheus/Grafana/Loki plus eBPF/profiles, SLOs & error budgets, golden pipeline + **official version matrix checked 9 Nov 2026** (K8s 1.37.2, Redis 8.10.3, Terraform 1.17.1, MongoDB 9.0.4, Kafka 4.4.0, PG 18.6…) | [View](devops-features.md) |
 | 11 | <a id="resources-guide"></a> **Curated Resources** | The canon GitHub repos, engineering deep dives (Discord, Slack, Uber, Netflix, Stripe…), Medium/newsletter picks, interview platforms, classic papers, AI-era (MCP/A2A/vLLM) — plus a topic → best modern resource map | [View](resources.md) |
 | 12 | <a id="interview-qa-guide"></a> **Interview Q&A** | Cross-tech failure glossary with solutions (cache stampede/avalanche/penetration, rebalance storms, split-brain, OOMKilled, gray failure…) + high-level answers: why Kafka is fast, the Redis-down playbook, Redis Cluster internals, GitOps, the bad-deploy first-5-minutes | [View](interview-qa.md) |
 | 13 | <a id="roadmap-guide"></a> **30-Day Study Roadmap** | Day-by-day path: designs interleaved with concepts, guides, and the Q&A bank; weekly checkpoints and mock-interview structure | [View](STUDY-ROADMAP.md) |
@@ -287,7 +287,7 @@ The guides cover the technology stack behind the design documents, each with run
 | 15 | <a id="operating-systems-guide"></a> **Operating Systems** | Processes vs threads, CFS scheduling & throttling, virtual memory/page cache, fsync & durability, epoll→io_uring, zero-copy (Kafka's secret), CPU caches/NUMA, cgroups+namespaces (what containers really are), OOM mechanics + interview Q&A | [View](operating-systems.md) |
 | 16 | <a id="lld-guide"></a> **Low-Level Design** | Thread-safe LRU, hash map without STL, bounded blocking queue, thread pool, priority scheduler, malloc/free allocator, fixed-size object pool, reader–writer lock, ring buffer, async logger, timing wheel, connection pool — each with the invariant, the production reference (CacheLib, Folly, oneTBB, TCMalloc, glibc, Netty, HikariCP) and the failure modes interviewers probe, plus a 25-question coverage map | [View](low-level-design.md) |
 | 17 | <a id="lld-problems-guide"></a> **Classic LLD Problems** | Parking lot, elevator, vending machine, library and ATM — scope, entities, runnable class models, invariants, extension points and failure modes; plus a coverage map for Splitwise, chess, call center, deck, movie booking, ride matching and more | [View](lld-problems.md) |
-| 18 | <a id="tools-guide"></a> **Tools & Technology Selection** | Edge (DNS/CDN/LB/Nginx/HAProxy/Envoy/API gateway/WAF), compute/Kubernetes/serverless, data stores (Postgres/MySQL/Mongo/Cassandra/Dynamo/Redis/ClickHouse/Snowflake/BigQuery/Elastic/Neo4j/vector/S3), caching, Kafka/Rabbit/SQS/SNS/Pulsar/NATS/Temporal, Spark/Flink/Airflow/dbt/Debezium, Prometheus/Grafana/Loki/Jaeger/Tempo/OTel, CI/CD/IaC, AI serving, and a which-tool-when decision table | [View](tools.md) |
+| 18 | <a id="tools-guide"></a> **Tools & Technology Selection** | Edge (DNS/CDN/LB/Nginx/HAProxy/Envoy/API gateway/WAF), compute/Kubernetes/serverless, data stores (Postgres/MySQL/Mongo/Cassandra/Dynamo/Redis/ClickHouse/Snowflake/BigQuery/Elastic/Neo4j/vector/S3), caching, Kafka/Rabbit/SQS/SNS/Pulsar/NATS/Temporal, Spark/Flink/Airflow/dbt/Debezium, Prometheus/Grafana/Loki/Jaeger/Tempo/OTel plus profiles/eBPF, Gateway API/IDP, SBOM/SLSA, CI/CD/IaC, AI serving, and a which-tool-when decision table | [View](tools.md) |
 
 <p align="right"><a href="#top">↑ Back to top</a></p>
 
@@ -505,7 +505,7 @@ Executable implementations of the algorithms used across the designs:
 ## Techniques & Patterns
 
 <details>
-<summary><b>33 patterns</b> — click to expand the full table</summary>
+<summary><b>37 patterns</b> — click to expand the full table</summary>
 
 | Technique | Description | Used In |
 | :--- | :--- | :--- |
@@ -542,6 +542,10 @@ Executable implementations of the algorithms used across the designs:
 | Token & Cost Quotas | RPM/TPM/$ metering with reserve-then-settle accounting and bounded failover | ai-gateway |
 | Cardinality Governance & Tiered Sampling | Series caps, log fingerprinting, tail-based trace sampling and downsampling tiers | observability-pipeline, alerting |
 | Pre-Trade Risk Gating | Worst-case-bounded in-memory checks that must reject before the wire — a legal control, not a quality one | algo-trading, payment-system |
+| Passkeys / WebAuthn | Phishing-resistant public-key login with RP ID/origin binding and explicit recovery | concepts §54, all auth surfaces |
+| Cell-Based Architecture | Independent workload slices and a cell router to contain blast radius | concepts §46, multi-tenant platforms |
+| SBOM + SLSA Provenance | Inventory what shipped and verify where/how it was built | devops §9, code-deployment |
+| Continuous Profiling / eBPF | Code-level CPU visibility and kernel-level flows without app changes | observability-pipeline |
 
 </details>
 

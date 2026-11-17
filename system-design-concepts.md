@@ -1517,6 +1517,31 @@ geo-routing: latency-based DNS / anycast steers users to the nearest healthy reg
 - Never trust replication alone: restore-from-backup drills (PITR) are the only proof the DR story works.
 - Cross-region is where consistency models (§29) bite hardest: async replication + active-active = eventual across regions; strong consistency (Spanner) costs the latency CAP/PACELC (§30) predicts.
 
+### Cell-based architecture (blast-radius design)
+
+Multi-region answers "what if a region dies?" A **cell** answers "what if this deploy, tenant, or query is the bomb?" A cell is a complete, independent copy of the workload — application, data, and dependencies — that serves a subset of traffic and shares no state with other cells.
+
+```text
+client ──► cell router ──► cell A (tenant 1..N)
+                         ├─► cell B (tenant N+1..M)
+                         └─► cell C (tenant M+1..K)
+```
+
+- **Cell router:** a thin, highly available mapping from partition key (tenant ID, user ID, resource ID) to a cell. It must not become the shared dependency the cells were meant to avoid.
+- **Partition key:** choose the natural grain of the service. Customer ID is common; a key that forces cross-cell joins or chatty calls defeats the isolation.
+- **Cell size:** small enough that one failure is tolerable, large enough that fixed capacity and operational cost do not dominate. Cap cell growth; a cell that can grow without bounds eventually contains everyone.
+- **Deploy one cell at a time:** a bad release or migration hits a fraction of traffic, and the canary is a real cell rather than a percentage of shared infrastructure.
+- **Observe per cell:** error rate, saturation, and latency by cell; a global average hides the cell that is failing.
+- **Migration:** moving a tenant is a data-copy plus cutover problem, so design export/import and routing changes before the first customer needs it.
+
+| Pattern | Scope of isolation | Typical use |
+| :--- | :--- | :--- |
+| **Bulkhead** | One dependency or resource pool inside a service | Stop one slow downstream from exhausting all workers |
+| **Cell** | A complete workload slice, often with its own data | Limit blast radius of bad deploys, overload, and tenant-specific failures |
+| **Multi-region** | Geographic region | Survive a regional outage and reduce distance to users |
+
+Cells are not free: duplicate capacity, routing complexity, cross-cell data movement, and per-cell operational tooling. Use them when the cost of a global outage or a poisoned deploy is large enough to justify that duplication. Primary source: [AWS Well-Architected — Reducing the Scope of Impact with Cell-Based Architecture](https://docs.aws.amazon.com/wellarchitected/latest/reducing-scope-of-impact-with-cell-based-architecture/).
+
 ---
 
 ## 47. Deployment Strategies
@@ -1858,6 +1883,35 @@ App verifies signature, issuer, audience, expiry, nonce → session
 - **SSO** is the product feature; OIDC and SAML are the protocols underneath it.
 
 The security-critical checks are boring and mandatory: validate the signature against the provider's published keys, check `iss`, `aud`, `exp` and `nonce`, and never accept an unsigned or `alg: none` token.
+
+### Passkeys and WebAuthn
+
+A **passkey** is a discoverable WebAuthn credential: the authenticator holds the private key, and the server stores only the public key and credential metadata. Login becomes a public-key challenge instead of a shared password, so there is no password database to leak and no code to phish. [WebAuthn Level 3](https://www.w3.org/TR/webauthn-3) became a W3C Recommendation on **25 August 2026**; [NIST SP 800-63B-4](https://pages.nist.gov/800-63-4/sp800-63b.html) (July 2025) treats syncable authenticators as a valid AAL2 option.
+
+```text
+Registration: server challenge ──► navigator.credentials.create()
+  ──► authenticator creates key pair ──► server stores credential ID + public key
+Login: server challenge ──► navigator.credentials.get()
+  ──► verify clientDataJSON origin, rpIdHash, challenge, signature, UV/UP flags
+```
+
+| | Password | Passkey |
+| :--- | :--- | :--- |
+| **Shared secret** | Server stores a hash; users reuse it | Private key never leaves the authenticator |
+| **Phishing** | A lookalike domain can collect it | Credential is scoped to the RP ID and origin |
+| **Recovery** | Reset link/email | The hard part: synced passkey, backup key, or a recovery flow that does not reintroduce SMS |
+| **UX** | Works everywhere, familiar | Best on platform authenticators; fallback and cross-device flows still matter |
+
+The implementation rules: bind the credential to the **RP ID**, validate the **origin** and **challenge** server-side, never accept a client-supplied `user.id` as proof, treat attestation as optional policy rather than a requirement, and support both synced (iCloud/Google Password Manager) and device-bound security keys. Account recovery is the weakest link — design it explicitly.
+
+### OAuth 2.1, DPoP and SCIM
+
+- **OAuth 2.1 is not an RFC yet.** It is [`draft-ietf-oauth-v2-1-17`](https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1) (30 October 2026). Do not call a deployment "OAuth 2.1 certified." The current normative baseline is [**RFC 9700**](https://www.rfc-editor.org/rfc/rfc9700.html) (OAuth 2.0 Security Best Current Practice, BCP 240) plus [**RFC 10017**](https://www.rfc-editor.org/rfc/rfc10017.html) (browser-based applications, BCP 212). The draft consolidates PKCE for every client, removes implicit and resource-owner-password flows, forbids bearer tokens in query strings, and prohibits `PKCE plain`.
+- **DPoP** ([RFC 9449](https://datatracker.ietf.org/doc/html/rfc9449)) makes an access token sender-constrained: the client proves possession of a private key on every request, so a stolen bearer token is not enough. Use it for public clients and high-value APIs where token replay is a real threat.
+- **Token exchange** (RFC 8693) lets a gateway or service exchange one audience-scoped token for another instead of forwarding a god-token across every hop.
+- **SCIM 2.0** ([RFC 7643/7644](https://scim.cloud/specs/), updated by RFC 9865, 9944 and 9967) is the enterprise provisioning protocol: create, update, deactivate, and group users from Okta/Entra ID. It complements OIDC/SAML — those authenticate a login; SCIM manages the account lifecycle.
+
+**Browser rule: use a backend-for-frontend (BFF).** Keep access and refresh tokens on the server, give the browser an `HttpOnly`, `Secure`, `SameSite` session cookie, and let the BFF attach tokens to upstream calls. Do not put long-lived tokens in `localStorage` or `sessionStorage`; any XSS becomes token theft. A SPA that talks directly to an API should use authorization code + PKCE with short-lived tokens, not the implicit flow.
 
 ### Sessions vs JWTs
 

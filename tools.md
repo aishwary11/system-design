@@ -88,6 +88,8 @@ If the answer to any is “we would rewrite the service”, the tool is a commit
 | **Kubernetes** | EKS, GKE, AKS, self-managed | many services, autoscaling, ecosystem | control-plane complexity; not a default for 3 services |
 | **Serverless** | Lambda, Cloud Functions, Cloud Run | spiky/event-driven, low ops | cold starts, execution limits, per-invocation cost |
 | **Batch** | AWS Batch, Kubernetes Jobs, Slurm | offline jobs, data processing | queueing and retry semantics are yours |
+| **Kubernetes gateway** | Gateway API, Envoy Gateway, Kong | role-oriented HTTP/gRPC/TCP/UDP routing, weighted canaries | controller support; Ingress-NGINX is retired |
+| **Developer portal / IDP** | Backstage, Port, Cortex, Crossplane | service catalog, golden paths, self-service infrastructure | a portal without automation is documentation |
 
 **The rule:** use the least powerful execution model that meets the SLO. A cron job on a VM is a valid answer; Kubernetes is not a maturity badge.
 
@@ -158,6 +160,7 @@ If the answer to any is “we would rewrite the service”, the tool is a commit
 | **Airflow** | workflow orchestration | scheduled DAGs, dependency management | not a streaming engine |
 | **dbt** | SQL transformations | warehouse modeling, tests, lineage | runs on the warehouse; not ingestion |
 | **Debezium** | CDC | database changes to Kafka without dual writes | schema evolution and snapshot handling |
+| **Open table format** | Iceberg, Delta Lake, Hudi | ACID tables over object storage, time travel, schema evolution | catalog coordination and compaction |
 
 **Batch vs stream:** batch is simpler and cheaper for large backfills; stream is necessary when the business action depends on seconds-old data. Most companies need both: stream the hot path, batch the reconciliation.
 
@@ -170,7 +173,9 @@ If the answer to any is “we would rewrite the service”, the tool is a commit
 | Metrics | Prometheus, CloudWatch, Datadog | rate, errors, duration, saturation | cardinality caps; pre-aggregate |
 | Logs | Loki, ELK, CloudWatch Logs | what exactly happened to this request | structured logs, sampling, retention tiers |
 | Traces | Jaeger, Tempo, Datadog APM | where the time went across services | head/tail sampling, span limits |
-| Instrumentation | OpenTelemetry SDK + Collector | vendor-neutral traces/metrics/logs | one pipeline, not three agents |
+| Profiles | OpenTelemetry Profiles (Alpha), Parca, Pyroscope | which functions burn CPU or allocate memory | sampling overhead; Alpha spec risk |
+| eBPF | Cilium/Hubble, Tetragon, OTel OBI | network flows, runtime security, code-free instrumentation | Linux kernel and privilege constraints |
+| Instrumentation | OpenTelemetry SDK + Collector + OBI | vendor-neutral traces/metrics/logs/profiles | one pipeline, not four agents |
 | Alerts | Alertmanager, PagerDuty, Opsgenie | who is woken up and why | SLO burn-rate alerts, not every spike |
 
 **RED** for services (rate, errors, duration); **USE** for resources (utilization, saturation, errors). Put `trace_id` in every log line; use exemplars to jump from a latency histogram to a slow trace.
@@ -188,8 +193,9 @@ If the answer to any is “we would rewrite the service”, the tool is a commit
 | **Terraform / OpenTofu** | infrastructure as code | multi-cloud, reviewable infra changes |
 | **Docker** | image build | consistent runtime packaging |
 | **Trivy / SonarQube** | security/quality gates | shift-left scanning |
+| **Sigstore cosign + Syft/Grype** | artifact signing, SBOM, provenance | sign by digest, generate SPDX/CycloneDX, verify at admission |
 
-**Pipeline default:** build once → test → scan → sign → deploy the same artifact to staging and production. A rollback is a redeploy of the previous digest, not a rebuild.
+**Pipeline default:** build once → SBOM → test → scan → sign → verify at admission → deploy the same digest to staging and production. A rollback is a redeploy of the previous digest, not a rebuild; SLSA v1.2 provenance is only useful when policy verifies it.
 
 ---
 
@@ -224,6 +230,9 @@ The AI layer changes fastest; isolate it behind an internal gateway so the model
 | CI/CD | GitHub Actions | GitLab CI, Jenkins | hand-rolled deploy scripts |
 | Infra | Terraform | Pulumi, CloudFormation | console-only changes |
 | Vector search | pgvector | Milvus/Qdrant at scale | a separate vector DB on day one |
+| Artifact integrity | cosign + admission policy (Kyverno/OPA) | Notation/in-toto attestations | trusting a mutable image tag |
+| Continuous profiling | OTel Profiles (Alpha) + eBPF profiler | Parca/Pyroscope at scale | profiling every service on day one |
+| Unit economics | OpenCost/Kubecost + billing export | FOCUS-normalized warehouse cost model | managing by the monthly bill alone |
 
 **Lock-in check:** managed services are fine until the exit cost exceeds the value. Keep data in open formats (Parquet, Avro, PostgreSQL dump), keep the contract behind your API, and document the migration path before the incident.
 

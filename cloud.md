@@ -323,7 +323,12 @@ These are provider-specific picks for common workloads. For the framework-agnost
 4. **Workload identity, never keys** — IRSA / Workload Identity Federation / Managed Identities
 5. **Kubernetes is a commitment** — EKS/GKE/AKS pay off at scale; below that pick Fargate/Cloud Run/Container Apps
 6. **Egress is the hidden bill** — multi-cloud looks cheap until data crosses providers
-7. Related guides: `postgresql-features.md`, `redis-features.md`, `kafka-features.md`, `mongodb-features.md`, `elasticsearch-features.md`, `rabbitmq-features.md`, `agentic-ai-features.md`
+7. **Measure unit economics, not just the invoice** — define the cost of one tenant, request, order, or agent run; a falling total bill can still hide a product line whose unit cost is rising
+8. **Allocate shared cost before debating it** — tag/label owner, environment, and cost center; split shared clusters, NAT, observability, and support costs with a documented rule
+9. **Showback before chargeback** — publish per-team and per-product cost first; only turn it into a budget chargeback when the allocation is trusted and disputes have a resolution path
+10. **Use billing data, not console guesses** — AWS CUR, GCP billing export, and Azure Cost Management feed OpenCost/Kubecost; FOCUS normalizes providers
+11. **Treat budgets and anomaly alerts as guardrails** — they catch spikes, but they do not tell you whether the cost per order is improving
+12. Related guides: `postgresql-features.md`, `redis-features.md`, `kafka-features.md`, `mongodb-features.md`, `elasticsearch-features.md`, `rabbitmq-features.md`, `agentic-ai-features.md`
 
 ## Related System Design Documents
 
@@ -478,7 +483,7 @@ The sections above are the daily-driver core. This is the **long tail**, organiz
 | :-- | :-- | :-- | :-- |
 | **CloudWatch** (logs/metrics/alarms; Logs Insights) | **Cloud Logging / Monitoring** | **Azure Monitor + Log Analytics** | First-party telemetry; all three are OpenTelemetry-friendly now |
 | **X-Ray** (traces) | **Cloud Trace** | **Application Insights** (KQL) | Distributed tracing; App Insights is the deepest of the three |
-| **Cost Explorer / Budgets / CUR** | **Billing export / Recommender** | **Cost Management + Advisor** | FinOps: the CUR/billing export is the source of truth for showback |
+| **Cost Explorer / Budgets / CUR** | **Billing export / Recommender** | **Cost Management + Advisor** | FinOps: the CUR/billing export is the source of truth for showback; OpenCost/Kubecost allocate Kubernetes spend to teams and workloads |
 | **Compute Optimizer / Trusted Advisor** | **Recommender** | **Advisor** | Rightsizing recommendations from actual utilization |
 
 **How to use this catalog:** (1) find the **capability**, not the brand — "I need pub/sub" before "I want SNS"; (2) check the §14 decision table for the top-80% choices; (3) the deciding factors are almost always the same four: **ops burden vs control, egress/data gravity, consistency needs, and exit cost**; (4) map what you pick back to this repo's designs — §15 lists which doc drills each capability's internals (Kafka → `kafka-features.md`, Spanner-style → `system-design-key-value-store.md`, Bedrock → `agentic-ai-features.md`, Lambda → `system-design-serverless.md`, CloudFront → `system-design-url-shortener.md`).

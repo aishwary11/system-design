@@ -703,6 +703,66 @@ Partitioning threads, connections, or in-flight requests per dependency or tenan
 **Failure it prevents:** provisioning far fewer in-flight requests than the throughput and latency require, then blaming the database.
 **Go deeper:** [Estimation](system-design-concepts.md#52-back-of-the-envelope-estimation).
 
+<a id="cell-based-architecture"></a>
+### Cell-based architecture
+Partition the workload into independent cells, each with its own application and data; a cell router maps tenants or resources to a cell so one bad deploy or overload cannot take everyone down.
+**Failure it prevents:** a global blast radius from a single release, hot tenant, or poisoned query; the cost is duplicate capacity and routing complexity.
+**Go deeper:** [Cell-based architecture](system-design-concepts.md#cell-based-architecture-blast-radius-design).
+
+<a id="ebpf"></a>
+### eBPF
+A Linux kernel mechanism for running sandboxed programs against network, syscall, and tracing events without changing application code.
+**Failure it prevents:** blind spots in compiled services and network policy; the cost is kernel/privilege dependence and careful overhead testing.
+**Go deeper:** [Profiles and eBPF](system-design-observability-pipeline.md#profiles-and-ebpf--the-fourth-signal-still-alpha).
+
+<a id="continuous-profiling"></a>
+### Continuous profiling
+Sampling stack traces in production continuously to show which functions consume CPU or allocate memory, instead of attaching a profiler after an incident.
+**Failure it prevents:** knowing a service is slow but not which code path is burning the CPU; the caveat is sampling overhead and an Alpha signal.
+**Go deeper:** [Profiles and eBPF](system-design-observability-pipeline.md#profiles-and-ebpf--the-fourth-signal-still-alpha).
+
+<a id="gateway-api"></a>
+### Gateway API
+The Kubernetes successor to Ingress: role-oriented `GatewayClass`, `Gateway`, and route resources with native weighted traffic splitting and multi-protocol support.
+**Failure it prevents:** controller-specific Ingress annotations and a front door that cannot express modern routing; Ingress-NGINX is retired.
+**Go deeper:** [Ingress, mesh and traffic splitting](devops-features.md#6-ingress-service-mesh--traffic-splitting).
+
+<a id="ambient-mesh"></a>
+### Ambient mesh
+A sidecarless service-mesh data plane: a node-level ztunnel handles L4 identity and mTLS, while optional waypoint proxies add L7 policy only where needed.
+**Failure it prevents:** a proxy per pod taxing memory and operations; the caveat is feature parity and migration complexity.
+**Go deeper:** [Ingress, mesh and traffic splitting](devops-features.md#6-ingress-service-mesh--traffic-splitting).
+
+<a id="sbom"></a>
+### SBOM
+Software Bill of Materials: a machine-readable inventory of every direct and transitive component in an artifact, usually SPDX or CycloneDX.
+**Failure it prevents:** discovering a vulnerable dependency during an incident with no way to know which artifacts contain it.
+**Go deeper:** [Supply-chain integrity](devops-features.md#supply-chain-integrity--sbom-provenance-and-signatures).
+
+<a id="slsa"></a>
+### SLSA
+Supply-chain Levels for Software Artifacts: graded build and source guarantees, with signed provenance that a deploy policy can verify.
+**Failure it prevents:** trusting an artifact because its filename looks right; provenance without verification is storage, not assurance.
+**Go deeper:** [Supply-chain integrity](devops-features.md#supply-chain-integrity--sbom-provenance-and-signatures).
+
+<a id="sigstore"></a>
+### Sigstore
+Keyless signing and transparency tooling (cosign, Fulcio, Rekor) for containers, binaries, and attestations.
+**Failure it prevents:** long-lived signing keys and unsigned artifacts reaching production; verify signatures at admission.
+**Go deeper:** [Supply-chain integrity](devops-features.md#supply-chain-integrity--sbom-provenance-and-signatures).
+
+<a id="platform-engineering"></a>
+### Platform engineering
+Treating the internal developer platform as a product: a service catalog, golden paths, and self-service infrastructure that reduce cognitive load.
+**Failure it prevents:** every team re-solving deployment, observability, and security; a portal without automation is just documentation.
+**Go deeper:** [Tools — compute and orchestration](tools.md#3-compute--orchestration).
+
+<a id="finops"></a>
+### FinOps
+Operational cost management that connects cloud consumption to business value, including allocation, showback/chargeback, and unit economics.
+**Failure it prevents:** optimizing the total invoice while the cost per order or tenant quietly rises.
+**Go deeper:** [Cloud key takeaways](cloud.md#16-key-takeaways).
+
 ## Security & identity
 
 <a id="tls"></a>
@@ -722,6 +782,30 @@ Mutual TLS: both client and server present certificates, so each side proves its
 A delegation protocol: a client gets a scoped access token to act on a resource owner's behalf without seeing their password.
 **Failure it prevents:** sharing passwords with third-party apps and giving them unlimited access.
 **Go deeper:** [Security & auth](system-design-concepts.md#54-security--authnauthz-oauth2-jwt-mtls).
+
+<a id="oauth-21"></a>
+### OAuth 2.1 (draft)
+The consolidation of OAuth 2.0 plus its security best practices: PKCE everywhere, no implicit or password grant, no bearer token in the query string. **Still an Internet-Draft, not an RFC.**
+**Failure it prevents:** shipping a legacy flow that RFC 9700 already treats as unsafe while calling it "OAuth 2.1."
+**Go deeper:** [OAuth 2.1, DPoP and SCIM](system-design-concepts.md#oauth-21-dpop-and-scim).
+
+<a id="dpop"></a>
+### DPoP
+Demonstrating Proof of Possession: the client signs each request with a private key, binding the access token to that key so a stolen bearer token cannot be replayed.
+**Failure it prevents:** a leaked access token being usable by anyone who can read it.
+**Go deeper:** [OAuth 2.1, DPoP and SCIM](system-design-concepts.md#oauth-21-dpop-and-scim).
+
+<a id="scim"></a>
+### SCIM
+System for Cross-domain Identity Management: a REST schema and protocol for provisioning and deprovisioning users and groups from an identity provider.
+**Failure it prevents:** manual account creation and, worse, accounts that survive after an employee leaves.
+**Go deeper:** [OAuth 2.1, DPoP and SCIM](system-design-concepts.md#oauth-21-dpop-and-scim).
+
+<a id="passkey"></a>
+### Passkeys (WebAuthn)
+Discoverable public-key credentials where the authenticator holds the private key and the server stores only the public key; login is a signed challenge, not a shared password.
+**Failure it prevents:** phishing and password-database breaches; the hard part is account recovery and cross-device UX.
+**Go deeper:** [Passkeys and WebAuthn](system-design-concepts.md#passkeys-and-webauthn).
 
 <a id="oidc"></a>
 ### OpenID Connect (OIDC)

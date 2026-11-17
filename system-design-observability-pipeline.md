@@ -400,6 +400,21 @@ A telemetry store is the most sensitive database in most companies: logs contain
 | **Selective log indexing** | Index low-cardinality dimensions only; search full bodies in object storage | Log Index |
 | **Deduplication by fingerprint** | Repeated identical lines collapse into one entry with a count | Log Fingerprint |
 | **Self-observability** | The pipeline is instrumented with its own stack, including ingest lag and drop counters | All services |
+| **Continuous profiling** | Sample stack traces in production to show which functions burn CPU or allocate memory; join samples to trace IDs where supported | Profiles pipeline (Alpha) |
+| **eBPF collection** | Kernel-level flow, syscall, and stack visibility without changing application code; useful for compiled services and network policy debugging | OBI, Cilium Hubble, Tetragon |
+
+### Profiles and eBPF — the fourth signal, still Alpha
+
+Metrics, logs, and traces tell you *that* a request was slow and *where* it spent time. A **profile** tells you *which code* consumed the CPU or allocated the memory. **Continuous profiling** samples production at low overhead instead of attaching a profiler after an incident.
+
+OpenTelemetry Profiles entered **public Alpha in March 2026** and is not yet a stability commitment. The emerging stack:
+
+- **OTel Profiles** defines a vendor-neutral profile signal and Collector support, with samples optionally linked to `trace_id`/`span_id`.
+- **eBPF profiling** samples every process on a Linux host without code changes, including compiled languages that are hard to instrument.
+- **OpenTelemetry eBPF Instrumentation (OBI)** auto-generates spans and RED metrics for supported protocols and runtimes; it complements, rather than replaces, SDK instrumentation.
+- **Cilium Hubble** exposes network flow and service-dependency visibility; **Tetragon** adds eBPF-based security observability and runtime enforcement.
+
+Caveats: Linux/kernel dependence, elevated privileges for some probes, protocol/runtime coverage gaps, and overhead that must be measured on the real workload. Keep profiles out of the paging path until the signal is stable; use them for cost and performance investigations first.
 
 ## Key Design Decisions
 
@@ -1053,6 +1068,9 @@ Telemetry pipelines fail in the details. Every row below is a real reason a char
 - [Prometheus](https://github.com/prometheus/prometheus) — TSDB blocks, compaction, staleness and `rate()` semantics referenced throughout the storage design
 - [Grafana Tempo](https://github.com/grafana/tempo) — trace storage and attribute indexing; [Grafana Loki](https://github.com/grafana/loki) — the index-dimensions-store-bodies model for logs
 - [ClickHouse](https://github.com/ClickHouse/ClickHouse) — columnar log search at petabyte scale when object-storage scans are too slow
+- [OpenTelemetry Profiles — public Alpha](https://opentelemetry.io/blog/2026/profiles-alpha) — the fourth signal, its data model, and the Alpha caveat
+- [OpenTelemetry eBPF Instrumentation (OBI)](https://opentelemetry.io/docs/zero-code/obi) — code-free spans and RED metrics for supported Linux workloads
+- [Cilium Hubble](https://docs.cilium.io/en/stable/observability/hubble) and [Tetragon](https://tetragon.io/) — eBPF network visibility and runtime security
 
 **Compression and alerting**
 

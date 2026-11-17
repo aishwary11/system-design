@@ -71,7 +71,7 @@ The articles where companies explain what they actually shipped — read these l
 ### Feeds & Social
 | Article | Teaches | Pair with |
 | :--- | :--- | :--- |
-| [Instagram: background jobs with Redis](https://instagram-engineering.com/improving-performance-of-background-jobs-with-redis-24f4d75b5bd0) | fan-out economics, Redis job queues | `system-design-instagram.md`, `system-design-twitter.md` |
+| [How Instagram scaled to 14M users with 3 engineers](https://read.engineerscodex.com/p/how-instagram-scaled-to-14-million) | early architecture, Redis sharding, feed fan-out economics | `system-design-instagram.md`, `system-design-twitter.md` |
 | [Twitter: timeline scaling](https://blog.x.com/engineering/en_us/topics/infrastructure/2023/timeline-scaling) | hybrid fan-out, Redis clusters | `system-design-twitter.md` |
 
 ### Payments & Money
@@ -91,8 +91,23 @@ The articles where companies explain what they actually shipped — read these l
 ### Platform & Infra
 | Article | Teaches | Pair with |
 | :--- | :--- | :--- |
-| [GitHub Actions: CI for monorepos](https://github.blog/2019-08-08-continuous-integration-solutions-for-monorepos/) | CI at monorepo scale | `devops-features.md`, `system-design-code-deployment.md` |
+| [Buildkite: monorepo CI best practices](https://buildkite.com/resources/blog/monorepo-ci-best-practices) | path filtering, affected-project builds, merge queues at monorepo scale | `devops-features.md`, `system-design-code-deployment.md` |
 | [Zepto: Route IQ — reconstructing delivery paths from noisy GPS](https://blog.zepto.com/route-iq-how-we-reconstruct-delivery-paths-from-noisy-gps-at-scale-6898d3260ed2) | anomaly scoring → Kalman → OSRM → HMM consensus (this repo's doc is built from it) | `system-design-route-reconstruction.md` |
+
+### Identity, Observability & Supply Chain (2026)
+
+| Resource | Teaches | Pair with |
+| :--- | :--- | :--- |
+| [W3C WebAuthn Level 3](https://www.w3.org/TR/webauthn-3) | passkey ceremonies, RP ID/origin binding, attestation (Recommendation, 25 Aug 2026) | `system-design-concepts.md` §54 |
+| [NIST SP 800-63B-4](https://pages.nist.gov/800-63-4/sp800-63b.html) | authenticator assurance levels, syncable authenticators, recovery | `system-design-concepts.md` §54 |
+| [OAuth 2.1 draft](https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1) · [RFC 9700](https://www.rfc-editor.org/rfc/rfc9700.html) · [RFC 10017](https://www.rfc-editor.org/rfc/rfc10017.html) | current OAuth security baseline; 2.1 is still a draft | `system-design-concepts.md` §54 |
+| [DPoP RFC 9449](https://datatracker.ietf.org/doc/html/rfc9449) · [SCIM 2.0](https://scim.cloud/specs/) | sender-constrained tokens; enterprise user provisioning | `system-design-concepts.md` §54 |
+| [OpenTelemetry Profiles (Alpha)](https://opentelemetry.io/blog/2026/profiles-alpha) · [OBI](https://opentelemetry.io/docs/zero-code/obi) | the fourth signal, eBPF profiling, code-free instrumentation | `system-design-observability-pipeline.md` |
+| [Cilium & Hubble](https://docs.cilium.io/en/stable/overview/intro) · [Tetragon](https://tetragon.io/) | eBPF network visibility and runtime security | `system-design-observability-pipeline.md` |
+| [SLSA v1.2](https://slsa.dev/spec/v1.2) · [Sigstore](https://docs.sigstore.dev/) | build/source provenance, keyless signing, verification | `devops-features.md` §9 |
+| [CISA SBOM minimum elements (2026)](https://www.cisa.gov/sites/default/files/2026-07/2026_cisa_sbom_minimum_elements_508c.pdf) | what an SBOM must contain, including transitive components | `devops-features.md` §9 |
+| [Kubernetes Gateway API](https://gateway-api.sigs.k8s.io/) · [Ingress-NGINX retirement](https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/) | Gateway/HTTPRoute, migration, why Ingress-NGINX is retired | `devops-features.md` §6 |
+| [FinOps unit economics](https://www.finops.org/framework/capabilities/unit-economics) · [OpenCost](https://opencost.io/docs) | cost per business unit, Kubernetes allocation, showback/chargeback | `cloud.md` §16 |
 
 ---
 
@@ -142,7 +157,7 @@ The articles where companies explain what they actually shipped — read these l
 | [Spanner](https://static.googleusercontent.com/media/research.google.com/en//archive/spanner-osdi2012.pdf) | 2012 | TrueTime, global consistency | `system-design-concepts.md` §29 |
 | [Kafka paper](https://notes.stephenholiday.com/Kafka.pdf) | 2011 | the log abstraction | `kafka-features.md` |
 | [ZooKeeper: Wait-free coordination](https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf) | 2010 | coordination service design | `system-design-distributed-lock-manager.md` |
-| [The Chubby lock service](https://research.google/pubs/pub27879/) | 2006 | locks, leases, sessions | `system-design-distributed-lock-manager.md` |
+| [The Chubby lock service](https://research.google/pubs/the-chubby-lock-service-for-loosely-coupled-distributed-systems) | 2006 | locks, leases, sessions | `system-design-distributed-lock-manager.md` |
 | [Paxos Made Simple](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf) | 2001 | consensus | `system-design-concepts.md` §23 |
 | [The Log-Structured Merge-Tree](https://www.cs.umb.edu/~poneil/lsmtree.pdf) | 1996 | LSM storage engines | `system-design-concepts.md` §32 |
 | [Raft: In Search of an Understandable Consensus Algorithm](https://raft.github.io/raft.pdf) | 2014 | the consensus you can explain in an interview | `system-design-concepts.md` §23 |
@@ -185,7 +200,7 @@ The single table to consult before an interview: each row = a topic this repo co
 | Recommendations | Chip Huyen's MLSys book | `system-design-recommendation-system.md` |
 | LLM serving | vLLM docs | `system-design-llm-inference.md` |
 | Agents & MCP/A2A | Anthropic effective agents + MCP spec | `agentic-ai-features.md` |
-| Cloud services | daily.dev: best engineering blogs 2026 | `cloud.md` |
+| Cloud services | [AWS Architecture Center](https://aws.amazon.com/architecture/) · [Google Cloud Architecture Framework](https://cloud.google.com/architecture/framework) · [Azure Architecture Center](https://learn.microsoft.com/azure/architecture/) | `cloud.md` |
 | DevOps/CI-CD | GitHub Actions docs + `devops-features.md` | `system-design-code-deployment.md` |
 
 ---
