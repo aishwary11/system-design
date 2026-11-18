@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Capacity &amp; Cost Simulator — System Design Library</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel-2: #1c2330;
+    --border: #30363d;
+    --border-soft: #21262d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --blue: #58a6ff;
+    --blue-soft: rgba(88, 166, 255, .12);
+    --green: #3fb950;
+    --amber: #d29922;
+    --red: #f85149;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: radial-gradient(circle at 50% -20%, #172033 0, var(--bg) 40%);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  button, input { font: inherit; }
+  button { cursor: pointer; }
+  .site-header { border-bottom: 1px solid var(--border-soft); }
+  .header-inner {
+    max-width: 1240px; margin: 0 auto; padding: 34px 24px 24px;
+    display: flex; justify-content: space-between; gap: 24px; align-items: flex-start;
+  }
+  .eyebrow {
+    color: var(--blue); font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  }
+  h1 { font-size: clamp(1.9rem, 4vw, 2.7rem); letter-spacing: -.035em; line-height: 1.1; margin-top: 8px; }
+  .lede { color: var(--muted); max-width: 760px; margin-top: 10px; }
+  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; padding-top: 22px; }
+  .button, .ghost {
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 13px;
+    background: var(--panel); color: var(--text); font-size: .86rem; font-weight: 600;
+    transition: border-color .15s, background .15s;
+  }
+  .button:hover, .ghost:hover { border-color: var(--blue); text-decoration: none; }
+  .button.primary { background: var(--blue); border-color: var(--blue); color: #06111f; }
+  .button.primary:hover { background: #79b8ff; }
+  main { max-width: 1240px; margin: 0 auto; padding: 22px 24px 60px; }
+  .notice {
+    color: var(--muted); font-size: .86rem; border-left: 3px solid var(--amber);
+    background: rgba(210, 153, 34, .07); padding: 10px 14px; border-radius: 0 8px 8px 0;
+  }
+  .scenarios { display: flex; gap: 8px; overflow-x: auto; padding: 20px 0 6px; scrollbar-width: thin; }
+  .scenario {
+    border: 1px solid var(--border); background: var(--panel); color: var(--muted);
+    border-radius: 999px; padding: 8px 14px; white-space: nowrap; font-size: .84rem; font-weight: 600;
+  }
+  .scenario:hover { border-color: var(--blue); color: var(--text); }
+  .scenario[aria-pressed="true"] { background: var(--blue-soft); border-color: var(--blue); color: var(--text); }
+  .scenario-blurb { color: var(--muted); font-size: .9rem; min-height: 22px; margin: 4px 0 18px; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 20px; align-items: start; }
+  .inputs { display: grid; gap: 14px; }
+  fieldset {
+    border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel);
+    padding: 16px; min-width: 0;
+  }
+  legend { padding: 0 7px; color: var(--text); font-size: .9rem; font-weight: 700; }
+  .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .field { display: grid; gap: 5px; min-width: 0; }
+  .field label { color: var(--muted); font-size: .78rem; line-height: 1.35; }
+  .field input {
+    width: 100%; background: #0b1017; color: var(--text); border: 1px solid var(--border);
+    border-radius: 7px; padding: 8px 9px; font-size: .9rem; font-variant-numeric: tabular-nums;
+  }
+  .field input:focus { outline: 2px solid var(--blue); outline-offset: 1px; border-color: var(--blue); }
+  .field .unit { color: #6e7681; font-size: .7rem; }
+  .fixed-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .fixed-head span { color: var(--muted); font-size: .8rem; }
+  .fixed-row { display: grid; grid-template-columns: minmax(0, 1fr) 120px 30px; gap: 8px; margin-top: 8px; }
+  .fixed-row input { width: 100%; background: #0b1017; color: var(--text); border: 1px solid var(--border); border-radius: 7px; padding: 8px 9px; font-size: .84rem; }
+  .fixed-row input:focus { outline: 2px solid var(--blue); outline-offset: 1px; }
+  .remove { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 7px; width: 30px; }
+  .remove:hover { color: var(--red); border-color: var(--red); }
+  .add { background: transparent; border: 1px dashed var(--border); color: var(--muted); border-radius: 7px; padding: 8px; font-size: .8rem; margin-top: 10px; width: 100%; }
+  .add:hover { color: var(--blue); border-color: var(--blue); }
+  .summary { position: sticky; top: 16px; display: grid; gap: 14px; }
+  .total-card {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: linear-gradient(145deg, #1b2a44, var(--panel));
+    padding: 18px;
+  }
+  .total-card span { color: var(--muted); font-size: .8rem; display: block; }
+  .total-card strong { font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -.045em; display: block; line-height: 1.15; margin: 4px 0; font-variant-numeric: tabular-nums; }
+  #total-note { color: #a5d6ff; font-size: .76rem; }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .metric { background: var(--panel); border: 1px solid var(--border); border-radius: 9px; padding: 10px 11px; }
+  .metric span { display: block; color: var(--muted); font-size: .69rem; text-transform: uppercase; letter-spacing: .05em; }
+  .metric strong { display: block; font-size: 1.08rem; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px 16px; }
+  .panel h2 { font-size: .95rem; margin-bottom: 10px; }
+  .bar-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; margin: 8px 0; font-size: .8rem; }
+  .bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-value { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .bar-track { grid-column: 1 / -1; height: 5px; border-radius: 99px; background: #0b1017; overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #a371f7); border-radius: inherit; }
+  .risk-list { list-style: none; display: grid; gap: 7px; }
+  .risk-list li { color: var(--muted); font-size: .8rem; border-left: 2px solid var(--border); padding-left: 9px; }
+  .risk-list li[data-kind="compute"], .risk-list li[data-kind="budget"] { border-color: var(--amber); }
+  .risk-list li[data-kind="egress"], .risk-list li[data-kind="ai"], .risk-list li[data-kind="llm"] { border-color: var(--red); }
+  .risk-list li[data-kind="ok"] { border-color: var(--green); }
+  .unit-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--border-soft); font-size: .8rem; color: var(--muted); }
+  .unit-row:last-child { border-bottom: 0; }
+  .unit-row b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .wide { margin-top: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border-soft); }
+  th { color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; }
+  td:last-child, th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  .up { color: var(--amber); }
+  .down { color: var(--green); }
+  .method { margin-top: 20px; }
+  .method summary { cursor: pointer; font-weight: 700; font-size: .95rem; }
+  .method-body { color: var(--muted); font-size: .86rem; margin-top: 12px; display: grid; gap: 10px; }
+  .method-body code { color: #a5d6ff; background: #0b1017; border: 1px solid var(--border-soft); padding: 1px 5px; border-radius: 4px; }
+  .method-body ul { padding-left: 18px; display: grid; gap: 5px; }
+  .disclaimer { color: #6e7681; font-size: .76rem; margin-top: 18px; }
+  footer { border-top: 1px solid var(--border-soft); color: var(--muted); text-align: center; font-size: .78rem; padding: 20px; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .summary { position: static; }
+    .header-inner { flex-direction: column; }
+    .header-actions { justify-content: flex-start; padding-top: 0; }
+  }
+  @media (max-width: 620px) {
+    main, .header-inner { padding-left: 14px; padding-right: 14px; }
+    .field-grid { grid-template-columns: 1fr; }
+    .cards { grid-template-columns: 1fr 1fr; }
+    .fixed-row { grid-template-columns: minmax(0, 1fr) 100px 30px; }
+    table { font-size: .78rem; }
+    th, td { padding: 7px 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <p class="eyebrow">System Design Library · Planning Tool</p>
+      <h1>Capacity &amp; Cost Simulator</h1>
+      <p class="lede">Back-of-the-envelope sizing and monthly cost from the library’s estimation methods. Change an assumption and see the bottleneck, unit economics and dominant cost move.</p>
+    </div>
+    <div class="header-actions">
+      <a class="ghost" href="../">← Diagram index</a>
+      <button class="button" id="reset" type="button">Reset scenario</button>
+      <button class="button primary" id="share" type="button">Copy share link</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <p class="notice">Planning model, not a cloud quote. Defaults come from the library’s cost sections; edit any unit price for your provider, region and contract.</p>
+  <nav id="scenarios" class="scenarios" aria-label="Scenario"></nav>
+  <p id="scenario-blurb" class="scenario-blurb"></p>
+
+  <div class="layout">
+    <form id="inputs" class="inputs" novalidate></form>
+
+    <aside class="summary" aria-live="polite">
+      <div class="total-card">
+        <span>Estimated monthly cost</span>
+        <strong id="total">—</strong>
+        <span id="total-note"></span>
+      </div>
+      <div id="cards" class="cards"></div>
+
+      <section class="panel">
+        <h2>Cost breakdown</h2>
+        <div id="breakdown"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Pressure signals</h2>
+        <ul id="risks" class="risk-list"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>Unit economics</h2>
+        <div id="units"></div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="panel wide">
+    <h2>Sensitivity</h2>
+    <p class="scenario-blurb" style="margin-bottom:10px">Each row changes one assumption by 20% and recomputes the same model.</p>
+    <div id="sensitivity"></div>
+  </section>
+
+  <details class="panel method">
+    <summary>Method, formulas &amp; sources</summary>
+    <div class="method-body">
+      <p>Monthly capacity uses a 30-day month (2,592,000 seconds) and 730 hours. Storage is steady-state retained bytes; first-month growth is not modeled.</p>
+      <ul>
+        <li>Traffic: <code>avg RPS = requests/month ÷ 2,592,000</code>; <code>peak RPS = avg × peak factor</code>.</li>
+        <li>Concurrency: <code>in flight = peak RPS × average duration</code> (Little’s law).</li>
+        <li>Compute: <code>instances = max(minimum, ceil(peak RPS ÷ (RPS/instance × target utilization) × redundancy))</code>.</li>
+        <li>Storage: <code>retained GB = daily GB × retention days × replicas ÷ compression</code>.</li>
+        <li>Egress: <code>TB/month × 1,000 × $/GB</code>.</li>
+        <li>AI: <code>tokens = requests × tokens/request</code>; cache savings apply only to cacheable traffic that hits.</li>
+        <li>LLM serving: <code>GPUs = ceil(monthly tokens ÷ tokens per GPU-month)</code>.</li>
+        <li>Observability: <code>samples/day = series × 86,400 ÷ scrape seconds</code>; logs are divided by compression; traces by sample rate and retention.</li>
+      </ul>
+      <p>The ~70% utilization warning comes from the queue-cliff discussion in <a href="https://github.com/aishwary11/system-design/blob/master/system-design-concepts.md#52-back-of-the-envelope-estimation" target="_blank" rel="noreferrer">Concepts §52</a>. Preset sources: <a href="https://github.com/aishwary11/system-design/blob/master/system-design-ai-gateway.md#capacity-model-back-of-envelope" target="_blank" rel="noreferrer">AI gateway</a>, <a href="https://github.com/aishwary11/system-design/blob/master/system-design-observability-pipeline.md#capacity-model-back-of-envelope" target="_blank" rel="noreferrer">observability</a>, <a href="https://github.com/aishwary11/system-design/blob/master/system-design-llm-inference.md#cost-estimation-1m-users" target="_blank" rel="noreferrer">LLM inference</a>, <a href="https://github.com/aishwary11/system-design/blob/master/system-design-webhook-delivery.md#cost-estimation-1m-deliveriesday" target="_blank" rel="noreferrer">webhook delivery</a>.</p>
+      <p>Model totals can differ from a document’s rounded table because this page derives compute and egress from their inputs. The webhook preset prices egress at a commodity ~$0.09/GB, while the <a href="https://github.com/aishwary11/system-design/blob/master/system-design-webhook-delivery.md#cost-estimation-1m-deliveriesday" target="_blank" rel="noreferrer">webhook document’s</a> $3/GB line is a conservative all-in reference estimate (retries, cross-AZ/region transfer, NAT and premium egress). Edit the egress price to compare the two; the source tables remain the reference.</p>
+    </div>
+  </details>
+
+  <p class="disclaimer">No data leaves this page. Share links encode assumptions in the URL hash; nothing is stored on a server.</p>
+</main>
+
+<footer>Part of the <a href="../">System Design Library</a> · generated into the static site by <code>tools/build-pages.mjs</code></footer>
+
+<script type="module" src="./app.mjs"></script>
+</body>
+</html>

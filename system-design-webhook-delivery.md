@@ -280,11 +280,13 @@ CREATE TABLE events (
 | PostgreSQL (multi-AZ primary + replica) | $1,800 |
 | Redis Cluster (quotas + breakers) | $900 |
 | Object storage (payloads, 30d lifecycle) | $400 |
-| Egress (HTTP POST, ~40 GB/day) | $3,600 |
+| Egress (HTTP POST, ~40 GB/day) — reference estimate at $3/GB | $3,600 |
 | Observability + log retention | $700 |
 | **Total** | **~$14,700/mo** |
 
-Egress dominates — which is why payload offloading plus customer-side dedupe (not re-sending bodies) matters more than compute tuning.
+> **Reference estimate, not a price list.** The egress line above is deliberately conservative at ~$3/GB — a blended "all-in" figure that covers retries, cross-AZ/region transfer, NAT processing, and premium/partner egress, not commodity origin egress. At a typical ~$0.09/GB (~$90/TB out of AWS — see `cloud.md` §17), the same 1.2 TB/month is ~$110 and the total lands near **~$11,200/mo**, where compute and Kafka lead instead of egress. Treat $14,700 as the upper bound of the range, and check the actual egress contract before quoting either number.
+
+Payload offloading plus customer-side dedupe (not re-sending bodies) still matters more than compute tuning: bytes are the only line that scales linearly with deliveries and retries.
 
 ## Trade-off Analysis
 

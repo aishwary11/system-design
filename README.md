@@ -559,6 +559,7 @@ Executable implementations of the algorithms used across the designs:
 
 - ✅ **Browse by topic** — click any link in the tables above
 - ✅ **Study scaling** — each system design doc shows infrastructure at 3 scale tiers
+- 🧮 **Estimate capacity and cost** — run `node tools/build-pages.mjs` and open the simulator from the generated site index
 - ✅ **Review LLD** — all code examples are executable JavaScript
 - ✅ **Master the technology** — read the PostgreSQL / Redis / Kafka / MongoDB / Elasticsearch / RabbitMQ guides, then the Cloud and Agentic AI maps, before their system design docs
 - ✅ **Interview prep** — each document includes common follow-up Q&A
