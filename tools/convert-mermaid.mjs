@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 /**
  * convert-mermaid.mjs
+ *
+ * SPENT — one-shot migration, kept for reference. The repo now has 0 mermaid
+ * blocks (all converted to Archify specs in diagrams/json), so this is not part
+ * of the routine pipeline: do not re-run it expecting work.
+ *
  * Extract ```mermaid flowchart blocks from the repo's markdown files and emit
  * draft Archify architecture JSON specs (nodes, edges, labels, types).
  *

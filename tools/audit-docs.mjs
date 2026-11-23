@@ -32,6 +32,7 @@
  * Exit code 1 on any failure. Usage: node tools/audit-docs.mjs
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -456,6 +457,17 @@ if (registry) {
   for (const [name, files] of definitionFiles)
     if (files.size > 1 && !registered.has(name))
       issues.push(`${name}: duplicate definition in ${[...files].join(', ')} — register a canonical owner or explicit variant in tools/canonical-ownership.json`);
+}
+
+// Pass 4: duplication gate — repeated prose, code, sections, diagram graphs,
+// README double-listings and per-page runtime copies (tools/audit-duplication.mjs).
+try {
+  execFileSync('node', [join(ROOT, 'tools', 'audit-duplication.mjs')], { encoding: 'utf8' });
+  console.log('duplication audit: NO DUPLICATION');
+} catch (e) {
+  const out = String(e.stdout || e.message).trim().split('\n').filter(Boolean);
+  const first = out.findIndex(l => l.startsWith('DUPLICATION ISSUES'));
+  issues.push(...out.slice(first < 0 ? 0 : first + 1).map(l => `duplication: ${l}`));
 }
 
 console.log(`audited ${files.length} markdown files, ${jsBlocks} js blocks (${jsFailed} failed, ${jsWarned} need injected globals)`);

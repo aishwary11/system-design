@@ -10,12 +10,18 @@
  *   diagrams/concepts/concept-*.architecture.html    (sharding / replication / quorum)
  *   diagrams/features/<tech>-*.architecture.html     (technology and AI feature maps)
  *   diagrams/template.html                           (README reference diagram)
+ *
+ * `deliver` ends by running tools/hoist-runtime.mjs, which moves the viewer
+ * stylesheet, engine and data payload into one shared archify.css/archify.js
+ * pair instead of leaving a copy in all 89 pages. Pass --self-contained to
+ * keep each page standalone.
  */
 import { readdirSync, readFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { hoistRuntime } from './hoist-runtime.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SKILL = join(homedir(), '.agents', 'skills', 'archify');
@@ -74,6 +80,16 @@ for (const f of files) {
     fail++;
     failures.push(f);
     console.log('ERR   ' + f + ' :: ' + String(e.message).slice(0, 200));
+  }
+}
+
+if (mode === 'deliver' && pass > 0) {
+  try {
+    hoistRuntime({ selfContained: process.argv.includes('--self-contained') });
+  } catch (e) {
+    fail++;
+    failures.push('hoist-runtime');
+    console.log('ERR   hoist-runtime :: ' + String(e.message).slice(0, 300));
   }
 }
 
